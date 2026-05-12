@@ -243,3 +243,28 @@ body::after {
   }
 
 }
+
+/* --- старый код уже есть выше --- */
+
+
+/* 👇 НОВЫЙ КОД ДОБАВЛЯЙ СЮДА ВНИЗ */
+
+.mini-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 40px);
+  gap: 4px;
+  margin-top: 20px;
+}
+
+.mini-grid div {
+  border: 1px solid #00ff88;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+  cursor: pointer;
+}
+
+.mini-grid div:hover {
+  background: rgba(0,255,136,0.15);
+}
