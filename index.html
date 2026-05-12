@@ -1,27 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <title>CLASSIFIED SYSTEM</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>MIRROR-INT SYSTEM</title>
+
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-<div id="screen">
 
-  <div class="title glitch">MIRROR-INT SYSTEM</div>
+  <!-- ЭФФЕКТ ШУМА -->
+  <div id="noise"></div>
 
-  <div class="panel">
-    <p>STATUS: ONLINE</p>
-    <p>ACCESS LEVEL: RESTRICTED</p>
+  <!-- ОСНОВНОЙ ЭКРАН -->
+  <div id="screen">
+
+    <!-- ЗАГОЛОВОК -->
+    <div class="title glitch">
+      MIRROR-INT SYSTEM
+    </div>
+
+    <!-- СТАТУС СИСТЕМЫ -->
+    <div class="panel">
+
+      <p>STATUS: ONLINE</p>
+
+      <p>ACCESS LEVEL: RESTRICTED</p>
+
+      <p id="clock"></p>
+
+    </div>
+
+    <!-- АРХИВ -->
+    <div class="panel">
+
+      <p>ARCHIVE DIRECTORY</p>
+
+      <!-- ПАПКА -->
+      <div class="folder" onclick="toggleFolder()">
+        📁 PROJECT_MIRROR
+      </div>
+
+      <!-- СОДЕРЖИМОЕ ПАПКИ -->
+      <div id="folderContent">
+
+        <!-- ФАЙЛ -->
+        <div class="file" onclick="openFile('log')">
+          📄 INCIDENT_LOG.txt
+        </div>
+
+        <!-- ФАЙЛ -->
+        <div class="file" onclick="openFile('subject')">
+          📄 SUBJECT_REPORT.txt
+        </div>
+
+        <!-- СЕКРЕТНЫЙ ДОК -->
+        <div class="file secret" onclick="openSecretFile()">
+          🔒 OMEGA_DOCUMENT.txt
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ОКНО ПРОСМОТРА -->
+    <div class="panel">
+
+      <p>FILE VIEWER</p>
+
+      <div id="viewer">
+        WAITING FOR FILE SELECTION...
+      </div>
+
+    </div>
+
+    <!-- ТЕРМИНАЛ -->
+    <div class="panel">
+
+      <p>SYSTEM LOGS</p>
+
+      <div id="logBox">
+        > SYSTEM INITIALIZED...
+      </div>
+
+    </div>
+
   </div>
 
-  <div class="panel">
-    <p>ARCHIVE ENTRY #01</p>
-    <button onclick="openFile()">OPEN FILE</button>
-  </div>
+  <!-- JS -->
+  <script src="script.js"></script>
 
-</div>
-
-<script src="script.js"></script>
 </body>
 </html>
