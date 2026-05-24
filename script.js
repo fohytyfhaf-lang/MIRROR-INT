@@ -7,12 +7,32 @@
    BOOT SEQUENCE
 ========================= */
 let progress = 0;
-let accessLevel = 0; 
+let accessLevel = 0;
 let systemBooted = false;
+
+let profile = {
+  actions: 0,
+  secret: 0,
+  start: Date.now()
+};
+const files = {
+  log: `INCIDENT LOG
+UNKNOWN SIGNAL DETECTED
+SECTOR: 04
+STATUS: UNSTABLE
+NOTE: OBSERVATION ACTIVE`,
+
+  subject: `SUBJECT REPORT
+ENTITY CLASS: UNKNOWN
+BEHAVIOR: OBSERVED
+STATUS: MEMORY CORRUPTION
+WARNING: AWARENESS INCREASE`
+};
+
 // 0 = guest
 // 1 = operator
 // 2 = researcher
-// 3 = omega clearance 
+// 3 = omega clearance
 const boot = setInterval(() => {
   progress += Math.floor(Math.random() * 12);
 
@@ -21,7 +41,7 @@ const boot = setInterval(() => {
 
   if (progress >= 100) {
     clearInterval(boot);
-
+systemBooted = true;
     const loading = document.getElementById("loading");
     const screen = document.getElementById("screen");
 
@@ -83,6 +103,48 @@ function openFile(type) {
 
   profile.actions++;
   updateMemory();
+}
+
+function loginSystem() {
+  const user = document.getElementById("user").value;
+  const pass = document.getElementById("pass").value;
+  const status = document.getElementById("loginStatus");
+
+  let success = false;
+
+  if (user === "operator" && pass === "0404") {
+    accessLevel = 1;
+    status.innerText = "ACCESS GRANTED: OPERATOR";
+    success = true;
+  }
+
+  else if (user === "research" && pass === "void") {
+    accessLevel = 2;
+    status.innerText = "ACCESS GRANTED: RESEARCHER";
+    success = true;
+  }
+
+  else if (user === "omega" && pass === "mirror") {
+    accessLevel = 3;
+    status.innerText = "OMEGA CLEARANCE GRANTED";
+    success = true;
+  }
+
+  else {
+    accessLevel = 0;
+    status.innerText = "ACCESS DENIED";
+    systemSpeak("FAILED LOGIN ATTEMPT");
+  }
+
+  if (success) {
+    setTimeout(() => {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("screen").style.display = "block";
+
+      startSystem();
+      systemSpeak("USER AUTHENTICATED");
+    }, 1200);
+  }
 }
 /* =========================
    SECRET FILE (ARG EVENT)
@@ -256,10 +318,7 @@ function triggerGlitch() {
 /* =========================
    CLICK OBSERVATION (ARG)
 ========================= */
-document.addEventListener("click", () => {
-  profile.actions++;
-  updateMemory();
-});
+
 
 
 /* =========================
