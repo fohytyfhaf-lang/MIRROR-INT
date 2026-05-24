@@ -69,19 +69,7 @@ setInterval(() => {
 /* =========================
    FILE SYSTEM (ARG)
 ========================= */
-const files = {
-  log: `INCIDENT LOG
-UNKNOWN SIGNAL DETECTED
-SECTOR: 04
-STATUS: UNSTABLE
-NOTE: OBSERVATION ACTIVE`,
 
-  subject: `SUBJECT REPORT
-ENTITY CLASS: UNKNOWN
-BEHAVIOR: OBSERVED
-STATUS: MEMORY CORRUPTION
-WARNING: AWARENESS INCREASE`
-};
 
 function openFile(type) {
   const viewer = document.getElementById("viewer");
