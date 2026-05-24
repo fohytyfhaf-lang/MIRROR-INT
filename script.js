@@ -7,7 +7,11 @@
    BOOT SEQUENCE
 ========================= */
 let progress = 0;
-
+let accessLevel = 0; 
+// 0 = guest
+// 1 = operator
+// 2 = researcher
+// 3 = omega clearance 
 const boot = setInterval(() => {
   progress += Math.floor(Math.random() * 12);
 
@@ -60,6 +64,17 @@ function openFile(type) {
   const viewer = document.getElementById("viewer");
   if (!viewer) return;
 
+  // 🔐 ограничения доступа
+  if (type === "subject" && accessLevel < 1) {
+    systemSpeak("ACCESS LEVEL TOO LOW");
+    return;
+  }
+
+  if (type === "log" && accessLevel < 0) {
+    systemSpeak("ACCESS DENIED");
+    return;
+  }
+
   viewer.innerText = files[type] || "FILE NOT FOUND";
 
   profile.actions++;
@@ -73,26 +88,51 @@ function openFile(type) {
 function openSecret() {
   profile.secret++;
 
-  let pass = prompt("ENTER ACCESS KEY:");
+  if (accessLevel < 3) {
+    systemSpeak("OMEGA ACCESS REQUIRED (LEVEL 3)");
+    return;
+  }
+
+  let pass = prompt("ENTER OMEGA KEY:");
 
   if (pass === "MIRROR") {
     document.getElementById("viewer").innerText =
-      "OMEGA FILE UNLOCKED\n\nENTITY CONFIRMED:\nIT IS WATCHING BACK";
+`OMEGA FILE UNLOCKED
 
+SUBJECT: ENTITY-0
+STATUS: ACTIVE
+
+NOTE:
+USER HAS REACHED SYSTEM CORE
+OBSERVATION LOOP COMPLETE`;
+
+    systemSpeak("OMEGA FILE ACCESSED");
     triggerGlitch();
-
-    setTimeout(() => {
-      systemSpeak("YOU SHOULD NOT HAVE DONE THAT");
-    }, 3000);
-
   } else {
-    systemSpeak("ACCESS DENIED");
+    systemSpeak("INVALID OMEGA KEY");
   }
 
   updateMemory();
 }
+function increaseAccess() {
+  if (accessLevel < 3) {
+    accessLevel++;
+    systemSpeak("ACCESS LEVEL UPGRADED: " + accessLevel);
+  }
+} 
+document.addEventListener("click", () => {
+  profile.actions++;
+  updateMemory();
 
-
+  if (profile.actions === 5) increaseAccess();
+  if (profile.actions === 15) increaseAccess();
+  if (profile.actions === 30) increaseAccess();
+});
+setInterval(() => {
+  if (accessLevel === 3) {
+    systemSpeak("SYSTEM NOTICE: USER IS NOW PART OF CORE OBSERVATION");
+  }
+}, 20000);
 /* =========================
    CAMERA SYSTEM (LIVING)
 ========================= */
@@ -102,40 +142,44 @@ function startSystem() {
 
   let instability = 0;
 
-setTimeout(() => {
-  cam.src = "images/cam_secret.gif";
-  systemSpeak("INITIAL SIGNAL DETECTED");
-}, 8000);
+  setTimeout(() => {
+    cam.src = "images/cam_secret.gif";
+    systemSpeak("INITIAL SIGNAL DETECTED");
+  }, 8000);
 
   setInterval(() => {
     let r = Math.random();
 
-    if (r < 0.4) {
+    // 🟢 GUEST
+    if (accessLevel === 0) {
       cam.src = "images/cam_idle.gif";
-      systemSpeak("SYSTEM STABLE");
     }
 
-    else if (r < 0.75) {
-      cam.src = "images/cam_glitch.gif";
-      instability++;
+    // 🟡 OPERATOR / RESEARCHER
+    else if (accessLevel === 1 || accessLevel === 2) {
+      if (r < 0.5) {
+        cam.src = "images/cam_glitch.gif";
+        instability++;
+      } else {
+        cam.src = "images/cam_alert.gif";
+        instability += 2;
+      }
     }
 
-    else {
-      cam.src = "images/cam_alert.gif";
-      instability += 2;
-      systemSpeak("MOVEMENT DETECTED");
+    // 🔴 OMEGA
+    else if (accessLevel === 3) {
+      cam.src = "images/cam_secret.gif";
+      systemSpeak("SYSTEM OBSERVING USER DIRECTLY");
     }
 
     if (instability > 6) {
       cam.src = "images/cam_secret.gif";
       systemSpeak("ENTITY IN FRAME");
-
       instability = 0;
     }
 
   }, 2500);
 }
-
 
 /* =========================
    🧠 PLAYER MEMORY (ARG PROFILE)
