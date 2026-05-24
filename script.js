@@ -113,7 +113,11 @@ const boot = setInterval(() => {
   if (loadText) {
     loadText.innerText = progress + "%";
   }
-
+  
+setTimeout(() => {
+  openSmileChat();
+}, 5000);
+  
   if (progress >= 100) {
 
     clearInterval(boot);
