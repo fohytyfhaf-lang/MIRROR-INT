@@ -1,190 +1,67 @@
-// =========================
-// MIRROR-INT SYSTEM
-// script.js
-// =========================
+const cam = document.getElementById("cam");
+const status = document.getElementById("status");
 
+let instability = 0;
 
-// ===== ЧАСЫ =====
-function updateClock() {
-  const now = new Date();
-  document.getElementById("clock").innerText =
-    "LOCAL TIME: " + now.toLocaleTimeString();
-}
-setInterval(updateClock, 1000);
-updateClock();
+/* ⚡ LOADING SYSTEM */
+let progress = 0;
+const loader = setInterval(() => {
 
+  progress += Math.floor(Math.random() * 12);
+  document.getElementById("loadText").innerText = progress + "%";
 
-// ===== ПАПКА =====
-function toggleFolder() {
-  const folder = document.getElementById("folderContent");
+  if (progress >= 100) {
+    clearInterval(loader);
 
-  if (folder.style.display === "none") {
-    folder.style.display = "block";
-    addLog("ARCHIVE DIRECTORY OPENED");
-  } else {
-    folder.style.display = "none";
-    addLog("ARCHIVE DIRECTORY CLOSED");
+    setTimeout(() => {
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("screen").style.display = "block";
+    }, 500);
+  }
+
+}, 150);
+
+/* 👁 CAMERA SYSTEM */
+function systemLoop() {
+
+  let r = Math.random();
+
+  if (r < 0.4) {
+    cam.src = "images/cam_idle.gif";
+    status.innerText = "SYSTEM: STABLE FEED";
+  }
+
+  else if (r < 0.7) {
+    cam.src = "images/cam_glitch.gif";
+    status.innerText = "WARNING: SIGNAL INSTABILITY";
+    instability++;
+  }
+
+  else {
+    cam.src = "images/cam_alert.gif";
+    status.innerText = "ALERT: UNKNOWN PRESENCE DETECTED";
+    instability += 2;
+  }
+
+  if (instability > 6) {
+    cam.src = "images/cam_secret.gif";
+    status.innerText = ">>> HIDDEN FEED UNLOCKED <<<";
+    instability = 0;
   }
 }
 
+setInterval(systemLoop, 3000);
 
-// ===== ФАЙЛЫ =====
-const files = {
-
-  log: `
-INCIDENT LOG
-
-03:41 AM
-UNKNOWN SIGNAL DETECTED
-
-STATUS:
-UNRESOLVED
-
-NOTES:
-SIGNAL SOURCE UNKNOWN
-SECTOR 04 OFFLINE
-`,
-
-  subject: `
-SUBJECT REPORT
-
-ENTITY ID:
-UNKNOWN
-
-BEHAVIOR:
-UNSTABLE
-
-THREAT LEVEL:
-MEDIUM
-
-NOTES:
-SUBJECT REACTS TO LIGHT
-MEMORY LOSS DETECTED
-`,
-
-  omega: `
-┌────────────────────────────┐
-│     OMEGA DOCUMENT         │
-├────────────────────────────┤
-
-ACCESS: GRANTED
-CLEARANCE: LEVEL 3
-
-SUBJECT STATUS:
-ACTIVE
-
-WARNING:
-MEMORY CORRUPTION DETECTED
-
-NOTES:
-- DO NOT TRUST VISUAL FEED
-- DO NOT TRUST AUDIO FEED
-- DO NOT TRUST MEMORY OUTPUT
-
-LAST MESSAGE:
-"IT IS STILL ALIVE"
-└────────────────────────────┘
-`
-};
-
-
-// ===== ОТКРЫТИЕ ФАЙЛОВ =====
-function openFile(type) {
-  document.getElementById("viewer").innerText =
-    files[type];
-
-  addLog("FILE OPENED: " + type.toUpperCase());
+/* 🎮 MANUAL SCAN */
+function scan() {
+  cam.src = "images/cam_glitch.gif";
+  status.innerText = "MANUAL SCAN ACTIVE";
+  instability++;
 }
 
-
-// ===== СЕКРЕТНЫЙ ФАЙЛ (ПАРОЛЬ) =====
-function openSecretFile() {
-
-  let password = prompt("ENTER ACCESS PASSWORD:");
-
-  if (password === "MIRROR") {
-
-    document.getElementById("viewer").innerText =
-      files.omega;
-
-    addLog("OMEGA DOCUMENT ACCESSED");
-
-    glitchEffect();
-
-  } else {
-
-    addLog("FAILED ACCESS ATTEMPT");
-    alert("ACCESS DENIED");
-  }
+/* ⚠ FORCE GLITCH */
+function forceGlitch() {
+  cam.src = "images/cam_alert.gif";
+  status.innerText = "SYSTEM OVERLOAD";
+  instability += 3;
 }
-
-
-// ===== ЛОГИ =====
-function addLog(text) {
-  const logBox = document.getElementById("logBox");
-
-  logBox.innerHTML += "\n> " + text;
-  logBox.scrollTop = logBox.scrollHeight;
-}
-
-
-// ===== СЛУЧАЙНЫЕ ЛОГИ =====
-const randomLogs = [
-  "SIGNAL INTERRUPTION DETECTED",
-  "MEMORY SECTOR FAILURE",
-  "ARCHIVE RESPONSE DELAY",
-  "UNKNOWN PROCESS RUNNING",
-  "VISUAL FEED CORRUPTED",
-  "ENTITY MOVEMENT DETECTED"
-];
-
-setInterval(() => {
-  if (Math.random() > 0.7) {
-    let pick = randomLogs[Math.floor(Math.random() * randomLogs.length)];
-    addLog(pick);
-  }
-}, 5000);
-
-
-// ===== ГЛИЧ ЭФФЕКТ =====
-function glitchEffect() {
-  const title = document.querySelector(".title");
-
-  title.style.transform = "translateX(2px)";
-
-  setTimeout(() => {
-    title.style.transform = "translateX(-2px)";
-  }, 50);
-
-  setTimeout(() => {
-    title.style.transform = "translateX(0px)";
-  }, 100);
-}
-
-
-// ===== СКРЫТАЯ ARG ПОДСКАЗКА =====
-let secretCounter = 0;
-
-document.body.addEventListener("click", () => {
-  secretCounter++;
-
-  if (secretCounter === 10) {
-    addLog("HIDDEN SIGNAL DETECTED");
-    addLog("CODE FRAGMENT: MIR");
-  }
-
-  if (secretCounter === 20) {
-    addLog("SECOND FRAGMENT FOUND");
-    addLog("CODE FRAGMENT: ROR");
-  }
-});
-
-
-// ===== СКРЫТИЕ ПАПКИ =====
-document.getElementById("folderContent").style.display = "none";
-
-
-// ===== СТАРТОВЫЕ ЛОГИ =====
-setTimeout(() => addLog("BOOT SEQUENCE COMPLETE"), 1000);
-setTimeout(() => addLog("ARCHIVE MODULE LOADED"), 2000);
-setTimeout(() => addLog("WARNING: CORRUPTED FILE DETECTED"), 3500);
