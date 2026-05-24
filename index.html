@@ -9,29 +9,35 @@
 
 <body>
 
-<!-- LOADING -->
+<!-- ⚡ LOADING -->
 <div id="loading">
   <p>BOOTING SYSTEM...</p>
   <p id="loadText">0%</p>
 </div>
 
-<!-- MAIN -->
+<!-- 🎮 MAIN -->
 <div id="screen" style="display:none;">
 
-  <h1 class="title">MIRROR SYSTEM</h1>
-
-  <div class="panel">
-    <p>CAMERA FEED</p>
-    <img id="cam" src="images/cam_idle.gif" width="400">
+  <div class="title glitch">
+    MIRROR / OBSERVATION SYSTEM
   </div>
 
   <div class="panel">
-    <p id="status">SYSTEM READY</p>
+    <p>LIVE CAMERA FEED</p>
+    <img id="cam" src="images/cam_idle.gif" width="500">
+  </div>
+
+  <div class="panel">
+    <p id="status">SYSTEM: ONLINE</p>
+  </div>
+
+  <div class="panel">
+    <button onclick="scan()">SCAN</button>
+    <button onclick="forceGlitch()">FORCE GLITCH</button>
   </div>
 
 </div>
 
 <script src="script.js"></script>
-
 </body>
 </html>
