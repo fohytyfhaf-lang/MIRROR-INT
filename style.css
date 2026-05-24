@@ -77,3 +77,9 @@ pre {
   pointer-events: none;
   z-index: 999;
 }
+
+body {
+  background: #000;
+  font-family: "Courier New", monospace;
+  color: #00ff88;
+}
