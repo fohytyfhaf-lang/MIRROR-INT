@@ -39,21 +39,18 @@ const boot = setInterval(() => {
   const loadText = document.getElementById("loadText");
   if (loadText) loadText.innerText = progress + "%";
 
-  if (progress >= 100) {
-    clearInterval(boot);
-systemBooted = true;
-    const loading = document.getElementById("loading");
-    const screen = document.getElementById("screen");
+if (progress >= 100) {
+  clearInterval(boot);
+  systemBooted = true;
 
-   if (loading) loading.style.display = "none";
+  const loading = document.getElementById("loading");
+  const login = document.getElementById("login");
 
-const login = document.getElementById("login");
-if (login) login.style.display = "block";
-     
-    startSystem();
-  }
-}, 150);
+  if (loading) loading.style.display = "none";
+  if (login) login.style.display = "block";
 
+  systemSpeak("SYSTEM INITIALIZED");
+}
 
 /* =========================
    CLOCK SYSTEM
