@@ -83,3 +83,66 @@ body {
   font-family: "Courier New", monospace;
   color: #00ff88;
 }
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+
+  background: radial-gradient(
+    circle at center,
+    rgba(0,255,136,0.08),
+    rgba(0,0,0,0.9)
+  );
+
+  z-index: 999;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.03),
+    rgba(255,255,255,0.03) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+
+  opacity: 0.35;
+  z-index: 999;
+}
+
+.panel {
+  background: rgba(0,0,0,0.85);
+  border: 1px solid #00ff88;
+  box-shadow: 0 0 10px rgba(0,255,136,0.2);
+  margin-top: 15px;
+  padding: 12px;
+}
+
+.file, button {
+  background: rgba(0,0,0,0.6);
+  border: 1px solid #00ff88;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.file:hover, button:hover {
+  background: rgba(0,255,136,0.15);
+}
+
+@keyframes flicker {
+  0% { opacity: 1; }
+  50% { opacity: 0.92; filter: brightness(0.9); }
+  100% { opacity: 1; }
+}
+
+.glitch {
+  animation: flicker 2s infinite;
+}
+
