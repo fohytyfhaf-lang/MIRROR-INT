@@ -102,7 +102,7 @@ function startSystem() {
 
   let instability = 0;
 
-    setTimeout(() => {
+setTimeout(() => {
   cam.src = "images/cam_secret.gif";
   systemSpeak("INITIAL SIGNAL DETECTED");
 }, 8000);
