@@ -55,13 +55,22 @@ omega / mirror
   <div class="panel">
     <p>ARCHIVE</p>
     
-    <div onclick="openSmileChat()" class="file secret">
-  🟩 MISTER SMILE
-</div> 
   
     <div onclick="openFile('log')" class="file">📄 INCIDENT LOG</div>
     <div onclick="openFile('subject')" class="file">📄 SUBJECT REPORT</div>
     <div onclick="openSecret()" class="file secret">🔒 OMEGA FILE</div>
+  </div>
+  
+  
+  🟩 MISTER SMILE
+<!-- 💬 MISTER SMILE CHAT 👇 ВОТ СЮДА -->
+  <div id="smileChat" style="display:none;" class="panel">
+    <p>MISTER SMILE CONNECTION</p>
+
+    <div id="chatLog"></div>
+
+    <input id="chatInput" placeholder="type message...">
+    <button onclick="sendSmile()">SEND</button>
   </div>
 
   <!-- 📖 VIEWER -->
