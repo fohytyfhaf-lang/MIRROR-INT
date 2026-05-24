@@ -1,264 +1,265 @@
 /* =========================
-   MIRROR INT // WINDOWS DESKTOP ARG
+   MIRROR INT ARG SYSTEM UI
+   OLD WINDOWS + ANOMALY STYLE
 ========================= */
 
 * {
   box-sizing: border-box;
+  user-select: none;
 }
 
 body {
   margin: 0;
-  font-family: "Tahoma", "Segoe UI", sans-serif;
-
-  /* Windows XP style background */
-  background: linear-gradient(135deg, #0a2a43, #1b3c5a, #0c1a2b);
-  color: #e6f0ff;
-
+  font-family: "Courier New", monospace;
+  background: #050607;
+  color: #00ff99;
   overflow: hidden;
 }
 
 /* =========================
-   DESKTOP AREA
+   DESKTOP
 ========================= */
 
-#screen {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  padding: 20px;
+#desktop {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #0b1a14, #000);
+  display: none;
 }
 
-/* =========================
-   WINDOWS STYLE WINDOWS
-========================= */
-
-.panel {
-  background: #d6e4f5;
-  color: #000;
-
-  border: 2px solid #4b6a88;
-  box-shadow:
-    0 0 0 1px #ffffff inset,
-    0 4px 10px rgba(0,0,0,0.4);
-
-  padding: 10px;
-  margin-top: 12px;
+/* subtle scanlines */
+#desktop::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.03),
+    rgba(255,255,255,0.03) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  pointer-events: none;
+  opacity: 0.25;
 }
 
-/* =========================
-   WINDOW TITLE STYLE
-========================= */
-
-.title {
-  font-size: 18px;
-  padding: 8px 12px;
-
-  background: linear-gradient(to right, #2b579a, #4c7bd9);
-  color: white;
-
-  border: 2px solid #1e3f73;
-
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
-}
-
-/* =========================
-   FILE ICONS (DESKTOP STYLE)
-========================= */
-
-.file {
-  display: inline-block;
-
-  padding: 8px;
-  margin: 6px;
-
-  background: #e8f1ff;
-  border: 1px solid #7a9bbd;
-
-  cursor: pointer;
-
-  width: 180px;
-}
-
-.file:hover {
-  background: #cfe3ff;
-}
-
-.secret {
-  opacity: 0.7;
-  font-style: italic;
-}
-
-/* =========================
-   INPUTS (OLD SYSTEM STYLE)
-========================= */
-
-input {
-  width: 100%;
-  padding: 6px;
-
-  border: 1px solid #5b7aa3;
-  background: white;
-  color: black;
-}
-
-button {
-  padding: 6px 10px;
-
-  background: linear-gradient(to bottom, #e6f0ff, #b9d0f5);
-  border: 1px solid #5b7aa3;
-
-  cursor: pointer;
-}
-
-button:hover {
-  background: #d6e7ff;
-}
-
-/* =========================
-   FILE VIEWER (WINDOW STYLE)
-========================= */
-
-pre {
-  background: white;
-  color: black;
-
-  padding: 10px;
-  border: 1px solid #5b7aa3;
-
-  white-space: pre-wrap;
-}
-
-/* =========================
-   GLITCH (SUBTLE SYSTEM ERROR)
-========================= */
-
-.glitch {
-  animation: flicker 6s infinite;
-}
-
-@keyframes flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.95; }
-  52% { opacity: 0.7; }
-  54% { opacity: 1; }
-}
-
-/* =========================
-   NOISE OVERLAY (CRT / SYSTEM)
-========================= */
-
+/* noise overlay */
 #noise {
   position: fixed;
   inset: 0;
-
   background: url("images/noise.gif");
   opacity: 0.05;
-
   pointer-events: none;
-  z-index: 999;
+  z-index: 9999;
 }
 
 /* =========================
-   SYSTEM WINDOW (RIGHT PANEL)
+   TASKBAR
+========================= */
+
+#taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 38px;
+  background: #000;
+  border-top: 1px solid #00ff99;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  z-index: 1000;
+}
+
+.task-item {
+  padding: 4px 10px;
+  margin-right: 6px;
+  border: 1px solid rgba(0,255,153,0.4);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.task-item:hover {
+  background: rgba(0,255,153,0.1);
+}
+
+/* =========================
+   DESKTOP ICONS
+========================= */
+
+.icon-grid {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: grid;
+  grid-template-columns: repeat(1, 80px);
+  gap: 12px;
+}
+
+.icon {
+  width: 70px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 11px;
+  color: #00ff99;
+}
+
+.icon div {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 5px;
+  background: rgba(0,255,153,0.1);
+  border: 1px solid rgba(0,255,153,0.3);
+}
+
+/* =========================
+   WINDOWS (APP STYLE)
 ========================= */
 
 .window {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-
-  width: 260px;
-
-  background: #d6e4f5;
-  border: 2px solid #4b6a88;
-
-  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  position: absolute;
+  width: 420px;
+  background: rgba(0,0,0,0.92);
+  border: 1px solid #00ff99;
+  box-shadow: 0 0 18px rgba(0,255,153,0.25);
 }
 
 .window-header {
-  background: linear-gradient(to right, #2b579a, #4c7bd9);
-  color: white;
-
+  background: rgba(0,255,153,0.15);
   padding: 6px;
   font-weight: bold;
+  cursor: move;
+  border-bottom: 1px solid #00ff99;
 }
 
 .window-body {
   padding: 10px;
-  color: black;
 }
 
 /* =========================
-   MISTER SMILE APP (HIDDEN PROGRAM)
+   LOGIN PANEL (OLD SYSTEM)
 ========================= */
 
-.appWindow {
-  position: fixed;
-  bottom: 40px;
-  right: 40px;
+#login {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.9);
+  border: 1px solid #00ff99;
+  padding: 20px;
+}
 
+/* =========================
+   PANELS INSIDE APPS
+========================= */
+
+.panel {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid rgba(0,255,153,0.3);
+  background: rgba(0,0,0,0.6);
+}
+
+/* =========================
+   BUTTONS / FILES
+========================= */
+
+button, .file {
+  background: black;
+  color: #00ff99;
+  border: 1px solid #00ff99;
+  padding: 5px;
+  cursor: pointer;
+}
+
+button:hover, .file:hover {
+  background: rgba(0,255,153,0.15);
+}
+
+/* =========================
+   CHAT APP (MISTER SMILE)
+========================= */
+
+#smileApp {
+  position: absolute;
   width: 360px;
-  height: 460px;
-
-  display: none;
-  flex-direction: column;
-
-  background: #f2f6ff;
-  border: 2px solid #2b579a;
-
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-
-  z-index: 9999;
+  height: 420px;
+  background: rgba(5,10,8,0.98);
+  border: 1px solid #00ff99;
+  box-shadow: 0 0 20px rgba(0,255,153,0.2);
 }
 
-/* app header like Windows program */
-.appHeader {
-  background: linear-gradient(to right, #2b579a, #4c7bd9);
-  color: white;
-
-  padding: 6px;
-  font-size: 13px;
-}
-
-/* chat log */
 #chatLog {
-  flex: 1;
-  padding: 8px;
-
-  background: white;
-  color: black;
-
+  height: 280px;
   overflow-y: auto;
-
-  border-top: 1px solid #7a9bbd;
-  border-bottom: 1px solid #7a9bbd;
+  padding: 8px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(0,255,153,0.2);
+  font-size: 12px;
 }
 
-/* input */
 #chatInput {
-  padding: 6px;
-  border: 1px solid #7a9bbd;
-  background: white;
-  color: black;
+  width: 70%;
+  background: black;
+  color: #00ff99;
+  border: 1px solid rgba(0,255,153,0.4);
 }
 
-/* app button */
-.appWindow button {
-  width: 100%;
+#smileApp button {
+  width: 25%;
 }
 
 /* =========================
-   SCROLLBAR (OLD WINDOWS FEEL)
+   GLITCH / ANOMALY EFFECT
 ========================= */
 
-::-webkit-scrollbar {
-  width: 10px;
+.glitch {
+  animation: flicker 0.12s infinite;
 }
 
-::-webkit-scrollbar-track {
-  background: #d6e4f5;
+@keyframes flicker {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
 }
 
-::-webkit-scrollbar-thumb {
-  background: #4b6a88;
+/* occasional system distortion */
+.anomaly {
+  filter: contrast(1.4) brightness(0.8);
+  animation: shake 0.2s infinite;
+}
+
+@keyframes shake {
+  0% { transform: translate(0,0); }
+  25% { transform: translate(1px,0); }
+  50% { transform: translate(-1px,1px); }
+  75% { transform: translate(0,-1px); }
+  100% { transform: translate(0,0); }
+}
+
+/* =========================
+   WINDOWS STYLE WINDOW OVERLAY
+========================= */
+
+.window::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at center, rgba(0,255,153,0.05), transparent);
+}
+
+/* =========================
+   SMILE VIRUS MODE (HIDDEN EFFECT)
+========================= */
+
+.smile-virus {
+  animation: smileGlitch 0.08s infinite;
+}
+
+@keyframes smileGlitch {
+  0% { filter: hue-rotate(0deg); }
+  50% { filter: hue-rotate(90deg) contrast(1.2); }
+  100% { filter: hue-rotate(0deg); }
 }
