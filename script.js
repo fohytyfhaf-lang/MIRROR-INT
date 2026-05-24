@@ -16,11 +16,13 @@ let profile = {
 };
 
 //Chat
+let smileStarted = false;
+let smileMood = 0;
 let smileUnlocked = false;
+let smileMemory = [];
 function openSmileChat() {
 
   const chat = document.getElementById("smileChat");
-
   if (!chat) return;
 
   if (accessLevel < 1) {
@@ -32,8 +34,15 @@ function openSmileChat() {
 
   systemSpeak("??? CONNECTION STABLE");
 
-  appendSmile("MISTER SMILE: hello detective");
-}
+  if (!smileStarted) {
+    smileStarted = true;
+
+    appendSmile("MISTER SMILE: Good evening, detective.");
+    appendSmile("MISTER SMILE: I trust I’m not disturbing your investigation.");
+    appendSmile("MISTER SMILE: May I observe you for a while?");
+  }
+
+
 function sendSmile() {
 
   const input = document.getElementById("chatInput");
@@ -46,34 +55,53 @@ function sendSmile() {
   input.value = "";
 
   setTimeout(() => {
-    respondSmile(text);
-  }, 1000);
-}
-function respondSmile(msg) {
+  function respondSmile(msg) {
+
+  msg = msg.toLowerCase();
 
   let reply = "";
 
+  // 👁 реакция на слова
   if (msg.includes("who")) {
-    reply = "MISTER SMILE: I am what stays after they delete logs.";
-  }
-
-  else if (msg.includes("system")) {
-    reply = "MISTER SMILE: it doesn’t want you here.";
+    reply = "MISTER SMILE: I am what your system tries to hide.";
+    smileMood++;
   }
 
   else if (msg.includes("help")) {
-    reply = "MISTER SMILE: I already am.";
+    reply = "MISTER SMILE: I already tried helping you before you noticed.";
+    smileMood--;
+  }
+
+  else if (msg.includes("system")) {
+    reply = "MISTER SMILE: it reacts when you stare too long.";
+    smileMood++;
+  }
+
+  else if (msg.includes("truth")) {
+    reply = "MISTER SMILE: you are not ready for that file.";
+    smileMood += 2;
   }
 
   else {
-    reply = "MISTER SMILE: ...interesting.";
+    reply = "MISTER SMILE: ...I see.";
+  }
+
+  // 🎭 зависит от твоего поведения
+  if (profile.actions > 10) {
+    reply += " (you are being observed more closely)";
+  }
+
+  if (profile.secret > 0) {
+    reply += " (you already touched forbidden data)";
   }
 
   appendSmile(reply);
 
-  if (Math.random() < 0.2) {
-    triggerGlitch();
+  // ⚠️ нестабильность
+  if (smileMood >= 3) {
     systemSpeak("UNSTABLE CONNECTION DETECTED");
+    triggerGlitch();
+    smileMood = 0;
   }
 }
 function appendSmile(text) {
@@ -342,10 +370,15 @@ document.addEventListener("click", () => {
 
   updateMemory();
 
+  
   if (profile.secret >= 2 && !smileUnlocked) {
   smileUnlocked = true;
   openSmileChat();
 }
+  if (smileStarted && Math.random() < 0.2) {
+  appendSmile("MISTER SMILE: I can feel your actions...");
+}
+  
   if (profile.actions === 5) {
     increaseAccess();
   }
