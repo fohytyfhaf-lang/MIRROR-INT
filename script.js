@@ -1,71 +1,92 @@
-let progress = 0;
+// =========================
+// MIRROR-INT ARG SYSTEM
+// LIVING SYSTEM VERSION
+// =========================
 
 /* =========================
-   BOOT SYSTEM
+   BOOT SEQUENCE
 ========================= */
-const loader = setInterval(() => {
+let progress = 0;
 
+const boot = setInterval(() => {
   progress += Math.floor(Math.random() * 12);
 
-  document.getElementById("loadText").innerText = progress + "%";
+  const loadText = document.getElementById("loadText");
+  if (loadText) loadText.innerText = progress + "%";
 
   if (progress >= 100) {
-    clearInterval(loader);
+    clearInterval(boot);
 
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("screen").style.display = "block";
+    const loading = document.getElementById("loading");
+    const screen = document.getElementById("screen");
+
+    if (loading) loading.style.display = "none";
+    if (screen) screen.style.display = "block";
 
     startSystem();
   }
-
 }, 150);
 
 
 /* =========================
-   CLOCK
+   CLOCK SYSTEM
 ========================= */
 setInterval(() => {
-  document.getElementById("clock").innerText =
-    "TIME: " + new Date().toLocaleTimeString();
+  const clock = document.getElementById("clock");
+  if (!clock) return;
+
+  clock.innerText = "TIME: " + new Date().toLocaleTimeString();
 }, 1000);
 
 
 /* =========================
-   FILE SYSTEM
+   FILE SYSTEM (ARG)
 ========================= */
 const files = {
   log: `INCIDENT LOG
 UNKNOWN SIGNAL DETECTED
-SECTOR OFFLINE
-STATUS: UNSTABLE`,
+SECTOR: 04
+STATUS: UNSTABLE
+NOTE: OBSERVATION ACTIVE`,
 
   subject: `SUBJECT REPORT
-ENTITY: UNKNOWN
+ENTITY CLASS: UNKNOWN
 BEHAVIOR: OBSERVED
-MEMORY LOSS DETECTED`
+STATUS: MEMORY CORRUPTION
+WARNING: AWARENESS INCREASE`
 };
 
 function openFile(type) {
-  document.getElementById("viewer").innerText = files[type];
-  profile.clicks++;
+  const viewer = document.getElementById("viewer");
+  if (!viewer) return;
+
+  viewer.innerText = files[type] || "FILE NOT FOUND";
+
+  profile.actions++;
   updateMemory();
 }
 
+
+/* =========================
+   SECRET FILE (ARG EVENT)
+========================= */
 function openSecret() {
+  profile.secret++;
 
-  profile.secretAttempts++;
-
-  let pass = prompt("ENTER ACCESS PASSWORD");
+  let pass = prompt("ENTER ACCESS KEY:");
 
   if (pass === "MIRROR") {
     document.getElementById("viewer").innerText =
-      "OMEGA FILE UNLOCKED\nENTITY CONFIRMED ACTIVE";
+      "OMEGA FILE UNLOCKED\n\nENTITY CONFIRMED:\nIT IS WATCHING BACK";
 
-    document.getElementById("memory").innerText =
-      "WARNING: ENTITY IS AWARE OF OBSERVATION";
+    triggerGlitch();
+
+    setTimeout(() => {
+      systemSpeak("YOU SHOULD NOT HAVE DONE THAT");
+    }, 3000);
 
   } else {
-    alert("ACCESS DENIED");
+    systemSpeak("ACCESS DENIED");
   }
 
   updateMemory();
@@ -73,24 +94,23 @@ function openSecret() {
 
 
 /* =========================
-   CAMERA SYSTEM
+   CAMERA SYSTEM (LIVING)
 ========================= */
 function startSystem() {
-
   const cam = document.getElementById("cam");
-  const memory = document.getElementById("memory");
+  if (!cam) return;
 
   let instability = 0;
 
   setInterval(() => {
-
     let r = Math.random();
 
     if (r < 0.4) {
       cam.src = "images/cam_idle.gif";
+      systemSpeak("SYSTEM STABLE");
     }
 
-    else if (r < 0.7) {
+    else if (r < 0.75) {
       cam.src = "images/cam_glitch.gif";
       instability++;
     }
@@ -98,64 +118,99 @@ function startSystem() {
     else {
       cam.src = "images/cam_alert.gif";
       instability += 2;
+      systemSpeak("MOVEMENT DETECTED");
     }
 
     if (instability > 6) {
       cam.src = "images/cam_secret.gif";
-
-      memory.innerText =
-        "MEMORY CORRUPTION DETECTED\nSUBJECT IS BEING STUDIED";
+      systemSpeak("ENTITY IN FRAME");
 
       instability = 0;
     }
 
-  }, 3000);
+  }, 2500);
 }
 
 
 /* =========================
-   🧠 ARG SYSTEM (ТЫ)
+   🧠 PLAYER MEMORY (ARG PROFILE)
 ========================= */
 let profile = {
-  clicks: 0,
-  secretAttempts: 0,
-  startTime: Date.now()
+  actions: 0,
+  secret: 0,
+  start: Date.now()
 };
 
 
-/* 👁 наблюдение за действиями */
+/* =========================
+   MEMORY ENGINE (TEXT THAT FEELS ALIVE)
+========================= */
+function updateMemory() {
+  const mem = document.getElementById("memory");
+  if (!mem) return;
+
+  let minutes = Math.floor((Date.now() - profile.start) / 60000);
+
+  let text = "";
+
+  if (profile.actions > 10) {
+    text += "HIGH INTERACTION DETECTED\n";
+  }
+
+  if (profile.secret > 0) {
+    text += "UNAUTHORIZED FILE ACCESS\n";
+  }
+
+  if (minutes >= 1) {
+    text += "LONG OBSERVATION SESSION\n";
+  }
+
+  if (text === "") {
+    text = "USER STATUS: NORMAL\nNO ANOMALIES";
+  }
+
+  mem.innerText = text;
+}
+
+
+/* =========================
+   SYSTEM VOICE (ARG TEXT EVENTS)
+========================= */
+function systemSpeak(msg) {
+  const mem = document.getElementById("memory");
+  if (!mem) return;
+
+  mem.innerText =
+    "[SYSTEM]\n" + msg + "\n\n" + mem.innerText;
+}
+
+
+/* =========================
+   GLITCH EFFECT
+========================= */
+function triggerGlitch() {
+  const body = document.body;
+
+  body.style.filter = "contrast(1.3) brightness(0.8)";
+
+  setTimeout(() => {
+    body.style.filter = "none";
+  }, 150);
+}
+
+
+/* =========================
+   CLICK OBSERVATION (ARG)
+========================= */
 document.addEventListener("click", () => {
-  profile.clicks++;
+  profile.actions++;
   updateMemory();
 });
 
 
 /* =========================
-   MEMORY ENGINE (ARG TEXT)
+   STARTUP MEMORY STATE
 ========================= */
-function updateMemory() {
-
-  let memory = document.getElementById("memory");
-
-  let minutes = Math.floor((Date.now() - profile.startTime) / 60000);
-
-  let msg = "";
-
-  if (profile.clicks > 15) {
-    msg += "HIGH INTERACTION LEVEL DETECTED\n";
-  }
-
-  if (profile.secretAttempts > 0) {
-    msg += "UNAUTHORIZED ACCESS ATTEMPTS RECORDED\n";
-  }
-
-  if (minutes >= 1) {
-    msg += "LONG OBSERVATION SESSION ACTIVE\n";
-  }
-
-  if (msg === "") {
-    msg = "USER STATUS: NORMAL\nNO ANOMALIES DETECTED";
-  }
-
-  memory.innerText = msg;
-}
+setTimeout(() => systemSpeak("OBSERVATION STARTED"), 1000);
+setTimeout(() => systemSpeak("USER DETECTED"), 2500);
+setTimeout(() => systemSpeak("CAMERAS ONLINE"), 4000);
