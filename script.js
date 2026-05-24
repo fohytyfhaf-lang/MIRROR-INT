@@ -114,10 +114,6 @@ const boot = setInterval(() => {
     loadText.innerText = progress + "%";
   }
   
-setTimeout(() => {
-  openSmileChat();
-}, 5000);
-  
   if (progress >= 100) {
 
     clearInterval(boot);
@@ -520,6 +516,10 @@ function triggerGlitch() {
 setTimeout(() => {
   systemSpeak("OBSERVATION STARTED");
 }, 1000);
+
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("SYSTEM LOADED");
+});
 
 setTimeout(() => {
   systemSpeak("USER DETECTED");
