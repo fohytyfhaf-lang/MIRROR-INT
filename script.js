@@ -39,12 +39,6 @@ const boot = setInterval(() => {
   const loadText = document.getElementById("loadText");
   if (loadText) loadText.innerText = progress + "%";
 
-const boot = setInterval(() => {
-  progress += Math.floor(Math.random() * 12);
-
-  const loadText = document.getElementById("loadText");
-  if (loadText) loadText.innerText = progress + "%";
-
   if (progress >= 100) {
     clearInterval(boot);
     systemBooted = true;
