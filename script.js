@@ -1,27 +1,23 @@
 // =========================
 // MIRROR-INT ARG SYSTEM
-// LIVING SYSTEM VERSION
 // =========================
-
-/* =========================
-   BOOT SEQUENCE
-========================= */
 
 let progress = 0;
 let accessLevel = 0;
 let systemBooted = false;
 
-// 0 = guest
-// 1 = operator
-// 2 = researcher
-// 3 = omega clearance
-
+// =========================
+// PLAYER PROFILE
+// =========================
 let profile = {
   actions: 0,
   secret: 0,
   start: Date.now()
 };
 
+// =========================
+// FILES
+// =========================
 const files = {
   log: `INCIDENT LOG
 UNKNOWN SIGNAL DETECTED
@@ -36,6 +32,9 @@ STATUS: MEMORY CORRUPTION
 WARNING: AWARENESS INCREASE`
 };
 
+// =========================
+// BOOT SYSTEM
+// =========================
 const boot = setInterval(() => {
 
   progress += Math.floor(Math.random() * 12);
@@ -68,11 +67,9 @@ const boot = setInterval(() => {
 
 }, 150);
 
-
-/* =========================
-   CLOCK SYSTEM
-========================= */
-
+// =========================
+// CLOCK
+// =========================
 setInterval(() => {
 
   const clock = document.getElementById("clock");
@@ -84,42 +81,9 @@ setInterval(() => {
 
 }, 1000);
 
-
-/* =========================
-   FILE SYSTEM
-========================= */
-
-function openFile(type) {
-
-  const viewer = document.getElementById("viewer");
-
-  if (!viewer) return;
-
-  // LOG
-  if (type === "log") {
-    viewer.innerText = files.log;
-  }
-
-  // SUBJECT
-  else if (type === "subject") {
-
-    if (accessLevel < 1) {
-      systemSpeak("ACCESS LEVEL REQUIRED: 1");
-      return;
-    }
-
-    viewer.innerText = files.subject;
-  }
-
-  profile.actions++;
-  updateMemory();
-}
-
-
-/* =========================
-   LOGIN SYSTEM
-========================= */
-
+// =========================
+// LOGIN SYSTEM
+// =========================
 function loginSystem() {
 
   const user =
@@ -166,7 +130,7 @@ function loginSystem() {
     success = true;
   }
 
-  // DENIED
+  // FAILED
   else {
 
     accessLevel = 0;
@@ -177,11 +141,8 @@ function loginSystem() {
     systemSpeak("FAILED LOGIN ATTEMPT");
   }
 
-  // SUCCESS LOGIN
+  // SUCCESS
   if (success) {
-
-    localStorage.setItem("mirrorUser", user);
-    localStorage.setItem("mirrorLevel", accessLevel);
 
     setTimeout(() => {
 
@@ -207,43 +168,79 @@ function loginSystem() {
   }
 }
 
+// =========================
+// OPEN FILES
+// =========================
+function openFile(type) {
 
-/* =========================
-   SECRET FILE
-========================= */
+  const viewer =
+    document.getElementById("viewer");
 
+  if (!viewer) return;
+
+  // LOG
+  if (type === "log") {
+
+    viewer.innerText = files.log;
+  }
+
+  // SUBJECT
+  else if (type === "subject") {
+
+    if (accessLevel < 1) {
+
+      systemSpeak("ACCESS LEVEL REQUIRED: 1");
+
+      return;
+    }
+
+    viewer.innerText = files.subject;
+  }
+
+  profile.actions++;
+
+  updateMemory();
+}
+
+// =========================
+// SECRET FILE
+// =========================
 function openSecret() {
 
   profile.secret++;
 
   if (accessLevel < 3) {
 
-    systemSpeak(
-      "OMEGA ACCESS REQUIRED (LEVEL 3)"
-    );
+    systemSpeak("OMEGA ACCESS REQUIRED");
 
     return;
   }
 
-  let pass = prompt("ENTER OMEGA KEY:");
+  let pass =
+    prompt("ENTER OMEGA KEY:");
 
   if (pass === "MIRROR") {
 
-    document.getElementById("viewer").innerText =
+    const viewer =
+      document.getElementById("viewer");
+
+    if (viewer) {
+
+      viewer.innerText =
 `OMEGA FILE UNLOCKED
 
 SUBJECT: ENTITY-0
 STATUS: ACTIVE
 
-NOTE:
-USER HAS REACHED SYSTEM CORE
-OBSERVATION LOOP COMPLETE`;
+USER HAS REACHED SYSTEM CORE`;
+    }
 
     systemSpeak("OMEGA FILE ACCESSED");
 
     triggerGlitch();
+  }
 
-  } else {
+  else {
 
     systemSpeak("INVALID OMEGA KEY");
   }
@@ -251,11 +248,9 @@ OBSERVATION LOOP COMPLETE`;
   updateMemory();
 }
 
-
-/* =========================
-   ACCESS SYSTEM
-========================= */
-
+// =========================
+// ACCESS EVOLUTION
+// =========================
 function increaseAccess() {
 
   if (accessLevel < 3) {
@@ -263,16 +258,15 @@ function increaseAccess() {
     accessLevel++;
 
     systemSpeak(
-      "ACCESS LEVEL UPGRADED: " + accessLevel
+      "ACCESS LEVEL UPGRADED: " +
+      accessLevel
     );
   }
 }
 
-
-/* =========================
-   PLAYER OBSERVATION
-========================= */
-
+// =========================
+// OBSERVATION
+// =========================
 document.addEventListener("click", () => {
 
   profile.actions++;
@@ -290,39 +284,20 @@ document.addEventListener("click", () => {
   if (profile.actions === 30) {
     increaseAccess();
   }
-
 });
 
-
-/* =========================
-   OMEGA EVENTS
-========================= */
-
-setInterval(() => {
-
-  if (accessLevel === 3) {
-
-    systemSpeak(
-      "SYSTEM NOTICE: USER IS NOW PART OF CORE OBSERVATION"
-    );
-  }
-
-}, 20000);
-
-
-/* =========================
-   CAMERA SYSTEM
-========================= */
-
+// =========================
+// CAMERA SYSTEM
+// =========================
 function startSystem() {
 
-  const cam = document.getElementById("cam");
+  const cam =
+    document.getElementById("cam");
 
   if (!cam) return;
 
   let instability = 0;
 
-  // INITIAL SIGNAL
   setTimeout(() => {
 
     cam.src = "images/cam_secret.gif";
@@ -331,7 +306,6 @@ function startSystem() {
 
   }, 8000);
 
-  // CAMERA LOOP
   setInterval(() => {
 
     if (!systemBooted) return;
@@ -355,8 +329,9 @@ function startSystem() {
         cam.src = "images/cam_glitch.gif";
 
         instability++;
+      }
 
-      } else {
+      else {
 
         cam.src = "images/cam_alert.gif";
 
@@ -387,11 +362,9 @@ function startSystem() {
   }, 2500);
 }
 
-
-/* =========================
-   MEMORY ENGINE
-========================= */
-
+// =========================
+// MEMORY ENGINE
+// =========================
 function updateMemory() {
 
   const mem =
@@ -399,29 +372,33 @@ function updateMemory() {
 
   if (!mem) return;
 
-  let minutes = Math.floor(
-    (Date.now() - profile.start) / 60000
-  );
+  let minutes =
+    Math.floor(
+      (Date.now() - profile.start) / 60000
+    );
 
   let text = "";
 
   if (profile.actions > 10) {
-    text += "HIGH INTERACTION DETECTED\n";
+
+    text +=
+      "HIGH INTERACTION DETECTED\n";
   }
 
   if (profile.secret > 0) {
-    text += "UNAUTHORIZED FILE ACCESS\n";
+
+    text +=
+      "UNAUTHORIZED FILE ACCESS\n";
   }
 
   if (minutes >= 1) {
-    text += "LONG OBSERVATION SESSION\n";
-  }
 
-  if (accessLevel === 3) {
-    text += "OMEGA OBSERVER LINK ACTIVE\n";
+    text +=
+      "LONG OBSERVATION SESSION\n";
   }
 
   if (text === "") {
+
     text =
       "USER STATUS: NORMAL\nNO ANOMALIES";
   }
@@ -429,11 +406,9 @@ function updateMemory() {
   mem.innerText = text;
 }
 
-
-/* =========================
-   SYSTEM VOICE
-========================= */
-
+// =========================
+// SYSTEM VOICE
+// =========================
 function systemSpeak(msg) {
 
   const mem =
@@ -445,11 +420,9 @@ function systemSpeak(msg) {
     "\n[SYSTEM] " + msg;
 }
 
-
-/* =========================
-   GLITCH EFFECT
-========================= */
-
+// =========================
+// GLITCH EFFECT
+// =========================
 function triggerGlitch() {
 
   const body = document.body;
@@ -464,11 +437,9 @@ function triggerGlitch() {
   }, 150);
 }
 
-
-/* =========================
-   STARTUP EVENTS
-========================= */
-
+// =========================
+// STARTUP EVENTS
+// =========================
 setTimeout(() => {
   systemSpeak("OBSERVATION STARTED");
 }, 1000);
