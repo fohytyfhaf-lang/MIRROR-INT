@@ -3,46 +3,35 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>MIRROR-INT SYSTEM</title>
+  <title>MIRROR SYSTEM</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- ⚡ LOADING -->
+<!-- LOADING -->
 <div id="loading">
-  <div class="loadBox">
-    <p>BOOTING CLASSIFIED SYSTEM...</p>
-    <p id="loadText">0%</p>
-  </div>
+  <p>BOOTING SYSTEM...</p>
+  <p id="loadText">0%</p>
 </div>
 
-<!-- 🎮 MAIN -->
+<!-- MAIN -->
 <div id="screen" style="display:none;">
 
-  <div class="title glitch">
-    MIRROR-INT / OBSERVATION SYSTEM
+  <h1 class="title">MIRROR SYSTEM</h1>
+
+  <div class="panel">
+    <p>CAMERA FEED</p>
+    <img id="cam" src="images/cam_idle.gif" width="400">
   </div>
 
-  <!-- 👁 CAMERA -->
   <div class="panel">
-    <p>LIVE CAMERA FEED</p>
-    <img id="cam" src="images/cam_idle.gif" width="500">
-  </div>
-
-  <!-- STATUS -->
-  <div class="panel">
-    <p id="status">SYSTEM: ONLINE</p>
-  </div>
-
-  <!-- CONTROL -->
-  <div class="panel">
-    <button onclick="scan()">SCAN</button>
-    <button onclick="forceGlitch()">FORCE GLITCH</button>
+    <p id="status">SYSTEM READY</p>
   </div>
 
 </div>
 
 <script src="script.js"></script>
+
 </body>
 </html>
