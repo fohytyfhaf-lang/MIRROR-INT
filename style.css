@@ -1,270 +1,78 @@
-/* ===== ОСНОВА ===== */
-
 body {
   margin: 0;
-  padding: 0;
-
-  background: #05070a;
+  font-family: monospace;
   color: #00ff88;
 
-  font-family: monospace;
-
-  overflow-x: hidden;
+  /* 🕶 секретный фон */
+  background: radial-gradient(circle at center, #07140f, #000);
 }
 
-
-/* ===== ШУМ СТАРОГО ЭКРАНА ===== */
-
-#noise {
+/* ⚡ LOADING */
+#loading {
   position: fixed;
-
   width: 100%;
   height: 100%;
+  background: black;
+  color: #00ff88;
 
-  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 
-  opacity: 0.05;
-
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      rgba(255,255,255,0.05) 0px,
-      rgba(255,255,255,0.05) 1px,
-      transparent 1px,
-      transparent 2px
-    );
+  z-index: 9999;
 }
 
+.loadBox {
+  text-align: center;
+  animation: flicker 1.5s infinite;
+}
 
-/* ===== ОСНОВНОЙ ЭКРАН ===== */
-
+/* 🎮 SCREEN */
 #screen {
-  padding: 40px;
+  padding: 30px;
 }
-
-
-/* ===== ЗАГОЛОВОК ===== */
 
 .title {
-  font-size: 28px;
-
-  letter-spacing: 4px;
-
+  font-size: 26px;
   border-bottom: 1px solid #00ff88;
-
   padding-bottom: 10px;
-
-  margin-bottom: 20px;
-
-  text-shadow: 0 0 5px #00ff88;
 }
 
+/* 📦 panels */
+.panel {
+  margin-top: 20px;
+  border: 1px solid #00ff88;
+  padding: 15px;
+  background: rgba(0,255,136,0.03);
+}
 
-/* ===== ГЛИЧ ===== */
+/* 👁 camera */
+img {
+  filter: contrast(120%) brightness(80%);
+}
 
+/* ⚡ glitch */
 .glitch {
   animation: flicker 2s infinite;
 }
 
 @keyframes flicker {
-
-  0% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.7;
-  }
-
-  100% {
-    opacity: 1;
-  }
-
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
 }
 
-
-/* ===== ПАНЕЛИ ===== */
-
-.panel {
-  margin-top: 20px;
-
-  border: 1px solid #00ff88;
-
-  padding: 15px;
-
-  background: rgba(0,255,136,0.02);
-
-  box-shadow:
-    0 0 5px rgba(0,255,136,0.2);
-}
-
-
-/* ===== ПАПКИ ===== */
-
-.folder {
-  cursor: pointer;
-
-  padding: 8px;
-
-  margin-top: 10px;
-
-  transition: 0.2s;
-}
-
-.folder:hover {
-  background: rgba(0,255,136,0.1);
-}
-
-
-/* ===== ФАЙЛЫ ===== */
-
-.file {
-  margin-left: 20px;
-
-  padding: 6px;
-
-  cursor: pointer;
-
-  opacity: 0.9;
-
-  transition: 0.2s;
-}
-
-.file:hover {
-  background: rgba(0,255,136,0.1);
-}
-
-
-/* ===== СЕКРЕТНЫЙ ДОК ===== */
-
-.secret {
-  color: #66ffaa;
-}
-
-
-/* ===== ПРОСМОТР ФАЙЛОВ ===== */
-
-#viewer {
-  min-height: 120px;
-
-  white-space: pre-line;
-
-  line-height: 1.5;
-}
-
-
-/* ===== ЛОГИ ===== */
-
-#logBox {
-  height: 180px;
-
-  overflow-y: auto;
-
-  white-space: pre-line;
-
-  line-height: 1.4;
-}
-
-
-/* ===== КНОПКИ ===== */
-
+/* buttons */
 button {
   background: transparent;
-
   border: 1px solid #00ff88;
-
   color: #00ff88;
-
   padding: 10px;
-
-  margin-top: 10px;
-
   cursor: pointer;
-
-  font-family: monospace;
-
-  transition: 0.2s;
 }
 
 button:hover {
   background: #00ff88;
-
   color: black;
-}
-
-
-/* ===== СКРОЛЛ ===== */
-
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: black;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #00ff88;
-}
-
-
-/* ===== ЭФФЕКТ МЕРЦАНИЯ ЭКРАНА ===== */
-
-body::after {
-  content: "";
-
-  position: fixed;
-
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 100%;
-
-  pointer-events: none;
-
-  background: rgba(255,255,255,0.01);
-
-  animation: screenFlicker 6s infinite;
-}
-
-@keyframes screenFlicker {
-
-  0% {
-    opacity: 0.02;
-  }
-
-  50% {
-    opacity: 0.04;
-  }
-
-  100% {
-    opacity: 0.02;
-  }
-
-}
-
-/* --- старый код уже есть выше --- */
-
-
-/* 👇 НОВЫЙ КОД ДОБАВЛЯЙ СЮДА ВНИЗ */
-
-.mini-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 40px);
-  gap: 4px;
-  margin-top: 20px;
-}
-
-.mini-grid div {
-  border: 1px solid #00ff88;
-  width: 40px;
-  height: 40px;
-  text-align: center;
-  line-height: 40px;
-  cursor: pointer;
-}
-
-.mini-grid div:hover {
-  background: rgba(0,255,136,0.15);
 }
