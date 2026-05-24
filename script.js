@@ -51,7 +51,6 @@ if (progress >= 100) {
 
   systemSpeak("SYSTEM INITIALIZED");
 }
-
 /* =========================
    CLOCK SYSTEM
 ========================= */
