@@ -55,62 +55,102 @@ function sendSmile() {
   input.value = "";
 
   setTimeout(() => {
-  function respondSmile(msg) {
+function respondSmile(msg) {
 
   msg = msg.toLowerCase();
 
-  let reply = "";
+  let replies = [];
 
-  // 👁 реакция на слова
-  if (msg.includes("who")) {
-    reply = "MISTER SMILE: I am what your system tries to hide.";
-    smileMood++;
+  const prefix = "MISTER SMILE: ";
+
+  // =========================
+  // 👤 ИМЯ / ЛИЧНОСТЬ
+  // =========================
+  if (msg.includes("name") || msg.includes("who are you") || msg.includes("ты кто")) {
+
+    replies = [
+      "A name is something people use when they wish to feel safe.",
+      "I am called many things. None of them are entirely correct.",
+      "You may refer to me as Mister Smile, if that eases your mind."
+    ];
   }
 
-  else if (msg.includes("help")) {
-    reply = "MISTER SMILE: I already tried helping you before you noticed.";
-    smileMood--;
+  // =========================
+  // 🏢 ОРГАНИЗАЦИЯ / САЙТ
+  // =========================
+  else if (msg.includes("site") || msg.includes("organization") || msg.includes("who made this")) {
+
+    replies = [
+      "This system is maintained by those who prefer silence over recognition.",
+      "Officially? There is no organization here.",
+      "You are interacting with an observation layer. That is all I am permitted to say."
+    ];
   }
 
+  // =========================
+  // ❓ СИСТЕМА / МИР ARG
+  // =========================
   else if (msg.includes("system")) {
-    reply = "MISTER SMILE: it reacts when you stare too long.";
-    smileMood++;
+
+    replies = [
+      "The system is not broken. It is simply aware.",
+      "Some processes observe you back. Please remain calm.",
+      "You are inside a controlled environment. That is not a warning."
+    ];
   }
 
-  else if (msg.includes("truth")) {
-    reply = "MISTER SMILE: you are not ready for that file.";
-    smileMood += 2;
+  // =========================
+  // 😶 НЕ СВЯЗАННЫЕ ВОПРОСЫ
+  // =========================
+  else if (msg.includes("weather") || msg.includes("game") || msg.includes("music") || msg.includes("random")) {
+
+    replies = [
+      "An unusual question for this context… noted.",
+      "I am not certain how that relates, but I appreciate the deviation.",
+      "Your mind wanders. That is interesting."
+    ];
   }
 
+  // =========================
+  // 🧠 ПРОСТЫЕ ВОПРОСЫ
+  // =========================
   else {
-    reply = "MISTER SMILE: ...I see.";
+
+    replies = [
+      "I understand.",
+      "Please continue.",
+      "That is worth considering.",
+      "Interesting perspective."
+    ];
   }
 
-  // 🎭 зависит от твоего поведения
-  if (profile.actions > 10) {
-    reply += " (you are being observed more closely)";
+  // =========================
+  // 🎲 СЛУЧАЙНЫЙ ОТВЕТ
+  // =========================
+  const reply = replies[Math.floor(Math.random() * replies.length)];
+
+  appendSmile(prefix + reply);
+
+  // =========================
+  // ⚠️ СКРЫТАЯ РЕАКЦИЯ СИСТЕМЫ
+  // =========================
+  if (msg.includes("truth") || msg.includes("why")) {
+    systemSpeak("SMILE INTERFACE ANALYZING USER INTENT");
   }
 
-  if (profile.secret > 0) {
-    reply += " (you already touched forbidden data)";
-  }
-
-  appendSmile(reply);
-
-  // ⚠️ нестабильность
-  if (smileMood >= 3) {
-    systemSpeak("UNSTABLE CONNECTION DETECTED");
+  if (Math.random() < 0.15) {
     triggerGlitch();
-    smileMood = 0;
+    systemSpeak("INTERFERENCE DETECTED");
   }
-}
 function appendSmile(text) {
 
   const log = document.getElementById("chatLog");
-
   if (!log) return;
 
   log.innerText += "\n" + text;
+
+  // 👁 автоскролл вниз
+  log.scrollTop = log.scrollHeight;
 }
 // =========================
 // FILES
