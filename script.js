@@ -15,13 +15,14 @@ let profile = {
   start: Date.now()
 };
 
-//Chat
-let smileStarted = false;
-let smileMood = 0;
-let smileUnlocked = false;
-let smileMemory = [];
-function openSmileChat() {
+// =========================
+// MISTER SMILE CHAT (UPGRADED)
+// =========================
 
+let smileStarted = false;
+let smileMemory = [];
+
+function openSmileChat() {
   const chat = document.getElementById("smileChat");
   if (!chat) return;
 
@@ -32,124 +33,131 @@ function openSmileChat() {
 
   chat.style.display = "block";
 
-  systemSpeak("??? CONNECTION STABLE");
+  systemSpeak("??? CONNECTION ESTABLISHED");
 
   if (!smileStarted) {
     smileStarted = true;
 
     appendSmile("MISTER SMILE: Good evening, detective.");
-    appendSmile("MISTER SMILE: I trust I’m not disturbing your investigation.");
-    appendSmile("MISTER SMILE: May I observe you for a while?");
+    appendSmile("MISTER SMILE: I will speak quietly… if you prefer.");
   }
-
+}
 
 function sendSmile() {
-
   const input = document.getElementById("chatInput");
-  const text = input.value;
-
+  const text = input.value.trim();
   if (!text) return;
 
   appendSmile("YOU: " + text);
 
+  smileMemory.push(text);
+  if (smileMemory.length > 10) smileMemory.shift();
+
   input.value = "";
 
-  setTimeout(() => {
-function respondSmile(msg) {
+  setTimeout(() => respondSmile(text), 900);
+}
 
+function respondSmile(msg) {
   msg = msg.toLowerCase();
 
   let replies = [];
 
-  const prefix = "MISTER SMILE: ";
+  const knownContext = smileMemory.join(" ").toLowerCase();
 
   // =========================
-  // 👤 ИМЯ / ЛИЧНОСТЬ
+  // NAME / IDENTITY
   // =========================
   if (msg.includes("name") || msg.includes("who are you") || msg.includes("ты кто")) {
-
     replies = [
-      "A name is something people use when they wish to feel safe.",
-      "I am called many things. None of them are entirely correct.",
-      "You may refer to me as Mister Smile, if that eases your mind."
+      "I am Mister Smile. Nothing more… and nothing less.",
+      "A gentleman with no official record.",
+      "Names are for things that wish to be found."
     ];
   }
 
   // =========================
-  // 🏢 ОРГАНИЗАЦИЯ / САЙТ
+  // ORGANIZATION / SYSTEM
   // =========================
-  else if (msg.includes("site") || msg.includes("organization") || msg.includes("who made this")) {
-
+  else if (msg.includes("organization") || msg.includes("site") || msg.includes("who made")) {
     replies = [
-      "This system is maintained by those who prefer silence over recognition.",
-      "Officially? There is no organization here.",
-      "You are interacting with an observation layer. That is all I am permitted to say."
+      "It would be rude of me to answer that directly.",
+      "There are no official creators here.",
+      "You are speaking to something that should not respond."
     ];
   }
 
   // =========================
-  // ❓ СИСТЕМА / МИР ARG
+  // MIRROR CULT (DANGEROUS TOPIC)
   // =========================
-  else if (msg.includes("system")) {
+  else if (msg.includes("mirror") || msg.includes("cult") || msg.includes("ritual")) {
 
     replies = [
-      "The system is not broken. It is simply aware.",
-      "Some processes observe you back. Please remain calm.",
-      "You are inside a controlled environment. That is not a warning."
+      "…you should not ask about that here.",
+      "Some reflections are not yours.",
+      "Let’s speak of something safer, yes?"
+    ];
+
+    systemSpeak("WARNING: RESTRICTED TOPIC ACCESSED");
+
+    if (Math.random() < 0.5) {
+      triggerGlitch();
+      appendSmile("MISTER SMILE: ...please stop.");
+    }
+  }
+
+  // =========================
+  // MEMORY-BASED REACTIONS
+  // =========================
+  else if (knownContext.includes("help")) {
+    replies = [
+      "I am already helping you.",
+      "You just don’t see it yet.",
+      "Follow the signs."
+    ];
+  }
+
+  else if (knownContext.includes("why")) {
+    replies = [
+      "Because you are being observed.",
+      "Not everything has a comforting answer.",
+      "You already know more than you admit."
     ];
   }
 
   // =========================
-  // 😶 НЕ СВЯЗАННЫЕ ВОПРОСЫ
-  // =========================
-  else if (msg.includes("weather") || msg.includes("game") || msg.includes("music") || msg.includes("random")) {
-
-    replies = [
-      "An unusual question for this context… noted.",
-      "I am not certain how that relates, but I appreciate the deviation.",
-      "Your mind wanders. That is interesting."
-    ];
-  }
-
-  // =========================
-  // 🧠 ПРОСТЫЕ ВОПРОСЫ
+  // DEFAULT
   // =========================
   else {
-
     replies = [
       "I understand.",
-      "Please continue.",
-      "That is worth considering.",
-      "Interesting perspective."
+      "Please continue, detective.",
+      "Noted.",
+      "Interesting choice of words."
     ];
   }
 
-  // =========================
-  // 🎲 СЛУЧАЙНЫЙ ОТВЕТ
-  // =========================
   const reply = replies[Math.floor(Math.random() * replies.length)];
 
-  appendSmile(prefix + reply);
+  appendSmile("MISTER SMILE: " + reply);
 
   // =========================
-  // ⚠️ СКРЫТАЯ РЕАКЦИЯ СИСТЕМЫ
+  // RANDOM BEHAVIOR (LIVING FEEL)
   // =========================
-  if (msg.includes("truth") || msg.includes("why")) {
-    systemSpeak("SMILE INTERFACE ANALYZING USER INTENT");
+  if (Math.random() < 0.12) {
+    systemSpeak("SMILE INTERFACE - BACKGROUND ANALYSIS ACTIVE");
   }
 
-  if (Math.random() < 0.15) {
-    triggerGlitch();
-    systemSpeak("INTERFERENCE DETECTED");
+  if (Math.random() < 0.08) {
+    appendSmile("MISTER SMILE: ...I may have said too much.");
   }
+}
+
 function appendSmile(text) {
-
   const log = document.getElementById("chatLog");
   if (!log) return;
 
   log.innerText += "\n" + text;
-
-  // 👁 автоскролл вниз
   log.scrollTop = log.scrollHeight;
 }
 // =========================
