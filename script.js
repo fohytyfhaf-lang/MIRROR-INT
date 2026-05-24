@@ -15,6 +15,75 @@ let profile = {
   start: Date.now()
 };
 
+//Chat
+let smileUnlocked = false;
+function openSmileChat() {
+
+  const chat = document.getElementById("smileChat");
+
+  if (!chat) return;
+
+  if (accessLevel < 1) {
+    systemSpeak("ACCESS DENIED");
+    return;
+  }
+
+  chat.style.display = "block";
+
+  systemSpeak("??? CONNECTION STABLE");
+
+  appendSmile("MISTER SMILE: hello detective");
+}
+function sendSmile() {
+
+  const input = document.getElementById("chatInput");
+  const text = input.value;
+
+  if (!text) return;
+
+  appendSmile("YOU: " + text);
+
+  input.value = "";
+
+  setTimeout(() => {
+    respondSmile(text);
+  }, 1000);
+}
+function respondSmile(msg) {
+
+  let reply = "";
+
+  if (msg.includes("who")) {
+    reply = "MISTER SMILE: I am what stays after they delete logs.";
+  }
+
+  else if (msg.includes("system")) {
+    reply = "MISTER SMILE: it doesn’t want you here.";
+  }
+
+  else if (msg.includes("help")) {
+    reply = "MISTER SMILE: I already am.";
+  }
+
+  else {
+    reply = "MISTER SMILE: ...interesting.";
+  }
+
+  appendSmile(reply);
+
+  if (Math.random() < 0.2) {
+    triggerGlitch();
+    systemSpeak("UNSTABLE CONNECTION DETECTED");
+  }
+}
+function appendSmile(text) {
+
+  const log = document.getElementById("chatLog");
+
+  if (!log) return;
+
+  log.innerText += "\n" + text;
+}
 // =========================
 // FILES
 // =========================
@@ -273,6 +342,10 @@ document.addEventListener("click", () => {
 
   updateMemory();
 
+  if (profile.secret >= 2 && !smileUnlocked) {
+  smileUnlocked = true;
+  openSmileChat();
+}
   if (profile.actions === 5) {
     increaseAccess();
   }
