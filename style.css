@@ -1,11 +1,11 @@
 body {
   margin: 0;
   font-family: monospace;
+  background: radial-gradient(circle at center, #06140f, black);
   color: #00ff88;
-  background: radial-gradient(circle at center, #07140f, #000);
 }
 
-/* LOADING */
+/* BOOT */
 #loading {
   position: fixed;
   width: 100%;
@@ -19,21 +19,40 @@ body {
 
 /* MAIN */
 #screen {
-  padding: 30px;
+  padding: 25px;
 }
 
 .title {
-  font-size: 26px;
+  font-size: 24px;
   border-bottom: 1px solid #00ff88;
   padding-bottom: 10px;
 }
 
 /* PANELS */
 .panel {
-  margin-top: 20px;
+  margin-top: 15px;
   border: 1px solid #00ff88;
-  padding: 15px;
-  background: rgba(0,255,136,0.03);
+  padding: 12px;
+  background: rgba(0,255,136,0.02);
+}
+
+/* FILES */
+.file {
+  cursor: pointer;
+  padding: 5px;
+}
+
+.file:hover {
+  background: rgba(0,255,136,0.1);
+}
+
+.secret {
+  color: #66ffaa;
+}
+
+/* VIEWER */
+pre {
+  white-space: pre-wrap;
 }
 
 /* GLITCH */
@@ -43,20 +62,6 @@ body {
 
 @keyframes flicker {
   0% { opacity: 1; }
-  50% { opacity: 0.5; }
+  50% { opacity: 0.4; }
   100% { opacity: 1; }
-}
-
-/* BUTTONS */
-button {
-  background: transparent;
-  border: 1px solid #00ff88;
-  color: #00ff88;
-  padding: 10px;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #00ff88;
-  color: black;
 }
