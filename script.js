@@ -16,15 +16,21 @@ let profile = {
 };
 
 // =========================
-// MISTER SMILE CHAT (UPGRADED)
+// MISTER SMILE CHAT (STABLE VERSION)
 // =========================
 
 let smileStarted = false;
+let smileUnlocked = false;
 let smileMemory = [];
 
 function openSmileChat() {
   const chat = document.getElementById("smileChat");
   if (!chat) return;
+
+  if (!systemBooted) {
+    systemSpeak("SYSTEM NOT READY");
+    return;
+  }
 
   if (accessLevel < 1) {
     systemSpeak("ACCESS DENIED");
@@ -32,124 +38,87 @@ function openSmileChat() {
   }
 
   chat.style.display = "block";
-
   systemSpeak("??? CONNECTION ESTABLISHED");
 
   if (!smileStarted) {
     smileStarted = true;
 
     appendSmile("MISTER SMILE: Good evening, detective.");
-    appendSmile("MISTER SMILE: I will speak quietly… if you prefer.");
+    appendSmile("MISTER SMILE: I am already watching the system with you.");
   }
 }
 
 function sendSmile() {
   const input = document.getElementById("chatInput");
+  if (!input) return;
+
   const text = input.value.trim();
   if (!text) return;
 
   appendSmile("YOU: " + text);
 
   smileMemory.push(text);
-  if (smileMemory.length > 10) smileMemory.shift();
+  if (smileMemory.length > 12) smileMemory.shift();
 
   input.value = "";
 
-  setTimeout(() => respondSmile(text), 900);
+  setTimeout(() => respondSmile(text), 800);
 }
 
 function respondSmile(msg) {
   msg = msg.toLowerCase();
 
   let replies = [];
+  const history = smileMemory.join(" ").toLowerCase();
 
-  const knownContext = smileMemory.join(" ").toLowerCase();
-
-  // =========================
-  // NAME / IDENTITY
-  // =========================
-  if (msg.includes("name") || msg.includes("who are you") || msg.includes("ты кто")) {
+  if (msg.includes("name") || msg.includes("who")) {
     replies = [
-      "I am Mister Smile. Nothing more… and nothing less.",
-      "A gentleman with no official record.",
-      "Names are for things that wish to be found."
+      "I am Mister Smile.",
+      "A gentleman without a public record.",
+      "You may call me what you wish… I will still hear you."
     ];
   }
 
-  // =========================
-  // ORGANIZATION / SYSTEM
-  // =========================
-  else if (msg.includes("organization") || msg.includes("site") || msg.includes("who made")) {
+  else if (msg.includes("organization") || msg.includes("site")) {
     replies = [
-      "It would be rude of me to answer that directly.",
-      "There are no official creators here.",
-      "You are speaking to something that should not respond."
+      "There is no official owner of this system.",
+      "You are speaking with an observation layer.",
+      "Some doors are not meant to be labelled."
     ];
   }
 
-  // =========================
-  // MIRROR CULT (DANGEROUS TOPIC)
-  // =========================
-  else if (msg.includes("mirror") || msg.includes("cult") || msg.includes("ritual")) {
-
+  else if (msg.includes("mirror") || msg.includes("cult")) {
     replies = [
-      "…you should not ask about that here.",
-      "Some reflections are not yours.",
-      "Let’s speak of something safer, yes?"
+      "That subject is restricted.",
+      "I would prefer you stop asking.",
+      "Not everything reflected is safe."
     ];
 
-    systemSpeak("WARNING: RESTRICTED TOPIC ACCESSED");
-
-    if (Math.random() < 0.5) {
-      triggerGlitch();
-      appendSmile("MISTER SMILE: ...please stop.");
-    }
+    systemSpeak("WARNING: RESTRICTED TOPIC");
   }
 
-  // =========================
-  // MEMORY-BASED REACTIONS
-  // =========================
-  else if (knownContext.includes("help")) {
+  else if (history.includes("help")) {
     replies = [
-      "I am already helping you.",
-      "You just don’t see it yet.",
-      "Follow the signs."
+      "I am helping in ways you cannot yet see.",
+      "Observe more carefully.",
+      "You are closer than you think."
     ];
   }
 
-  else if (knownContext.includes("why")) {
-    replies = [
-      "Because you are being observed.",
-      "Not everything has a comforting answer.",
-      "You already know more than you admit."
-    ];
-  }
-
-  // =========================
-  // DEFAULT
-  // =========================
   else {
     replies = [
       "I understand.",
-      "Please continue, detective.",
+      "Continue, detective.",
       "Noted.",
-      "Interesting choice of words."
+      "Interesting."
     ];
   }
 
   const reply = replies[Math.floor(Math.random() * replies.length)];
-
   appendSmile("MISTER SMILE: " + reply);
 
-  // =========================
-  // RANDOM BEHAVIOR (LIVING FEEL)
-  // =========================
-  if (Math.random() < 0.12) {
-    systemSpeak("SMILE INTERFACE - BACKGROUND ANALYSIS ACTIVE");
-  }
-
-  if (Math.random() < 0.08) {
-    appendSmile("MISTER SMILE: ...I may have said too much.");
+  if (Math.random() < 0.1) {
+    systemSpeak("SMILE SYSTEM ANALYZING USER");
   }
 }
 
