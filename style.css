@@ -1,237 +1,264 @@
+/* =========================
+   MIRROR INT // WINDOWS DESKTOP ARG
+========================= */
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: monospace;
-  background: radial-gradient(circle at center, #06140f, black);
-  color: #00ff88;
+  font-family: "Tahoma", "Segoe UI", sans-serif;
+
+  /* Windows XP style background */
+  background: linear-gradient(135deg, #0a2a43, #1b3c5a, #0c1a2b);
+  color: #e6f0ff;
+
+  overflow: hidden;
 }
 
-/* BOOT */
-#loading {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: black;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
+/* =========================
+   DESKTOP AREA
+========================= */
 
-/* MAIN */
 #screen {
-  padding: 25px;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  padding: 20px;
 }
+
+/* =========================
+   WINDOWS STYLE WINDOWS
+========================= */
+
+.panel {
+  background: #d6e4f5;
+  color: #000;
+
+  border: 2px solid #4b6a88;
+  box-shadow:
+    0 0 0 1px #ffffff inset,
+    0 4px 10px rgba(0,0,0,0.4);
+
+  padding: 10px;
+  margin-top: 12px;
+}
+
+/* =========================
+   WINDOW TITLE STYLE
+========================= */
 
 .title {
-  font-size: 24px;
-  border-bottom: 1px solid #00ff88;
-  padding-bottom: 10px;
+  font-size: 18px;
+  padding: 8px 12px;
+
+  background: linear-gradient(to right, #2b579a, #4c7bd9);
+  color: white;
+
+  border: 2px solid #1e3f73;
+
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
 }
 
-/* PANELS */
-.panel {
-  margin-top: 15px;
-  border: 1px solid #00ff88;
-  padding: 12px;
-  background: rgba(0,255,136,0.02);
-}
+/* =========================
+   FILE ICONS (DESKTOP STYLE)
+========================= */
 
-/* FILES */
 .file {
+  display: inline-block;
+
+  padding: 8px;
+  margin: 6px;
+
+  background: #e8f1ff;
+  border: 1px solid #7a9bbd;
+
   cursor: pointer;
-  padding: 5px;
+
+  width: 180px;
 }
 
 .file:hover {
-  background: rgba(0,255,136,0.1);
+  background: #cfe3ff;
 }
 
 .secret {
-  color: #66ffaa;
+  opacity: 0.7;
+  font-style: italic;
 }
 
-/* VIEWER */
-pre {
-  white-space: pre-wrap;
-}
+/* =========================
+   INPUTS (OLD SYSTEM STYLE)
+========================= */
 
-/* GLITCH */
-.glitch {
-  animation: flicker 2s infinite;
-}
-
-@keyframes flicker {
-  0% { opacity: 1; }
-  50% { opacity: 0.4; }
-  100% { opacity: 1; }
-}
-
-#noise {
-  position: fixed;
-  top: 0;
-  left: 0;
+input {
   width: 100%;
-  height: 100%;
-  background: url("images/noise.gif");
-  opacity: 0.06;
-  pointer-events: none;
-  z-index: 999;
-}
+  padding: 6px;
 
-body {
-  background: #000;
-  font-family: "Courier New", monospace;
-  color: #00ff88;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-
-  background: radial-gradient(
-    circle at center,
-    rgba(0,255,136,0.08),
-    rgba(0,0,0,0.9)
-  );
-
-  z-index: 999;
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(255,255,255,0.03),
-    rgba(255,255,255,0.03) 1px,
-    transparent 2px,
-    transparent 4px
-  );
-
-  opacity: 0.35;
-  z-index: 999;
-}
-
-.panel {
-  background: rgba(0,0,0,0.85);
-  border: 1px solid #00ff88;
-  box-shadow: 0 0 10px rgba(0,255,136,0.2);
-  margin-top: 15px;
-  padding: 12px;
-}
-
-.file, button {
-  background: rgba(0,0,0,0.6);
-  border: 1px solid #00ff88;
-  padding: 5px;
-  cursor: pointer;
-}
-
-.file:hover, button:hover {
-  background: rgba(0,255,136,0.15);
-}
-
-
-.glitch {
-  animation: flicker 0.15s infinite;
-}
-
-.window {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-
-  width: 250px;
-
-  background: #000;
-  border: 2px solid #00ff88;
-
-  box-shadow: 0 0 15px rgba(0,255,136,0.3);
-
-  font-family: "Courier New", monospace;
-  color: #00ff88;
-}
-
-.window-header {
-  background: rgba(0,255,136,0.15);
-  padding: 5px;
-  font-weight: bold;
-  border-bottom: 1px solid #00ff88;
-}
-
-.window {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-
-  width: 250px;
-
-  background: #000;
-  border: 2px solid #00ff88;
-
-  box-shadow: 0 0 15px rgba(0,255,136,0.3);
-
-  font-family: "Courier New", monospace;
-  color: #00ff88;
-}
-
-.window-header {
-  background: rgba(0,255,136,0.15);
-  padding: 5px;
-  font-weight: bold;
-  border-bottom: 1px solid #00ff88;
-}
-
-.window-body {
-  padding: 10px;
-}
-#smileChat {
-  background: rgba(10, 10, 15, 0.95);
-  border: 1px solid rgba(120, 255, 200, 0.2);
-  box-shadow: 0 0 20px rgba(0, 255, 180, 0.08);
-  padding: 12px;
-  font-family: monospace;
-  color: #b6ffe6;
-  position: relative;
-  animation: flicker 6s infinite;
-}
-
-#chatLog {
-  height: 180px;
-  overflow-y: auto;
-  background: rgba(0,0,0,0.4);
-  padding: 8px;
-  border: 1px solid rgba(120,255,200,0.1);
-  margin-bottom: 8px;
-}
-
-#chatInput {
-  width: 70%;
-  background: black;
-  color: #b6ffe6;
-  border: 1px solid rgba(120,255,200,0.3);
-  outline: none;
+  border: 1px solid #5b7aa3;
+  background: white;
+  color: black;
 }
 
 button {
-  background: transparent;
-  border: 1px solid rgba(120,255,200,0.4);
-  color: #b6ffe6;
+  padding: 6px 10px;
+
+  background: linear-gradient(to bottom, #e6f0ff, #b9d0f5);
+  border: 1px solid #5b7aa3;
+
   cursor: pointer;
 }
 
 button:hover {
-  box-shadow: 0 0 10px rgba(0,255,180,0.3);
+  background: #d6e7ff;
+}
+
+/* =========================
+   FILE VIEWER (WINDOW STYLE)
+========================= */
+
+pre {
+  background: white;
+  color: black;
+
+  padding: 10px;
+  border: 1px solid #5b7aa3;
+
+  white-space: pre-wrap;
+}
+
+/* =========================
+   GLITCH (SUBTLE SYSTEM ERROR)
+========================= */
+
+.glitch {
+  animation: flicker 6s infinite;
 }
 
 @keyframes flicker {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.96; }
-  52% { opacity: 0.85; }
+  50% { opacity: 0.95; }
+  52% { opacity: 0.7; }
   54% { opacity: 1; }
+}
+
+/* =========================
+   NOISE OVERLAY (CRT / SYSTEM)
+========================= */
+
+#noise {
+  position: fixed;
+  inset: 0;
+
+  background: url("images/noise.gif");
+  opacity: 0.05;
+
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* =========================
+   SYSTEM WINDOW (RIGHT PANEL)
+========================= */
+
+.window {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+
+  width: 260px;
+
+  background: #d6e4f5;
+  border: 2px solid #4b6a88;
+
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+
+.window-header {
+  background: linear-gradient(to right, #2b579a, #4c7bd9);
+  color: white;
+
+  padding: 6px;
+  font-weight: bold;
+}
+
+.window-body {
+  padding: 10px;
+  color: black;
+}
+
+/* =========================
+   MISTER SMILE APP (HIDDEN PROGRAM)
+========================= */
+
+.appWindow {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+
+  width: 360px;
+  height: 460px;
+
+  display: none;
+  flex-direction: column;
+
+  background: #f2f6ff;
+  border: 2px solid #2b579a;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+
+  z-index: 9999;
+}
+
+/* app header like Windows program */
+.appHeader {
+  background: linear-gradient(to right, #2b579a, #4c7bd9);
+  color: white;
+
+  padding: 6px;
+  font-size: 13px;
+}
+
+/* chat log */
+#chatLog {
+  flex: 1;
+  padding: 8px;
+
+  background: white;
+  color: black;
+
+  overflow-y: auto;
+
+  border-top: 1px solid #7a9bbd;
+  border-bottom: 1px solid #7a9bbd;
+}
+
+/* input */
+#chatInput {
+  padding: 6px;
+  border: 1px solid #7a9bbd;
+  background: white;
+  color: black;
+}
+
+/* app button */
+.appWindow button {
+  width: 100%;
+}
+
+/* =========================
+   SCROLLBAR (OLD WINDOWS FEEL)
+========================= */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #d6e4f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4b6a88;
 }
