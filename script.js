@@ -39,18 +39,25 @@ const boot = setInterval(() => {
   const loadText = document.getElementById("loadText");
   if (loadText) loadText.innerText = progress + "%";
 
-if (progress >= 100) {
-  clearInterval(boot);
-  systemBooted = true;
+const boot = setInterval(() => {
+  progress += Math.floor(Math.random() * 12);
 
-  const loading = document.getElementById("loading");
-  const login = document.getElementById("login");
+  const loadText = document.getElementById("loadText");
+  if (loadText) loadText.innerText = progress + "%";
 
-  if (loading) loading.style.display = "none";
-  if (login) login.style.display = "block";
+  if (progress >= 100) {
+    clearInterval(boot);
+    systemBooted = true;
 
-  systemSpeak("SYSTEM INITIALIZED");
-}
+    const loading = document.getElementById("loading");
+    const login = document.getElementById("login");
+
+    if (loading) loading.style.display = "none";
+    if (login) login.style.display = "block";
+
+    systemSpeak("SYSTEM INITIALIZED");
+  }
+}, 150);
 /* =========================
    CLOCK SYSTEM
 ========================= */
@@ -238,11 +245,6 @@ function startSystem() {
 /* =========================
    🧠 PLAYER MEMORY (ARG PROFILE)
 ========================= */
-let profile = {
-  actions: 0,
-  secret: 0,
-  start: Date.now()
-};
 
 
 /* =========================
