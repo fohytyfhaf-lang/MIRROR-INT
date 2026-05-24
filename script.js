@@ -25,9 +25,11 @@ const boot = setInterval(() => {
     const loading = document.getElementById("loading");
     const screen = document.getElementById("screen");
 
-    if (loading) loading.style.display = "none";
-    if (screen) screen.style.display = "block";
+   if (loading) loading.style.display = "none";
 
+const login = document.getElementById("login");
+if (login) login.style.display = "block";
+     
     startSystem();
   }
 }, 150);
