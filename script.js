@@ -218,4 +218,3 @@ document.addEventListener("click", () => {
 setTimeout(() => systemSpeak("OBSERVATION STARTED"), 1000);
 setTimeout(() => systemSpeak("USER DETECTED"), 2500);
 setTimeout(() => systemSpeak("CAMERAS ONLINE"), 4000);
-document.getElementById("cam").src = "images/cam_secret.gif";
