@@ -8,6 +8,7 @@
 ========================= */
 let progress = 0;
 let accessLevel = 0; 
+let systemBooted = false;
 // 0 = guest
 // 1 = operator
 // 2 = researcher
@@ -147,6 +148,10 @@ function startSystem() {
   }, 8000);
 
   setInterval(() => {
+
+    // ❗ СИСТЕМА НЕ АКТИВНА ДО BOOT
+    if (!systemBooted) return;
+
     let r = Math.random();
 
     // 🟢 GUEST
@@ -179,7 +184,6 @@ function startSystem() {
 
   }, 2500);
 }
-
 /* =========================
    🧠 PLAYER MEMORY (ARG PROFILE)
 ========================= */
@@ -229,9 +233,9 @@ function systemSpeak(msg) {
   if (!mem) return;
 
   mem.innerText =
-    "[SYSTEM]\n" + msg + "\n\n" + mem.innerText;
+    mem.innerText +
+    "\n[SYSTEM] " + msg;
 }
-
 
 /* =========================
    GLITCH EFFECT
