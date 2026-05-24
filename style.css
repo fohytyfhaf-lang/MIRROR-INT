@@ -136,14 +136,6 @@ body::after {
   background: rgba(0,255,136,0.15);
 }
 
-@keyframes flicker {
-  0% { opacity: 1; transform: translate(0px, 0px); }
-  10% { opacity: 0.4; transform: translate(1px, -1px); }
-  20% { opacity: 1; }
-  30% { opacity: 0.7; transform: translate(-1px, 1px); }
-  40% { opacity: 1; }
-  100% { opacity: 1; }
-}
 
 .glitch {
   animation: flicker 0.15s infinite;
@@ -197,4 +189,49 @@ body::after {
 
 .window-body {
   padding: 10px;
+}
+#smileChat {
+  background: rgba(10, 10, 15, 0.95);
+  border: 1px solid rgba(120, 255, 200, 0.2);
+  box-shadow: 0 0 20px rgba(0, 255, 180, 0.08);
+  padding: 12px;
+  font-family: monospace;
+  color: #b6ffe6;
+  position: relative;
+  animation: flicker 6s infinite;
+}
+
+#chatLog {
+  height: 180px;
+  overflow-y: auto;
+  background: rgba(0,0,0,0.4);
+  padding: 8px;
+  border: 1px solid rgba(120,255,200,0.1);
+  margin-bottom: 8px;
+}
+
+#chatInput {
+  width: 70%;
+  background: black;
+  color: #b6ffe6;
+  border: 1px solid rgba(120,255,200,0.3);
+  outline: none;
+}
+
+button {
+  background: transparent;
+  border: 1px solid rgba(120,255,200,0.4);
+  color: #b6ffe6;
+  cursor: pointer;
+}
+
+button:hover {
+  box-shadow: 0 0 10px rgba(0,255,180,0.3);
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.96; }
+  52% { opacity: 0.85; }
+  54% { opacity: 1; }
 }
