@@ -120,16 +120,19 @@ function loginSystem() {
     status.innerText = "ACCESS DENIED";
     systemSpeak("FAILED LOGIN ATTEMPT");
   }
+if (success) {
+  setTimeout(() => {
+    document.getElementById("login").style.display = "none";
 
-  if (success) {
+    const screen = document.getElementById("screen");
+    if (screen) screen.style.display = "block";
+
     setTimeout(() => {
-      document.getElementById("login").style.display = "none";
-      document.getElementById("screen").style.display = "block";
-
       startSystem();
       systemSpeak("USER AUTHENTICATED");
-    }, 1200);
-  }
+    }, 300);
+
+  }, 1200);
 }
 /* =========================
    SECRET FILE (ARG EVENT)
