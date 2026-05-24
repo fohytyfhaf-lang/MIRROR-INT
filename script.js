@@ -64,24 +64,23 @@ function openFile(type) {
   const viewer = document.getElementById("viewer");
   if (!viewer) return;
 
-  // 🔐 ограничения доступа
-  if (type === "subject" && accessLevel < 1) {
-    systemSpeak("ACCESS LEVEL TOO LOW");
-    return;
+  // 📁 LOG — доступен всем
+  if (type === "log") {
+    viewer.innerText = files[type];
   }
 
-  if (type === "log" && accessLevel < 0) {
-    systemSpeak("ACCESS DENIED");
-    return;
+  // 📁 SUBJECT — только level 1+
+  else if (type === "subject") {
+    if (accessLevel < 1) {
+      systemSpeak("ACCESS LEVEL REQUIRED: 1");
+      return;
+    }
+    viewer.innerText = files[type];
   }
-
-  viewer.innerText = files[type] || "FILE NOT FOUND";
 
   profile.actions++;
   updateMemory();
 }
-
-
 /* =========================
    SECRET FILE (ARG EVENT)
 ========================= */
