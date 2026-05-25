@@ -2,150 +2,135 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>MIRROR INT V7 FIXED</title>
+<title>MIRROR INT V7</title>
 
-<style>
-body {
-  margin:0;
-  font-family: monospace;
-  background: radial-gradient(#05070a, #000);
-  color:#00ff9d;
-  overflow:hidden;
-}
-
-#bg {
-  position:fixed;
-  inset:0;
-  background:url("https://i.imgur.com/3ZQ3Z8B.gif");
-  opacity:0.05;
-  pointer-events:none;
-}
-
-/* LOGIN */
-#login {
-  position:absolute;
-  top:35%;
-  left:50%;
-  transform:translateX(-50%);
-  text-align:center;
-}
-
-/* MAIN */
-#main {
-  display:none;
-}
-
-/* DESKTOP */
-#desktop {
-  display:flex;
-  gap:15px;
-  padding:15px;
-}
-
-.icon {
-  padding:10px;
-  border:1px solid #00ff9d;
-  cursor:pointer;
-}
-
-/* WINDOWS */
-.window {
-  display:none;
-  position:absolute;
-  top:20%;
-  left:25%;
-  width:420px;
-  height:320px;
-  background:black;
-  border:1px solid #00ff9d;
-  padding:10px;
-}
-
-/* CHAT */
-#staffLog, #chatLog {
-  height:200px;
-  overflow:auto;
-  background:#000;
-  padding:5px;
-  border:1px solid #00ff9d;
-}
-
-/* CAMERA */
-img {
-  width:320px;
-  display:block;
-  margin-top:10px;
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div id="bg"></div>
+<!-- ================= BOOT ================= -->
+<div id="loading">
+  <div id="bootWindow">
+
+    <div id="bootHeader">MIRROR-INT SYSTEM</div>
+
+    <div id="bootBody">
+      <p>Starting system...</p>
+
+      <p id="bootStatus">Initializing...</p>
+
+      <div id="bootBar">
+        <div id="bootProgress"></div>
+      </div>
+
+      <p id="loadText">0%</p>
+    </div>
+
+  </div>
+</div>
 
 <!-- ================= LOGIN ================= -->
-<div id="login">
-  <h2>MIRROR INT LOGIN</h2>
+<div id="login" style="display:none;">
+  <h2>AUTH REQUIRED</h2>
 
-  <input id="user" placeholder="user"><br>
-  <input id="pass" type="password" placeholder="pass"><br>
+  <input id="user" placeholder="username"><br>
+  <input id="pass" type="password" placeholder="password"><br>
 
-  <button onclick="login()">ENTER</button>
+  <button onclick="loginSystem()">LOGIN</button>
+
+  <p id="loginStatus"></p>
+
+  <p>
+    operator / 0404<br>
+    research / void<br>
+    omega / mirror
+  </p>
 </div>
 
-<!-- ================= MAIN ================= -->
-<div id="main">
+<!-- ================= MAIN SYSTEM ================= -->
+<div id="screen" style="display:none;">
 
-<div id="desktop">
-  <div class="icon" onclick="openWin('staff')">STAFF</div>
-  <div class="icon" onclick="openWin('camera')">CAMERA</div>
-  <div class="icon" onclick="openWin('files')">FILES</div>
-  <div class="icon" onclick="openWin('smile')">SMILE</div>
-</div>
+  <div class="title glitch">
+    MIRROR-INT / SECURE OBSERVATION SYSTEM
+  </div>
 
-<div>
-CLOCK: <span id="clock"></span>
-</div>
+  <!-- DESKTOP -->
+  <div id="desktop">
 
-<img id="cam" src="https://i.imgur.com/8QfQx.gif">
+    <div class="icon" onclick="openWindow('staffWindow')">
+      🧠 STAFF
+    </div>
 
-<!-- STAFF -->
-<div id="staff" class="window">
-<button onclick="closeWin('staff')">X</button>
+    <div class="icon" onclick="openWindow('cameraWindow')">
+      📷 CAMERAS
+    </div>
 
-<pre id="staffLog"></pre>
+    <div class="icon" onclick="openWindow('archiveWindow')">
+      📁 ARCHIVE
+    </div>
 
-<input id="staffInput">
-<button onclick="sendStaffMessage()">SEND</button>
-</div>
+    <div class="icon" onclick="openWindow('smileWindow')">
+      😶 SMILE
+    </div>
 
-<!-- FILES -->
-<div id="files" class="window">
-<button onclick="closeWin('files')">X</button>
+  </div>
 
-<pre id="fileView">NO FILE</pre>
+  <!-- CLOCK -->
+  <div>
+    TIME: <span id="clock"></span>
+  </div>
 
-<button onclick="alert('HACK SYSTEM (later upgrade)')">HACK</button>
-</div>
+  <!-- CAMERA -->
+  <div id="cameraWindow" class="window">
+    <div class="window-header">CAMERA SYSTEM</div>
 
-<!-- CAMERA -->
-<div id="camera" class="window">
-<button onclick="closeWin('camera')">X</button>
+    <img id="cam" src="images/cam_idle.gif">
 
-<button onclick="switchCam()">SWITCH CAMERA</button>
+    <button onclick="closeWindow('cameraWindow')">CLOSE</button>
+  </div>
 
-<p>Use main camera below</p>
-</div>
+  <!-- STAFF CHAT -->
+  <div id="staffWindow" class="window">
+    <div class="window-header">STAFF CHAT</div>
 
-<!-- SMILE -->
-<div id="smile" class="window">
-<button onclick="closeWin('smile')">X</button>
+    <pre id="staffLog"></pre>
 
-<pre id="chatLog"></pre>
+    <input id="staffInput">
+    <button onclick="sendStaffMessage()">SEND</button>
 
-<input id="chatInput">
-<button onclick="sendSmile()">SEND</button>
-</div>
+    <button onclick="closeWindow('staffWindow')">CLOSE</button>
+  </div>
+
+  <!-- ARCHIVE -->
+  <div id="archiveWindow" class="window">
+    <div class="window-header">ARCHIVE FILES</div>
+
+    <pre id="viewer">NO FILE SELECTED</pre>
+
+    <button onclick="openFile('log')">LOG</button>
+    <button onclick="openFile('subject')">SUBJECT</button>
+
+    <button onclick="closeWindow('archiveWindow')">CLOSE</button>
+  </div>
+
+  <!-- SMILE -->
+  <div id="smileWindow" class="window">
+    <div class="window-header">MISTER SMILE</div>
+
+    <pre id="chatLog"></pre>
+
+    <input id="chatInput">
+    <button onclick="sendSmile()">SEND</button>
+
+    <button onclick="closeWindow('smileWindow')">CLOSE</button>
+  </div>
+
+  <!-- MEMORY -->
+  <div class="window" style="bottom:10px; right:10px;">
+    <div class="window-header">SYSTEM MEMORY</div>
+    <pre id="memory">BOOTING...</pre>
+  </div>
 
 </div>
 
