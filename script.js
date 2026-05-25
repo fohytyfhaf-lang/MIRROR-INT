@@ -11,6 +11,9 @@ let cameraStarted = false;
 let activeCamera = 0;
 
 let staffPaused = false;
+let staffStarted = false;
+
+
 
 // ---------- MEMORY ----------
 let systemLog = [];
@@ -122,10 +125,12 @@ function loginSystem() {
 
     startSystem();
 
-    if (accessLevel >= 2) staffAI();
-    if (accessLevel >= 3) unlockSmile();
-
-  }, 800);
+   if (accessLevel >= 2 && !staffStarted) {
+  staffStarted = true;
+  staffAI();
+}
+  if (accessLevel >= 3) {
+  setTimeout(() => unlockSmile(), 1200);
 }
 
 // =========================
@@ -150,8 +155,10 @@ function openFile(type) {
 // CAMERA SYSTEM (MULTI VIEW)
 // =========================
 function startSystem() {
-  if (cameraStarted) return;
-  cameraStarted = true;
+ if (cameraStarted) return;
+cameraStarted = true;
+
+console.log("CAMERA SYSTEM STARTED");
 
   const cam = document.getElementById("cam");
   if (!cam) return;
