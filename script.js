@@ -150,8 +150,6 @@ WARNING: AWARENESS INCREASE`
 // WINDOWS 95 BOOT SYSTEM
 // =========================
 
-let progress = 0;
-
 const bootMessages = [
 
   "Loading kernel modules...",
@@ -207,7 +205,9 @@ const boot = setInterval(() => {
     clearInterval(boot);
 
     setTimeout(() => {
-
+      
+    systemBooted = true;
+      
       document.getElementById(
         "loading"
       ).style.display = "none";
