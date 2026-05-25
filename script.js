@@ -29,6 +29,7 @@ setInterval(() => {
 // LOGIN
 // =========================
 function login() {
+  document.getElementById("desktop").style.display = "block";
   const u = document.getElementById("user").value;
   const p = document.getElementById("pass").value;
 
