@@ -147,40 +147,83 @@ WARNING: AWARENESS INCREASE`
 };
 
 // =========================
-// BOOT SYSTEM
+// WINDOWS 95 BOOT SYSTEM
 // =========================
+
+let progress = 0;
+
+const bootMessages = [
+
+  "Loading kernel modules...",
+  "Checking archive integrity...",
+  "Connecting to observation network...",
+  "Loading security cameras...",
+  "Decrypting incident logs...",
+  "Starting staff interface...",
+  "Synchronizing memory storage...",
+  "Scanning user activity...",
+  "Launching MIRROR-INT..."
+];
+
 const boot = setInterval(() => {
 
-  progress += Math.floor(Math.random() * 12);
+  progress +=
+    Math.floor(
+      Math.random() * 8
+    ) + 2;
 
-  const loadText = document.getElementById("loadText");
+  if (progress > 100)
+    progress = 100;
 
-  if (loadText) {
-    loadText.innerText = progress + "%";
-  }
-  
+  // progress text
+  document.getElementById(
+    "loadText"
+  ).innerText =
+    progress + "%";
+
+  // progress bar
+  document.getElementById(
+    "bootProgress"
+  ).style.width =
+    progress + "%";
+
+  // random boot message
+  const randomMsg =
+    bootMessages[
+      Math.floor(
+        Math.random() *
+        bootMessages.length
+      )
+    ];
+
+  document.getElementById(
+    "bootStatus"
+  ).innerText =
+    randomMsg;
+
+  // finish
   if (progress >= 100) {
 
     clearInterval(boot);
 
-    systemBooted = true;
+    setTimeout(() => {
 
-    const loading = document.getElementById("loading");
-    const login = document.getElementById("login");
+      document.getElementById(
+        "loading"
+      ).style.display = "none";
 
-    if (loading) {
-      loading.style.display = "none";
-    }
+      document.getElementById(
+        "login"
+      ).style.display = "block";
 
-    if (login) {
-      login.style.display = "block";
-    }
+      systemSpeak(
+        "SYSTEM INITIALIZED"
+      );
 
-    systemSpeak("SYSTEM INITIALIZED");
+    }, 1200);
   }
 
-}, 150);
-
+}, 250);
 // =========================
 // CLOCK
 // =========================
