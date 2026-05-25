@@ -468,8 +468,6 @@ function startSystem() {
         cam.src = "images/cam_alert.gif";
         instability += 2;
       }
-    }
-
     else {
       cam.src = "images/cam_secret.gif";
       systemSpeak("SYSTEM OBSERVING USER");
@@ -483,3 +481,7 @@ function startSystem() {
 
   }, 2500);
 }
+// ===== START =====
+document.addEventListener("DOMContentLoaded", () => {
+  staffAI();
+});
