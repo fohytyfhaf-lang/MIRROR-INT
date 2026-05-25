@@ -276,32 +276,46 @@ STATUS: MEMORY CORRUPTION`
 };
 
 // =========================
-// STAFF CHAT SYSTEM
+// LIVE STAFF CHAT
 // =========================
 
-const staffProfiles = [
+function addStaffMessage(author, text, type = "normal") {
 
-{
-  name: "HARRIS",
-  mood: "aggressive"
-},
+  const msg = {
+    author,
+    text,
+    type,
+    time: new Date().toLocaleTimeString()
+  };
 
-{
-  name: "MILA",
-  mood: "careful"
-},
+  staffChat.push(msg);
 
-{
-  name: "ETHAN",
-  mood: "nervous"
-},
-
-{
-  name: "LUCY",
-  mood: "quiet"
+  renderStaffChat();
+  maybeArchive(msg);
 }
 
-];
+// вывод чата
+function renderStaffChat() {
+
+  const box = document.getElementById("staffLog");
+  if (!box) return;
+
+  box.innerHTML = staffChat.slice(-40).map(m => {
+
+    const translated = translationEnabled
+      ? translate(m.text)
+      : m.text;
+
+    return `
+      <div class="msg ${m.type}">
+        [${m.time}] <b>${m.author}</b>: ${translated}
+      </div>
+    `;
+
+  }).join("");
+
+  box.scrollTop = box.scrollHeight;
+}
 
 // =========================
 // FILE VIEW
