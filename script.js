@@ -5,34 +5,57 @@
 let progress = 0;
 let accessLevel = 0;
 let systemBooted = false;
+let cameraStarted = false;
 
-// =========================
-// PLAYER PROFILE
-// =========================
 let profile = {
   actions: 0,
   secret: 0,
   start: Date.now()
 };
 
+let smileStarted = false;
+let smileUnlocked = false;
+let smileMemory = [];
+
+let systemLog = [];
+
 // =========================
-// SAFE SYSTEM SPEAK
+// SYSTEM SPEAK (SAFE)
 // =========================
 function systemSpeak(msg) {
+  systemLog.push("[SYSTEM] " + msg);
+
   const mem = document.getElementById("memory");
   if (!mem) return;
 
-  mem.innerText += "\n[SYSTEM] " + msg;
+  mem.innerText = updateMemory();
+}
+
+// =========================
+// MEMORY ENGINE
+// =========================
+function updateMemory() {
+
+  let minutes = Math.floor((Date.now() - profile.start) / 60000);
+
+  let text = "";
+
+  if (profile.actions > 10) text += "HIGH INTERACTION DETECTED\n";
+  if (profile.secret > 0) text += "UNAUTHORIZED FILE ACCESS\n";
+  if (minutes >= 1) text += "LONG OBSERVATION SESSION\n";
+
+  if (!text) text = "USER STATUS: NORMAL\nNO ANOMALIES";
+
+  const logs = systemLog.slice(-5).join("\n");
+
+  return text + "\n\n" + logs;
 }
 
 // =========================
 // MISTER SMILE
 // =========================
-let smileStarted = false;
-let smileUnlocked = false;
-let smileMemory = [];
-
 function openSmileChat() {
+
   const chat = document.getElementById("smileChat");
   if (!chat) return;
 
@@ -57,6 +80,7 @@ function openSmileChat() {
 }
 
 function sendSmile() {
+
   const input = document.getElementById("chatInput");
   if (!input) return;
 
@@ -70,10 +94,11 @@ function sendSmile() {
 
   input.value = "";
 
-  setTimeout(() => respondSmile(text), 700);
+  setTimeout(() => respondSmile(text), 600);
 }
 
 function respondSmile(msg) {
+
   msg = msg.toLowerCase();
   const history = smileMemory.join(" ").toLowerCase();
 
@@ -85,20 +110,23 @@ function respondSmile(msg) {
       "A gentleman without a public record.",
       "You may call me what you wish."
     ];
-  } 
+  }
+
   else if (msg.includes("mirror") || msg.includes("cult")) {
     replies = [
       "That subject is restricted.",
       "Not everything reflected is safe."
     ];
     systemSpeak("WARNING: RESTRICTED TOPIC");
-  } 
+  }
+
   else if (history.includes("help")) {
     replies = [
       "I am helping in ways you cannot yet see.",
       "Observe more carefully."
     ];
-  } 
+  }
+
   else {
     replies = [
       "I understand.",
@@ -112,6 +140,7 @@ function respondSmile(msg) {
 }
 
 function appendSmile(text) {
+
   const log = document.getElementById("chatLog");
   if (!log) return;
 
@@ -120,23 +149,7 @@ function appendSmile(text) {
 }
 
 // =========================
-// FILES
-// =========================
-const files = {
-  log: `INCIDENT LOG
-UNKNOWN SIGNAL DETECTED
-SECTOR: 04
-STATUS: UNSTABLE
-NOTE: OBSERVATION ACTIVE`,
-
-  subject: `SUBJECT REPORT
-ENTITY CLASS: UNKNOWN
-BEHAVIOR: OBSERVED
-STATUS: MEMORY CORRUPTION`
-};
-
-// =========================
-// BOOT SYSTEM (ONLY ONCE)
+// BOOT SYSTEM
 // =========================
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -169,6 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
       bootMessages[Math.floor(Math.random() * bootMessages.length)];
 
     if (progress >= 100) {
+
       clearInterval(boot);
 
       setTimeout(() => {
@@ -197,7 +211,7 @@ setInterval(() => {
 }, 1000);
 
 // =========================
-// LOGIN
+// LOGIN SYSTEM
 // =========================
 function loginSystem() {
 
@@ -211,17 +225,20 @@ function loginSystem() {
     accessLevel = 1;
     status.innerText = "ACCESS GRANTED: OPERATOR";
     success = true;
-  } 
+  }
+
   else if (user === "research" && pass === "void") {
     accessLevel = 2;
     status.innerText = "ACCESS GRANTED: RESEARCHER";
     success = true;
-  } 
+  }
+
   else if (user === "omega" && pass === "mirror") {
     accessLevel = 3;
     status.innerText = "OMEGA CLEARANCE GRANTED";
     success = true;
-  } 
+  }
+
   else {
     accessLevel = 0;
     status.innerText = "ACCESS DENIED";
@@ -229,6 +246,7 @@ function loginSystem() {
   }
 
   if (success) {
+
     setTimeout(() => {
 
       document.getElementById("login").style.display = "none";
@@ -242,6 +260,22 @@ function loginSystem() {
 }
 
 // =========================
+// FILES
+// =========================
+const files = {
+  log: `INCIDENT LOG
+UNKNOWN SIGNAL DETECTED
+SECTOR: 04
+STATUS: UNSTABLE
+NOTE: OBSERVATION ACTIVE`,
+
+  subject: `SUBJECT REPORT
+ENTITY CLASS: UNKNOWN
+BEHAVIOR: OBSERVED
+STATUS: MEMORY CORRUPTION`
+};
+
+// =========================
 // FILE VIEW
 // =========================
 function openFile(type) {
@@ -249,9 +283,8 @@ function openFile(type) {
   const viewer = document.getElementById("viewer");
   if (!viewer) return;
 
-  if (type === "log") {
-    viewer.innerText = files.log;
-  } 
+  if (type === "log") viewer.innerText = files.log;
+
   else if (type === "subject") {
     if (accessLevel < 1) {
       systemSpeak("ACCESS LEVEL REQUIRED");
@@ -294,7 +327,7 @@ STATUS: ACTIVE`;
 }
 
 // =========================
-// ACCESS
+// ACCESS LEVELS
 // =========================
 function increaseAccess() {
   if (accessLevel < 3) {
@@ -326,6 +359,9 @@ document.addEventListener("click", () => {
 // =========================
 function startSystem() {
 
+  if (cameraStarted) return;
+  cameraStarted = true;
+
   const cam = document.getElementById("cam");
   if (!cam) return;
 
@@ -339,7 +375,8 @@ function startSystem() {
 
     if (accessLevel === 0) {
       cam.src = "images/cam_idle.gif";
-    } 
+    }
+
     else if (accessLevel <= 2) {
 
       if (r < 0.5) {
@@ -349,7 +386,8 @@ function startSystem() {
         cam.src = "images/cam_alert.gif";
         instability += 2;
       }
-    } 
+    }
+
     else {
       cam.src = "images/cam_secret.gif";
       systemSpeak("SYSTEM OBSERVING USER");
@@ -362,25 +400,4 @@ function startSystem() {
     }
 
   }, 2500);
-}
-
-// =========================
-// MEMORY
-// =========================
-function updateMemory() {
-
-  const mem = document.getElementById("memory");
-  if (!mem) return;
-
-  let minutes = Math.floor((Date.now() - profile.start) / 60000);
-
-  let text = "";
-
-  if (profile.actions > 10) text += "HIGH INTERACTION\n";
-  if (profile.secret > 0) text += "UNAUTHORIZED ACCESS\n";
-  if (minutes >= 1) text += "LONG SESSION\n";
-
-  if (!text) text = "USER STATUS NORMAL";
-
-  mem.innerText = text;
 }
