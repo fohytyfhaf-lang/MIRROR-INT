@@ -1,30 +1,32 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MIRROR-INT V95</title>
+<title>MIRROR-INT SYSTEM</title>
+
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <!-- =========================
 BOOT SCREEN
 ========================= -->
+
 <div id="loading">
 
   <div id="bootWindow">
 
     <div id="bootHeader">
-      Система зеркального отображения
+      MIRROR-INT SYSTEM
     </div>
 
     <div id="bootBody">
 
-      <p>Запуск MIRROR-INT...</p>
+      <p>Starting MIRROR-INT...</p>
 
       <p id="bootStatus">
-        Инициализация системы...
+        Initializing system...
       </p>
 
       <div id="bootBar">
@@ -42,15 +44,18 @@ BOOT SCREEN
 <!-- =========================
 LOGIN
 ========================= -->
+
 <div id="login" style="display:none;">
 
-  <div class="loginBox">
+  <div class="window loginWindow">
 
-    <div class="windowHeader">
-      Авторизация MIRROR-INT
+    <div class="window-header">
+      AUTHORIZATION REQUIRED
     </div>
 
-    <div class="windowBody">
+    <div class="window-body">
+
+      <p>ENTER SYSTEM CREDENTIALS</p>
 
       <input id="user" placeholder="USERNAME">
 
@@ -63,4 +68,305 @@ LOGIN
       <p id="loginStatus"></p>
 
       <div class="hint">
+        operator / 0404<br>
+        research / void<br>
+        omega / mirror
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- =========================
+MAIN SYSTEM
+========================= -->
+
+<div id="screen" style="display:none;">
+
+  <!-- DESKTOP -->
+
+  <div id="desktop">
+
+    <div class="desktop-icon"
+         onclick="openWindow('archiveWindow')">
+
+      <img src="images/folder.png">
+
+      <span>ARCHIVE</span>
+
+    </div>
+
+    <div class="desktop-icon"
+         onclick="openWindow('cameraWindow')">
+
+      <img src="images/camera.png">
+
+      <span>CAMERAS</span>
+
+    </div>
+
+    <div class="desktop-icon"
+         onclick="openWindow('staffWindow')">
+
+      <img src="images/chat.png">
+
+      <span>STAFF CHAT</span>
+
+    </div>
+
+    <div class="desktop-icon"
+         onclick="openWindow('smileWindow')">
+
+      <img src="images/smile.png">
+
+      <span>MISTER SMILE</span>
+
+    </div>
+
+    <div class="desktop-icon"
+         onclick="openWindow('gameWindow')">
+
+      <img src="images/game.png">
+
+      <span>GAME</span>
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+  CAMERA WINDOW
+  ========================= -->
+
+  <div id="cameraWindow"
+       class="window"
+       style="display:none;">
+
+    <div class="window-header">
+      LIVE CAMERA SYSTEM
+    </div>
+
+    <div class="window-body">
+
+      <img id="cam"
+           src="images/cam_idle.gif">
+
+      <div class="camButtons">
+
+        <button onclick="switchCamera(-1)">
+          PREV
+        </button>
+
+        <button onclick="switchCamera(1)">
+          NEXT
+        </button>
+
+      </div>
+
+      <div id="cameraName">
+        CAMERA 01
+      </div>
+
+      <button onclick="closeWindow('cameraWindow')">
+        CLOSE
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+  ARCHIVE
+  ========================= -->
+
+  <div id="archiveWindow"
+       class="window"
+       style="display:none;">
+
+    <div class="window-header">
+      ARCHIVE DATABASE
+    </div>
+
+    <div class="window-body">
+
+      <div class="file"
+           onclick="openFile('log')">
+        📄 INCIDENT LOG
+      </div>
+
+      <div class="file"
+           onclick="openFile('subject')">
+        📄 SUBJECT REPORT
+      </div>
+
+      <div class="file"
+           onclick="openFile('research')">
+        📄 RESEARCH NOTES
+      </div>
+
+      <div class="file secret"
+           onclick="openOmega()">
+        🔒 OMEGA FILE
+      </div>
+
+      <pre id="viewer">
+NO FILE SELECTED
+      </pre>
+
+      <button onclick="closeWindow('archiveWindow')">
+        CLOSE
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+  STAFF CHAT
+  ========================= -->
+
+  <div id="staffWindow"
+       class="window"
+       style="display:none;">
+
+    <div class="window-header">
+      LIVE STAFF CHAT
+    </div>
+
+    <div class="window-body">
+
+      <pre id="staffLog"></pre>
+
+      <div class="chatControls">
+
+        <input id="staffInput"
+               placeholder="message...">
+
+        <button onclick="sendStaffMessage()">
+          SEND
+        </button>
+
+      </div>
+
+      <button onclick="closeWindow('staffWindow')">
+        CLOSE
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+  MISTER SMILE
+  ========================= -->
+
+  <div id="smileWindow"
+       class="window"
+       style="display:none;">
+
+    <div class="window-header">
+      MISTER SMILE
+    </div>
+
+    <div class="window-body">
+
+      <pre id="chatLog"></pre>
+
+      <div class="chatControls">
+
+        <input id="chatInput"
+               placeholder="say something...">
+
+        <button onclick="sendSmile()">
+          SEND
+        </button>
+
+      </div>
+
+      <button onclick="closeWindow('smileWindow')">
+        CLOSE
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+  MINI GAME
+  ========================= -->
+
+  <div id="gameWindow"
+       class="window"
+       style="display:none;">
+
+    <div class="window-header">
+      TERMINAL GAME
+    </div>
+
+    <div class="window-body">
+
+      <p>
+        Find the hidden code:
+      </p>
+
+      <button onclick="fakeHack()">
+        RUN HACK
+      </button>
+
+      <pre id="gameText">
+SYSTEM READY
+      </pre>
+
+      <button onclick="closeWindow('gameWindow')">
+        CLOSE
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+  MEMORY
+  ========================= -->
+
+  <div id="memoryWindow"
+       class="window memoryWindow">
+
+    <div class="window-header">
+      SYSTEM MEMORY
+    </div>
+
+    <div class="window-body">
+
+      <pre id="memory">
+INITIALIZING...
+      </pre>
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+  TASKBAR
+  ========================= -->
+
+  <div class="taskbar">
+
+    <div class="start-button">
+      Start
+    </div>
+
+    <div id="clock">
+      00:00:00
+    </div>
+
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
 </html>
