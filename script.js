@@ -322,11 +322,19 @@ function loginSystem() {
     setTimeout(() => {
       document.getElementById("login").style.display = "none";
       document.getElementById("screen").style.display = "block";
-      startSystem();
-      staffAI();
-      systemBooted = true;
-      systemSpeak("SYSTEM ONLINE");
-    }, 800);
+     setTimeout(() => {
+  document.getElementById("login").style.display = "none";
+  document.getElementById("screen").style.display = "block";
+
+  systemBooted = true;
+  systemSpeak("SYSTEM ONLINE");
+
+  if (accessLevel >= 1) startSystem();
+  if (accessLevel >= 2) staffAI();
+  if (accessLevel >= 3) unlockSmile();
+
+}, 800);
+    
   } else {
     status.innerText = "ACCESS DENIED";
     systemSpeak("FAILED LOGIN");
