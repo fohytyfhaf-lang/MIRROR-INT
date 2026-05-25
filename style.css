@@ -1,15 +1,9 @@
 /* =========================
-   MIRROR-INT V7 CLEAN CSS
-   ARG / OS STYLE
+   MIRROR-INT WINDOWS 95 CORE
 ========================= */
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
 body {
+  margin: 0;
   font-family: "Courier New", monospace;
   background: #008080;
   overflow: hidden;
@@ -17,170 +11,7 @@ body {
 }
 
 /* =========================
-   CRT / BACKGROUND EFFECT
-========================= */
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.6) 100%);
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(255,255,255,0.03),
-    rgba(255,255,255,0.03) 1px,
-    transparent 2px,
-    transparent 4px
-  );
-  opacity: 0.25;
-}
-
-/* =========================
-   BOOT SCREEN
-========================= */
-
-#loading {
-  position: fixed;
-  inset: 0;
-  background: #008080;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-#bootWindow {
-  width: 420px;
-  background: #c0c0c0;
-  border: 2px solid #fff;
-}
-
-#bootHeader {
-  background: linear-gradient(to right, #000080, #1084d0);
-  color: white;
-  padding: 5px;
-  font-weight: bold;
-}
-
-#bootBody {
-  padding: 15px;
-}
-
-#bootBar {
-  width: 100%;
-  height: 20px;
-  background: white;
-  border: 2px inset gray;
-  margin-top: 10px;
-  overflow: hidden;
-}
-
-#bootProgress {
-  width: 0%;
-  height: 100%;
-  background: repeating-linear-gradient(
-    90deg,
-    #000080,
-    #000080 10px,
-    #1084d0 10px,
-    #1084d0 20px
-  );
-  transition: width 0.2s;
-}
-
-/* =========================
-   LOGIN
-========================= */
-
-#login {
-  position: absolute;
-  top: 25%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #c0c0c0;
-  padding: 20px;
-  border: 2px solid white;
-}
-
-/* =========================
-   SCREEN
-========================= */
-
-#screen {
-  width: 100vw;
-  height: 100vh;
-  padding: 10px;
-}
-
-/* =========================
-   TITLE
-========================= */
-
-.title {
-  font-weight: bold;
-  color: white;
-  margin-bottom: 10px;
-}
-
-/* =========================
-   DESKTOP ICONS
-========================= */
-
-#desktop {
-  display: flex;
-  gap: 20px;
-  padding: 10px;
-  flex-wrap: wrap;
-}
-
-.desktop-icon {
-  width: 80px;
-  text-align: center;
-  cursor: pointer;
-  color: white;
-  font-size: 12px;
-}
-
-.desktop-icon img {
-  width: 40px;
-  height: 40px;
-}
-
-/* =========================
-   WINDOWS / PANELS
-========================= */
-
-.panel {
-  background: #c0c0c0;
-  border: 2px solid;
-  border-color: #fff #808080 #808080 #fff;
-  padding: 8px;
-  margin: 10px;
-}
-
-/* =========================
-   WINDOW SYSTEM
-========================= */
-
-.window {
-  position: absolute;
-  width: 420px;
-  height: 300px;
-  background: #c0c0c0;
-  border: 2px solid white;
-  display: none;
-}
-
-/* =========================
-   WINDOWS STYLE DESKTOP
+   DESKTOP
 ========================= */
 
 #desktop {
@@ -188,146 +19,51 @@ body::after {
   width: 100vw;
   height: 100vh;
   position: relative;
-  background: #008080;
-  overflow: hidden;
+  padding: 10px;
 }
 
-/* окна */
+/* icons */
+.icon {
+  width: 80px;
+  text-align: center;
+  margin: 10px;
+  cursor: pointer;
+  color: white;
+  font-size: 12px;
+}
+
+.icon img {
+  width: 40px;
+  height: 40px;
+}
+
+/* =========================
+   WINDOWS 95 STYLE
+========================= */
+
 .window {
   position: absolute;
   width: 420px;
-  height: 300px;
+  height: 320px;
+
   background: #c0c0c0;
-  border: 2px solid #fff;
-  border-right: 2px solid #000;
-  border-bottom: 2px solid #000;
-  box-shadow: 2px 2px 0px #000;
+
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+
+  box-shadow: inset -1px -1px #000;
+
   display: none;
+  padding: 6px;
 }
 
-/* заголовок окна */
+/* header */
 .window-header {
   background: linear-gradient(to right, #000080, #1084d0);
   color: white;
-  padding: 4px;
   font-weight: bold;
-  cursor: move;
-}
-
-/* taskbar */
-#taskbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 30px;
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  display: flex;
-  align-items: center;
-  padding-left: 5px;
-}
-
-.start {
-  background: #c0c0c0;
-  border: 2px solid #fff;
-  border-right: 2px solid #000;
-  border-bottom: 2px solid #000;
-  padding: 2px 10px;
-  cursor: pointer;
-}
-
-/* =========================
-   FILE VIEWER
-========================= */
-
-pre {
-  background: black;
-  color: #00ff99;
-  padding: 8px;
-  height: 200px;
-  overflow: auto;
-  border: 2px inset gray;
-}
-
-/* =========================
-   STAFF CHAT
-========================= */
-
-#staffWindow {
-  position: fixed;
-  top: 80px;
-  left: 200px;
-  width: 520px;
-  height: 420px;
-}
-
-#staffLog {
-  background: black;
-  color: #00ff99;
-  height: 250px;
-  overflow: auto;
-  padding: 6px;
-  border: 2px inset gray;
-}
-
-/* input */
-#staffInput {
-  width: 100%;
-  padding: 5px;
-  background: black;
-  color: #00ff99;
-  border: 2px inset gray;
-}
-
-/* =========================
-   SMILE CHAT
-========================= */
-
-#smileWindow {
-  position: fixed;
-  right: 20px;
-  bottom: 60px;
-  width: 320px;
-  height: 320px;
-}
-
-#chatLog {
-  height: 200px;
-  overflow: auto;
-  background: black;
-  color: #00ff99;
-  border: 2px inset gray;
-  padding: 5px;
-}
-
-#chatInput {
-  width: 70%;
-  background: black;
-  color: #00ff99;
-  border: 2px inset gray;
-}
-
-/* =========================
-   CAMERA
-========================= */
-
-#cam {
-  width: 100%;
-  max-width: 450px;
-  border: 2px inset gray;
-}
-
-/* =========================
-   MEMORY PANEL
-========================= */
-
-#memory {
-  background: black;
-  color: #00ff99;
-  padding: 6px;
-  border: 2px inset gray;
-  white-space: pre-wrap;
+  font-size: 12px;
+  padding: 3px 6px;
 }
 
 /* =========================
@@ -337,21 +73,80 @@ pre {
 button {
   background: #c0c0c0;
   border: 2px solid;
-  border-color: #fff #808080 #808080 #fff;
-  padding: 4px 10px;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  font-family: inherit;
   cursor: pointer;
+  font-size: 12px;
 }
 
 button:active {
-  border-color: #808080 #fff #fff #808080;
+  border-color: #808080 #ffffff #ffffff #808080;
 }
 
 /* =========================
-   GLITCH EFFECT
+   CHAT / CONSOLE
+========================= */
+
+pre {
+  background: black;
+  color: #00ff99;
+  padding: 6px;
+  height: 200px;
+  overflow: auto;
+  border: 2px inset #808080;
+}
+
+/* input */
+input {
+  width: 70%;
+  background: black;
+  color: #00ff99;
+  border: 2px inset #808080;
+}
+
+/* =========================
+   TASKBAR
+========================= */
+
+#taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 32px;
+
+  background: #c0c0c0;
+
+  border-top: 2px solid #ffffff;
+
+  display: flex;
+  align-items: center;
+  padding: 2px;
+}
+
+.start {
+  width: 70px;
+  height: 26px;
+
+  background: #c0c0c0;
+
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+
+  font-weight: bold;
+  font-size: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================
+   GLITCH LIGHT ARG EFFECT
 ========================= */
 
 .glitch {
-  animation: flicker 3s infinite;
+  animation: flicker 4s infinite;
 }
 
 @keyframes flicker {
@@ -361,12 +156,4 @@ button:active {
   96% { opacity: 1; }
   98% { opacity: 0.2; }
   100% { opacity: 1; }
-}
-
-/* =========================
-   HIDDEN
-========================= */
-
-.hidden {
-  display: none;
 }
