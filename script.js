@@ -115,6 +115,94 @@ function staffAI() {
 }
 
 // =========================
+// PLAYER CHAT INPUT (FIX)
+// =========================
+
+function sendStaffMessage() {
+  const input = document.getElementById("staffInput");
+  if (!input) return;
+
+  const text = input.value.trim();
+  if (!text) return;
+
+  // сообщение игрока
+  addStaffMessage("YOU", text);
+  input.value = "";
+
+  // реакция сотрудников
+  setTimeout(() => staffResponse(text), 600);
+}
+
+// =========================
+// STAFF RESPONSE SYSTEM
+// =========================
+
+function staffResponse(msg) {
+
+  msg = msg.toLowerCase();
+
+  let replies = [];
+
+  // простая логика живого чата
+  if (msg.includes("hello") || msg.includes("hi")) {
+    replies = [
+      "We are online.",
+      "System acknowledges operator.",
+      "Hello."
+    ];
+  }
+
+  else if (msg.includes("who")) {
+    replies = [
+      "We are monitoring personnel.",
+      "You are under observation.",
+      "Staff unit active."
+    ];
+  }
+
+  else if (msg.includes("help")) {
+    replies = [
+      "Request received.",
+      "We will analyze your situation.",
+      "Stand by."
+    ];
+  }
+
+  else if (msg.includes("error") || msg.includes("bug")) {
+    replies = [
+      "System instability detected.",
+      "We are checking logs.",
+      "Possible anomaly."
+    ];
+  }
+
+  else if (msg.includes("smile")) {
+    replies = [
+      "Do not mention that entity.",
+      "Restricted topic.",
+      "We are watching."
+    ];
+  }
+
+  else {
+    replies = [
+      "Noted.",
+      "Continue.",
+      "Message logged."
+    ];
+  }
+
+  const staff =
+    staffProfiles[Math.floor(Math.random() * staffProfiles.length)];
+
+  const reply =
+    replies[Math.floor(Math.random() * replies.length)];
+
+  setTimeout(() => {
+    addStaffMessage(staff.name, reply);
+  }, 500);
+}
+// =========================
 // MISTER SMILE CHAT
 // =========================
 
