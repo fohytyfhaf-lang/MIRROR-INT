@@ -317,28 +317,25 @@ function loginSystem() {
   else if (user === "research" && pass === "void") { accessLevel = 2; ok = true; }
   else if (user === "omega" && pass === "mirror") { accessLevel = 3; ok = true; }
 
-  if (ok) {
-    status.innerText = "ACCESS GRANTED";
-    setTimeout(() => {
-      document.getElementById("login").style.display = "none";
-      document.getElementById("screen").style.display = "block";
-     setTimeout(() => {
-  document.getElementById("login").style.display = "none";
-  document.getElementById("screen").style.display = "block";
+ if (ok) {
+  status.innerText = "ACCESS GRANTED";
 
-  systemBooted = true;
-  systemSpeak("SYSTEM ONLINE");
+  setTimeout(() => {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("screen").style.display = "block";
 
-  if (accessLevel >= 1) startSystem();
-  if (accessLevel >= 2) staffAI();
-  if (accessLevel >= 3) unlockSmile();
+    systemBooted = true;
+    systemSpeak("SYSTEM ONLINE");
 
-}, 800);
-    
-  } else {
-    status.innerText = "ACCESS DENIED";
-    systemSpeak("FAILED LOGIN");
-  }
+    if (accessLevel >= 1) startSystem();
+    if (accessLevel >= 2) staffAI();
+    if (accessLevel >= 3) unlockSmile();
+
+  }, 800);
+
+} else {
+  status.innerText = "ACCESS DENIED";
+  systemSpeak("FAILED LOGIN");
 }
 
 // =========================
