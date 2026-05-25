@@ -1,31 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>MIRROR-INT V7</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIRROR-INT V95</title>
 <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <!-- =========================
-     BOOT SCREEN
+BOOT SCREEN
 ========================= -->
 <div id="loading">
 
   <div id="bootWindow">
 
     <div id="bootHeader">
-      MIRROR-INT SYSTEM
+      Система зеркального отображения
     </div>
 
     <div id="bootBody">
 
-      <p>BOOTING SYSTEM...</p>
+      <p>Запуск MIRROR-INT...</p>
 
       <p id="bootStatus">
-        initializing modules...
+        Инициализация системы...
       </p>
 
       <div id="bootBar">
@@ -41,213 +40,27 @@
 </div>
 
 <!-- =========================
-     LOGIN
+LOGIN
 ========================= -->
 <div id="login" style="display:none;">
 
   <div class="loginBox">
 
-    <h2>MIRROR-INT LOGIN</h2>
-
-    <input id="user" placeholder="USERNAME">
-
-    <input id="pass"
-           type="password"
-           placeholder="PASSWORD">
-
-   <button onclick="loginSystem()">
-    </button>
-
-    <p id="loginStatus"></p>
-
-    <div class="hint">
-      operator / 0404<br>
-      research / void<br>
-      omega / mirror
-    </div>
-
-  </div>
-
-</div>
-
-<!-- =========================
-     MAIN SYSTEM
-========================= -->
-<div id="main" style="display:none;">
-
-  <!-- DESKTOP -->
-  <div id="desktop">
-
-    <div class="icon"
-         onclick="openWin('staffWindow')">
-      🧠
-      <span>STAFF</span>
-    </div>
-
-    <div class="icon"
-         onclick="openWin('cameraWindow')">
-      📷
-      <span>CAMERAS</span>
-    </div>
-
-    <div class="icon"
-         onclick="openWin('archiveWindow')">
-      📁
-      <span>ARCHIVE</span>
-    </div>
-
-    <div class="icon"
-         onclick="openWin('smileWindow')">
-      😶
-      <span>SMILE</span>
-    </div>
-
-  </div>
-
-  <!-- TOP BAR -->
-  <div id="topbar">
-
-    <div>
-      MIRROR-INT SECURE TERMINAL
-    </div>
-
-    <div id="clock">
-      00:00:00
-    </div>
-
-  </div>
-
-  <!-- CAMERA -->
-  <div id="cameraWindow" class="window">
-
     <div class="windowHeader">
-      CAMERA SYSTEM
+      Авторизация MIRROR-INT
     </div>
 
     <div class="windowBody">
 
-      <img id="cam"
-           src="cam_glitch.gif">
+      <input id="user" placeholder="USERNAME">
 
-      <br><br>
+      <input id="pass" type="password" placeholder="PASSWORD">
 
-      <button onclick="switchCam()">
-        SWITCH CAMERA
+      <button onclick="loginSystem()">
+        LOGIN
       </button>
 
-      <button onclick="closeWin('cameraWindow')">
-        CLOSE
-      </button>
+      <p id="loginStatus"></p>
 
-    </div>
-
-  </div>
-
-  <!-- STAFF -->
-  <div id="staffWindow" class="window">
-
-    <div class="windowHeader">
-      STAFF CHAT
-    </div>
-
-    <div class="windowBody">
-
-      <pre id="staffLog"></pre>
-
-      <input id="staffInput"
-             placeholder="message...">
-
-      <button onclick="sendStaffMessage()">
-        SEND
-      </button>
-
-      <button onclick="closeWin('staffWindow')">
-        CLOSE
-      </button>
-
-    </div>
-
-  </div>
-
-  <!-- ARCHIVE -->
-  <div id="archiveWindow" class="window">
-
-    <div class="windowHeader">
-      ARCHIVE FILES
-    </div>
-
-    <div class="windowBody">
-
-      <button onclick="openFile('log')">
-        INCIDENT LOG
-      </button>
-
-      <button onclick="openFile('subject')">
-        SUBJECT FILE
-      </button>
-
-      <button onclick="openFile('omega')">
-        OMEGA FILE
-      </button>
-
-      <pre id="viewer">
-NO FILE SELECTED
-      </pre>
-
-      <button onclick="closeWin('archiveWindow')">
-        CLOSE
-      </button>
-
-    </div>
-
-  </div>
-
-  <!-- SMILE -->
-  <div id="smileWindow" class="window">
-
-    <div class="windowHeader">
-      MISTER SMILE
-    </div>
-
-    <div class="windowBody">
-
-      <pre id="chatLog"></pre>
-
-      <input id="chatInput"
-             placeholder="type message...">
-
-      <button onclick="sendSmile()">
-        SEND
-      </button>
-
-      <button onclick="closeWin('smileWindow')">
-        CLOSE
-      </button>
-
-    </div>
-
-  </div>
-
-  <!-- MEMORY -->
-  <div id="memoryWindow" class="window smallWindow">
-
-    <div class="windowHeader">
-      SYSTEM MEMORY
-    </div>
-
-    <div class="windowBody">
-
-      <pre id="memory">
-SYSTEM READY
-      </pre>
-
-    </div>
-
-  </div>
-
-</div>
-
-<script src="script.js"></script>
-
-</body>
+      <div class="hint">
 </html>
