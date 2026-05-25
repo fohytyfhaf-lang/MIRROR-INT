@@ -6,16 +6,6 @@ let progress = 0;
 let accessLevel = 0;
 let systemBooted = false;
 
-function systemSpeak(msg) {
-  const mem = document.getElementById("memory");
-
-  if (!mem) {
-    console.log("[SYSTEM]", msg);
-    return;
-  }
-
-  mem.innerText += "\n[SYSTEM] " + msg;
-}
 // =========================
 // PLAYER PROFILE
 // =========================
@@ -26,9 +16,18 @@ let profile = {
 };
 
 // =========================
-// MISTER SMILE CHAT (STABLE VERSION)
+// SAFE SYSTEM SPEAK
 // =========================
+function systemSpeak(msg) {
+  const mem = document.getElementById("memory");
+  if (!mem) return;
 
+  mem.innerText += "\n[SYSTEM] " + msg;
+}
+
+// =========================
+// MISTER SMILE
+// =========================
 let smileStarted = false;
 let smileUnlocked = false;
 let smileMemory = [];
@@ -48,11 +47,10 @@ function openSmileChat() {
   }
 
   chat.style.display = "block";
-  systemSpeak("??? CONNECTION ESTABLISHED");
+  systemSpeak("CONNECTION ESTABLISHED");
 
   if (!smileStarted) {
     smileStarted = true;
-
     appendSmile("MISTER SMILE: Good evening, detective.");
     appendSmile("MISTER SMILE: I am already watching the system with you.");
   }
@@ -72,64 +70,45 @@ function sendSmile() {
 
   input.value = "";
 
-  setTimeout(() => respondSmile(text), 800);
+  setTimeout(() => respondSmile(text), 700);
 }
 
 function respondSmile(msg) {
   msg = msg.toLowerCase();
+  const history = smileMemory.join(" ").toLowerCase();
 
   let replies = [];
-  const history = smileMemory.join(" ").toLowerCase();
 
   if (msg.includes("name") || msg.includes("who")) {
     replies = [
       "I am Mister Smile.",
       "A gentleman without a public record.",
-      "You may call me what you wish… I will still hear you."
+      "You may call me what you wish."
     ];
-  }
-
-  else if (msg.includes("organization") || msg.includes("site")) {
-    replies = [
-      "There is no official owner of this system.",
-      "You are speaking with an observation layer.",
-      "Some doors are not meant to be labelled."
-    ];
-  }
-
+  } 
   else if (msg.includes("mirror") || msg.includes("cult")) {
     replies = [
       "That subject is restricted.",
-      "I would prefer you stop asking.",
       "Not everything reflected is safe."
     ];
-
     systemSpeak("WARNING: RESTRICTED TOPIC");
-  }
-
+  } 
   else if (history.includes("help")) {
     replies = [
       "I am helping in ways you cannot yet see.",
-      "Observe more carefully.",
-      "You are closer than you think."
+      "Observe more carefully."
     ];
-  }
-
+  } 
   else {
     replies = [
       "I understand.",
-      "Continue, detective.",
-      "Noted.",
-      "Interesting."
+      "Continue.",
+      "Noted."
     ];
   }
 
   const reply = replies[Math.floor(Math.random() * replies.length)];
   appendSmile("MISTER SMILE: " + reply);
-
-  if (Math.random() < 0.1) {
-    systemSpeak("SMILE SYSTEM ANALYZING USER");
-  }
 }
 
 function appendSmile(text) {
@@ -139,6 +118,7 @@ function appendSmile(text) {
   log.innerText += "\n" + text;
   log.scrollTop = log.scrollHeight;
 }
+
 // =========================
 // FILES
 // =========================
@@ -152,12 +132,11 @@ NOTE: OBSERVATION ACTIVE`,
   subject: `SUBJECT REPORT
 ENTITY CLASS: UNKNOWN
 BEHAVIOR: OBSERVED
-STATUS: MEMORY CORRUPTION
-WARNING: AWARENESS INCREASE`
+STATUS: MEMORY CORRUPTION`
 };
 
 // =========================
-// WINDOWS 95 BOOT SYSTEM
+// BOOT SYSTEM (ONLY ONCE)
 // =========================
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -165,11 +144,10 @@ document.addEventListener("DOMContentLoaded", () => {
     "Loading kernel modules...",
     "Checking archive integrity...",
     "Connecting to observation network...",
-    "Loading security cameras...",
-    "Decrypting incident logs...",
-    "Starting staff interface...",
-    "Synchronizing memory storage...",
-    "Scanning user activity...",
+    "Loading cameras...",
+    "Decrypting logs...",
+    "Starting interface...",
+    "Synchronizing memory...",
     "Launching MIRROR-INT..."
   ];
 
@@ -182,7 +160,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!bar || !text || !status) return;
 
     progress += Math.floor(Math.random() * 8) + 2;
-
     if (progress > 100) progress = 100;
 
     text.innerText = progress + "%";
@@ -202,145 +179,88 @@ document.addEventListener("DOMContentLoaded", () => {
         systemBooted = true;
         systemSpeak("SYSTEM INITIALIZED");
 
-      }, 1200);
+      }, 1000);
     }
 
   }, 250);
-
 });
 
 // =========================
 // CLOCK
 // =========================
 setInterval(() => {
-
   const clock = document.getElementById("clock");
-
   if (!clock) return;
 
   clock.innerText =
     "TIME: " + new Date().toLocaleTimeString();
-
 }, 1000);
 
 // =========================
-// LOGIN SYSTEM
+// LOGIN
 // =========================
 function loginSystem() {
 
-  const user =
-    document.getElementById("user").value;
-
-  const pass =
-    document.getElementById("pass").value;
-
-  const status =
-    document.getElementById("loginStatus");
+  const user = document.getElementById("user").value;
+  const pass = document.getElementById("pass").value;
+  const status = document.getElementById("loginStatus");
 
   let success = false;
 
-  // OPERATOR
   if (user === "operator" && pass === "0404") {
-
     accessLevel = 1;
-
-    status.innerText =
-      "ACCESS GRANTED: OPERATOR";
-
+    status.innerText = "ACCESS GRANTED: OPERATOR";
     success = true;
-  }
-
-  // RESEARCHER
+  } 
   else if (user === "research" && pass === "void") {
-
     accessLevel = 2;
-
-    status.innerText =
-      "ACCESS GRANTED: RESEARCHER";
-
+    status.innerText = "ACCESS GRANTED: RESEARCHER";
     success = true;
-  }
-
-  // OMEGA
+  } 
   else if (user === "omega" && pass === "mirror") {
-
     accessLevel = 3;
-
-    status.innerText =
-      "OMEGA CLEARANCE GRANTED";
-
+    status.innerText = "OMEGA CLEARANCE GRANTED";
     success = true;
-  }
-
-  // FAILED
+  } 
   else {
-
     accessLevel = 0;
-
-    status.innerText =
-      "ACCESS DENIED";
-
+    status.innerText = "ACCESS DENIED";
     systemSpeak("FAILED LOGIN ATTEMPT");
   }
 
-  // SUCCESS
   if (success) {
-
     setTimeout(() => {
 
-      const login =
-        document.getElementById("login");
-
-      const screen =
-        document.getElementById("screen");
-
-      if (login) {
-        login.style.display = "none";
-      }
-
-      if (screen) {
-        screen.style.display = "block";
-      }
+      document.getElementById("login").style.display = "none";
+      document.getElementById("screen").style.display = "block";
 
       startSystem();
-
       systemSpeak("USER AUTHENTICATED");
 
-    }, 1200);
+    }, 1000);
   }
 }
 
 // =========================
-// OPEN FILES
+// FILE VIEW
 // =========================
 function openFile(type) {
 
-  const viewer =
-    document.getElementById("viewer");
-
+  const viewer = document.getElementById("viewer");
   if (!viewer) return;
 
-  // LOG
   if (type === "log") {
-
     viewer.innerText = files.log;
-  }
-
-  // SUBJECT
+  } 
   else if (type === "subject") {
-
     if (accessLevel < 1) {
-
-      systemSpeak("ACCESS LEVEL REQUIRED: 1");
-
+      systemSpeak("ACCESS LEVEL REQUIRED");
       return;
     }
-
     viewer.innerText = files.subject;
   }
 
   profile.actions++;
-
   updateMemory();
 }
 
@@ -352,89 +272,53 @@ function openSecret() {
   profile.secret++;
 
   if (accessLevel < 3) {
-
     systemSpeak("OMEGA ACCESS REQUIRED");
-
     return;
   }
 
-  let pass =
-    prompt("ENTER OMEGA KEY:");
+  let pass = prompt("ENTER OMEGA KEY:");
 
   if (pass === "MIRROR") {
-
-    const viewer =
-      document.getElementById("viewer");
-
-    if (viewer) {
-
-      viewer.innerText =
+    document.getElementById("viewer").innerText =
 `OMEGA FILE UNLOCKED
 
 SUBJECT: ENTITY-0
-STATUS: ACTIVE
-
-USER HAS REACHED SYSTEM CORE`;
-    }
+STATUS: ACTIVE`;
 
     systemSpeak("OMEGA FILE ACCESSED");
-
-    triggerGlitch();
-  }
-
-  else {
-
-    systemSpeak("INVALID OMEGA KEY");
+  } else {
+    systemSpeak("INVALID KEY");
   }
 
   updateMemory();
 }
 
 // =========================
-// ACCESS EVOLUTION
+// ACCESS
 // =========================
 function increaseAccess() {
-
   if (accessLevel < 3) {
-
     accessLevel++;
-
-    systemSpeak(
-      "ACCESS LEVEL UPGRADED: " +
-      accessLevel
-    );
+    systemSpeak("ACCESS LEVEL " + accessLevel);
   }
 }
 
 // =========================
-// OBSERVATION
+// CLICK OBSERVATION
 // =========================
 document.addEventListener("click", () => {
 
   profile.actions++;
-
   updateMemory();
 
-  
   if (profile.secret >= 2 && !smileUnlocked) {
-  smileUnlocked = true;
-  openSmileChat();
-}
-  if (smileStarted && Math.random() < 0.2) {
-  appendSmile("MISTER SMILE: I can feel your actions...");
-}
-  
-  if (profile.actions === 5) {
-    increaseAccess();
+    smileUnlocked = true;
+    openSmileChat();
   }
 
-  if (profile.actions === 15) {
-    increaseAccess();
-  }
-
-  if (profile.actions === 30) {
-    increaseAccess();
-  }
+  if (profile.actions === 5) increaseAccess();
+  if (profile.actions === 15) increaseAccess();
+  if (profile.actions === 30) increaseAccess();
 });
 
 // =========================
@@ -442,20 +326,10 @@ document.addEventListener("click", () => {
 // =========================
 function startSystem() {
 
-  const cam =
-    document.getElementById("cam");
-
+  const cam = document.getElementById("cam");
   if (!cam) return;
 
   let instability = 0;
-
-  setTimeout(() => {
-
-    cam.src = "images/cam_secret.gif";
-
-    systemSpeak("INITIAL SIGNAL DETECTED");
-
-  }, 8000);
 
   setInterval(() => {
 
@@ -463,50 +337,27 @@ function startSystem() {
 
     let r = Math.random();
 
-    // GUEST
     if (accessLevel === 0) {
-
       cam.src = "images/cam_idle.gif";
-    }
-
-    // OPERATOR / RESEARCHER
-    else if (
-      accessLevel === 1 ||
-      accessLevel === 2
-    ) {
+    } 
+    else if (accessLevel <= 2) {
 
       if (r < 0.5) {
-
         cam.src = "images/cam_glitch.gif";
-
         instability++;
-      }
-
-      else {
-
+      } else {
         cam.src = "images/cam_alert.gif";
-
         instability += 2;
       }
-    }
-
-    // OMEGA
-    else if (accessLevel === 3) {
-
+    } 
+    else {
       cam.src = "images/cam_secret.gif";
-
-      systemSpeak(
-        "SYSTEM OBSERVING USER DIRECTLY"
-      );
+      systemSpeak("SYSTEM OBSERVING USER");
     }
 
-    // ENTITY EVENT
     if (instability > 6) {
-
       cam.src = "images/cam_secret.gif";
-
       systemSpeak("ENTITY IN FRAME");
-
       instability = 0;
     }
 
@@ -514,95 +365,22 @@ function startSystem() {
 }
 
 // =========================
-// MEMORY ENGINE
+// MEMORY
 // =========================
 function updateMemory() {
 
-  const mem =
-    document.getElementById("memory");
-
+  const mem = document.getElementById("memory");
   if (!mem) return;
 
-  let minutes =
-    Math.floor(
-      (Date.now() - profile.start) / 60000
-    );
+  let minutes = Math.floor((Date.now() - profile.start) / 60000);
 
   let text = "";
 
-  if (profile.actions > 10) {
+  if (profile.actions > 10) text += "HIGH INTERACTION\n";
+  if (profile.secret > 0) text += "UNAUTHORIZED ACCESS\n";
+  if (minutes >= 1) text += "LONG SESSION\n";
 
-    text +=
-      "HIGH INTERACTION DETECTED\n";
-  }
-
-  if (profile.secret > 0) {
-
-    text +=
-      "UNAUTHORIZED FILE ACCESS\n";
-  }
-
-  if (minutes >= 1) {
-
-    text +=
-      "LONG OBSERVATION SESSION\n";
-  }
-
-  if (text === "") {
-
-    text =
-      "USER STATUS: NORMAL\nNO ANOMALIES";
-  }
+  if (!text) text = "USER STATUS NORMAL";
 
   mem.innerText = text;
 }
-
-// =========================
-// SYSTEM VOICE
-// =========================
-function systemSpeak(msg) {
-
-  const mem =
-    document.getElementById("memory");
-
-  if (!mem) return;
-
-  mem.innerText +=
-    "\n[SYSTEM] " + msg;
-}
-
-// =========================
-// GLITCH EFFECT
-// =========================
-function triggerGlitch() {
-
-  const body = document.body;
-
-  body.style.filter =
-    "contrast(1.3) brightness(0.8)";
-
-  setTimeout(() => {
-
-    body.style.filter = "none";
-
-  }, 150);
-}
-
-// =========================
-// STARTUP EVENTS
-// =========================
-setTimeout(() => {
-  systemSpeak("OBSERVATION STARTED");
-}, 1000);
-
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("SYSTEM LOADED");
-});
-
-setTimeout(() => {
-  systemSpeak("USER DETECTED");
-}, 2500);
-
-setTimeout(() => {
-  systemSpeak("CAMERAS ONLINE");
-}, 4000);
