@@ -18,6 +18,18 @@ let smileUnlocked = false;
 let smileMemory = [];
 
 let systemLog = [];
+let staffChat = [];
+let translationEnabled = false;
+
+setInterval(() => {
+
+  let hour = new Date().getHours();
+
+  if (hour >= 2 && hour <= 4) {
+    addStaffMessage("MISTER SMILE", "I am still here...", "danger");
+  }
+
+}, 60000);
 
 // =========================
 // SYSTEM SPEAK (SAFE)
@@ -274,6 +286,34 @@ ENTITY CLASS: UNKNOWN
 BEHAVIOR: OBSERVED
 STATUS: MEMORY CORRUPTION`
 };
+
+
+let staffChat = [];
+let translationEnabled = false;
+
+function translate(text) {
+  const dict = {
+    system: "система",
+    signal: "сигнал",
+    error: "ошибка",
+    observer: "наблюдатель",
+    unknown: "неизвестно"
+  };
+
+  let result = text.toLowerCase();
+
+  for (let key in dict) {
+    result = result.replaceAll(key, dict[key]);
+  }
+
+  return result;
+}
+
+function maybeArchive(msg) {
+  if (Math.random() < 0.2) {
+    console.log("ARCHIVE:", msg);
+  }
+}
 
 // =========================
 // LIVE STAFF CHAT
