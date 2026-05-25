@@ -206,3 +206,8 @@ function sendSmile() {
     box.innerText += "\nSMILE: ...observing";
   }, 1000);
 }
+// =========================
+// SAFE START
+// =========================
+
+window.login = loginSystem;
