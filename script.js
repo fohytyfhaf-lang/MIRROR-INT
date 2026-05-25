@@ -287,42 +287,52 @@ BEHAVIOR: OBSERVED
 STATUS: MEMORY CORRUPTION`
 };
 
+// =========================
+// STAFF CHAT SYSTEM
+// =========================
 
-let staffChat = [];
-let translationEnabled = false;
+const staffProfiles = [
+  { name: "HARRIS", mood: "aggressive" },
+  { name: "MILA", mood: "careful" },
+  { name: "ETHAN", mood: "nervous" },
+  { name: "LUCY", mood: "quiet" }
+];
 
-function translate(text) {
-  const dict = {
-    system: "система",
-    signal: "сигнал",
-    error: "ошибка",
-    observer: "наблюдатель",
-    unknown: "неизвестно"
-  };
+let playerName = "OPERATOR";
+let staffArchive = [];
 
-  let result = text.toLowerCase();
-
-  for (let key in dict) {
-    result = result.replaceAll(key, dict[key]);
-  }
-
-  return result;
-}
-
-function maybeArchive(msg) {
-  if (Math.random() < 0.2) {
-    console.log("ARCHIVE:", msg);
-  }
-}
-// ===== START =====
+// =========================
+// START AI CHAT
+// =========================
 document.addEventListener("DOMContentLoaded", () => {
   staffAI();
 });
 
 // =========================
-// LIVE STAFF CHAT
+// AI SYSTEM
 // =========================
+function staffAI() {
 
+  setInterval(() => {
+
+    const staff = staffProfiles[Math.floor(Math.random() * staffProfiles.length)];
+
+    const msgs = [
+      () => addStaffMessage(staff.name, "System activity increasing..."),
+      () => addStaffMessage(staff.name, "We should monitor the operator."),
+      () => addStaffMessage(staff.name, `${playerName}, confirm status.`),
+      () => addStaffMessage(staff.name, "Something feels wrong in the system."),
+      () => addStaffMessage(staff.name, "Camera feed is unstable.")
+    ];
+
+    msgs[Math.floor(Math.random() * msgs.length)]();
+
+  }, 5000);
+}
+
+// =========================
+// ADD MESSAGE
+// =========================
 function addStaffMessage(author, text, type = "normal") {
 
   const msg = {
@@ -335,28 +345,19 @@ function addStaffMessage(author, text, type = "normal") {
   staffChat.push(msg);
 
   renderStaffChat();
-  maybeArchive(msg);
 }
 
-// вывод чата
+// =========================
+// RENDER CHAT
+// =========================
 function renderStaffChat() {
 
   const box = document.getElementById("staffLog");
   if (!box) return;
 
   box.innerHTML = staffChat.slice(-40).map(m => {
-
-    const translated = translationEnabled
-      ? translate(m.text)
-      : m.text;
-
-    return `
-      <div class="msg ${m.type}">
-        [${m.time}] <b>${m.author}</b>: ${translated}
-      </div>
-    `;
-
-  }).join("");
+    return `[${m.time}] ${m.author}: ${m.text}`;
+  }).join("\n");
 
   box.scrollTop = box.scrollHeight;
 }
