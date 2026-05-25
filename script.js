@@ -95,23 +95,56 @@ function renderStaffChat() {
 // =========================
 // STAFF AI
 // =========================
-
 function staffAI() {
-  setInterval(() => {
 
-    const s = staffProfiles[Math.floor(Math.random() * staffProfiles.length)];
+  const dialogue = [
+    {
+      author: "HARRIS",
+      text: "System is unstable again...",
+      delay: 0
+    },
+    {
+      author: "MILA",
+      text: "I noticed it too. Logs are corrupted.",
+      delay: 3000
+    },
+    {
+      author: "ETHAN",
+      text: "Are we sure the operator is not the cause?",
+      delay: 7000
+    },
+    {
+      author: "LUCY",
+      text: "Do not jump to conclusions.",
+      delay: 11000
+    },
+    {
+      author: "HARRIS",
+      text: "Still... something is watching back.",
+      delay: 15000
+    }
+  ];
 
-    const msgs = [
-      () => addStaffMessage(s.name, "System activity increasing..."),
-      () => addStaffMessage(s.name, "We should monitor the operator."),
-      () => addStaffMessage(s.name, `${playerName}, confirm status.`),
-      () => addStaffMessage(s.name, "Something feels unstable."),
-      () => addStaffMessage(s.name, "Camera feed is unstable.")
-    ];
+  function runDialogue(index = 0) {
 
-    msgs[Math.floor(Math.random() * msgs.length)]();
+    if (index >= dialogue.length) {
+      // пауза между “разговорами”
+      setTimeout(() => staffAI(), 8000);
+      return;
+    }
 
-  }, 5000);
+    const msg = dialogue[index];
+
+    setTimeout(() => {
+
+      addStaffMessage(msg.author, msg.text);
+
+      runDialogue(index + 1);
+
+    }, msg.delay);
+  }
+
+  runDialogue();
 }
 
 // =========================
