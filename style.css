@@ -1,564 +1,377 @@
 /* =========================
-MIRROR-INT WINDOWS 95 STYLE
+WINDOWS 95 MIRROR-INT
 ========================= */
 
-body {
+body{
+  margin:0;
+  overflow:hidden;
 
-  margin: 0;
+  background:#008080;
 
-  background: #008080;
-
-  overflow: hidden;
-
-  font-family:
-    "Courier New",
-    monospace;
-
-  user-select: none;
+  font-family:Tahoma, sans-serif;
+  font-size:14px;
 }
 
 /* =========================
-CRT EFFECT
+BOOT
 ========================= */
 
-body::after {
+#loading{
+  position:fixed;
+  inset:0;
 
-  content: "";
+  background:#000;
 
-  position: fixed;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 
-  inset: 0;
+  z-index:9999;
 
-  pointer-events: none;
-
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(255,255,255,0.03),
-      rgba(255,255,255,0.03) 1px,
-      transparent 2px,
-      transparent 4px
-    );
-
-  opacity: 0.25;
+  color:#00ff99;
+  font-family:Courier New;
 }
 
-/* =========================
-BOOT SCREEN
-========================= */
+#bootWindow{
+  width:500px;
 
-#loading {
+  background:#111;
 
-  position: fixed;
+  border:2px solid #00ff99;
 
-  inset: 0;
+  padding:15px;
 
-  background: #008080;
-
-  display: flex;
-
-  justify-content: center;
-
-  align-items: center;
-
-  z-index: 9999;
+  box-shadow:0 0 20px #00ff99;
 }
 
-#bootWindow {
-
-  width: 460px;
-
-  background: #c0c0c0;
-
-  border: 2px solid;
-
-  border-color:
-    #ffffff
-    #808080
-    #808080
-    #ffffff;
-
-  box-shadow:
-    inset -1px -1px #000;
+#bootHeader{
+  font-size:22px;
+  margin-bottom:10px;
 }
 
-#bootHeader {
+#bootBar{
+  width:100%;
+  height:22px;
 
-  background:
-    linear-gradient(
-      to right,
-      #000080,
-      #1084d0
-    );
+  background:#000;
 
-  color: white;
+  border:1px solid #00ff99;
 
-  padding: 5px 8px;
-
-  font-weight: bold;
-
-  font-size: 14px;
+  margin-top:10px;
 }
 
-#bootBody {
+#bootProgress{
+  width:0%;
+  height:100%;
 
-  padding: 20px;
+  background:#00ff99;
 
-  font-size: 13px;
+  transition:0.2s;
 }
 
-#bootStatus {
-
-  margin-top: 10px;
-
-  color: #222;
-}
-
-#bootBar {
-
-  width: 100%;
-
-  height: 24px;
-
-  background: white;
-
-  border: 2px inset #808080;
-
-  overflow: hidden;
-
-  margin-top: 15px;
-}
-
-#bootProgress {
-
-  width: 0%;
-
-  height: 100%;
-
-  background:
-    repeating-linear-gradient(
-      90deg,
-      #000080 0px,
-      #000080 10px,
-      #1084d0 10px,
-      #1084d0 20px
-    );
-
-  transition: width 0.2s;
-}
-
-#loadText {
-
-  text-align: right;
-
-  font-weight: bold;
-
-  margin-top: 8px;
+#loadText{
+  text-align:right;
 }
 
 /* =========================
 LOGIN
 ========================= */
 
-#login {
+#login{
+  width:100%;
+  height:100vh;
 
-  width: 100vw;
-
-  height: 100vh;
-
-  display: flex;
-
-  justify-content: center;
-
-  align-items: center;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
-.loginWindow {
-
-  width: 320px;
+.loginWindow{
+  width:340px;
 }
 
-.hint {
+.window{
+  position:absolute;
 
-  margin-top: 15px;
+  background:#c0c0c0;
 
-  font-size: 12px;
+  border-top:2px solid #fff;
+  border-left:2px solid #fff;
 
-  color: #333;
+  border-right:2px solid #000;
+  border-bottom:2px solid #000;
+
+  box-shadow:2px 2px #555;
 }
 
-/* =========================
-WINDOWS
-========================= */
+.window-header{
+  background:linear-gradient(to right,#000080,#1084d0);
 
-.window {
+  color:white;
 
-  position: absolute;
+  padding:5px;
 
-  background: #c0c0c0;
-
-  border: 2px solid;
-
-  border-color:
-    #ffffff
-    #808080
-    #808080
-    #ffffff;
-
-  box-shadow:
-    inset -1px -1px #000;
-
-  min-width: 300px;
+  font-weight:bold;
 }
 
-.window-header {
-
-  background:
-    linear-gradient(
-      to right,
-      #000080,
-      #1084d0
-    );
-
-  color: white;
-
-  padding: 4px 6px;
-
-  font-weight: bold;
-
-  font-size: 13px;
+.window-body{
+  padding:10px;
 }
 
-.window-body {
+input{
+  width:95%;
 
-  padding: 10px;
+  margin-top:6px;
+  margin-bottom:6px;
+
+  padding:5px;
+
+  border-top:2px solid #555;
+  border-left:2px solid #555;
+
+  border-right:2px solid white;
+  border-bottom:2px solid white;
+}
+
+button{
+  margin-top:6px;
+
+  background:#c0c0c0;
+
+  border-top:2px solid white;
+  border-left:2px solid white;
+
+  border-right:2px solid black;
+  border-bottom:2px solid black;
+
+  padding:5px 10px;
+
+  cursor:pointer;
+}
+
+button:active{
+  border-top:2px solid black;
+  border-left:2px solid black;
+
+  border-right:2px solid white;
+  border-bottom:2px solid white;
 }
 
 /* =========================
 DESKTOP
 ========================= */
 
-#desktop {
+#screen{
+  width:100vw;
+  height:100vh;
 
-  padding: 10px;
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 12px;
+  position:relative;
 }
 
-.desktop-icon {
+#desktop{
+  padding:20px;
 
-  width: 80px;
-
-  text-align: center;
-
-  color: white;
-
-  cursor: pointer;
-
-  font-size: 12px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
 }
 
-.desktop-icon img {
+.desktop-icon{
+  width:90px;
 
-  width: 38px;
+  text-align:center;
 
-  height: 38px;
+  color:white;
 
-  image-rendering: pixelated;
+  cursor:pointer;
 }
 
-/* =========================
-BUTTONS
-========================= */
+.desktop-icon img{
+  width:48px;
+  height:48px;
 
-button {
-
-  background: #c0c0c0;
-
-  border: 2px solid;
-
-  border-color:
-    #ffffff
-    #808080
-    #808080
-    #ffffff;
-
-  padding: 4px 10px;
-
-  font-family: inherit;
-
-  cursor: pointer;
-
-  margin-top: 5px;
+  image-rendering:pixelated;
 }
 
-button:active {
-
-  border-color:
-    #808080
-    #ffffff
-    #ffffff
-    #808080;
+.desktop-icon span{
+  display:block;
+  margin-top:4px;
 }
 
 /* =========================
-INPUTS
+WINDOWS POSITIONS
 ========================= */
 
-input {
-
-  width: 95%;
-
-  margin-top: 8px;
-
-  padding: 4px;
-
-  border: 2px inset #808080;
-
-  background: white;
-
-  font-family: inherit;
+#cameraWindow{
+  width:500px;
+  top:70px;
+  left:150px;
 }
 
-/* =========================
-PRE / TERMINALS
-========================= */
-
-pre {
-
-  background: black;
-
-  color: #00ff99;
-
-  border: 2px inset #808080;
-
-  padding: 8px;
-
-  overflow: auto;
-
-  height: 180px;
-
-  font-size: 12px;
+#archiveWindow{
+  width:520px;
+  top:90px;
+  left:220px;
 }
 
-/* =========================
-FILES
-========================= */
-
-.file {
-
-  padding: 5px;
-
-  margin-bottom: 4px;
-
-  background: #d4d0c8;
-
-  border: 1px solid #808080;
-
-  cursor: pointer;
+#staffWindow{
+  width:520px;
+  top:120px;
+  left:260px;
 }
 
-.file:hover {
-
-  background: #ece9d8;
+#smileWindow{
+  width:450px;
+  top:100px;
+  left:300px;
 }
 
-.secret {
-
-  color: darkred;
-
-  font-weight: bold;
+#gameWindow{
+  width:400px;
+  top:140px;
+  left:180px;
 }
 
-/* =========================
-CAMERA
-========================= */
+.memoryWindow{
+  width:300px;
 
-#cam {
-
-  width: 100%;
-
-  height: 220px;
-
-  object-fit: cover;
-
-  border: 2px inset #808080;
-
-  background: black;
-}
-
-.camButtons {
-
-  margin-top: 8px;
-
-  display: flex;
-
-  gap: 5px;
-}
-
-#cameraName {
-
-  margin-top: 6px;
-
-  font-size: 12px;
-
-  font-weight: bold;
+  right:20px;
+  bottom:50px;
 }
 
 /* =========================
 CHAT
 ========================= */
 
-.chatControls {
+#staffLog,
+#chatLog,
+#viewer,
+#memory,
+#gameText{
+  background:black;
 
-  display: flex;
+  color:#00ff99;
 
-  gap: 6px;
+  padding:10px;
 
-  margin-top: 6px;
-}
+  height:220px;
 
-.chatControls input {
+  overflow:auto;
 
-  flex: 1;
+  font-family:Courier New;
+
+  border:2px inset #555;
 }
 
 /* =========================
-WINDOW POSITIONS
+FILES
 ========================= */
 
-#cameraWindow {
+.file{
+  background:white;
 
-  top: 70px;
-  left: 180px;
+  padding:6px;
 
-  width: 500px;
+  margin-bottom:5px;
+
+  cursor:pointer;
+
+  border:1px solid gray;
 }
 
-#archiveWindow {
-
-  top: 100px;
-  left: 220px;
-
-  width: 500px;
+.file:hover{
+  background:#000080;
+  color:white;
 }
 
-#staffWindow {
-
-  top: 90px;
-  left: 260px;
-
-  width: 520px;
+.secret{
+  color:red;
 }
 
-#smileWindow {
+/* =========================
+CAMERA
+========================= */
 
-  top: 120px;
-  left: 320px;
+#cam{
+  width:100%;
+  height:260px;
 
-  width: 430px;
+  object-fit:cover;
+
+  background:black;
+
+  border:2px inset #555;
 }
 
-#gameWindow {
-
-  top: 160px;
-  left: 350px;
-
-  width: 400px;
+.camButtons{
+  margin-top:10px;
 }
 
-.memoryWindow {
-
-  right: 10px;
-
-  bottom: 45px;
-
-  width: 260px;
+#cameraName{
+  margin-top:8px;
+  font-weight:bold;
 }
 
 /* =========================
 TASKBAR
 ========================= */
 
-.taskbar {
+.taskbar{
+  position:fixed;
 
-  position: fixed;
+  bottom:0;
+  left:0;
 
-  bottom: 0;
+  width:100%;
+  height:40px;
 
-  left: 0;
+  background:#c0c0c0;
 
-  width: 100%;
+  border-top:2px solid white;
 
-  height: 34px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 
-  background: #c0c0c0;
+  padding:0 10px;
 
-  border-top: 2px solid #ffffff;
-
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
-
-  padding: 0 6px;
-
-  box-sizing: border-box;
+  box-sizing:border-box;
 }
 
-.start-button {
+.start-button{
+  background:#c0c0c0;
 
-  background: #c0c0c0;
+  border-top:2px solid white;
+  border-left:2px solid white;
 
-  border: 2px solid;
+  border-right:2px solid black;
+  border-bottom:2px solid black;
 
-  border-color:
-    #ffffff
-    #808080
-    #808080
-    #ffffff;
+  padding:5px 14px;
 
-  padding: 4px 14px;
-
-  font-weight: bold;
+  font-weight:bold;
 }
 
-#clock {
+#clock{
+  background:black;
 
-  background: #c0c0c0;
+  color:#00ff99;
 
-  border: 2px inset #808080;
+  padding:5px 10px;
 
-  padding: 3px 10px;
-
-  font-size: 12px;
+  border:2px inset #555;
 }
 
 /* =========================
 GLITCH
 ========================= */
 
-.glitch {
-
-  animation: flicker 3s infinite;
+.glitch{
+  animation:flicker 2s infinite;
 }
 
-@keyframes flicker {
-
-  0% { opacity: 1; }
-
-  96% { opacity: 1; }
-
-  97% { opacity: 0.4; }
-
-  98% { opacity: 1; }
-
-  99% { opacity: 0.7; }
-
-  100% { opacity: 1; }
+@keyframes flicker{
+  0%{opacity:1;}
+  50%{opacity:0.8;}
+  100%{opacity:1;}
 }
