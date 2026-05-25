@@ -94,6 +94,64 @@ button:active,
 }
 
 /* =========================
+   STAFF CHAT
+   ========================= */
+
+#staffWindow {
+  position: fixed;
+  top: 80px;
+  left: 200px;
+
+  width: 520px;
+  height: 420px;
+
+  z-index: 40;
+}
+
+#staffMessages {
+  height: 300px;
+
+  overflow-y: auto;
+
+  background: black;
+
+  color: #00ff88;
+
+  border: 2px inset #808080;
+
+  padding: 6px;
+
+  font-size: 12px;
+
+  margin-bottom: 10px;
+}
+
+.staff-controls {
+  display: flex;
+  gap: 6px;
+}
+
+#staffInput {
+  flex: 1;
+
+  background: black;
+
+  color: #00ff88;
+
+  border: 2px inset #808080;
+
+  font-family: inherit;
+
+  padding: 4px;
+}
+
+#staffMessages div {
+  margin-bottom: 4px;
+}
+
+
+
+/* =========================
    CHAT (MISTER SMILE APP)
    ========================= */
 
