@@ -472,6 +472,8 @@ function startSystem() {
         cam.src = "images/cam_alert.gif";
         instability += 2;
       }
+    }
+
     else {
       cam.src = "images/cam_secret.gif";
       systemSpeak("SYSTEM OBSERVING USER");
