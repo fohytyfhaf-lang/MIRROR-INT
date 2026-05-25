@@ -6,6 +6,16 @@ let progress = 0;
 let accessLevel = 0;
 let systemBooted = false;
 
+function systemSpeak(msg) {
+  const mem = document.getElementById("memory");
+
+  if (!mem) {
+    console.log("[SYSTEM]", msg);
+    return;
+  }
+
+  mem.innerText += "\n[SYSTEM] " + msg;
+}
 // =========================
 // PLAYER PROFILE
 // =========================
