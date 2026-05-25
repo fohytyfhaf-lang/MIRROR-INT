@@ -149,81 +149,56 @@ WARNING: AWARENESS INCREASE`
 // =========================
 // WINDOWS 95 BOOT SYSTEM
 // =========================
+document.addEventListener("DOMContentLoaded", () => {
 
-const bootMessages = [
+  const bootMessages = [
+    "Loading kernel modules...",
+    "Checking archive integrity...",
+    "Connecting to observation network...",
+    "Loading security cameras...",
+    "Decrypting incident logs...",
+    "Starting staff interface...",
+    "Synchronizing memory storage...",
+    "Scanning user activity...",
+    "Launching MIRROR-INT..."
+  ];
 
-  "Loading kernel modules...",
-  "Checking archive integrity...",
-  "Connecting to observation network...",
-  "Loading security cameras...",
-  "Decrypting incident logs...",
-  "Starting staff interface...",
-  "Synchronizing memory storage...",
-  "Scanning user activity...",
-  "Launching MIRROR-INT..."
-];
+  const boot = setInterval(() => {
 
-const boot = setInterval(() => {
+    const bar = document.getElementById("bootProgress");
+    const text = document.getElementById("loadText");
+    const status = document.getElementById("bootStatus");
 
-  progress +=
-    Math.floor(
-      Math.random() * 8
-    ) + 2;
+    if (!bar || !text || !status) return;
 
-  if (progress > 100)
-    progress = 100;
+    progress += Math.floor(Math.random() * 8) + 2;
 
-  // progress text
-  document.getElementById(
-    "loadText"
-  ).innerText =
-    progress + "%";
+    if (progress > 100) progress = 100;
 
-  // progress bar
-  document.getElementById(
-    "bootProgress"
-  ).style.width =
-    progress + "%";
+    text.innerText = progress + "%";
+    bar.style.width = progress + "%";
 
-  // random boot message
-  const randomMsg =
-    bootMessages[
-      Math.floor(
-        Math.random() *
-        bootMessages.length
-      )
-    ];
+    status.innerText =
+      bootMessages[Math.floor(Math.random() * bootMessages.length)];
 
-  document.getElementById(
-    "bootStatus"
-  ).innerText =
-    randomMsg;
+    if (progress >= 100) {
+      clearInterval(boot);
 
-  // finish
-  if (progress >= 100) {
+      setTimeout(() => {
 
-    clearInterval(boot);
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("login").style.display = "block";
 
-    setTimeout(() => {
-      
-    systemBooted = true;
-      
-      document.getElementById(
-        "loading"
-      ).style.display = "none";
+        systemBooted = true;
+        systemSpeak("SYSTEM INITIALIZED");
 
-      document.getElementById(
-        "login"
-      ).style.display = "block";
+      }, 1200);
+    }
 
-      systemSpeak(
-        "SYSTEM INITIALIZED"
-      );
+  }, 250);
 
-    }, 1200);
-  }
+});
 
-}, 250);
 // =========================
 // CLOCK
 // =========================
