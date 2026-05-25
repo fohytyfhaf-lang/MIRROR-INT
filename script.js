@@ -314,6 +314,10 @@ function maybeArchive(msg) {
     console.log("ARCHIVE:", msg);
   }
 }
+// ===== START =====
+document.addEventListener("DOMContentLoaded", () => {
+  staffAI();
+});
 
 // =========================
 // LIVE STAFF CHAT
@@ -481,7 +485,3 @@ function startSystem() {
 
   }, 2500);
 }
-// ===== START =====
-document.addEventListener("DOMContentLoaded", () => {
-  staffAI();
-});
