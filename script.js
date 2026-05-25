@@ -276,6 +276,34 @@ STATUS: MEMORY CORRUPTION`
 };
 
 // =========================
+// STAFF CHAT SYSTEM
+// =========================
+
+const staffProfiles = [
+
+{
+  name: "HARRIS",
+  mood: "aggressive"
+},
+
+{
+  name: "MILA",
+  mood: "careful"
+},
+
+{
+  name: "ETHAN",
+  mood: "nervous"
+},
+
+{
+  name: "LUCY",
+  mood: "quiet"
+}
+
+];
+
+// =========================
 // FILE VIEW
 // =========================
 function openFile(type) {
