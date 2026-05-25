@@ -20,7 +20,7 @@ let profile = {
 let systemLog = [];
 let staffChat = [];
 let smileMemory = [];
-
+let staffPaused = false;
 let smileStarted = false;
 let smileUnlocked = false;
 
