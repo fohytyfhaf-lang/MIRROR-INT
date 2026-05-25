@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,10 +6,93 @@
 <title>MIRROR INT V7</title>
 
 <link rel="stylesheet" href="style.css">
+
+<style>
+/* ===== BOOT ANIMATION ===== */
+#loading {
+  position: fixed;
+  inset: 0;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #00ff9d;
+  flex-direction: column;
+  font-family: monospace;
+}
+
+#bootWindow {
+  width: 420px;
+  border: 1px solid #00ff9d;
+  padding: 10px;
+  animation: flicker 1.5s infinite;
+}
+
+#bootProgress {
+  height: 10px;
+  background: #00ff9d;
+  width: 0%;
+  transition: width 0.2s;
+}
+
+#login {
+  display: none;
+  animation: fadeIn 1s ease;
+  text-align: center;
+  margin-top: 100px;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+@keyframes flicker {
+  0% {opacity: 1;}
+  50% {opacity: 0.7;}
+  100% {opacity: 1;}
+}
+</style>
 </head>
 
 <body>
 
+<!-- ================= BOOT ================= -->
+<div id="loading">
+  <div id="bootWindow">
+
+    <p>BOOTING MIRROR-INT...</p>
+    <p id="bootStatus">loading modules...</p>
+
+    <div style="border:1px solid #00ff9d; height:10px;">
+      <div id="bootProgress"></div>
+    </div>
+
+    <p id="loadText">0%</p>
+
+  </div>
+</div>
+
+<!-- ================= LOGIN ================= -->
+<div id="login">
+  <h2>MIRROR INT LOGIN</h2>
+
+  <input id="user" placeholder="user"><br>
+  <input id="pass" type="password" placeholder="pass"><br>
+
+  <button onclick="loginSystem()">ENTER</button>
+
+  <p id="loginStatus"></p>
+
+  <p>
+    operator / 0404<br>
+    research / void<br>
+    omega / mirror
+  </p>
+</div>
+
+<!-- дальше твой основной экран -->
+<div id="screen" style="display:none;">
 <!-- ================= BOOT ================= -->
 <div id="loading">
   <div id="bootWindow">
