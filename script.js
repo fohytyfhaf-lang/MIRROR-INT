@@ -17,6 +17,40 @@ const cameras = [
   "https://i.imgur.com/7ZQ7Z7Z.gif"
 ];
 
+let progress = 0;
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const boot = setInterval(() => {
+
+    progress += 3;
+
+    const bar = document.getElementById("bootProgress");
+    const txt = document.getElementById("loadText");
+    const st = document.getElementById("bootStatus");
+
+    if (bar) bar.style.width = progress + "%";
+    if (txt) txt.innerText = progress + "%";
+
+    if (progress < 40) st.innerText = "loading system core...";
+    else if (progress < 80) st.innerText = "checking memory integrity...";
+    else st.innerText = "starting interface...";
+
+    if (progress >= 100) {
+      clearInterval(boot);
+
+      setTimeout(() => {
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("login").style.display = "block";
+      }, 600);
+    }
+
+  }, 80);
+
+});
+
+
+
 // =========================
 // CLOCK
 // =========================
