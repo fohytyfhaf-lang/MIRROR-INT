@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <title>MIRROR-INT SYSTEM</title>
@@ -9,9 +10,7 @@
 
 <body>
 
-<!-- =========================
-BOOT SCREEN
-========================= -->
+<!-- BOOT -->
 
 <div id="loading">
 
@@ -26,7 +25,7 @@ BOOT SCREEN
       <p>Starting MIRROR-INT...</p>
 
       <p id="bootStatus">
-        Initializing system...
+        Initializing...
       </p>
 
       <div id="bootBar">
@@ -41,9 +40,7 @@ BOOT SCREEN
 
 </div>
 
-<!-- =========================
-LOGIN
-========================= -->
+<!-- LOGIN -->
 
 <div id="login" style="display:none;">
 
@@ -55,11 +52,11 @@ LOGIN
 
     <div class="window-body">
 
-      <p>ENTER SYSTEM CREDENTIALS</p>
-
       <input id="user" placeholder="USERNAME">
 
-      <input id="pass" type="password" placeholder="PASSWORD">
+      <input id="pass"
+             type="password"
+             placeholder="PASSWORD">
 
       <button onclick="loginSystem()">
         LOGIN
@@ -79,9 +76,7 @@ LOGIN
 
 </div>
 
-<!-- =========================
-MAIN SYSTEM
-========================= -->
+<!-- MAIN -->
 
 <div id="screen" style="display:none;">
 
@@ -125,27 +120,16 @@ MAIN SYSTEM
 
     </div>
 
-    <div class="desktop-icon"
-         onclick="openWindow('gameWindow')">
-
-      <img src="images/game.png">
-
-      <span>GAME</span>
-
-    </div>
-
   </div>
 
-  <!-- =========================
-  CAMERA WINDOW
-  ========================= -->
+  <!-- CAMERA -->
 
   <div id="cameraWindow"
        class="window"
        style="display:none;">
 
     <div class="window-header">
-      LIVE CAMERA SYSTEM
+      CAMERA SYSTEM
     </div>
 
     <div class="window-body">
@@ -177,38 +161,37 @@ MAIN SYSTEM
 
   </div>
 
-  <!-- =========================
-  ARCHIVE
-  ========================= -->
+  <!-- ARCHIVE -->
 
   <div id="archiveWindow"
        class="window"
        style="display:none;">
 
     <div class="window-header">
-      ARCHIVE DATABASE
+      ARCHIVE
     </div>
 
     <div class="window-body">
 
       <div class="file"
            onclick="openFile('log')">
+
         📄 INCIDENT LOG
+
       </div>
 
       <div class="file"
            onclick="openFile('subject')">
+
         📄 SUBJECT REPORT
+
       </div>
 
       <div class="file"
-           onclick="openFile('research')">
-        📄 RESEARCH NOTES
-      </div>
-
-      <div class="file secret"
            onclick="openOmega()">
+
         🔒 OMEGA FILE
+
       </div>
 
       <pre id="viewer">
@@ -223,32 +206,26 @@ NO FILE SELECTED
 
   </div>
 
-  <!-- =========================
-  STAFF CHAT
-  ========================= -->
+  <!-- STAFF -->
 
   <div id="staffWindow"
        class="window"
        style="display:none;">
 
     <div class="window-header">
-      LIVE STAFF CHAT
+      STAFF CHAT
     </div>
 
     <div class="window-body">
 
       <pre id="staffLog"></pre>
 
-      <div class="chatControls">
+      <input id="staffInput"
+             placeholder="message...">
 
-        <input id="staffInput"
-               placeholder="message...">
-
-        <button onclick="sendStaffMessage()">
-          SEND
-        </button>
-
-      </div>
+      <button onclick="sendStaffMessage()">
+        SEND
+      </button>
 
       <button onclick="closeWindow('staffWindow')">
         CLOSE
@@ -258,9 +235,7 @@ NO FILE SELECTED
 
   </div>
 
-  <!-- =========================
-  MISTER SMILE
-  ========================= -->
+  <!-- SMILE -->
 
   <div id="smileWindow"
        class="window"
@@ -274,16 +249,12 @@ NO FILE SELECTED
 
       <pre id="chatLog"></pre>
 
-      <div class="chatControls">
+      <input id="chatInput"
+             placeholder="say something...">
 
-        <input id="chatInput"
-               placeholder="say something...">
-
-        <button onclick="sendSmile()">
-          SEND
-        </button>
-
-      </div>
+      <button onclick="sendSmile()">
+        SEND
+      </button>
 
       <button onclick="closeWindow('smileWindow')">
         CLOSE
@@ -293,46 +264,9 @@ NO FILE SELECTED
 
   </div>
 
-  <!-- =========================
-  MINI GAME
-  ========================= -->
+  <!-- MEMORY -->
 
-  <div id="gameWindow"
-       class="window"
-       style="display:none;">
-
-    <div class="window-header">
-      TERMINAL GAME
-    </div>
-
-    <div class="window-body">
-
-      <p>
-        Find the hidden code:
-      </p>
-
-      <button onclick="fakeHack()">
-        RUN HACK
-      </button>
-
-      <pre id="gameText">
-SYSTEM READY
-      </pre>
-
-      <button onclick="closeWindow('gameWindow')">
-        CLOSE
-      </button>
-
-    </div>
-
-  </div>
-
-  <!-- =========================
-  MEMORY
-  ========================= -->
-
-  <div id="memoryWindow"
-       class="window memoryWindow">
+  <div class="window memoryWindow">
 
     <div class="window-header">
       SYSTEM MEMORY
@@ -341,16 +275,14 @@ SYSTEM READY
     <div class="window-body">
 
       <pre id="memory">
-INITIALIZING...
+BOOTING...
       </pre>
 
     </div>
 
   </div>
 
-  <!-- =========================
-  TASKBAR
-  ========================= -->
+  <!-- TASKBAR -->
 
   <div class="taskbar">
 
