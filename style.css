@@ -424,3 +424,80 @@ pre {
   animation: flicker 0.2s infinite;
   color: #aaffcc;
 }
+
+<style>
+body {
+  margin:0;
+  font-family: monospace;
+  background: radial-gradient(#05070a, #000);
+  color: #00ff9d;
+  overflow:hidden;
+}
+
+/* BACKGROUND NOISE */
+#bg {
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:url("https://i.imgur.com/3ZQ3Z8B.gif");
+  opacity:0.05;
+  pointer-events:none;
+}
+
+/* LOGIN */
+#login {
+  position:absolute;
+  top:30%;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+}
+
+/* DESKTOP */
+#desktop {
+  display:flex;
+  gap:20px;
+  padding:20px;
+}
+
+.icon {
+  cursor:pointer;
+  padding:10px;
+  border:1px solid #00ff9d;
+}
+
+/* PANELS */
+.panel {
+  border:1px solid #00ff9d;
+  padding:10px;
+  margin:10px;
+}
+
+/* WINDOWS */
+.window {
+  display:none;
+  position:absolute;
+  top:20%;
+  left:20%;
+  width:400px;
+  height:300px;
+  background:black;
+  border:1px solid #00ff9d;
+  padding:10px;
+}
+
+/* CHAT */
+#staffLog, #chatLog {
+  height:200px;
+  overflow:auto;
+  background:#000;
+}
+
+/* CAMERA */
+img {
+  width:300px;
+}
+</style>
+</head>
+
+<body>
