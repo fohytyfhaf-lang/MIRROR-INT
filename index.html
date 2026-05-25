@@ -13,12 +13,11 @@ body {
   overflow:hidden;
 }
 
-/* NOISE */
 #bg {
   position:fixed;
   inset:0;
   background:url("https://i.imgur.com/3ZQ3Z8B.gif");
-  opacity:0.06;
+  opacity:0.05;
   pointer-events:none;
 }
 
@@ -29,6 +28,11 @@ body {
   left:50%;
   transform:translateX(-50%);
   text-align:center;
+}
+
+/* MAIN */
+#main {
+  display:none;
 }
 
 /* DESKTOP */
@@ -57,17 +61,20 @@ body {
   padding:10px;
 }
 
-/* CHAT BOX */
+/* CHAT */
 #staffLog, #chatLog {
   height:200px;
   overflow:auto;
   background:#000;
   padding:5px;
+  border:1px solid #00ff9d;
 }
 
 /* CAMERA */
 img {
-  width:300px;
+  width:320px;
+  display:block;
+  margin-top:10px;
 }
 </style>
 </head>
@@ -76,16 +83,18 @@ img {
 
 <div id="bg"></div>
 
-<!-- LOGIN -->
+<!-- ================= LOGIN ================= -->
 <div id="login">
   <h2>MIRROR INT LOGIN</h2>
+
   <input id="user" placeholder="user"><br>
   <input id="pass" type="password" placeholder="pass"><br>
+
   <button onclick="login()">ENTER</button>
 </div>
 
-<!-- MAIN -->
-<div id="main" style="display:none;">
+<!-- ================= MAIN ================= -->
+<div id="main">
 
 <div id="desktop">
   <div class="icon" onclick="openWin('staff')">STAFF</div>
@@ -103,7 +112,9 @@ CLOCK: <span id="clock"></span>
 <!-- STAFF -->
 <div id="staff" class="window">
 <button onclick="closeWin('staff')">X</button>
+
 <pre id="staffLog"></pre>
+
 <input id="staffInput">
 <button onclick="sendStaffMessage()">SEND</button>
 </div>
@@ -111,28 +122,34 @@ CLOCK: <span id="clock"></span>
 <!-- FILES -->
 <div id="files" class="window">
 <button onclick="closeWin('files')">X</button>
+
 <pre id="fileView">NO FILE</pre>
-<button onclick="hack()">HACK</button>
+
+<button onclick="alert('HACK SYSTEM (later upgrade)')">HACK</button>
 </div>
 
 <!-- CAMERA -->
 <div id="camera" class="window">
-<button onclick="closeWin('camera')">X</button><br>
+<button onclick="closeWin('camera')">X</button>
+
 <button onclick="switchCam()">SWITCH CAMERA</button>
+
+<p>Use main camera below</p>
 </div>
 
 <!-- SMILE -->
 <div id="smile" class="window">
 <button onclick="closeWin('smile')">X</button>
+
 <pre id="chatLog"></pre>
+
 <input id="chatInput">
 <button onclick="sendSmile()">SEND</button>
 </div>
 
-<pre id="memory"></pre>
-
 </div>
 
+<!-- SCRIPT -->
 <script src="script.js"></script>
 
 </body>
