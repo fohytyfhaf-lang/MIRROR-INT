@@ -1,46 +1,51 @@
 // =========================
-// MIRROR-INT V95 SYSTEM
+// MIRROR-INT WINDOWS 95 ARG
 // =========================
 
+// ---------- SYSTEM ----------
 let progress = 0;
 let accessLevel = 0;
-let currentCamera = 0;
+let systemBooted = false;
 
-let systemLog = [];
-let staffMessages = [];
+// ---------- CAMERA ----------
+let currentCam = 0;
 
-const cameraList = [
+const cameras = [
   {
-    name: "CAMERA 01 / HALLWAY",
+    name: "CAMERA 01 / HALL",
     src: "images/cam_idle.gif"
   },
 
   {
-    name: "CAMERA 02 / STORAGE",
+    name: "CAMERA 02 / ARCHIVE",
     src: "images/cam_glitch.gif"
   },
 
   {
-    name: "CAMERA 03 / OMEGA",
+    name: "CAMERA 03 / RESTRICTED",
     src: "images/cam_secret.gif"
   }
 ];
 
-// =========================
-// FILES
-// =========================
+// ---------- MEMORY ----------
+let systemLog = [];
+let staffMessages = [];
+let smileMemory = [];
 
+// ---------- FILES ----------
 const files = {
 
   log: `
-INCIDENT LOG / 07
+INCIDENT LOG / 04
+
+03:14 AM
 
 Unknown movement detected
 inside sector hallway.
 
-Staff member ETHAN
-reported hearing voices
-through inactive speakers.
+Audio corrupted.
+
+Staff requested lockdown.
 
 STATUS:
 UNRESOLVED
@@ -49,28 +54,34 @@ UNRESOLVED
   subject: `
 SUBJECT REPORT
 
-Entity designation:
-"MISTER SMILE"
+Entity:
+UNKNOWN
 
-Observed:
-- appears in reflections
-- causes memory loss
-- active mostly at night
+Behavior:
+Observes operators through
+inactive cameras.
 
-WARNING:
-avoid direct interaction
+Several staff members
+reported hearing whispers.
+
+STATUS:
+ACTIVE
 `,
 
   research: `
 RESEARCH NOTES
 
-The system memory
-continues rewriting itself.
+Project MIRROR started
+in 1998.
 
-Old files disappear.
+Purpose:
+Behavior monitoring.
 
-Some employees claim
-the cameras move on their own.
+After first activation,
+multiple disappearances
+were reported.
+
+Internal archives sealed.
 `
 };
 
@@ -84,50 +95,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
     progress += 4;
 
-    const bar =
-      document.getElementById("bootProgress");
+    const bar = document.getElementById("bootProgress");
+    const text = document.getElementById("loadText");
+    const status = document.getElementById("bootStatus");
 
-    const txt =
-      document.getElementById("loadText");
+    if(bar) bar.style.width = progress + "%";
+    if(text) text.innerText = progress + "%";
 
-    const status =
-      document.getElementById("bootStatus");
+    if(progress < 30){
+      status.innerText = "Loading modules...";
+    }
 
-    if (bar)
-      bar.style.width = progress + "%";
+    else if(progress < 60){
+      status.innerText = "Checking memory...";
+    }
 
-    if (txt)
-      txt.innerText = progress + "%";
+    else if(progress < 90){
+      status.innerText = "Starting camera systems...";
+    }
 
-    if (progress < 30)
-      status.innerText =
-      "Loading system core...";
+    else{
+      status.innerText = "Launching MIRROR-INT...";
+    }
 
-    else if (progress < 60)
-      status.innerText =
-      "Checking archives...";
-
-    else if (progress < 90)
-      status.innerText =
-      "Connecting cameras...";
-
-    else
-      status.innerText =
-      "Starting interface...";
-
-    if (progress >= 100) {
+    if(progress >= 100){
 
       clearInterval(boot);
 
       setTimeout(() => {
 
-        document.getElementById("loading")
-          .style.display = "none";
+        document.getElementById("loading").style.display = "none";
 
-        document.getElementById("login")
-          .style.display = "flex";
+        document.getElementById("login").style.display = "flex";
 
-      }, 900);
+      }, 700);
     }
 
   }, 120);
@@ -138,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // LOGIN SYSTEM
 // =========================
 
-function loginSystem() {
+function loginSystem(){
 
   const user =
     document.getElementById("user").value;
@@ -151,97 +152,130 @@ function loginSystem() {
 
   let ok = false;
 
-  if (
-    user === "operator" &&
-    pass === "0404"
-  ) {
+  if(user === "operator" && pass === "0404"){
     accessLevel = 1;
     ok = true;
   }
 
-  else if (
-    user === "research" &&
-    pass === "void"
-  ) {
+  else if(user === "research" && pass === "void"){
     accessLevel = 2;
     ok = true;
   }
 
-  else if (
-    user === "omega" &&
-    pass === "mirror"
-  ) {
+  else if(user === "omega" && pass === "mirror"){
     accessLevel = 3;
     ok = true;
   }
 
-  if (!ok) {
+  if(!ok){
 
-    status.innerText =
-      "ACCESS DENIED";
+    status.innerText = "ACCESS DENIED";
 
     return;
   }
 
-  status.innerText =
-    "ACCESS GRANTED";
+  status.innerText = "ACCESS GRANTED";
 
   setTimeout(() => {
 
-    document.getElementById("login")
-      .style.display = "none";
+    document.getElementById("login").style.display = "none";
 
-    document.getElementById("screen")
-      .style.display = "block";
+    document.getElementById("screen").style.display = "block";
 
-    updateMemory();
+    systemBooted = true;
+
+    systemSpeak("SYSTEM ONLINE");
 
     startClock();
 
-    startStaffChat();
+    startStaffAI();
 
-    checkSmile();
+    startCameraGlitch();
 
-  }, 1200);
+    updateMemory();
 
+  }, 800);
 }
 
 // =========================
 // WINDOWS
 // =========================
 
-function openWindow(id) {
+function openWindow(id){
 
-  const w =
-    document.getElementById(id);
+  const w = document.getElementById(id);
 
-  if (w)
+  if(w){
     w.style.display = "block";
+  }
 }
 
-function closeWindow(id) {
+function closeWindow(id){
 
-  const w =
-    document.getElementById(id);
+  const w = document.getElementById(id);
 
-  if (w)
+  if(w){
     w.style.display = "none";
+  }
+}
+
+// =========================
+// CLOCK
+// =========================
+
+function startClock(){
+
+  setInterval(() => {
+
+    const c = document.getElementById("clock");
+
+    if(c){
+      c.innerText =
+        new Date().toLocaleTimeString();
+    }
+
+  }, 1000);
+}
+
+// =========================
+// MEMORY SYSTEM
+// =========================
+
+function systemSpeak(text){
+
+  systemLog.push(
+    "[SYSTEM] " + text
+  );
+
+  updateMemory();
+}
+
+function updateMemory(){
+
+  const mem =
+    document.getElementById("memory");
+
+  if(!mem) return;
+
+  mem.innerText =
+    systemLog.slice(-10).join("\n");
 }
 
 // =========================
 // CAMERA SYSTEM
 // =========================
 
-function switchCamera(dir) {
+function switchCamera(dir){
 
-  currentCamera += dir;
+  currentCam += dir;
 
-  if (currentCamera < 0)
-    currentCamera =
-    cameraList.length - 1;
+  if(currentCam < 0){
+    currentCam = cameras.length - 1;
+  }
 
-  if (currentCamera >= cameraList.length)
-    currentCamera = 0;
+  if(currentCam >= cameras.length){
+    currentCam = 0;
+  }
 
   const cam =
     document.getElementById("cam");
@@ -249,38 +283,67 @@ function switchCamera(dir) {
   const name =
     document.getElementById("cameraName");
 
-  cam.src =
-    cameraList[currentCamera].src;
+  cam.src = cameras[currentCam].src;
 
   name.innerText =
-    cameraList[currentCamera].name;
+    cameras[currentCam].name;
+}
+
+function startCameraGlitch(){
+
+  setInterval(() => {
+
+    if(accessLevel >= 2){
+
+      const r = Math.random();
+
+      if(r < 0.2){
+
+        const cam =
+          document.getElementById("cam");
+
+        cam.style.opacity = "0.4";
+
+        setTimeout(() => {
+          cam.style.opacity = "1";
+        }, 200);
+
+      }
+
+    }
+
+  }, 3000);
 }
 
 // =========================
-// FILE VIEWER
+// FILE SYSTEM
 // =========================
 
-function openFile(type) {
+function openFile(type){
 
   const viewer =
     document.getElementById("viewer");
 
-  if (!viewer) return;
+  if(!viewer) return;
 
-  viewer.innerText =
-    files[type];
+  if(files[type]){
+
+    viewer.innerText = files[type];
+
+    systemSpeak(
+      "OPENED FILE: " + type.toUpperCase()
+    );
+
+  }
+
 }
 
-// =========================
-// OMEGA FILE
-// =========================
-
-function openOmega() {
+function openOmega(){
 
   const viewer =
     document.getElementById("viewer");
 
-  if (accessLevel < 3) {
+  if(accessLevel < 3){
 
     viewer.innerText =
 `
@@ -289,6 +352,8 @@ ACCESS DENIED
 OMEGA CLEARANCE REQUIRED
 `;
 
+    systemSpeak("OMEGA ACCESS FAILED");
+
     return;
   }
 
@@ -296,33 +361,40 @@ OMEGA CLEARANCE REQUIRED
 `
 OMEGA FILE
 
-The entity was never found.
+Project MIRROR was never
+shut down.
 
-It was invited.
+The operators are being
+observed in real time.
 
-All cameras connected
-to sector 04 eventually
-begin showing the same face.
+MISTER SMILE IS ACTIVE.
 
-Do not let it speak alone
-with the operator.
+DO NOT TRUST
+THE CAMERAS.
 `;
+
+  systemSpeak("OMEGA FILE OPENED");
 }
 
 // =========================
 // STAFF CHAT
 // =========================
 
-function addStaffMessage(author, msg) {
+function addStaffMessage(author,text){
 
   staffMessages.push(
-    `[${author}] ${msg}`
+    `[${author}] ${text}`
   );
+
+  renderStaffChat();
+}
+
+function renderStaffChat(){
 
   const box =
     document.getElementById("staffLog");
 
-  if (!box) return;
+  if(!box) return;
 
   box.innerText =
     staffMessages.slice(-40).join("\n");
@@ -335,251 +407,213 @@ function addStaffMessage(author, msg) {
 // STAFF AI
 // =========================
 
-function startStaffChat() {
+function startStaffAI(){
 
   const scenes = [
 
     [
-      {
-        t: 0,
-        a: "HARRIS",
-        m: "System feels unstable again."
-      },
-
-      {
-        t: 5000,
-        a: "MILA",
-        m: "Camera 03 keeps glitching."
-      },
-
-      {
-        t: 10000,
-        a: "ETHAN",
-        m: "I heard voices yesterday."
-      },
-
-      {
-        t: 16000,
-        a: "LUCY",
-        m: "Do not discuss that here."
-      }
+      ["HARRIS","System feels unstable again."],
+      ["MILA","Archive cameras keep freezing."],
+      ["ETHAN","Did someone open restricted files?"],
+      ["LUCY","Stop discussing this here."]
     ],
 
     [
-      {
-        t: 0,
-        a: "MILA",
-        m: "Did anyone sleep?"
-      },
+      ["MILA","I stayed overnight yesterday."],
+      ["ETHAN","You too?"],
+      ["MILA","I heard footsteps near camera 03."],
+      ["HARRIS","Ignore it."]
+    ],
 
-      {
-        t: 6000,
-        a: "ETHAN",
-        m: "Not after reading the Omega logs."
-      },
-
-      {
-        t: 12000,
-        a: "HARRIS",
-        m: "Those files should be deleted."
-      },
-
-      {
-        t: 17000,
-        a: "LUCY",
-        m: "Nothing deletes anymore."
-      }
+    [
+      ["ETHAN","Do you think the operators can read this?"],
+      ["LUCY","Hopefully not."],
+      ["HARRIS","Keep focus on work."]
     ]
+
   ];
 
-  function runScene() {
+  function playScene(){
 
-    const scene =
-      scenes[
-        Math.floor(
-          Math.random() *
-          scenes.length
-        )
-      ];
+    const s =
+      scenes[Math.floor(Math.random()*scenes.length)];
 
-    scene.forEach(msg => {
+    s.forEach((m,i) => {
 
       setTimeout(() => {
 
-        addStaffMessage(
-          msg.a,
-          msg.m
-        );
+        addStaffMessage(m[0],m[1]);
 
-      }, msg.t);
+      }, i * 5000);
 
     });
 
-    setTimeout(runScene, 26000);
+    setTimeout(playScene,30000);
   }
 
-  runScene();
+  playScene();
 }
 
 // =========================
-// PLAYER CHAT
+// PLAYER MESSAGE
 // =========================
 
-function sendStaffMessage() {
+function sendStaffMessage(){
 
   const input =
     document.getElementById("staffInput");
 
-  if (!input) return;
+  if(!input) return;
 
   const text =
     input.value.trim();
 
-  if (!text) return;
+  if(!text) return;
 
-  addStaffMessage(
-    "YOU",
-    text
+  addStaffMessage("YOU",text);
+
+  input.value = "";
+
+  setTimeout(() => {
+
+    respondStaff(text);
+
+  }, 1200);
+}
+
+function respondStaff(msg){
+
+  msg = msg.toLowerCase();
+
+  let response =
+    "Message logged.";
+
+  if(msg.includes("hello")){
+    response = "Hello operator.";
+  }
+
+  else if(msg.includes("mirror")){
+    response = "Do not discuss MIRROR here.";
+  }
+
+  else if(msg.includes("camera")){
+    response = "Camera feeds are unstable.";
+  }
+
+  else if(msg.includes("smile")){
+    response = "Restricted topic.";
+  }
+
+  const staff = [
+    "HARRIS",
+    "MILA",
+    "ETHAN",
+    "LUCY"
+  ];
+
+  const name =
+    staff[Math.floor(Math.random()*staff.length)];
+
+  addStaffMessage(name,response);
+}
+
+// =========================
+// MISTER SMILE CHAT
+// =========================
+
+function sendSmile(){
+
+  const input =
+    document.getElementById("chatInput");
+
+  if(!input) return;
+
+  const text =
+    input.value.trim();
+
+  if(!text) return;
+
+  appendSmile(
+    "YOU: " + text
   );
 
   input.value = "";
 
   setTimeout(() => {
 
-    addStaffMessage(
-      "HARRIS",
-      "Message received."
-    );
+    respondSmile(text);
 
-  }, 1000);
+  }, 2000);
 }
 
-// =========================
-// SMILE CHAT
-// =========================
-
-function sendSmile() {
-
-  const input =
-    document.getElementById("chatInput");
+function appendSmile(text){
 
   const log =
     document.getElementById("chatLog");
 
-  if (!input || !log) return;
-
-  const text =
-    input.value.trim();
-
-  if (!text) return;
-
   log.innerText +=
-    "\nYOU: " + text;
+    "\n" + text;
 
-  input.value = "";
-
-  setTimeout(() => {
-
-    log.innerText +=
-      "\nMISTER SMILE: I can still see you.";
-
-    log.scrollTop =
-      log.scrollHeight;
-
-  }, 1400);
+  log.scrollTop =
+    log.scrollHeight;
 }
 
-// =========================
-// NIGHT EVENT
-// =========================
+function respondSmile(msg){
 
-function checkSmile() {
+  msg = msg.toLowerCase();
 
-  const hour =
-    new Date().getHours();
+  let reply =
+    "...watching";
 
-  if (hour >= 1 && hour <= 4) {
-
-    setTimeout(() => {
-
-      addStaffMessage(
-        "SYSTEM",
-        "Unknown user connected."
-      );
-
-      openWindow("smileWindow");
-
-    }, 20000);
+  if(msg.includes("who")){
+    reply = "You already know me.";
   }
-}
 
-// =========================
-// MEMORY
-// =========================
+  else if(msg.includes("hello")){
+    reply = "Good evening.";
+  }
 
-function updateMemory() {
+  else if(msg.includes("mirror")){
+    reply = "The mirror is open.";
+  }
 
-  const mem =
-    document.getElementById("memory");
+  else if(msg.includes("help")){
+    reply = "Nobody can help now.";
+  }
 
-  if (!mem) return;
-
-  mem.innerText =
-`
-SYSTEM STATUS: ONLINE
-
-ACTIVE USER LEVEL:
-${accessLevel}
-
-CAMERAS CONNECTED:
-${cameraList.length}
-
-ARCHIVE STATUS:
-STABLE
-
-OMEGA STATUS:
-RESTRICTED
-`;
-}
-
-// =========================
-// CLOCK
-// =========================
-
-function startClock() {
-
-  setInterval(() => {
-
-    const c =
-      document.getElementById("clock");
-
-    if (!c) return;
-
-    c.innerText =
-      new Date().toLocaleTimeString();
-
-  }, 1000);
+  appendSmile(
+    "SMILE: " + reply
+  );
 }
 
 // =========================
 // MINI GAME
 // =========================
 
-function fakeHack() {
+function fakeHack(){
 
   const game =
     document.getElementById("gameText");
 
-  if (!game) return;
-
   game.innerText =
 `
-CONNECTING...
+CONNECTING TO NODE...
 
-BYPASSING SECURITY...
+BYPASSING FIREWALL...
 
-ACCESSING STAFF DATABASE...
+ACCESSING ARCHIVE...
 
 ACCESS GRANTED
 `;
+
+  setTimeout(() => {
+
+    game.innerText +=
+`
+
+SECRET FOUND:
+OMEGA ACTIVE
+`;
+
+  }, 3000);
 }
