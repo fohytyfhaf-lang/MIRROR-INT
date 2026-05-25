@@ -1,174 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <title>MIRROR INT ARG SYSTEM</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>MIRROR INT V7 FIXED</title>
+
+<style>
+body {
+  margin:0;
+  font-family: monospace;
+  background: radial-gradient(#05070a, #000);
+  color:#00ff9d;
+  overflow:hidden;
+}
+
+/* NOISE */
+#bg {
+  position:fixed;
+  inset:0;
+  background:url("https://i.imgur.com/3ZQ3Z8B.gif");
+  opacity:0.06;
+  pointer-events:none;
+}
+
+/* LOGIN */
+#login {
+  position:absolute;
+  top:35%;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+}
+
+/* DESKTOP */
+#desktop {
+  display:flex;
+  gap:15px;
+  padding:15px;
+}
+
+.icon {
+  padding:10px;
+  border:1px solid #00ff9d;
+  cursor:pointer;
+}
+
+/* WINDOWS */
+.window {
+  display:none;
+  position:absolute;
+  top:20%;
+  left:25%;
+  width:420px;
+  height:320px;
+  background:black;
+  border:1px solid #00ff9d;
+  padding:10px;
+}
+
+/* CHAT BOX */
+#staffLog, #chatLog {
+  height:200px;
+  overflow:auto;
+  background:#000;
+  padding:5px;
+}
+
+/* CAMERA */
+img {
+  width:300px;
+}
+</style>
 </head>
 
 <body>
 
-<!-- =========================
-     BOOT SCREEN
-========================= -->
-<div id="loading">
-  <div id="bootWindow">
+<div id="bg"></div>
 
-    <div id="bootHeader">MIRROR-INT SYSTEM</div>
-
-    <div id="bootBody">
-      <p>Starting MIRROR-INT...</p>
-
-      <p id="bootStatus">Initializing system files...</p>
-
-      <div id="bootBar">
-        <div id="bootProgress"></div>
-      </div>
-
-      <p id="loadText">0%</p>
-    </div>
-
-  </div>
+<!-- LOGIN -->
+<div id="login">
+  <h2>MIRROR INT LOGIN</h2>
+  <input id="user" placeholder="user"><br>
+  <input id="pass" type="password" placeholder="pass"><br>
+  <button onclick="login()">ENTER</button>
 </div>
 
-<!-- =========================
-     LOGIN
-========================= -->
-<div id="login" style="display:none;" class="panel">
-  <p>AUTHENTICATION REQUIRED</p>
+<!-- MAIN -->
+<div id="main" style="display:none;">
 
-  <input id="user" placeholder="USERNAME">
-  <input id="pass" placeholder="PASSWORD" type="password">
-
-  <button onclick="loginSystem()">LOGIN</button>
-
-  <p id="loginStatus"></p>
-
-  <p id="hint">
-    operator / 0404<br>
-    research / void<br>
-    omega / mirror
-  </p>
+<div id="desktop">
+  <div class="icon" onclick="openWin('staff')">STAFF</div>
+  <div class="icon" onclick="openWin('camera')">CAMERA</div>
+  <div class="icon" onclick="openWin('files')">FILES</div>
+  <div class="icon" onclick="openWin('smile')">SMILE</div>
 </div>
 
-<!-- =========================
-     MAIN SYSTEM
-========================= -->
-<div id="screen" style="display:none;">
+<div>
+CLOCK: <span id="clock"></span>
+</div>
 
-  <div class="title glitch">
-    MIRROR-INT / ARG OBSERVATION SYSTEM
-  </div>
+<img id="cam" src="https://i.imgur.com/8QfQx.gif">
 
-  <!-- =========================
-       DESKTOP ICONS
-  ========================= -->
-  <div id="desktop">
+<!-- STAFF -->
+<div id="staff" class="window">
+<button onclick="closeWin('staff')">X</button>
+<pre id="staffLog"></pre>
+<input id="staffInput">
+<button onclick="sendStaffMessage()">SEND</button>
+</div>
 
-    <div class="desktop-icon" onclick="openWindow('archiveWindow')">
-      <img src="images/folder.png">
-      <span>ARCHIVE</span>
-    </div>
+<!-- FILES -->
+<div id="files" class="window">
+<button onclick="closeWin('files')">X</button>
+<pre id="fileView">NO FILE</pre>
+<button onclick="hack()">HACK</button>
+</div>
 
-    <div class="desktop-icon" onclick="openWindow('staffWindow')">
-      <img src="images/chat.png">
-      <span>STAFF CHAT</span>
-    </div>
+<!-- CAMERA -->
+<div id="camera" class="window">
+<button onclick="closeWin('camera')">X</button><br>
+<button onclick="switchCam()">SWITCH CAMERA</button>
+</div>
 
-    <div class="desktop-icon" onclick="openWindow('cameraWindow')">
-      <img src="images/camera.png">
-      <span>CAMERAS</span>
-    </div>
+<!-- SMILE -->
+<div id="smile" class="window">
+<button onclick="closeWin('smile')">X</button>
+<pre id="chatLog"></pre>
+<input id="chatInput">
+<button onclick="sendSmile()">SEND</button>
+</div>
 
-    <div class="desktop-icon" onclick="openWindow('smileWindow')">
-      <img src="images/smile.png">
-      <span>MISTER SMILE</span>
-    </div>
-
-  </div>
-
-  <!-- =========================
-       CLOCK PANEL
-  ========================= -->
-  <div class="panel">
-    <p id="clock">TIME: --</p>
-    <p>STATUS: ONLINE</p>
-    <p>ACCESS: RESTRICTED</p>
-  </div>
-
-  <!-- =========================
-       CAMERA WINDOW
-  ========================= -->
-  <div id="cameraWindow" class="panel" style="display:none;">
-    <p>LIVE CAMERA FEED</p>
-    <img id="cam" src="images/cam_idle.gif" width="450">
-    <button onclick="closeWindow('cameraWindow')">CLOSE</button>
-  </div>
-
-  <!-- =========================
-       ARCHIVE WINDOW
-  ========================= -->
-  <div id="archiveWindow" class="panel" style="display:none;">
-    <p>ARCHIVE</p>
-
-    <div onclick="openFile('log')" class="file">📄 INCIDENT LOG</div>
-    <div onclick="openFile('subject')" class="file">📄 SUBJECT REPORT</div>
-    <div onclick="openSecret()" class="file secret">🔒 OMEGA FILE</div>
-
-    <button onclick="closeWindow('archiveWindow')">CLOSE</button>
-  </div>
-
-  <!-- =========================
-       STAFF CHAT WINDOW
-  ========================= -->
-  <div id="staffWindow" class="panel" style="display:none;">
-    <p>STAFF CHAT (LIVE SYSTEM)</p>
-
-    <pre id="staffLog"
-         style="white-space: pre-wrap; max-height:250px; overflow:auto;"></pre>
-
-    <input id="staffInput" placeholder="message...">
-    <button onclick="sendStaffMessage()">SEND</button>
-
-    <button onclick="closeWindow('staffWindow')">CLOSE</button>
-  </div>
-
-  <!-- =========================
-       MISTER SMILE WINDOW
-  ========================= -->
-  <div id="smileWindow" class="panel" style="display:none;">
-    <p>MISTER SMILE CHANNEL</p>
-
-    <pre id="chatLog" style="white-space: pre-wrap; max-height:200px; overflow:auto;"></pre>
-
-    <input id="chatInput" placeholder="type message...">
-    <button onclick="sendSmile()">SEND</button>
-
-    <button onclick="closeWindow('smileWindow')">CLOSE</button>
-  </div>
-
-  <!-- =========================
-       FILE VIEWER
-  ========================= -->
-  <div class="panel">
-    <p>FILE VIEWER</p>
-    <pre id="viewer">NO FILE SELECTED</pre>
-  </div>
-
-  <!-- =========================
-       MEMORY
-  ========================= -->
-  <div class="panel">
-    <p>SYSTEM MEMORY</p>
-    <div id="memory">INITIALIZING...</div>
-  </div>
+<pre id="memory"></pre>
 
 </div>
 
-<!-- =========================
-     SCRIPT
-========================= -->
 <script src="script.js"></script>
 
 </body>
