@@ -9,39 +9,32 @@
 
 <body>
 
+<!-- =========================
+     BOOT SCREEN
+========================= -->
 <div id="loading">
-
   <div id="bootWindow">
 
-    <div id="bootHeader">
-      MIRROR-INT SYSTEM
-    </div>
+    <div id="bootHeader">MIRROR-INT SYSTEM</div>
 
     <div id="bootBody">
+      <p>Starting MIRROR-INT...</p>
 
-      <p>
-        Starting MIRROR-INT...
-      </p>
-
-      <p id="bootStatus">
-        Initializing system files...
-      </p>
+      <p id="bootStatus">Initializing system files...</p>
 
       <div id="bootBar">
         <div id="bootProgress"></div>
       </div>
 
-      <p id="loadText">
-        0%
-      </p>
-
+      <p id="loadText">0%</p>
     </div>
 
   </div>
-
 </div>
 
-  <!-- 🔐 LOGIN -->
+<!-- =========================
+     LOGIN
+========================= -->
 <div id="login" style="display:none;" class="panel">
   <p>AUTHENTICATION REQUIRED</p>
 
@@ -51,114 +44,132 @@
   <button onclick="loginSystem()">LOGIN</button>
 
   <p id="loginStatus"></p>
-  <p id="hint">
-operator / 0404<br>
-research / void<br>
-omega / mirror
-</p>
-</div>
-<!-- 🎮 MAIN -->
-<div id="screen" style="display:none;">
-  <!-- 💬 STAFF CHAT WINDOW -->
-<div id="staffWindow" class="panel" style="display:none;">
-  <p>STAFF CHAT (LIVE SYSTEM)</p>
 
-  <pre id="staffLog"
-       style="white-space: pre-wrap;
-              max-height:250px;
-              overflow:auto;
-              background:black;
-              color:lime;
-              padding:10px;">
-  </pre>
+  <p id="hint">
+    operator / 0404<br>
+    research / void<br>
+    omega / mirror
+  </p>
 </div>
+
+<!-- =========================
+     MAIN SYSTEM
+========================= -->
+<div id="screen" style="display:none;">
+
   <div class="title glitch">
     MIRROR-INT / ARG OBSERVATION SYSTEM
   </div>
-  
-<!-- 🖥 DESKTOP -->
 
-<div id="desktop">
+  <!-- =========================
+       DESKTOP ICONS
+  ========================= -->
+  <div id="desktop">
 
-  <!-- 📁 FILES -->
-  <div class="desktop-icon" onclick="openWindow('archiveWindow')">
-    <img src="images/folder.png">
-    <span>ARCHIVE</span>
+    <div class="desktop-icon" onclick="openWindow('archiveWindow')">
+      <img src="images/folder.png">
+      <span>ARCHIVE</span>
+    </div>
+
+    <div class="desktop-icon" onclick="openWindow('staffWindow')">
+      <img src="images/chat.png">
+      <span>STAFF CHAT</span>
+    </div>
+
+    <div class="desktop-icon" onclick="openWindow('cameraWindow')">
+      <img src="images/camera.png">
+      <span>CAMERAS</span>
+    </div>
+
+    <div class="desktop-icon" onclick="openWindow('smileWindow')">
+      <img src="images/smile.png">
+      <span>MISTER SMILE</span>
+    </div>
+
   </div>
 
-  <!-- 💬 STAFF CHAT -->
-  <div class="desktop-icon" onclick="openWindow('staffWindow')">
-    <img src="images/chat.png">
-    <span>STAFF CHAT</span>
-  </div>
-
-  <!-- 📷 CAMERAS -->
-  <div class="desktop-icon" onclick="openWindow('cameraWindow')">
-    <img src="images/camera.png">
-    <span>CAMERAS</span>
-  </div>
-
-</div>
-
-  <!-- 🕒 TIME -->
+  <!-- =========================
+       CLOCK PANEL
+  ========================= -->
   <div class="panel">
     <p id="clock">TIME: --</p>
     <p>STATUS: ONLINE</p>
     <p>ACCESS: RESTRICTED</p>
   </div>
 
-  <!-- 👁 CAMERA -->
-  <div class="panel">
-    <p>LIVE FEED</p>
+  <!-- =========================
+       CAMERA WINDOW
+  ========================= -->
+  <div id="cameraWindow" class="panel" style="display:none;">
+    <p>LIVE CAMERA FEED</p>
     <img id="cam" src="images/cam_idle.gif" width="450">
+    <button onclick="closeWindow('cameraWindow')">CLOSE</button>
   </div>
 
-  <!-- 📁 ARCHIVE -->
-  <div class="panel">
+  <!-- =========================
+       ARCHIVE WINDOW
+  ========================= -->
+  <div id="archiveWindow" class="panel" style="display:none;">
     <p>ARCHIVE</p>
-    
-  
+
     <div onclick="openFile('log')" class="file">📄 INCIDENT LOG</div>
     <div onclick="openFile('subject')" class="file">📄 SUBJECT REPORT</div>
     <div onclick="openSecret()" class="file secret">🔒 OMEGA FILE</div>
+
+    <button onclick="closeWindow('archiveWindow')">CLOSE</button>
   </div>
-  
-  
-<!-- 💬 MISTER SMILE CHAT -->
-<div id="smileChat" style="display:none;" class="panel">
-  <p>MISTER SMILE CONNECTION</p>
 
-  <pre id="chatLog" style="white-space: pre-wrap; max-height:200px; overflow:auto;"></pre>
+  <!-- =========================
+       STAFF CHAT WINDOW
+  ========================= -->
+  <div id="staffWindow" class="panel" style="display:none;">
+    <p>STAFF CHAT (LIVE SYSTEM)</p>
 
-  <input id="chatInput" placeholder="type message...">
-  <button onclick="sendSmile()">SEND</button>
-</div>
-  <!-- 📖 VIEWER -->
+    <pre id="staffLog"
+         style="white-space: pre-wrap; max-height:250px; overflow:auto;"></pre>
+
+    <input id="staffInput" placeholder="message...">
+    <button onclick="sendStaffMessage()">SEND</button>
+
+    <button onclick="closeWindow('staffWindow')">CLOSE</button>
+  </div>
+
+  <!-- =========================
+       MISTER SMILE WINDOW
+  ========================= -->
+  <div id="smileWindow" class="panel" style="display:none;">
+    <p>MISTER SMILE CHANNEL</p>
+
+    <pre id="chatLog" style="white-space: pre-wrap; max-height:200px; overflow:auto;"></pre>
+
+    <input id="chatInput" placeholder="type message...">
+    <button onclick="sendSmile()">SEND</button>
+
+    <button onclick="closeWindow('smileWindow')">CLOSE</button>
+  </div>
+
+  <!-- =========================
+       FILE VIEWER
+  ========================= -->
   <div class="panel">
     <p>FILE VIEWER</p>
     <pre id="viewer">NO FILE SELECTED</pre>
   </div>
 
-  <!-- 🧠 ARG MEMORY -->
+  <!-- =========================
+       MEMORY
+  ========================= -->
   <div class="panel">
-    <p>SYSTEM MEMORY (OBSERVATION PROFILE)</p>
+    <p>SYSTEM MEMORY</p>
     <div id="memory">INITIALIZING...</div>
   </div>
 
 </div>
-  
-<div id="noise"></div>
-  <div class="window">
-  <div class="window-header">MIRROR SYSTEM - CONTROL</div>
 
-  <div class="window-body">
-    SYSTEM STATUS: ACTIVE<br>
-    OBSERVATION: ONLINE<br>
-    WARNING: UNKNOWN ACTIVITY
-  </div>
-</div>
- 
-  
+<!-- =========================
+     SCRIPT
+========================= -->
 <script src="script.js"></script>
+
 </body>
 </html>
