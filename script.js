@@ -347,7 +347,11 @@ function startCameraGlitch(){
     if(r < 0.25){
 
       cam.style.opacity = "0.4";
-
+      
+document.getElementById(
+  "glitchSound"
+).play();
+      
       setTimeout(() => {
 
         cam.style.opacity = "1";
