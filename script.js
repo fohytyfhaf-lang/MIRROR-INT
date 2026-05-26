@@ -118,6 +118,10 @@ Internal archives sealed.
 
 document.addEventListener("DOMContentLoaded", () => {
 
+  document.getElementById(
+    "bootSound"
+  ).play();
+
   const boot = setInterval(() => {
 
     progress += 4;
@@ -229,6 +233,9 @@ function loginSystem(){
 // =========================
 
 function openWindow(id){
+   document.getElementById(
+    "clickSound"
+  ).play();
 
   const w = document.getElementById(id);
 
