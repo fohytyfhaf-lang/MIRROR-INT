@@ -23,7 +23,7 @@ const cameras = [
 
   {
     name: "CAMERA 03 / RESTRICTED",
-    src: 
+    src:"images/cam_camera2.gif"
  },
 
   {
