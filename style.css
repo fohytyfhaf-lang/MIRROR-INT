@@ -375,3 +375,37 @@ GLITCH
   50%{opacity:0.8;}
   100%{opacity:1;}
 }
+
+/* =========================
+VOID RUNNER GAME
+========================= */
+
+#gameWindow {
+
+  width: 760px;
+  height: 430px;
+
+  left: 220px;
+  top: 90px;
+}
+
+#gameCanvas {
+
+  background: black;
+
+  border:
+    2px inset #808080;
+
+  display: block;
+
+  margin-bottom: 10px;
+}
+
+.gameInfo {
+
+  color: #00ff99;
+
+  font-size: 13px;
+
+  margin-bottom: 10px;
+}
