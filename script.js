@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const boot = setInterval(() => {
 
-    progress += 1;
+    progress += 0.4;
 
     const bar =
       document.getElementById("bootProgress");
@@ -213,7 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-  }, 170);
+  }, 220);
 
 });
 // =========================
