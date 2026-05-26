@@ -124,12 +124,6 @@ Internal archives sealed.
 // BOOT SYSTEM
 // =========================
 function startBootSequence() {
-
-const bios = document.getElementById("biosScreen");
-const hack = document.getElementById("hackScreen");
-const hackText = document.getElementById("hackText");
-
-if (bios) bios.style.display = "block";
   
   progress = 0;
 
