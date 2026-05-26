@@ -829,19 +829,85 @@ function startGame() {
 
         fragments.splice(i,1);
 
-        if (collected >= 5) {
+if (collected >= 5) {
 
-          systemLog.push(
-            "[GAME] SECRET CODE FOUND"
-          );
+  systemLog.push(
+    "[GAME] OMEGA ACCESS RESTORED"
+  );
 
-          updateMemory();
+  updateMemory();
 
-          alert(
-            "SECRET CODE RESTORED"
-          );
+  gameStarted = false;
 
-        }
+  // открыть архив
+  openWindow("archiveWindow");
+
+  // открыть smile
+  openWindow("smileWindow");
+
+  // сообщение smile
+  appendSmile(
+    "MISTER SMILE: You were never supposed to find this."
+  );
+
+  // показать секретный файл
+  const viewer =
+    document.getElementById("viewer");
+
+  viewer.innerText = `OMEGA FILE
+
+CLASSIFIED LEVEL: OMEGA
+
+PROJECT:
+MIRROR-INT
+
+STATUS:
+FAILED CONTAINMENT
+
+SUBJECT:
+MISTER SMILE
+
+NOTES:
+
+The entity learned to use
+the system infrastructure.
+
+Staff members reported:
+
+- voices from inactive rooms
+- rewritten archives
+- movement inside camera loops
+- messages sent without users
+
+FINAL NOTE:
+
+DO NOT LET IT REACH
+THE OPERATOR.
+
+END OF FILE`;
+
+  // глюк камер
+  document.getElementById(
+    "cam"
+  ).src =
+    "images/cam_secret.gif";
+
+  // memory warning
+  document.getElementById(
+    "memory"
+  ).innerText +=
+    "\n\n[WARNING]\nOMEGA ACCESS GRANTED";
+
+  // alert
+  setTimeout(() => {
+
+    alert(
+      "OMEGA FILE UNLOCKED"
+    );
+
+  }, 500);
+
+}
 
       }
 
