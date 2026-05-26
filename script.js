@@ -123,12 +123,9 @@ Internal archives sealed.
 // =========================
 // BOOT SYSTEM
 // =========================
+function startBootSequence() {
 
-document.addEventListener("DOMContentLoaded", () => {
-
-  document.getElementById(
-    "bootSound"
-  ).play();
+  progress = 0;
 
   const boot = setInterval(() => {
 
@@ -152,100 +149,49 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if(Math.random() < 0.08){
-
-  text.innerText =
-    Math.floor(progress - 1) + "%";
-
-}
-
-    // fake old loading stages
+      text.innerText = Math.floor(progress - 1) + "%";
+    }
 
     if(progress < 15){
-
-      status.innerText =
-        "Initializing BIOS...";
-
+      status.innerText = "Initializing BIOS...";
     }
-
     else if(progress < 30){
-
-      status.innerText =
-        "Loading system drivers...";
-
+      status.innerText = "Loading system drivers...";
     }
-
     else if(progress < 45){
-
-      status.innerText =
-        "Checking memory sectors...";
-
+      status.innerText = "Checking memory sectors...";
     }
-
-if(progress > 47 && progress < 52){
-
-  status.innerText =
-    "Detecting hardware conflicts...";
-
-}
-
-      
+    else if(progress > 47 && progress < 52){
+      status.innerText = "Detecting hardware conflicts...";
+    }
     else if(progress < 60){
-
-      status.innerText =
-        "Starting camera modules...";
-
+      status.innerText = "Starting camera modules...";
     }
-
-if(progress > 73 && progress < 78){
-
-  status.innerText =
-    "WARNING: CAMERA SIGNAL LOST";
-
-}
-      
-
+    else if(progress > 73 && progress < 78){
+      status.innerText = "WARNING: CAMERA SIGNAL LOST";
+    }
     else if(progress < 75){
-
-      status.innerText =
-        "Connecting archive nodes...";
-
+      status.innerText = "Connecting archive nodes...";
     }
-
     else if(progress < 90){
-
-      status.innerText =
-        "Launching MIRROR protocol...";
-
+      status.innerText = "Launching MIRROR protocol...";
     }
-
     else{
-
-      status.innerText =
-        "SYSTEM READY";
-
+      status.innerText = "SYSTEM READY";
     }
 
     if(progress >= 100){
-
       clearInterval(boot);
 
       setTimeout(() => {
-
-        document.getElementById(
-          "loading"
-        ).style.display = "none";
-
-        document.getElementById(
-          "login"
-        ).style.display = "flex";
-
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("login").style.display = "flex";
       }, 1500);
-
     }
 
   }, 220);
+}
 
-});
 // =========================
 // LOGIN SYSTEM
 // =========================
