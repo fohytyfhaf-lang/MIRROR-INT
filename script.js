@@ -1067,4 +1067,41 @@ document.addEventListener(
 
 document.addEventListener("DOMContentLoaded", () => {
   startBootSequence();
+
+  function startIntro() {
+
+  const bios = document.getElementById("biosScreen");
+  const hack = document.getElementById("hackScreen");
+  const hackText = document.getElementById("hackText");
+
+  bios.style.display = "block";
+
+  // BIOS сцена
+  setTimeout(() => {
+
+    bios.style.display = "none";
+    hack.style.display = "block";
+
+    let i = 0;
+
+    const interval = setInterval(() => {
+
+      if (i < hackLines.length) {
+        hackText.innerText += hackLines[i] + "\n";
+        i++;
+      } else {
+        clearInterval(interval);
+
+        setTimeout(() => {
+          hack.style.display = "none";
+          startBoot(); // переходим к Win95
+        }, 800);
+      }
+
+    }, 400);
+
+  }, 1500);
+}
+  
 });
+
