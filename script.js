@@ -119,6 +119,10 @@ Internal archives sealed.
 
 document.addEventListener("DOMContentLoaded", () => {
 
+  document.getElementById(
+    "bootSound"
+  ).play();
+
   const boot = setInterval(() => {
 
     progress += 1;
@@ -132,76 +136,64 @@ document.addEventListener("DOMContentLoaded", () => {
     const status =
       document.getElementById("bootStatus");
 
-    if(bar)
+    if(bar){
       bar.style.width = progress + "%";
+    }
 
-    if(text)
+    if(text){
       text.innerText = progress + "%";
+    }
 
-    // boot messages
+    // fake old loading stages
 
     if(progress < 15){
 
       status.innerText =
-        "Loading DOS modules...";
+        "Initializing BIOS...";
 
     }
 
     else if(progress < 30){
 
       status.innerText =
-        "Checking system memory...";
+        "Loading system drivers...";
 
     }
 
     else if(progress < 45){
 
       status.innerText =
-        "Connecting archive nodes...";
+        "Checking memory sectors...";
 
     }
 
     else if(progress < 60){
 
       status.innerText =
-        "Restoring camera systems...";
+        "Starting camera modules...";
 
     }
 
     else if(progress < 75){
 
       status.innerText =
-        "Decrypting MIRROR files...";
+        "Connecting archive nodes...";
 
     }
 
     else if(progress < 90){
 
       status.innerText =
-        "WARNING: Unknown signal detected...";
+        "Launching MIRROR protocol...";
 
     }
 
     else{
 
       status.innerText =
-        "Launching MIRROR-INT...";
-    }
-
-    // fake freeze
-
-    if(progress === 72){
-
-      status.innerText =
-        "SYSTEM NOT RESPONDING...";
-
-      document.getElementById(
-        "glitchSound"
-      ).play();
+        "SYSTEM READY";
 
     }
-
-    // finish
 
     if(progress >= 100){
 
@@ -217,14 +209,13 @@ document.addEventListener("DOMContentLoaded", () => {
           "login"
         ).style.display = "flex";
 
-      }, 1200);
+      }, 1500);
 
     }
 
-  }, 180);
+  }, 170);
 
 });
-
 // =========================
 // LOGIN SYSTEM
 // =========================
