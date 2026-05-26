@@ -138,12 +138,16 @@ function startBoot() {
     if (bar) bar.style.width = progress + "%";
     if (text) text.innerText = Math.floor(progress) + "%";
 
-    if (progress < 15) status.innerText = "Initializing BIOS...";
-    else if (progress < 30) status.innerText = "Loading system drivers...";
-    else if (progress < 45) status.innerText = "Checking memory sectors...";
-    else if (progress < 60) status.innerText = "Starting system...";
-    else if (progress < 80) status.innerText = "Launching services...";
-    else status.innerText = "SYSTEM READY";
+   const logs = [
+  "Loading HIMEM.SYS...",
+  "Initializing system memory...",
+  "Checking hardware...",
+  "Loading device drivers...",
+  "Starting UI subsystem...",
+  "Mounting system registry..."
+];
+
+status.innerText = logs[Math.floor(progress / 15)];
 
     if (progress >= 100) {
 
