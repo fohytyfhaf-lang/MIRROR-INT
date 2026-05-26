@@ -361,6 +361,10 @@ function startCameraGlitch(){
 
       const old =
         cam.src;
+      
+document.getElementById(
+  "glitchSound"
+).play();
 
       cam.src =
         "images/noise.gif";
