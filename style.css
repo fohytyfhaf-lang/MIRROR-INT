@@ -444,7 +444,3 @@ VOID RUNNER GAME
   align-items: center;
 }
 
-#biosScreen,
-#hackScreen {
-  display: none !important;
-}
