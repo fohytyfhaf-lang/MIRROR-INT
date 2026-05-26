@@ -409,3 +409,37 @@ VOID RUNNER GAME
 
   margin-bottom: 10px;
 }
+
+
+
+/* ================= BIOS ================= */
+#biosScreen {
+  position: fixed;
+  inset: 0;
+  background: black;
+  color: white;
+  font-family: monospace;
+  padding: 20px;
+  white-space: pre;
+}
+
+/* ================= HACK ================= */
+#hackScreen {
+  position: fixed;
+  inset: 0;
+  background: black;
+  color: #00ff00;
+  font-family: "Courier New", monospace;
+  padding: 20px;
+  white-space: pre;
+}
+
+/* ================= WIN95 BOOT ================= */
+#loading {
+  position: fixed;
+  inset: 0;
+  background: #008080;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
