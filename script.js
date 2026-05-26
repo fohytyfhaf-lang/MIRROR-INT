@@ -6,7 +6,14 @@
 let progress = 0;
 let accessLevel = 0;
 let systemBooted = false;
-
+let hackLines = [
+  "[OK] accessing system core...",
+  "[OK] bypassing security layer...",
+  "[OK] injecting MIRROR protocol...",
+  "[OK] override successful...",
+  "[WARNING] unknown entity detected...",
+  "[OK] boot sequence modified..."
+];
 // ---------- CAMERA ----------
 let currentCam = 0;
 
