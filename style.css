@@ -410,6 +410,9 @@ VOID RUNNER GAME
   margin-bottom: 10px;
 }
 
+#loading {
+  display: flex !important;
+}
 
 #loading {
   z-index: 9998;
