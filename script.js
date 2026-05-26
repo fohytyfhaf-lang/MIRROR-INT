@@ -312,6 +312,15 @@ function switchCamera(dir){
 
   cam.src = cameras[currentCam].src;
 
+cam.style.filter = "brightness(1.2) contrast(1.3)";
+
+setTimeout(() => {
+
+  cam.style.filter = "none";
+
+}, 120);
+
+
   name.innerText =
     cameras[currentCam].name;
 }
@@ -320,28 +329,67 @@ function startCameraGlitch(){
 
   setInterval(() => {
 
-    if(accessLevel >= 2){
+    const cam =
+      document.getElementById("cam");
 
-      const r = Math.random();
+    if(!cam) return;
 
-      if(r < 0.2){
+    const r = Math.random();
 
-        const cam =
-          document.getElementById("cam");
+    // лёгкий glitch
+    if(r < 0.25){
 
-        cam.style.opacity = "0.4";
+      cam.style.opacity = "0.4";
 
-        setTimeout(() => {
-          cam.style.opacity = "1";
-        }, 200);
+      setTimeout(() => {
 
-      }
+        cam.style.opacity = "1";
+
+      }, 120);
 
     }
 
-  }, 3000);
-}
+    // VHS noise
+    if(r < 0.12){
 
+      const old =
+        cam.src;
+
+      cam.src =
+        "images/noise.gif";
+
+      setTimeout(() => {
+
+        cam.src =
+          cameras[currentCam].src;
+
+      }, 350);
+
+    }
+
+    // secret camera override
+    if(r < 0.05 &&
+       accessLevel >= 2){
+
+      cam.src =
+        "images/cam_secret.gif";
+
+      systemSpeak(
+        "UNKNOWN CAMERA SIGNAL DETECTED"
+      );
+
+      setTimeout(() => {
+
+        cam.src =
+          cameras[currentCam].src;
+
+      }, 1000);
+
+    }
+
+  }, 4000);
+
+}
 // =========================
 // FILE SYSTEM
 // =========================
