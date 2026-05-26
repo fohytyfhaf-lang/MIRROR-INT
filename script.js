@@ -23,6 +23,21 @@ const cameras = [
 
   {
     name: "CAMERA 03 / RESTRICTED",
+    src: 
+ },
+
+  {
+name: "CAMERA 04 / RESTRICTED",
+    src: 
+ },
+
+  {
+    name: "CAMERA 05 / RESTRICTED",
+    src: 
+ },
+
+  {
+name: "CAMERA 06 / RESTRICTED",
     src: "images/cam_secret.gif"
   }
 ];
