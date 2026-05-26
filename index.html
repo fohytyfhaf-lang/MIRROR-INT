@@ -11,21 +11,36 @@
 <body>
 
 <!-- BOOT -->
+<!-- ================= BIOS ================= -->
+<div id="biosScreen">
+  <pre id="biosText">
+AMERICAN MEGATRENDS BIOS v2.1
 
+Checking system memory...
+Boot device: UNKNOWN
+Initializing...
+  </pre>
+</div>
+
+<!-- ================= HACK ================= -->
+<div id="hackScreen" style="display:none;">
+  <pre id="hackText"></pre>
+</div>
+
+<!-- ================= WIN95 BOOT ================= -->
 <div id="loading">
-
   <div id="bootWindow">
 
     <div id="bootHeader">
-      MIRROR-INT SYSTEM
+      Microsoft Windows 95
     </div>
 
     <div id="bootBody">
 
-      <p>Starting MIRROR-INT...</p>
+      <p>Starting system...</p>
 
       <p id="bootStatus">
-        Initializing...
+        Loading system files...
       </p>
 
       <div id="bootBar">
@@ -37,7 +52,6 @@
     </div>
 
   </div>
-
 </div>
 
 <!-- LOGIN -->
