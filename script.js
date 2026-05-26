@@ -681,6 +681,9 @@ function startGame() {
     "codeDisplay"
   ).innerText = "CODE: -----";
 
+  player.y = 180;
+  player.vy = 0;
+
   function spawnObstacle() {
 
     obstacles.push({
@@ -716,6 +719,8 @@ function startGame() {
 
   function loop() {
 
+    if (!gameStarted) return;
+
     ctx.clearRect(0,0,700,250);
 
     // floor
@@ -737,7 +742,9 @@ function startGame() {
     player.y += player.vy;
 
     if (player.y > 180) {
+
       player.y = 180;
+
       player.jump = false;
     }
 
@@ -780,8 +787,12 @@ function startGame() {
         return;
       }
 
-      if (o.x < -40)
+      if (o.x < -40) {
+
         obstacles.splice(i,1);
+
+      }
+
     }
 
     // fragments
@@ -796,9 +807,9 @@ function startGame() {
       f.x -= 5;
 
       ctx.fillStyle = "#ffffff";
-      
-ctx.font = "20px Courier New";
-      
+
+      ctx.font = "20px Courier New";
+
       ctx.fillText(
         f.char,
         f.x,
@@ -831,32 +842,32 @@ ctx.font = "20px Courier New";
 
         fragments.splice(i,1);
 
-if (collected >= 5) {
+        // WIN
+        if (collected >= 5) {
 
-  systemLog.push(
-    "[GAME] OMEGA ACCESS RESTORED"
-  );
+          clearInterval(obstacleTimer);
+          clearInterval(fragmentTimer);
 
-  updateMemory();
+          gameStarted = false;
 
-  gameStarted = false;
+          systemLog.push(
+            "[GAME] OMEGA ACCESS RESTORED"
+          );
 
-  // открыть архив
-  openWindow("archiveWindow");
+          updateMemory();
 
-  // открыть smile
-  openWindow("smileWindow");
+          openWindow("archiveWindow");
 
-  // сообщение smile
-  appendSmile(
-    "MISTER SMILE: You were never supposed to find this."
-  );
+          openWindow("smileWindow");
 
-  // показать секретный файл
-  const viewer =
-    document.getElementById("viewer");
+          appendSmile(
+            "MISTER SMILE: You were never supposed to find this."
+          );
 
-  viewer.innerText = `OMEGA FILE
+          const viewer =
+            document.getElementById("viewer");
+
+          viewer.innerText = `OMEGA FILE
 
 CLASSIFIED LEVEL: OMEGA
 
@@ -888,35 +899,36 @@ THE OPERATOR.
 
 END OF FILE`;
 
-  // глюк камер
-  document.getElementById(
-    "cam"
-  ).src =
-    "images/cam_secret.gif";
+          document.getElementById(
+            "cam"
+          ).src =
+            "images/cam_secret.gif";
 
-  // memory warning
-  document.getElementById(
-    "memory"
-  ).innerText +=
-    "\n\n[WARNING]\nOMEGA ACCESS GRANTED";
+          document.getElementById(
+            "memory"
+          ).innerText +=
+            "\n\n[WARNING]\nOMEGA ACCESS GRANTED";
 
-  // alert
-  setTimeout(() => {
+          setTimeout(() => {
 
-    alert(
-      "OMEGA FILE UNLOCKED"
-    );
+            alert(
+              "OMEGA FILE UNLOCKED"
+            );
 
-  }, 500);
+          }, 500);
 
-}
+        }
 
-      if (f.x < -20)
+      }
+
+      if (f.x < -20) {
+
         fragments.splice(i,1);
+
+      }
+
     }
-      
-}
-    
+
     requestAnimationFrame(loop);
 
   }
@@ -925,7 +937,6 @@ END OF FILE`;
 
 }
 
-// jump
 document.addEventListener(
   "keydown",
   e => {
