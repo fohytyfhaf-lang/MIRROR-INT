@@ -443,3 +443,8 @@ VOID RUNNER GAME
   justify-content: center;
   align-items: center;
 }
+
+#biosScreen,
+#hackScreen {
+  display: none !important;
+}
