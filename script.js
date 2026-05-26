@@ -912,7 +912,9 @@ END OF FILE`;
       if (f.x < -20)
         fragments.splice(i,1);
     }
-
+      
+}
+    
     requestAnimationFrame(loop);
 
   }
