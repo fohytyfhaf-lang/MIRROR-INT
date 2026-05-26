@@ -147,8 +147,7 @@ function startBoot() {
   "Mounting system registry..."
 ];
 
-status.innerText = logs[Math.floor(progress / 15)];
-
+status.innerText = logs[Math.floor(progress / 15)] || logs[logs.length - 1];
     if (progress >= 100) {
 
       clearInterval(boot);
