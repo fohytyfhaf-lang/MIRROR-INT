@@ -123,70 +123,37 @@ Internal archives sealed.
 // =========================
 // BOOT SYSTEM
 // =========================
-function startBootSequence() {
-  
+function startBoot() {
+
   progress = 0;
 
   const boot = setInterval(() => {
 
     progress += 0.4;
 
-    const bar =
-      document.getElementById("bootProgress");
+    const bar = document.getElementById("bootProgress");
+    const text = document.getElementById("loadText");
+    const status = document.getElementById("bootStatus");
 
-    const text =
-      document.getElementById("loadText");
+    if (bar) bar.style.width = progress + "%";
+    if (text) text.innerText = Math.floor(progress) + "%";
 
-    const status =
-      document.getElementById("bootStatus");
+    if (progress < 15) status.innerText = "Initializing BIOS...";
+    else if (progress < 30) status.innerText = "Loading system drivers...";
+    else if (progress < 45) status.innerText = "Checking memory sectors...";
+    else if (progress < 60) status.innerText = "Starting system...";
+    else if (progress < 80) status.innerText = "Launching services...";
+    else status.innerText = "SYSTEM READY";
 
-    if(bar){
-      bar.style.width = progress + "%";
-    }
+    if (progress >= 100) {
 
-    if(text){
-      text.innerText = progress + "%";
-    }
-
-    if(Math.random() < 0.08){
-      text.innerText = Math.floor(progress - 1) + "%";
-    }
-
-    if(progress < 15){
-      status.innerText = "Initializing BIOS...";
-    }
-    else if(progress < 30){
-      status.innerText = "Loading system drivers...";
-    }
-    else if(progress < 45){
-      status.innerText = "Checking memory sectors...";
-    }
-    else if(progress > 47 && progress < 52){
-      status.innerText = "Detecting hardware conflicts...";
-    }
-    else if(progress < 60){
-      status.innerText = "Starting camera modules...";
-    }
-    else if(progress > 73 && progress < 78){
-      status.innerText = "WARNING: CAMERA SIGNAL LOST";
-    }
-    else if(progress < 75){
-      status.innerText = "Connecting archive nodes...";
-    }
-    else if(progress < 90){
-      status.innerText = "Launching MIRROR protocol...";
-    }
-    else{
-      status.innerText = "SYSTEM READY";
-    }
-
-    if(progress >= 100){
       clearInterval(boot);
 
       setTimeout(() => {
         document.getElementById("loading").style.display = "none";
         document.getElementById("login").style.display = "flex";
-      }, 1500);
+      }, 1000);
+
     }
 
   }, 220);
@@ -1066,7 +1033,7 @@ document.addEventListener(
 );
 
 document.addEventListener("DOMContentLoaded", () => {
-  startBootSequence();
+  startBoot();
 
   function startIntro() {
 
@@ -1077,7 +1044,7 @@ document.addEventListener("DOMContentLoaded", () => {
   bios.style.display = "block";
 
   // BIOS сцена
-  setTimeout(() => {
+  setTimeoutBoot(() => {
 
     bios.style.display = "none";
     hack.style.display = "block";
