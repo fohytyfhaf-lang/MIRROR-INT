@@ -981,6 +981,10 @@ END OF FILE`;
             "\n\n[WARNING]\nOMEGA ACCESS GRANTED";
 
           setTimeout(() => {
+            
+document.getElementById(
+    "alertSound"
+  ).play();
 
             alert(
               "OMEGA FILE UNLOCKED"
