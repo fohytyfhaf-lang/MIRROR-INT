@@ -416,3 +416,9 @@ VOID RUNNER GAME
   inset: 0;
   display: none;
 }
+
+#bootBody {
+  font-family: "Courier New", monospace;
+  background: black;
+  color: #c0c0c0;
+}
