@@ -23,17 +23,17 @@ const cameras = [
 
   {
     name: "CAMERA 03 / RESTRICTED",
-    src:
+    src:"images/cam_storage.gif"
  },
 
   {
-name: "CAMERA 04 / RESTRICTED",
-    src: 
+name: "CAMERA 04 / OFFICE",
+    src:  "images/cam_office.gif"
  },
 
   {
-    name: "CAMERA 05 / RESTRICTED",
-    src: 
+    name:  "CAMERA 05 / LAB",
+    src: "images/cam_lab.gif"
  },
 
   {
