@@ -617,3 +617,247 @@ OMEGA ACTIVE
 
   }, 3000);
 }
+
+// =========================
+// VOID RUNNER GAME
+// =========================
+
+let gameStarted = false;
+
+let player = {
+  x: 40,
+  y: 180,
+  w: 20,
+  h: 20,
+  vy: 0,
+  jump: false
+};
+
+let obstacles = [];
+let fragments = [];
+
+let score = 0;
+let collected = 0;
+
+let hiddenCode = ["4", "0", "4", "A", "X"];
+
+function startGame() {
+
+  if (gameStarted) return;
+
+  gameStarted = true;
+
+  const canvas =
+    document.getElementById("gameCanvas");
+
+  const ctx =
+    canvas.getContext("2d");
+
+  obstacles = [];
+  fragments = [];
+
+  collected = 0;
+
+  document.getElementById(
+    "fragmentCount"
+  ).innerText = "0";
+
+  document.getElementById(
+    "codeDisplay"
+  ).innerText = "CODE: -----";
+
+  function spawnObstacle() {
+
+    obstacles.push({
+      x: 700,
+      y: 190,
+      w: 20,
+      h: 40
+    });
+
+  }
+
+  function spawnFragment() {
+
+    fragments.push({
+      x: 700,
+      y: 120 + Math.random() * 60,
+      char:
+        hiddenCode[
+          Math.floor(
+            Math.random() *
+            hiddenCode.length
+          )
+        ]
+    });
+
+  }
+
+  let obstacleTimer =
+    setInterval(spawnObstacle, 1800);
+
+  let fragmentTimer =
+    setInterval(spawnFragment, 3500);
+
+  function loop() {
+
+    ctx.clearRect(0,0,700,250);
+
+    // floor
+    ctx.fillStyle = "#00ff99";
+
+    ctx.fillRect(0,210,700,3);
+
+    // player
+    ctx.fillRect(
+      player.x,
+      player.y,
+      player.w,
+      player.h
+    );
+
+    // gravity
+    player.vy += 0.6;
+
+    player.y += player.vy;
+
+    if (player.y > 180) {
+      player.y = 180;
+      player.jump = false;
+    }
+
+    // obstacles
+    for (
+      let i = obstacles.length - 1;
+      i >= 0;
+      i--
+    ) {
+
+      let o = obstacles[i];
+
+      o.x -= 6;
+
+      ctx.fillRect(
+        o.x,
+        o.y,
+        o.w,
+        o.h
+      );
+
+      // collision
+      if (
+        player.x < o.x + o.w &&
+        player.x + player.w > o.x &&
+        player.y < o.y + o.h &&
+        player.y + player.h > o.y
+      ) {
+
+        clearInterval(obstacleTimer);
+        clearInterval(fragmentTimer);
+
+        gameStarted = false;
+
+        alert(
+          "SYSTEM FAILURE\nCollected: " +
+          collected
+        );
+
+        return;
+      }
+
+      if (o.x < -40)
+        obstacles.splice(i,1);
+    }
+
+    // fragments
+    for (
+      let i = fragments.length - 1;
+      i >= 0;
+      i--
+    ) {
+
+      let f = fragments[i];
+
+      f.x -= 5;
+
+      ctx.fillStyle = "#ffffff";
+
+      ctx.fillText(
+        f.char,
+        f.x,
+        f.y
+      );
+
+      // collect
+      if (
+        player.x < f.x + 20 &&
+        player.x + player.w > f.x &&
+        player.y < f.y &&
+        player.y + player.h > f.y - 20
+      ) {
+
+        collected++;
+
+        document.getElementById(
+          "fragmentCount"
+        ).innerText = collected;
+
+        let current =
+          document.getElementById(
+            "codeDisplay"
+          ).innerText;
+
+        document.getElementById(
+          "codeDisplay"
+        ).innerText =
+          current.replace("-", f.char);
+
+        fragments.splice(i,1);
+
+        if (collected >= 5) {
+
+          systemLog.push(
+            "[GAME] SECRET CODE FOUND"
+          );
+
+          updateMemory();
+
+          alert(
+            "SECRET CODE RESTORED"
+          );
+
+        }
+
+      }
+
+      if (f.x < -20)
+        fragments.splice(i,1);
+    }
+
+    requestAnimationFrame(loop);
+
+  }
+
+  loop();
+
+}
+
+// jump
+document.addEventListener(
+  "keydown",
+  e => {
+
+    if (
+      e.code === "Space" &&
+      !player.jump &&
+      gameStarted
+    ) {
+
+      player.vy = -11;
+
+      player.jump = true;
+
+    }
+
+  }
+);
