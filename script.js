@@ -125,6 +125,12 @@ Internal archives sealed.
 // =========================
 function startBootSequence() {
 
+const bios = document.getElementById("biosScreen");
+const hack = document.getElementById("hackScreen");
+const hackText = document.getElementById("hackText");
+
+if (bios) bios.style.display = "block";
+  
   progress = 0;
 
   const boot = setInterval(() => {
@@ -1064,3 +1070,7 @@ document.addEventListener(
 
   }
 );
+
+document.addEventListener("DOMContentLoaded", () => {
+  startBootSequence();
+});
