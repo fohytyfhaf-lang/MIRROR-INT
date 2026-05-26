@@ -118,10 +118,6 @@ Internal archives sealed.
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  document.getElementById(
-    "bootSound"
-  ).play();
-
   const boot = setInterval(() => {
 
     progress += 4;
@@ -207,6 +203,10 @@ function loginSystem(){
 
   status.innerText = "ACCESS GRANTED";
 
+document.getElementById(
+  "bootSound"
+).play();
+  
   setTimeout(() => {
 
     document.getElementById("login").style.display = "none";
@@ -348,7 +348,7 @@ function startCameraGlitch(){
 
       cam.style.opacity = "0.4";
       
-document.getElementById(
+      document.getElementById(
   "glitchSound"
 ).play();
       
