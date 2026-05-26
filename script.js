@@ -11,9 +11,10 @@ let systemBooted = false;
 let currentCam = 0;
 
 const cameras = [
+
   {
-    name: "CAMERA 01 / HALL",
-    src: "images/cam_idle.gif"
+    name: "CAMERA 01 / MAIN HALL",
+    src: "images/cam_hall.gif"
   },
 
   {
@@ -22,24 +23,35 @@ const cameras = [
   },
 
   {
-    name: "CAMERA 03 / RESTRICTED",
-    src:"images/cam_storage.gif"
- },
+    name: "CAMERA 03 / STORAGE",
+    src: "images/cam_storage.gif"
+  },
 
   {
-name: "CAMERA 04 / OFFICE",
-    src:  "images/cam_office.gif"
- },
+    name: "CAMERA 04 / OFFICE",
+    src: "images/cam_office.gif"
+  },
 
   {
-    name:  "CAMERA 05 / LAB",
+    name: "CAMERA 05 / LAB",
     src: "images/cam_lab.gif"
- },
+  },
 
   {
-name: "CAMERA 06 / RESTRICTED",
+    name: "CAMERA 06 / SERVER ROOM",
+    src: "images/cam_server.gif"
+  },
+
+  {
+    name: "CAMERA 07 / ALERT",
+    src: "images/cam_alert.gif"
+  },
+
+  {
+    name: "CAMERA 08 / RESTRICTED",
     src: "images/cam_secret.gif"
   }
+
 ];
 
 // ---------- MEMORY ----------
