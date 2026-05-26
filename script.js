@@ -144,6 +144,13 @@ document.addEventListener("DOMContentLoaded", () => {
       text.innerText = progress + "%";
     }
 
+    if(Math.random() < 0.08){
+
+  text.innerText =
+    Math.floor(progress - 1) + "%";
+
+}
+
     // fake old loading stages
 
     if(progress < 15){
@@ -167,12 +174,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+if(progress > 47 && progress < 52){
+
+  status.innerText =
+    "Detecting hardware conflicts...";
+
+}
+
+      
     else if(progress < 60){
 
       status.innerText =
         "Starting camera modules...";
 
     }
+
+if(progress > 73 && progress < 78){
+
+  status.innerText =
+    "WARNING: CAMERA SIGNAL LOST";
+
+}
+      
 
     else if(progress < 75){
 
