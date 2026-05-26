@@ -115,35 +115,95 @@ Internal archives sealed.
 // =========================
 // BOOT SYSTEM
 // =========================
+// =========================
+// BOOT SYSTEM
+// =========================
 
 document.addEventListener("DOMContentLoaded", () => {
 
   const boot = setInterval(() => {
 
-    progress += 4;
+    progress += 1;
 
-    const bar = document.getElementById("bootProgress");
-    const text = document.getElementById("loadText");
-    const status = document.getElementById("bootStatus");
+    const bar =
+      document.getElementById("bootProgress");
 
-    if(bar) bar.style.width = progress + "%";
-    if(text) text.innerText = progress + "%";
+    const text =
+      document.getElementById("loadText");
 
-    if(progress < 30){
-      status.innerText = "Loading modules...";
+    const status =
+      document.getElementById("bootStatus");
+
+    if(bar)
+      bar.style.width = progress + "%";
+
+    if(text)
+      text.innerText = progress + "%";
+
+    // boot messages
+
+    if(progress < 15){
+
+      status.innerText =
+        "Loading DOS modules...";
+
+    }
+
+    else if(progress < 30){
+
+      status.innerText =
+        "Checking system memory...";
+
+    }
+
+    else if(progress < 45){
+
+      status.innerText =
+        "Connecting archive nodes...";
+
     }
 
     else if(progress < 60){
-      status.innerText = "Checking memory...";
+
+      status.innerText =
+        "Restoring camera systems...";
+
+    }
+
+    else if(progress < 75){
+
+      status.innerText =
+        "Decrypting MIRROR files...";
+
     }
 
     else if(progress < 90){
-      status.innerText = "Starting camera systems...";
+
+      status.innerText =
+        "WARNING: Unknown signal detected...";
+
     }
 
     else{
-      status.innerText = "Launching MIRROR-INT...";
+
+      status.innerText =
+        "Launching MIRROR-INT...";
     }
+
+    // fake freeze
+
+    if(progress === 72){
+
+      status.innerText =
+        "SYSTEM NOT RESPONDING...";
+
+      document.getElementById(
+        "glitchSound"
+      ).play();
+
+    }
+
+    // finish
 
     if(progress >= 100){
 
@@ -151,14 +211,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
       setTimeout(() => {
 
-        document.getElementById("loading").style.display = "none";
+        document.getElementById(
+          "loading"
+        ).style.display = "none";
 
-        document.getElementById("login").style.display = "flex";
+        document.getElementById(
+          "login"
+        ).style.display = "flex";
 
-      }, 700);
+      }, 1200);
+
     }
 
-  }, 120);
+  }, 180);
 
 });
 
