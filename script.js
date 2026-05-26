@@ -1033,9 +1033,9 @@ document.addEventListener(
 );
 
 document.addEventListener("DOMContentLoaded", () => {
-  startBoot();
-
-  function startIntro() {
+  startIntro();
+});
+function startIntro() {
 
   const bios = document.getElementById("biosScreen");
   const hack = document.getElementById("hackScreen");
@@ -1043,8 +1043,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   bios.style.display = "block";
 
-  // BIOS сцена
-  setTimeoutBoot(() => {
+  setTimeout(() => {
 
     bios.style.display = "none";
     hack.style.display = "block";
@@ -1061,7 +1060,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         setTimeout(() => {
           hack.style.display = "none";
-          startBoot(); // переходим к Win95
+          startBoot(); // 👈 ВАЖНО: запускаем Win95 boot
         }, 800);
       }
 
@@ -1069,6 +1068,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
   }, 1500);
 }
-  
-});
-
