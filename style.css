@@ -410,28 +410,3 @@ VOID RUNNER GAME
   margin-bottom: 10px;
 }
 
-#loading {
-  display: flex !important;
-}
-
-#loading {
-  z-index: 9998;
-}
-
-#biosScreen {
-  z-index: 10000;
-}
-
-#hackScreen {
-  z-index: 10001;
-}
-
-}
-
-#biosScreen,
-#hackScreen {
-  position: fixed;
-  inset: 0;
-  display: none;
-}
-
