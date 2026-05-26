@@ -796,7 +796,9 @@ function startGame() {
       f.x -= 5;
 
       ctx.fillStyle = "#ffffff";
-
+      
+ctx.font = "20px Courier New";
+      
       ctx.fillText(
         f.char,
         f.x,
