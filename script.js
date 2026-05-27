@@ -245,6 +245,23 @@ function loginSystem(){
 
     systemBooted = true;
 
+    const bg = document.getElementById("bgMusic");
+const bootMusic = document.getElementById("bootMusic");
+
+// стоп boot-музыку если играет
+if (bootMusic) {
+  bootMusic.pause();
+  bootMusic.currentTime = 0;
+}
+
+// запуск фоновой музыки
+if (bg) {
+  bg.volume = 0.4;
+  bg.play().catch(err => {
+    console.log("Audio blocked:", err);
+  });
+}
+
     systemSpeak("SYSTEM ONLINE");
 
     startClock();
