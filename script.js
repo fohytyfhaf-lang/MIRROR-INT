@@ -15,6 +15,13 @@ let hackLines = [
   "[OK] boot sequence modified..."
 ];
 
+function playSound(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  el.play().catch(() => {});
+}
+
 function win95BootBeep() {
   const ctx = new (window.AudioContext || window.webkitAudioContext)();
 
