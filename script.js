@@ -207,10 +207,6 @@ function loginSystem(){
 
   status.innerText = "ACCESS GRANTED";
 
-document.getElementById(
-  "bootSound"
-).play();
-  
   setTimeout(() => {
 
     document.getElementById("login").style.display = "none";
