@@ -262,21 +262,25 @@ function loginSystem(){
 
     updateMemory();
 
- // 🔊 МУЗЫКА ТОЛЬКО ТУТ
-  const bg = document.getElementById("bgMusic");
-  const bootMusic = document.getElementById("bootMusic");
+const bg = document.getElementById("bgMusic");
+const bootMusic = document.getElementById("bootMusic");
 
-  if (bootMusic) {
-    bootMusic.pause();
-    bootMusic.currentTime = 0;
-  }
+if (bootMusic) {
+  bootMusic.pause();
+  bootMusic.currentTime = 0;
+}
 
-  if (bg) {
-    bg.volume = 0.4;
-    bg.play().catch(err => {
-      console.log("BG blocked:", err);
+if (bg) {
+  bg.volume = 0.4;
+
+  const playPromise = bg.play();
+
+  if (playPromise !== undefined) {
+    playPromise.catch(() => {
+      console.log("BG blocked until user interaction");
     });
   }
+}
     
   }, 800);
 }
