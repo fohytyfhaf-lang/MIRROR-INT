@@ -252,8 +252,11 @@ function loginSystem(){
 
     systemBooted = true;
 
-     playSound("bootSound");
-  playSound("bgMusic")
+ playSound("bootSound");
+
+  setTimeout(() => {
+    playSound("bgMusic");
+  }, 2000);
 
     const bg = document.getElementById("bgMusic");
 const bootMusic = document.getElementById("bootMusic");
