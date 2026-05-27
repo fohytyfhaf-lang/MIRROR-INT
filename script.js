@@ -1035,38 +1035,75 @@ document.addEventListener(
 );
 
 document.addEventListener("DOMContentLoaded", () => {
+
+  document.getElementById(
+    "bootSound"
+  ).volume = 0.3;
+
+  document.getElementById(
+    "clickSound"
+  ).volume = 0.4;
+
+  document.getElementById(
+    "glitchSound"
+  ).volume = 0.25;
+
+  document.getElementById(
+    "alertSound"
+  ).volume = 0.5;
+
   startIntro();
+
 });
+
 function startIntro() {
 
-  const bios = document.getElementById("biosScreen");
-  const hack = document.getElementById("hackScreen");
-  const hackText = document.getElementById("hackText");
+  const bios =
+    document.getElementById("biosScreen");
+
+  const hack =
+    document.getElementById("hackScreen");
+
+  const hackText =
+    document.getElementById("hackText");
 
   bios.style.display = "block";
 
   setTimeout(() => {
 
     bios.style.display = "none";
+
     hack.style.display = "block";
 
     let i = 0;
 
     const interval = setInterval(() => {
 
-      if (i < hackLines.length) {
-        hackText.innerText += hackLines[i] + "\n";
+      if(i < hackLines.length){
+
+        hackText.innerText +=
+          hackLines[i] + "\n";
+
         i++;
-      } else {
+
+      }
+
+      else{
+
         clearInterval(interval);
 
         setTimeout(() => {
+
           hack.style.display = "none";
-          startBoot(); // 👈 ВАЖНО: запускаем Win95 boot
+
+          startBoot();
+
         }, 800);
+
       }
 
     }, 400);
 
   }, 1500);
+
 }
