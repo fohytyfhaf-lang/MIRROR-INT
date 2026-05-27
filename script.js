@@ -252,14 +252,6 @@ function loginSystem(){
 
     systemBooted = true;
 
- playSound("bootSound");
-
-  setTimeout(() => {
-    playSound("bgMusic");
-  }, 2000);
-
-
-
     systemSpeak("SYSTEM ONLINE");
 
     startClock();
@@ -270,6 +262,22 @@ function loginSystem(){
 
     updateMemory();
 
+ // 🔊 МУЗЫКА ТОЛЬКО ТУТ
+  const bg = document.getElementById("bgMusic");
+  const bootMusic = document.getElementById("bootMusic");
+
+  if (bootMusic) {
+    bootMusic.pause();
+    bootMusic.currentTime = 0;
+  }
+
+  if (bg) {
+    bg.volume = 0.4;
+    bg.play().catch(err => {
+      console.log("BG blocked:", err);
+    });
+  }
+    
   }, 800);
 }
 
