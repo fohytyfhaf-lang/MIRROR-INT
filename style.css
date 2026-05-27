@@ -410,25 +410,10 @@ VOID RUNNER GAME
   margin-bottom: 10px;
 }
 
-#biosScreen{
-  position:fixed;
-  inset:0;
-  background:black;
-  color:#00ff66;
-  font-family:Courier New;
-  padding:20px;
-  z-index:99999;
+
 }
 
-#hackScreen{
-  position:fixed;
-  inset:0;
-  background:black;
-  color:red;
-  font-family:Courier New;
-  padding:20px;
-  z-index:99998;
-}
+#
 
 #bootBody {
   font-family: "Courier New", monospace;
