@@ -14,6 +14,35 @@ let hackLines = [
   "[WARNING] unknown entity detected...",
   "[OK] boot sequence modified..."
 ];
+
+function win95BootBeep() {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+  function beep(time, freq, duration) {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = "square";
+    osc.frequency.value = freq;
+
+    gain.gain.setValueAtTime(0.1, time);
+    gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(time);
+    osc.stop(time + duration);
+  }
+
+  const start = ctx.currentTime + 0.1;
+
+  beep(start + 0.0, 880, 0.12);
+  beep(start + 0.2, 880, 0.12);
+  beep(start + 0.4, 660, 0.18);
+}
+
+
 // ---------- CAMERA ----------
 let currentCam = 0;
 
