@@ -1069,6 +1069,8 @@ function startIntro() {
 
   bios.style.display = "block";
 
+  document.getElementById("bootSound").play().catch(() => {});
+  
   setTimeout(() => {
 
     bios.style.display = "none";
