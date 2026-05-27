@@ -15,10 +15,6 @@ let hackLines = [
   "[OK] boot sequence modified..."
 ];
 
-document.addEventListener("click", () => {
-  const bg = document.getElementById("bgMusic");
-  if (bg) bg.play().catch(() => {});
-}, { once: true });
 
 function playSound(id) {
   const el = document.getElementById(id);
