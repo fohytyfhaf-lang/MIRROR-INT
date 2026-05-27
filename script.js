@@ -126,7 +126,11 @@ Internal archives sealed.
 function startBoot() {
 
   progress = 0;
-
+  
+document.getElementById(
+  "bootSound"
+).play();
+  
   const boot = setInterval(() => {
 
     progress += 0.4;
