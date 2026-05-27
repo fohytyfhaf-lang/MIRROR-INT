@@ -267,8 +267,6 @@ function loginSystem(){
 
     updateMemory();
     
-}
-    
   }, 800);
 }
 
