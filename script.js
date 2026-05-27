@@ -252,6 +252,9 @@ function loginSystem(){
 
     systemBooted = true;
 
+     playSound("bootSound");
+  playSound("bgMusic")
+
     const bg = document.getElementById("bgMusic");
 const bootMusic = document.getElementById("bootMusic");
 
