@@ -14,7 +14,53 @@ let hackLines = [
   "[WARNING] unknown entity detected...",
   "[OK] boot sequence modified..."
 ];
+// =========================
+// AUDIO SYSTEM (STABLE WIN95)
+// =========================
 
+let audioUnlocked = false;
+
+function unlockAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+
+  const ids = [
+    "bootSound",
+    "clickSound",
+    "glitchSound",
+    "alertSound",
+    "bgMusic",
+    "bootMusic"
+  ];
+
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    // "разогрев" аудио (важно для Chrome)
+    const p = el.play();
+    if (p !== undefined) {
+      p.then(() => {
+        el.pause();
+        el.currentTime = 0;
+      }).catch(() => {});
+    }
+  });
+
+  console.log("AUDIO UNLOCKED");
+}
+
+// один универсальный триггер
+document.addEventListener("pointerdown", unlockAudio, { once: true });
+document.addEventListener("keydown", unlockAudio, { once: true });
+
+function playSound(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  el.currentTime = 0;
+  el.play().catch(() => {});
+}
 
 function playSound(id) {
   const el = document.getElementById(id);
