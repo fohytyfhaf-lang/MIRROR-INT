@@ -266,25 +266,7 @@ function loginSystem(){
     startCameraGlitch();
 
     updateMemory();
-
-const bg = document.getElementById("bgMusic");
-const bootMusic = document.getElementById("bootMusic");
-
-if (bootMusic) {
-  bootMusic.pause();
-  bootMusic.currentTime = 0;
-}
-
-if (bg) {
-  bg.volume = 0.4;
-
-  const playPromise = bg.play();
-
-  if (playPromise !== undefined) {
-    playPromise.catch(() => {
-      console.log("BG blocked until user interaction");
-    });
-  }
+    
 }
     
   }, 800);
