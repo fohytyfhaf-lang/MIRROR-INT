@@ -207,9 +207,6 @@ function loginSystem(){
 
   status.innerText = "ACCESS GRANTED";
 
-document.getElementById(
-  "bootSound"
-).play();
   
   setTimeout(() => {
 
@@ -372,7 +369,8 @@ if(r < 0.12){
     "glitchSound"
   ).play();
 
-  cam.src = "images/noise.gif";
+ cam.src =
+  "images/noise.gif?" + Date.now();
 
   setTimeout(() => {
 
