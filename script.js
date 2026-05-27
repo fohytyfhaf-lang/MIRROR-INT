@@ -51,7 +51,11 @@ function unlockAudio() {
 }
 
 // один универсальный триггер
-document.addEventListener("pointerdown", unlockAudio, { once: true });
+document.addEventListener("pointerdown", () => {
+  unlockAudio();
+  startBackgroundMusic();
+}, { once: true });
+
 document.addEventListener("keydown", unlockAudio, { once: true });
 
 function playSound(id) {
@@ -60,6 +64,16 @@ function playSound(id) {
 
   el.currentTime = 0;
   el.play().catch(() => {});
+}
+
+function startBackgroundMusic() {
+  const bg = document.getElementById("bgMusic");
+  if (!bg) return;
+
+  bg.volume = 0.4;
+  bg.loop = true;
+
+  bg.play().catch(() => {});
 }
 
 function win95BootBeep() {
