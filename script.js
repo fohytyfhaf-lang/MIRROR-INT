@@ -213,7 +213,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("alertSound")?.volume = 0.5;
 
   startIntro();
-
+  document.addEventListener("pointerdown", startAudioOnce, { once: true });
+});
   // 🔥 ВАЖНО ДЛЯ ANDROID
   initAudio();
 });
