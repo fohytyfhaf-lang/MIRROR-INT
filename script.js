@@ -46,13 +46,10 @@ function initAudio() {
 
   const start = () => {
     startAudioOnce();
-
     document.removeEventListener("pointerdown", start);
-    document.removeEventListener("touchstart", start);
   };
 
   document.addEventListener("pointerdown", start, { once: true });
-  document.addEventListener("touchstart", start, { once: true });
 }
 
 // ---------- SAFE SOUND PLAY ----------
