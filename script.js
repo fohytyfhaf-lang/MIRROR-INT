@@ -3,8 +3,6 @@
 // =========================
 // ---------- AUDIO SYSTEM ----------
 // =========================
-// MIRROR-INT AUDIO FIX (ANDROID + PC SAFE)
-// =========================
 
 let audioStarted = false;
 
@@ -15,28 +13,25 @@ function startAudioOnce() {
   const bg = document.getElementById("bgMusic");
   const boot = document.getElementById("bootMusic");
 
-  // безопасный старт музыки только после жеста
-  setTimeout(() => {
-
+  const unlock = () => {
     if (bg) {
       bg.volume = 0.4;
       bg.loop = true;
       bg.muted = false;
-
-      const p = bg.play();
-      if (p) p.catch(() => console.log("BG BLOCKED"));
+      bg.play().catch(() => {});
     }
 
     if (boot) {
       boot.volume = 0.3;
       boot.play().catch(() => {});
     }
+  };
 
-  }, 50);
+  // маленькая задержка = стабильнее на Android
+  setTimeout(unlock, 50);
 
-  console.log("AUDIO ENABLED");
+  console.log("AUDIO STARTED");
 }
-
 
 // =========================
 // UNIVERSAL USER INTERACTION TRIGGER
