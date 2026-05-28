@@ -1164,6 +1164,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ).volume = 0.5;
 
   startIntro();
+  initAudioOnUserInteraction();
 
 });
 
