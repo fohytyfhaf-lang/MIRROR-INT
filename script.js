@@ -218,6 +218,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("alertSound")?.volume = 0.5;
 
   startIntro();
+
+  // 🔥 ВАЖНО ДЛЯ ANDROID
+  initAudio();
 });
 
 
