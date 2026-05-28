@@ -1,9 +1,6 @@
 // =========================
 // MIRROR-INT CLEAN AUDIO + CORE FIX
 // =========================
-
-let audioStarted = false;
-
 // ---------- AUDIO SYSTEM ----------
 // =========================
 // MIRROR-INT AUDIO FIX (ANDROID + PC SAFE)
