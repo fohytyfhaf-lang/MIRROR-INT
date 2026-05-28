@@ -5,6 +5,12 @@
 let audioStarted = false;
 
 // ---------- AUDIO SYSTEM ----------
+// =========================
+// MIRROR-INT AUDIO FIX (ANDROID + PC SAFE)
+// =========================
+
+let audioStarted = false;
+
 function startAudioOnce() {
   if (audioStarted) return;
   audioStarted = true;
@@ -12,29 +18,45 @@ function startAudioOnce() {
   const bg = document.getElementById("bgMusic");
   const boot = document.getElementById("bootMusic");
 
-  // BG MUSIC
-  if (bg) {
-    bg.volume = 0.4;
-    bg.loop = true;
-    bg.muted = false;
+  // безопасный старт музыки только после жеста
+  setTimeout(() => {
 
-    const p = bg.play();
-    if (p) p.catch(() => {});
-  }
+    if (bg) {
+      bg.volume = 0.4;
+      bg.loop = true;
+      bg.muted = false;
 
-  // optional boot music
-  if (boot) {
-    boot.volume = 0.3;
-    boot.play().catch(() => {});
-  }
+      const p = bg.play();
+      if (p) p.catch(() => console.log("BG BLOCKED"));
+    }
 
-  console.log("AUDIO STARTED");
+    if (boot) {
+      boot.volume = 0.3;
+      boot.play().catch(() => {});
+    }
+
+  }, 50);
+
+  console.log("AUDIO ENABLED");
 }
 
-// один универсальный триггер (ВАЖНО)
-document.addEventListener("pointerdown", startAudioOnce);
-document.addEventListener("keydown", startAudioOnce);
 
+// =========================
+// UNIVERSAL USER INTERACTION TRIGGER
+// (ANDROID + PC 100%)
+// =========================
+function initAudio() {
+
+  const start = () => {
+    startAudioOnce();
+
+    document.removeEventListener("pointerdown", start);
+    document.removeEventListener("touchstart", start);
+  };
+
+  document.addEventListener("pointerdown", start, { once: true });
+  document.addEventListener("touchstart", start, { once: true });
+}
 
 // ---------- SAFE SOUND PLAY ----------
 function playSound(id) {
