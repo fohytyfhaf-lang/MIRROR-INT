@@ -27,11 +27,24 @@ function startAudioOnce() {
     }
   };
 
-  // маленькая задержка = стабильнее на Android
-  setTimeout(unlock, 50);
-
+  setTimeout(unlock, 30);
   console.log("AUDIO STARTED");
 }
+
+// ОДИН УНИВЕРСАЛЬНЫЙ ТРИГГЕР (ANDROID + PC)
+function initAudio() {
+  const trigger = () => {
+    startAudioOnce();
+    document.removeEventListener("pointerdown", trigger);
+    document.removeEventListener("touchstart", trigger);
+    document.removeEventListener("keydown", trigger);
+  };
+
+  document.addEventListener("pointerdown", trigger, { once: true });
+  document.addEventListener("touchstart", trigger, { once: true });
+  document.addEventListener("keydown", trigger, { once: true });
+}
+
 
 // =========================
 // UNIVERSAL USER INTERACTION TRIGGER
