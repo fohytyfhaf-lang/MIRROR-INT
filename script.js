@@ -73,7 +73,15 @@ function startBackgroundMusic() {
   bg.volume = 0.4;
   bg.loop = true;
 
-  bg.play().catch(() => {});
+  bg.load(); // важно!
+
+  const playPromise = bg.play();
+
+  if (playPromise !== undefined) {
+    playPromise.catch(err => {
+      console.log("AUDIO BLOCKED:", err);
+    });
+  }
 }
 
 function win95BootBeep() {
