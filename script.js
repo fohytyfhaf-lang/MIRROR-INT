@@ -84,6 +84,19 @@ function startBackgroundMusic() {
   }
 }
 
+function initAudioOnUserInteraction() {
+  function start() {
+    unlockAudio();
+    startBackgroundMusic();
+
+    document.removeEventListener("click", start);
+    document.removeEventListener("touchstart", start);
+  }
+
+  document.addEventListener("click", start);
+  document.addEventListener("touchstart", start);
+}
+
 function win95BootBeep() {
   const ctx = new (window.AudioContext || window.webkitAudioContext)();
 
