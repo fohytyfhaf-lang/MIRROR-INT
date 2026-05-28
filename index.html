@@ -1,26 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
-<title>MIRROR-INT SYSTEM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIRROR-INT 4.0 CORE</title>
 
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  
 
-<!-- BOOT -->
 <!-- ================= BIOS ================= -->
 <div id="biosScreen">
-  <pre id="biosText">
-AMERICAN MEGATRENDS BIOS v2.1
-
+  <pre>AMERICAN MEGATRENDS BIOS v2.1
 Checking system memory...
 Boot device: UNKNOWN
-Initializing...
-  </pre>
+Initializing...</pre>
 </div>
 
 <!-- ================= HACK ================= -->
@@ -28,54 +23,34 @@ Initializing...
   <pre id="hackText"></pre>
 </div>
 
-<!-- ================= WIN95 BOOT ================= -->
+<!-- ================= BOOT ================= -->
 <div id="loading">
   <div id="bootWindow">
-<img src="images/win95_logo.png" id="bootLogo">
-    <div id="bootHeader">
-      Microsoft Windows 95
-    </div>
+    <div id="bootHeader">MIRROR-INT BOOT SYSTEM</div>
 
     <div id="bootBody">
-
       <p>Starting system...</p>
-
-      <p id="bootStatus">
-        Loading system files...
-      </p>
+      <p id="bootStatus">Loading...</p>
 
       <div id="bootBar">
         <div id="bootProgress"></div>
       </div>
 
       <p id="loadText">0%</p>
-
     </div>
-
   </div>
 </div>
 
-<!-- LOGIN -->
-
+<!-- ================= LOGIN ================= -->
 <div id="login" style="display:none;">
-
-  <div class="window loginWindow">
-
-    <div class="window-header">
-      AUTHORIZATION REQUIRED
-    </div>
+  <div class="window">
+    <div class="window-header">AUTH REQUIRED</div>
 
     <div class="window-body">
-
       <input id="user" placeholder="USERNAME">
+      <input id="pass" type="password" placeholder="PASSWORD">
 
-      <input id="pass"
-             type="password"
-             placeholder="PASSWORD">
-
-      <button onclick="loginSystem()">
-        LOGIN
-      </button>
+      <button onclick="loginSystem()">LOGIN</button>
 
       <p id="loginStatus"></p>
 
@@ -84,310 +59,58 @@ Initializing...
         research / void<br>
         omega / mirror
       </div>
-
     </div>
-
   </div>
-
 </div>
 
-<!-- MAIN -->
-
+<!-- ================= MAIN ================= -->
 <div id="screen" style="display:none;">
 
   <!-- DESKTOP -->
-
   <div id="desktop">
 
-    <div class="desktop-icon"
-         onclick="openWindow('archiveWindow')">
-
-      <img src="images/folder.png">
-
-      <span>ARCHIVE</span>
-
-    </div>
-
-    <div class="desktop-icon"
-         onclick="openWindow('cameraWindow')">
-
-      <img src="images/camera.png">
-
-      <span>CAMERAS</span>
-
-    </div>
-
-    <div class="desktop-icon"
-         onclick="openWindow('staffWindow')">
-
-      <img src="images/chat.png">
-
-      <span>STAFF CHAT</span>
-
-    </div>
-
-    <div class="desktop-icon"
-         onclick="openWindow('smileWindow')">
-
-      <img src="images/smile.png">
-
-      <span>MISTER SMILE</span>
-
-    </div>
-
-    <div class="desktop-icon"
-     onclick="openWindow('gameWindow')">
-
-  <img src="images/game.png">
-
-  <span>VOID RUNNER</span>
-
-  </div>
-    
- </div>
-    
-  <!-- CAMERA -->
-
-  <div id="cameraWindow"
-       class="window"
-       style="display:none;">
-
-    <div class="window-header">
-      CAMERA SYSTEM
-    </div>
-
-    <div class="window-body">
-
-      <img id="cam"
-           src="images/cam_idle.gif">
-
-      <div class="camButtons">
-
-        <button onclick="switchCamera(-1)">
-          PREV
-        </button>
-
-        <button onclick="switchCamera(1)">
-          NEXT
-        </button>
-
-      </div>
-
-      <div id="cameraName">
-        CAMERA 01
-      </div>
-
-      <button onclick="closeWindow('cameraWindow')">
-        CLOSE
-      </button>
-
-    </div>
+    <div onclick="openWindow('archiveWindow')">ARCHIVE</div>
+    <div onclick="openWindow('cameraWindow')">CAMERAS</div>
+    <div onclick="openWindow('staffWindow')">STAFF</div>
+    <div onclick="openWindow('smileWindow')">SMILE</div>
+    <div onclick="openWindow('gameWindow')">GAME</div>
 
   </div>
 
-  <!-- ARCHIVE -->
+  <!-- WINDOWS -->
+  <div id="archiveWindow" style="display:none;">ARCHIVE</div>
+  <div id="cameraWindow" style="display:none;">CAMERAS</div>
+  <div id="staffWindow" style="display:none;">STAFF</div>
+  <div id="smileWindow" style="display:none;">SMILE</div>
 
-  <div id="archiveWindow"
-       class="window"
-       style="display:none;">
-
-    <div class="window-header">
-      ARCHIVE
-    </div>
-
-    <div class="window-body">
-
-      <div class="file"
-           onclick="openFile('log')">
-
-        📄 INCIDENT LOG
-
-      </div>
-
-      <div class="file"
-           onclick="openFile('subject')">
-
-        📄 SUBJECT REPORT
-
-      </div>
-
-      <div class="file"
-           onclick="openOmega()">
-
-        🔒 OMEGA FILE
-
-      </div>
-
-      <pre id="viewer">
-NO FILE SELECTED
-      </pre>
-
-      <button onclick="closeWindow('archiveWindow')">
-        CLOSE
-      </button>
-
-    </div>
-
+  <!-- GAME -->
+  <div id="gameWindow" style="display:none;">
+    <canvas id="gameCanvas" width="700" height="250"></canvas>
   </div>
-
-  <!-- STAFF -->
-
-  <div id="staffWindow"
-       class="window"
-       style="display:none;">
-
-    <div class="window-header">
-      STAFF CHAT
-    </div>
-
-    <div class="window-body">
-
-      <pre id="staffLog"></pre>
-
-      <input id="staffInput"
-             placeholder="message...">
-
-      <button onclick="sendStaffMessage()">
-        SEND
-      </button>
-
-      <button onclick="closeWindow('staffWindow')">
-        CLOSE
-      </button>
-
-    </div>
-
-  </div>
-
-  <!-- SMILE -->
-
-  <div id="smileWindow"
-       class="window"
-       style="display:none;">
-
-    <div class="window-header">
-      MISTER SMILE
-    </div>
-
-    <div class="window-body">
-
-      <pre id="chatLog"></pre>
-
-      <input id="chatInput"
-             placeholder="say something...">
-
-      <button onclick="sendSmile()">
-        SEND
-      </button>
-
-      <button onclick="closeWindow('smileWindow')">
-        CLOSE
-      </button>
-
-    </div>
-
-  </div>
-
-<!-- GAME -->
-
-<div id="gameWindow"
-     class="window"
-     style="display:none;">
-
-  <div class="window-header">
-    VOID RUNNER
-  </div>
-
-  <div class="window-body">
-
-    <canvas id="gameCanvas"
-            width="700"
-            height="250">
-    </canvas>
-
-    <div class="gameInfo">
-
-      <p>
-        FRAGMENTS:
-        <span id="fragmentCount">0</span>/5
-      </p>
-
-      <p id="codeDisplay">
-        CODE: -----
-      </p>
-
-    </div>
-
-    <button onclick="startGame()">
-      START
-    </button>
-
-    <button onclick="closeWindow('gameWindow')">
-      CLOSE
-    </button>
-
-  </div>
-
-</div>
 
   <!-- MEMORY -->
-
-  <div class="window memoryWindow">
-
-    <div class="window-header">
-      SYSTEM MEMORY
-    </div>
-
-    <div class="window-body">
-
-      <pre id="memory">
-BOOTING...
-      </pre>
-
-    </div>
-
+  <div id="memoryWindow">
+    <pre id="memory">BOOTING...</pre>
   </div>
-  
+
   <!-- TASKBAR -->
-
-  <div class="taskbar">
-
-    <div class="start-button">
-      Start
-    </div>
-
-    <div id="clock">
-      00:00:00
-    </div>
-
+  <div id="taskbar">
+    <div>START</div>
+    <div id="clock">00:00:00</div>
   </div>
 
 </div>
 
-<!-- SOUNDS -->
-  
-<audio id="bootSound"
-       src="audio/boot.wav"
-       preload="auto">
-</audio>
+<!-- ================= AUDIO (IMPORTANT) ================= -->
+<audio id="bootSound" src="audio/boot.wav" preload="auto"></audio>
+<audio id="clickSound" src="sounds/click.wav" preload="auto"></audio>
+<audio id="glitchSound" src="sounds/glitch.wav" preload="auto"></audio>
+<audio id="alertSound" src="sounds/alert.wav" preload="auto"></audio>
 
-<audio id="clickSound"
-       src="sounds/click.wav"
-       preload="auto">
-</audio>
+<audio id="bootMusic" src="audio/boot_ambient.mp3" loop preload="auto"></audio>
+<audio id="bgMusic" src="audio/background.mp3" loop preload="auto"></audio>
 
-<audio id="glitchSound"
-       src="sounds/glitch.wav"
-       preload="auto">
-</audio>
-
-<audio id="alertSound"
-       src="sounds/alert.wav"
-       preload="auto">
-</audio>
-<audio id="bootMusic" src="audio/boot_ambient.mp3" loop></audio>
-  <audio id="bgMusic" src="audio/background.mp3" loop></audio>
-
+<!-- ================= SCRIPT ================= -->
 <script src="script.js"></script>
 
 </body>
