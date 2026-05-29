@@ -1,18 +1,14 @@
-function login(){
-  const u = $("user").value;
-  const p = $("pass").value;
+export function loginSystem() {
+  const u = document.getElementById("user").value;
+  const p = document.getElementById("pass").value;
 
-  const st = $("loginStatus");
-
-  if((u==="admin" && p==="1234") || (u==="op" && p==="0404")){
-    st.innerText = "ACCESS GRANTED";
-
-    setTimeout(()=>{
-      hide("login");
-      show("desktop");
-    },500);
-
+  if (
+    (u === "operator" && p === "0404") ||
+    (u === "omega" && p === "mirror")
+  ) {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("screen").style.display = "block";
   } else {
-    st.innerText = "DENIED";
+    document.getElementById("loginStatus").innerText = "ACCESS DENIED";
   }
 }
