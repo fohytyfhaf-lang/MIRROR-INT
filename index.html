@@ -1,15 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  
+
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-
-<title>MIRROR-INT 4.0</title>
+<title>MIRROR-INT 4.0 CORE</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -17,129 +13,61 @@
 
 <body>
 
-
-<!-- ===================================== -->
-<!-- BIOS SCREEN -->
-<!-- ===================================== -->
-
-<section id="biosScreen" class="boot-layer">
-
+<!-- ================= BIOS ================= -->
+<section id="biosScreen">
 <pre id="biosText">
-
 AMERICAN MEGATRENDS BIOS v4.0
 
-CPU:
-MIRROR CORE ONLINE
-
-MEMORY CHECK:
-████████████ 100%
-
-DEVICE STATUS:
-UNKNOWN
-
-INITIALIZING ENTITY SYSTEM...
-
+CPU: MIRROR CORE ONLINE
+MEMORY CHECK: OK
+INITIALIZING SYSTEM...
 </pre>
-
 </section>
 
-
-<!-- ===================================== -->
-<!-- HACK SCREEN -->
-<!-- ===================================== -->
-
-<section id="hackScreen"
-class="boot-layer hidden">
-
+<!-- ================= HACK ================= -->
+<section id="hackScreen" style="display:none;">
 <pre id="hackText"></pre>
-
 </section>
 
-
-<!-- ===================================== -->
-<!-- WINDOWS BOOT -->
-<!-- ===================================== -->
-
+<!-- ================= BOOT ================= -->
 <section id="loading">
 
 <div id="bootWindow">
 
-<img
-src="images/win95_logo.png"
-id="bootLogo">
+<img src="images/win95_logo.png" id="bootLogo">
 
-<div id="bootHeader">
-
-Microsoft Windows 95
-
-</div>
+<div id="bootHeader">MIRROR-INT CORE ENGINE</div>
 
 <div id="bootBody">
 
-<p>MIRROR-INT CORE ENGINE</p>
-
-<p id="bootStatus">
-
-Loading system files...
-
-</p>
+<p id="bootStatus">Loading system...</p>
 
 <div id="bootBar">
-
 <div id="bootProgress"></div>
-
 </div>
 
 <p id="loadText">0%</p>
 
 </div>
-
 </div>
 
 </section>
 
-
-<!-- ===================================== -->
-<!-- LOGIN -->
-<!-- ===================================== -->
-
-<section id="login"
-class="hidden">
+<!-- ================= LOGIN ================= -->
+<section id="login" style="display:none;">
 
 <div class="window loginWindow">
 
-<div class="window-header">
-
-AUTHORIZATION REQUIRED
-
-</div>
+<div class="window-header">AUTHORIZATION</div>
 
 <div class="window-body">
 
-<input
-id="user"
-placeholder="USERNAME">
+<input id="user" placeholder="USERNAME">
+<input id="pass" type="password" placeholder="PASSWORD">
 
-<input
-id="pass"
-type="password"
-placeholder="PASSWORD">
-
-<button id="loginBtn">
-
-LOGIN
-
-</button>
+<button onclick="loginSystem()">LOGIN</button>
 
 <p id="loginStatus"></p>
-
-<div class="hint">
-
-operator / 0404<br>
-research / void<br>
-omega / mirror
-
-</div>
 
 </div>
 
@@ -147,393 +75,122 @@ omega / mirror
 
 </section>
 
-
-<!-- ===================================== -->
-<!-- DESKTOP -->
-<!-- ===================================== -->
-
-<main id="screen"
-class="hidden">
+<!-- ================= DESKTOP ================= -->
+<main id="screen" style="display:none;">
 
 <div id="desktop">
 
-
-<!-- ARCHIVE -->
-
-<div class="desktop-icon"
-data-window="archiveWindow">
-
-<img src="images/folder.png">
-
-<span>ARCHIVE</span>
-
+<div class="desktop-icon" onclick="openWindow('archiveWindow')">
+<img src="images/folder.png"><span>ARCHIVE</span>
 </div>
 
-
-<!-- CAMERAS -->
-
-<div class="desktop-icon"
-data-window="cameraWindow">
-
-<img src="images/camera.png">
-
-<span>CAMERAS</span>
-
+<div class="desktop-icon" onclick="openWindow('cameraWindow')">
+<img src="images/camera.png"><span>CAMERAS</span>
 </div>
 
-
-<!-- STAFF -->
-
-<div class="desktop-icon"
-data-window="staffWindow">
-
-<img src="images/chat.png">
-
-<span>STAFF CHAT</span>
-
+<div class="desktop-icon" onclick="openWindow('staffWindow')">
+<img src="images/chat.png"><span>STAFF</span>
 </div>
 
-
-<!-- ENTITY -->
-
-<div class="desktop-icon"
-data-window="entityWindow">
-
-<img src="images/entity.png">
-
-<span>ENTITY</span>
-
+<div class="desktop-icon" onclick="openWindow('entityWindow')">
+<img src="images/entity.png"><span>ENTITY</span>
 </div>
 
-
-<!-- GAME -->
-
-<div class="desktop-icon"
-data-window="gameWindow">
-
-<img src="images/game.png">
-
-<span>VOID RUNNER</span>
-
+<div class="desktop-icon" onclick="openWindow('gameWindow')">
+<img src="images/game.png"><span>VOID RUNNER</span>
 </div>
 
 </div>
 
-
-<!-- ===================================== -->
 <!-- WINDOWS -->
-<!-- ===================================== -->
 
-
-<!-- ARCHIVE -->
-
-<div id="archiveWindow"
-class="window hidden">
-
-<div class="window-header">
-
-ARCHIVE
-
-<button
-class="close-btn"
-data-close="archiveWindow">
-
-X
-
-</button>
-
-</div>
-
+<div id="archiveWindow" class="window" style="display:none;">
+<div class="window-header">ARCHIVE</div>
 <div class="window-body">
 
-<div class="file">
-📄 INCIDENT LOG
-</div>
+<div class="file" onclick="openFile('log')">INCIDENT LOG</div>
+<div class="file" onclick="openFile('subject')">SUBJECT REPORT</div>
+<div class="file secret" onclick="openOmega()">OMEGA FILE</div>
 
-<div class="file">
-📄 SUBJECT REPORT
-</div>
+<pre id="viewer">NO FILE</pre>
 
-<div class="file secret">
-🔒 OMEGA FILE
-</div>
-
-<pre id="viewer">
-
-NO FILE SELECTED
-
-</pre>
+<button onclick="closeWindow('archiveWindow')">CLOSE</button>
 
 </div>
-
 </div>
 
-
-<!-- CAMERA -->
-
-<div id="cameraWindow"
-class="window hidden">
-
-<div class="window-header">
-
-CAMERA SYSTEM
-
-<button
-class="close-btn"
-data-close="cameraWindow">
-
-X
-
-</button>
-
-</div>
-
+<div id="cameraWindow" class="window" style="display:none;">
+<div class="window-header">CAMERAS</div>
 <div class="window-body">
 
-<img
-id="cam"
-src="images/cam_idle.gif">
+<img id="cam" src="images/cam_1.gif">
 
-<div class="camButtons">
+<button onclick="switchCamera(-1)">PREV</button>
+<button onclick="switchCamera(1)">NEXT</button>
 
-<button id="prevCam">
+<div id="cameraName">CAM 01</div>
 
-PREV
-
-</button>
-
-<button id="nextCam">
-
-NEXT
-
-</button>
+<button onclick="closeWindow('cameraWindow')">CLOSE</button>
 
 </div>
-
-<div id="cameraName">
-
-CAMERA 01
-
 </div>
 
-</div>
-
-</div>
-
-
-<!-- STAFF -->
-
-<div id="staffWindow"
-class="window hidden">
-
-<div class="window-header">
-
-STAFF CHAT
-
-<button
-class="close-btn"
-data-close="staffWindow">
-
-X
-
-</button>
-
-</div>
-
+<div id="staffWindow" class="window" style="display:none;">
+<div class="window-header">STAFF CHAT</div>
 <div class="window-body">
 
 <pre id="staffLog"></pre>
 
-<input
-id="staffInput"
-placeholder="message...">
+<input id="staffInput">
+<button onclick="sendStaffMessage()">SEND</button>
 
-<button id="sendStaff">
-
-SEND
-
-</button>
+<button onclick="closeWindow('staffWindow')">CLOSE</button>
 
 </div>
-
 </div>
 
-
-<!-- ENTITY -->
-
-<div id="entityWindow"
-class="window hidden">
-
-<div class="window-header">
-
-ENTITY OBSERVATION
-
-<button
-class="close-btn"
-data-close="entityWindow">
-
-X
-
-</button>
-
-</div>
-
+<div id="entityWindow" class="window" style="display:none;">
+<div class="window-header">ENTITY</div>
 <div class="window-body">
-
 <pre id="entityLog">
-
-ENTITY STATUS:
-UNKNOWN
-
-DO NOT LOOK AWAY.
-
+ENTITY STATUS: UNKNOWN
 </pre>
-
+</div>
 </div>
 
-</div>
-
-
-<!-- GAME -->
-
-<div id="gameWindow"
-class="window hidden">
-
-<div class="window-header">
-
-VOID RUNNER
-
-<button
-class="close-btn"
-data-close="gameWindow">
-
-X
-
-</button>
-
-</div>
-
+<div id="gameWindow" class="window" style="display:none;">
+<div class="window-header">VOID RUNNER</div>
 <div class="window-body">
 
-<canvas
-id="gameCanvas"
-width="700"
-height="250">
+<canvas id="gameCanvas" width="700" height="250"></canvas>
 
-</canvas>
-
-<div class="gameInfo">
-
-<p>
-
-FRAGMENTS:
-<span id="fragmentCount">0</span>/5
-
-</p>
-
-<p id="codeDisplay">
-
-CODE: -----
-
-</p>
+<button onclick="startGame()">START</button>
+<button onclick="closeWindow('gameWindow')">CLOSE</button>
 
 </div>
-
-<button id="startGameBtn">
-
-START
-
-</button>
-
 </div>
-
-</div>
-
 
 <!-- MEMORY -->
-
 <div class="window memoryWindow">
-
-<div class="window-header">
-
-SYSTEM MEMORY
-
-</div>
-
+<div class="window-header">MEMORY</div>
 <div class="window-body">
-
-<pre id="memory">
-
-BOOTING...
-
-</pre>
-
+<pre id="memory">BOOTING...</pre>
 </div>
-
 </div>
-
 
 <!-- TASKBAR -->
-
-<footer class="taskbar">
-
-<div class="start-button">
-
-Start
-
+<div class="taskbar">
+<div class="start-button">START</div>
+<div id="clock">00:00:00</div>
 </div>
-
-<div id="clock">
-
-00:00:00
-
-</div>
-
-</footer>
 
 </main>
 
-
-<!-- ===================================== -->
 <!-- AUDIO -->
-<!-- ===================================== -->
-
-<audio
-id="bootSound"
-src="audio/boot.wav"
-preload="auto">
-</audio>
-
-<audio
-id="clickSound"
-src="audio/click.wav"
-preload="auto">
-</audio>
-
-<audio
-id="glitchSound"
-src="audio/glitch.wav"
-preload="auto">
-</audio>
-
-<audio
-id="alertSound"
-src="audio/alert.wav"
-preload="auto">
-</audio>
-
-<audio
-id="bootMusic"
-src="audio/boot_ambient.mp3"
-loop>
-</audio>
-
-<audio
-id="bgMusic"
-src="audio/background.mp3"
-loop>
-</audio>
-
+<audio id="bootSound" src="audio/boot.wav"></audio>
+<audio id="clickSound" src="audio/click.wav"></audio>
+<audio id="bootMusic" src="audio/boot_ambient.mp3" loop></audio>
+<audio id="bgMusic" src="audio/background.mp3" loop></audio>
 
 <script src="script.js"></script>
 
