@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>MIRROR-INT 4.0 CORE</title>
 
 <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
@@ -31,15 +29,12 @@ INITIALIZING SYSTEM...
 
 <!-- ================= BOOT ================= -->
 <section id="loading">
-
 <div id="bootWindow">
-
 <img src="images/win95_logo.png" id="bootLogo">
 
 <div id="bootHeader">MIRROR-INT CORE ENGINE</div>
 
 <div id="bootBody">
-
 <p id="bootStatus">Loading system...</p>
 
 <div id="bootBar">
@@ -47,15 +42,12 @@ INITIALIZING SYSTEM...
 </div>
 
 <p id="loadText">0%</p>
-
 </div>
 </div>
-
 </section>
 
-<!-- ================= LOGIN ================= -->
-<section id="login" style="display:none;">
-
+<!-- ================= LOGIN (FIXED - NO inline display:none) ================= -->
+<section id="login">
 <div class="window loginWindow">
 
 <div class="window-header">AUTHORIZATION</div>
@@ -70,9 +62,7 @@ INITIALIZING SYSTEM...
 <p id="loginStatus"></p>
 
 </div>
-
 </div>
-
 </section>
 
 <!-- ================= DESKTOP ================= -->
@@ -102,8 +92,7 @@ INITIALIZING SYSTEM...
 
 </div>
 
-<!-- WINDOWS -->
-
+<!-- ARCHIVE -->
 <div id="archiveWindow" class="window" style="display:none;">
 <div class="window-header">ARCHIVE</div>
 <div class="window-body">
@@ -119,22 +108,24 @@ INITIALIZING SYSTEM...
 </div>
 </div>
 
+<!-- CAMERA -->
 <div id="cameraWindow" class="window" style="display:none;">
 <div class="window-header">CAMERAS</div>
 <div class="window-body">
 
-<img id="cam" src="images/cam_1.gif">
+<img id="cam" src="images/cam_server.gif">
 
 <button onclick="switchCamera(-1)">PREV</button>
 <button onclick="switchCamera(1)">NEXT</button>
 
-<div id="cameraName">CAM 01</div>
+<div id="cameraName">CAM SERVER</div>
 
 <button onclick="closeWindow('cameraWindow')">CLOSE</button>
 
 </div>
 </div>
 
+<!-- CHAT -->
 <div id="staffWindow" class="window" style="display:none;">
 <div class="window-header">STAFF CHAT</div>
 <div class="window-body">
@@ -149,15 +140,15 @@ INITIALIZING SYSTEM...
 </div>
 </div>
 
+<!-- ENTITY -->
 <div id="entityWindow" class="window" style="display:none;">
 <div class="window-header">ENTITY</div>
 <div class="window-body">
-<pre id="entityLog">
-ENTITY STATUS: UNKNOWN
-</pre>
+<pre id="entityLog">ENTITY STATUS: UNKNOWN</pre>
 </div>
 </div>
 
+<!-- GAME -->
 <div id="gameWindow" class="window" style="display:none;">
 <div class="window-header">VOID RUNNER</div>
 <div class="window-body">
