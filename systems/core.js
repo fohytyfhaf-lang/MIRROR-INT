@@ -33,6 +33,10 @@ function closeApp(name) {
 
 
 document.addEventListener("DOMContentLoaded", () => {
+
+  window.loginSystem = loginSystem;
+window.sendMsg = sendMsg;
+window.toggleMusic = toggleMusic;
   initBoot();
   initLogin();
   initGame();
