@@ -1,60 +1,40 @@
-let gameLoopStarted = false;
+let started = false;
 
 function startGame() {
 
-  const canvas = document.getElementById("gameCanvas");
+  if (started) return;
 
-  if (!canvas) return;
+  started = true;
+
+  const canvas = $("gameCanvas");
 
   const ctx = canvas.getContext("2d");
 
-  let player = {
-    x: 100,
-    y: 100,
-    size: 20,
-    speed: 4
-  };
+  let x = 100;
+  let y = 100;
 
-  let keys = {};
+  const keys = {};
 
-  if (!gameLoopStarted) {
+  document.addEventListener("keydown", (e) => {
+    keys[e.key.toLowerCase()] = true;
+  });
 
-    document.addEventListener("keydown", (e) => {
-      keys[e.key.toLowerCase()] = true;
-    });
+  document.addEventListener("keyup", (e) => {
+    keys[e.key.toLowerCase()] = false;
+  });
 
-    document.addEventListener("keyup", (e) => {
-      keys[e.key.toLowerCase()] = false;
-    });
-
-    gameLoopStarted = true;
-  }
-
-  function update() {
-
-    if (keys["w"]) player.y -= player.speed;
-    if (keys["s"]) player.y += player.speed;
-    if (keys["a"]) player.x -= player.speed;
-    if (keys["d"]) player.x += player.speed;
-  }
-
-  function draw() {
+  function loop() {
 
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    if (keys["w"]) y -= 4;
+    if (keys["s"]) y += 4;
+    if (keys["a"]) x -= 4;
+    if (keys["d"]) x += 4;
+
     ctx.fillStyle = "#00ff99";
-    ctx.fillRect(player.x, player.y, player.size, player.size);
-
-    ctx.font = "16px Courier New";
-    ctx.fillStyle = "white";
-    ctx.fillText("VOID RUNNER ACTIVE", 20, 20);
-  }
-
-  function loop() {
-
-    update();
-    draw();
+    ctx.fillRect(x, y, 20, 20);
 
     requestAnimationFrame(loop);
   }
