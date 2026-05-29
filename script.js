@@ -41,6 +41,16 @@ function initAudio() {
   console.log("AUDIO STARTED");
 }
 
+let bootStage = 0;
+
+function show(el) {
+  if (el) el.style.display = "block";
+}
+
+function hide(el) {
+  if (el) el.style.display = "none";
+}
+
 // ОДИН УНИВЕРСАЛЬНЫЙ ТРИГГЕР (ANDROID + PC)
 // =========================
 // ANDROID + PC AUDIO INIT
@@ -49,22 +59,49 @@ function startIntro() {
   const bios = document.getElementById("biosScreen");
   const hack = document.getElementById("hackScreen");
 
-  if (bios) bios.style.display = "block";
+  show(bios);
 
   setTimeout(() => {
+    hide(bios);
+    show(hack);
 
-    if (bios) bios.style.display = "none";
-    if (hack) hack.style.display = "block";
-
-    setTimeout(() => {
-
-      if (hack) hack.style.display = "none";
+    typeHackText(() => {
+      hide(hack);
       startBoot();
-
-    }, 1500);
+    });
 
   }, 1200);
 }
+
+// =========================
+// HACK TYPING EFFECT (ARG FEEL)
+// =========================
+function typeHackText(callback) {
+  const el = document.getElementById("hackText");
+  if (!el) return callback();
+
+  const lines = [
+    "injecting MIRROR CORE...",
+    "accessing kernel memory...",
+    "warning: unknown entity detected",
+    "boot override accepted",
+    "..."
+  ];
+
+  let i = 0;
+
+  const t = setInterval(() => {
+    if (i >= lines.length) {
+      clearInterval(t);
+      setTimeout(callback, 500);
+      return;
+    }
+
+    el.innerText += lines[i] + "\n";
+    i++;
+  }, 300);
+}
+
 // ---------- SAFE SOUND PLAY ----------
 function playSound(id) {
   const el = document.getElementById(id);
@@ -99,26 +136,25 @@ let systemBooted = false;
 // START BOOT
 // =========================
 function startBoot() {
-  progress = 0;
+  const bar = document.getElementById("bootProgress");
+  const text = document.getElementById("loadText");
+  const status = document.getElementById("bootStatus");
 
-  safeBootSound();
+  let progress = 0;
+
+  const logs = [
+    "Loading system...",
+    "Checking hardware...",
+    "Injecting core modules...",
+    "Mounting registry...",
+    "WARNING: ENTITY ACTIVE"
+  ];
 
   const boot = setInterval(() => {
-    progress += 0.5;
-
-    const bar = document.getElementById("bootProgress");
-    const text = document.getElementById("loadText");
-    const status = document.getElementById("bootStatus");
+    progress += Math.random() * 3; // ARG FEEL (НЕ линейный)
 
     if (bar) bar.style.width = progress + "%";
     if (text) text.innerText = Math.floor(progress) + "%";
-
-    const logs = [
-      "Loading system...",
-      "Checking hardware...",
-      "Starting UI...",
-      "Mounting registry..."
-    ];
 
     if (status) {
       status.innerText = logs[Math.floor(progress / 25)] || logs.at(-1);
@@ -127,14 +163,19 @@ function startBoot() {
     if (progress >= 100) {
       clearInterval(boot);
 
+      // glitch before login
       setTimeout(() => {
-        document.getElementById("loading").style.display = "none";
-        document.getElementById("login").style.display = "flex";
+        document.getElementById("loading").style.opacity = "0";
+
+        setTimeout(() => {
+          hide(document.getElementById("loading"));
+          show(document.getElementById("login"));
+        }, 600);
+
       }, 800);
     }
-  }, 200);
+  }, 120);
 }
-
 
 // =========================
 // LOGIN
