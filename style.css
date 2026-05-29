@@ -6,7 +6,15 @@ body {
 }
 
 /* скрытие */
-.hidden { display:none; }
+#bootLog{
+  height:180px;
+  overflow-y:auto;
+  white-space:pre-wrap;
+
+  color:#00ff99;
+  font-family:monospace;
+  font-size:14px;
+}
 
 /* универсальный центр */
 .center {
@@ -24,10 +32,9 @@ body {
 }
 
 /* LOGIN FIX */
-#login {
-  display:none;
+#login .window{
+  width:320px;
 }
-
 /* ВАЖНО: активный логин */
 #login.active {
   display:flex;
@@ -59,20 +66,15 @@ body {
 }
 
 /* CANVAS */
-canvas {
+canvas{
   background:black;
   display:block;
+  image-rendering:pixelated;
 }
-
 /* CHAT FIX */
-#chat {
-  height:150px;
-  overflow-y:auto;
-  white-space:pre-wrap;
-  background:black;
-  color:#00ff99;
-  padding:5px;
-  font-family:monospace;
+#chat{
+  width:300px;
+  box-sizing:border-box;
 }
 
 
@@ -111,4 +113,21 @@ canvas {
   margin-top:5px;
   color:#00ff99;
   font-family:monospace;
+}
+
+@media(max-width:700px){
+
+  #bootWindow{
+    width:90%;
+  }
+
+  #login .window{
+    width:90%;
+  }
+
+  canvas{
+    width:100%;
+    height:auto;
+  }
+
 }
