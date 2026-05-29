@@ -1,194 +1,77 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>MIRROR-INT</title>
-
+<title>MIRROR-INT 6.0</title>
 <link rel="stylesheet" href="style.css">
-
 </head>
+
 <body>
 
-<!-- BIOS -->
-<section id="biosScreen">
-<pre>
-AMERICAN MEGATRENDS BIOS
-
-CHECKING MEMORY...
-LOADING MIRROR-INT...
-</pre>
-</section>
-
 <!-- BOOT -->
-<section id="loading">
-
-<div id="bootWindow">
-
-<h1>MIRROR-INT</h1>
-
-<div id="bootBar">
-<div id="bootProgress"></div>
+<div id="boot">
+  <h2>MIRROR-INT BOOT</h2>
+  <p id="bootText">Loading...</p>
 </div>
-
-<p id="loadText">0%</p>
-
-</div>
-
-</section>
 
 <!-- LOGIN -->
-<section id="login">
-
-<div class="window loginWindow">
-
-<div class="window-header">
-AUTHORIZATION
+<div id="login" class="hidden">
+  <div class="window">
+    <div class="title">LOGIN</div>
+    <input id="user" placeholder="user">
+    <input id="pass" type="password" placeholder="pass">
+    <button onclick="login()">ENTER</button>
+    <p id="loginStatus"></p>
+  </div>
 </div>
-
-<div class="window-body">
-
-<input id="user" placeholder="USERNAME">
-<input id="pass" type="password" placeholder="PASSWORD">
-
-<button onclick="loginSystem()">
-LOGIN
-</button>
-
-<p id="loginStatus"></p>
-
-</div>
-</div>
-
-</section>
 
 <!-- DESKTOP -->
-<main id="screen">
+<div id="desktop" class="hidden">
 
-<div id="desktop">
+  <div class="taskbar">MIRROR-INT 6.0</div>
 
-<div class="desktop-icon" onclick="openWindow('cameraWindow')">
-<img src="images/camera.png">
-<span>CAMERAS</span>
-</div>
+  <div class="icons">
 
-<div class="desktop-icon" onclick="openWindow('staffWindow')">
-<img src="images/chat.png">
-<span>STAFF</span>
-</div>
+    <button onclick="openWindow('chatWin')">CHAT</button>
+    <button onclick="openWindow('camWin')">CAMERAS</button>
+    <button onclick="openWindow('gameWin')">GAME</button>
 
-<div class="desktop-icon" onclick="openWindow('gameWindow')">
-<img src="images/smile.png">
-<span>VOID GAME</span>
-</div>
+  </div>
 
-</div>
+  <!-- CHAT -->
+  <div id="chatWin" class="window hidden">
+    <div class="title">STAFF CHAT</div>
+    <pre id="chatBox"></pre>
+    <input id="chatInput">
+    <button onclick="sendMsg()">SEND</button>
+  </div>
 
-<!-- CAMERA -->
-<div id="cameraWindow" class="window">
+  <!-- CAMERA -->
+  <div id="camWin" class="window hidden">
+    <div class="title">CAM SYSTEM</div>
+    <img id="cam" src="images/cam_server.gif">
+    <button onclick="nextCam()">NEXT</button>
+  </div>
 
-<div class="window-header">
-CAMERAS
-</div>
-
-<div class="window-body">
-
-<img id="cam" src="images/cam_server.gif">
-
-<div id="cameraName">
-CAM SERVER
-</div>
-
-<button onclick="switchCamera(-1)">
-PREV
-</button>
-
-<button onclick="switchCamera(1)">
-NEXT
-</button>
-
-<button onclick="closeWindow('cameraWindow')">
-CLOSE
-</button>
-
-</div>
-</div>
-
-<!-- CHAT -->
-<div id="staffWindow" class="window">
-
-<div class="window-header">
-STAFF CHAT
-</div>
-
-<div class="window-body">
-
-<pre id="staffLog"></pre>
-
-<input id="staffInput">
-
-<button onclick="sendStaffMessage()">
-SEND
-</button>
-
-<button onclick="closeWindow('staffWindow')">
-CLOSE
-</button>
-
-</div>
-</div>
-
-<!-- GAME -->
-<div id="gameWindow" class="window">
-
-<div class="window-header">
-VOID GAME
-</div>
-
-<div class="window-body">
-
-<canvas id="gameCanvas" width="500" height="250"></canvas>
-
-<button onclick="startGame()">
-START
-</button>
-
-<button onclick="closeWindow('gameWindow')">
-CLOSE
-</button>
-
-</div>
-</div>
-
-<div class="taskbar">
-
-<div class="start-button">
-START
-</div>
-
-<div id="clock">
-00:00:00
-</div>
+  <!-- GAME -->
+  <div id="gameWin" class="window hidden">
+    <div class="title">VOID JUMP</div>
+    <canvas id="game" width="300" height="150"></canvas>
+    <button onclick="startGame()">START</button>
+  </div>
 
 </div>
 
-</main>
+<audio id="bgm" src="audio/background.mp3" loop></audio>
 
-<audio id="bgMusic" src="audio/background.mp3" loop></audio>
-
-<script src="systems/core.js"></script>
-<script src="systems/boot.js"></script>
-<script src="systems/login.js"></script>
-<script src="systems/windows.js"></script>
-<script src="systems/camera.js"></script>
-<script src="systems/chat.js"></script>
-<script src="systems/game.js"></script>
-<script src="systems/clock.js"></script>
-<script src="systems/audio.js"></script>
+<script src="core.js"></script>
+<script src="login.js"></script>
+<script src="windows.js"></script>
+<script src="chat.js"></script>
+<script src="camera.js"></script>
+<script src="game.js"></script>
+<script src="audio.js"></script>
+<script src="boot.js"></script>
 
 </body>
 </html>
-```
