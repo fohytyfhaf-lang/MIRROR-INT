@@ -13,14 +13,22 @@
 </head>
 <body>
 
+<!-- BIOS -->
+<section id="biosScreen">
+<pre>
+AMERICAN MEGATRENDS BIOS
+
+CHECKING MEMORY...
+LOADING MIRROR-INT...
+</pre>
+</section>
+
 <!-- BOOT -->
 <section id="loading">
 
 <div id="bootWindow">
 
 <h1>MIRROR-INT</h1>
-
-<p id="bootStatus">Loading system...</p>
 
 <div id="bootBar">
 <div id="bootProgress"></div>
@@ -44,7 +52,6 @@ AUTHORIZATION
 <div class="window-body">
 
 <input id="user" placeholder="USERNAME">
-
 <input id="pass" type="password" placeholder="PASSWORD">
 
 <button onclick="loginSystem()">
@@ -54,7 +61,6 @@ LOGIN
 <p id="loginStatus"></p>
 
 </div>
-
 </div>
 
 </section>
@@ -65,18 +71,18 @@ LOGIN
 <div id="desktop">
 
 <div class="desktop-icon" onclick="openWindow('cameraWindow')">
-📹
+<img src="images/camera.png">
 <span>CAMERAS</span>
 </div>
 
 <div class="desktop-icon" onclick="openWindow('staffWindow')">
-💬
+<img src="images/chat.png">
 <span>STAFF</span>
 </div>
 
 <div class="desktop-icon" onclick="openWindow('gameWindow')">
-🎮
-<span>GAME</span>
+<img src="images/smile.png">
+<span>VOID GAME</span>
 </div>
 
 </div>
@@ -90,12 +96,11 @@ CAMERAS
 
 <div class="window-body">
 
-<img
-id="cam"
-src="cam_secret.gif"
->
+<img id="cam" src="images/cam_server.gif">
 
-<br><br>
+<div id="cameraName">
+CAM SERVER
+</div>
 
 <button onclick="switchCamera(-1)">
 PREV
@@ -105,15 +110,14 @@ PREV
 NEXT
 </button>
 
-<p id="cameraName">
-CAM SECRET
-</p>
+<button onclick="closeWindow('cameraWindow')">
+CLOSE
+</button>
 
 </div>
-
 </div>
 
-<!-- STAFF -->
+<!-- CHAT -->
 <div id="staffWindow" class="window">
 
 <div class="window-header">
@@ -130,38 +134,60 @@ STAFF CHAT
 SEND
 </button>
 
-</div>
+<button onclick="closeWindow('staffWindow')">
+CLOSE
+</button>
 
+</div>
 </div>
 
 <!-- GAME -->
 <div id="gameWindow" class="window">
 
 <div class="window-header">
-VOID RUNNER
+VOID GAME
 </div>
 
 <div class="window-body">
 
-<canvas
-id="gameCanvas"
-width="500"
-height="250"
-></canvas>
-
-<br><br>
+<canvas id="gameCanvas" width="500" height="250"></canvas>
 
 <button onclick="startGame()">
 START
 </button>
 
+<button onclick="closeWindow('gameWindow')">
+CLOSE
+</button>
+
+</div>
+</div>
+
+<div class="taskbar">
+
+<div class="start-button">
+START
+</div>
+
+<div id="clock">
+00:00:00
 </div>
 
 </div>
 
 </main>
 
-<script src="script.js"></script>
+<audio id="bgMusic" src="audio/background.mp3" loop></audio>
+
+<script src="systems/core.js"></script>
+<script src="systems/boot.js"></script>
+<script src="systems/login.js"></script>
+<script src="systems/windows.js"></script>
+<script src="systems/camera.js"></script>
+<script src="systems/chat.js"></script>
+<script src="systems/game.js"></script>
+<script src="systems/clock.js"></script>
+<script src="systems/audio.js"></script>
 
 </body>
 </html>
