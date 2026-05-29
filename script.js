@@ -13,8 +13,8 @@ let audioStarted = false;
 let cameraIndex = 0;
 const cameras = [
   { name: "CAM 01", src: "images/cam_server.gif" },
-  { name: "CAM 02", src: "" },
-  { name: "CAM 03", src: "images/cam_3.gif" }
+  { name: "CAM 02", src: "images/cam_storage.gif" },
+  { name: "CAM 03", src: "" }
 ];
 
 // =========================
