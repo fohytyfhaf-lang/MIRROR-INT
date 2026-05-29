@@ -13,6 +13,14 @@ export function initChat() {
   }, 3000);
 }
 
+function initChat() {
+  if (Apps.chatInit) return;
+  Apps.chatInit = true;
+
+  document.getElementById("chat").innerText = "SYS: CHAT ONLINE";
+}
+
+
 export function sendMsg() {
   const input = document.getElementById("msg");
   const chat = document.getElementById("chat");
