@@ -1,22 +1,15 @@
-let audioStarted = false;
 
-function startAudioOnce() {
+document.addEventListener("click", () => {
 
-  if (audioStarted) return;
+const bg = $("bgMusic");
 
-  audioStarted = true;
+if(bg){
 
-  const bg = $("bgMusic");
+bg.volume = 0.3;
 
-  if (bg)
-    bg.play().catch(() => {});
+bg.play().catch(()=>{});
+
 }
 
-function initAudio() {
-
-  document.addEventListener(
-    "pointerdown",
-    startAudioOnce,
-    { once: true }
-  );
-}
+},{once:true});
+```
