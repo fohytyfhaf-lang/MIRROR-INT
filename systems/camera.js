@@ -1,33 +1,44 @@
+
 let cameraIndex = 0;
 
 const cameras = [
 
-  {
-    name: "CAM SERVER",
-    src: "images/cam_server.gif"
-  },
+{
+name:"CAM SERVER",
+src:"images/cam_server.gif"
+},
 
-  {
-    name: "CAM LAB",
-    src: "images/cam_lab.gif"
-  }
+{
+name:"CAM STORAGE",
+src:"images/cam_storage.gif"
+},
+
+{
+name:"CAM LAB",
+src:"images/cam_lab.gif"
+},
+
+{
+name:"CAM OFFICE",
+src:"images/cam_office.gif"
+}
+
 ];
 
-function switchCamera(dir) {
+function switchCamera(dir){
 
-  cameraIndex += dir;
+cameraIndex += dir;
 
-  if (cameraIndex < 0)
-    cameraIndex = cameras.length - 1;
+if(cameraIndex < 0)
+cameraIndex = cameras.length - 1;
 
-  if (cameraIndex >= cameras.length)
-    cameraIndex = 0;
+if(cameraIndex >= cameras.length)
+cameraIndex = 0;
 
-  const cam = $("cam");
+$("cam").src = cameras[cameraIndex].src;
 
-  const name = $("cameraName");
+$("cameraName").innerText =
+cameras[cameraIndex].name;
 
-  cam.src = cameras[cameraIndex].src;
-
-  name.innerText = cameras[cameraIndex].name;
 }
+
