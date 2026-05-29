@@ -1,53 +1,41 @@
+
 let progress = 0;
 
-function startIntro() {
+window.addEventListener("DOMContentLoaded", () => {
 
-  show("biosScreen");
+setTimeout(() => {
 
-  setTimeout(() => {
+hide("biosScreen");
 
-    hide("biosScreen");
+startBoot();
 
-    show("hackScreen");
+}, 1500);
 
-    setTimeout(() => {
+});
 
-      hide("hackScreen");
+function startBoot(){
 
-      startBoot();
+const bar = $("bootProgress");
+const text = $("loadText");
 
-    }, 1200);
+const boot = setInterval(() => {
 
-  }, 1200);
+progress += 4;
+
+bar.style.width = progress + "%";
+text.innerText = progress + "%";
+
+if(progress >= 100){
+
+clearInterval(boot);
+
+hide("loading");
+
+document.getElementById("login").classList.add("active");
+
 }
 
-function startBoot() {
+}, 100);
 
-  show("loading");
-
-  const bar = $("bootProgress");
-  const text = $("loadText");
-
-  const boot = setInterval(() => {
-
-    progress += 5;
-
-    if (bar)
-      bar.style.width = progress + "%";
-
-    if (text)
-      text.innerText = progress + "%";
-
-    if (progress >= 100) {
-
-      clearInterval(boot);
-
-      hide("loading");
-
-      document
-        .getElementById("login")
-        .classList.add("active");
-    }
-
-  }, 120);
 }
+
