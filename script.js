@@ -159,13 +159,28 @@ function loginSystem() {
 // WINDOWS
 // =========================
 function openWindow(id) {
-  show(id);
+  const win = document.getElementById(id);
+
+  if (!win) return;
+
+  win.style.display = "block";
+
+  // случайная позиция как Win95
+  if (!win.dataset.opened) {
+    win.style.top = (80 + Math.random() * 120) + "px";
+    win.style.left = (120 + Math.random() * 180) + "px";
+
+    win.dataset.opened = "true";
+  }
 }
 
 function closeWindow(id) {
-  hide(id);
-}
+  const win = document.getElementById(id);
 
+  if (!win) return;
+
+  win.style.display = "none";
+}
 // =========================
 // CAMERA FIXED
 // =========================
@@ -211,29 +226,84 @@ function sendStaffMessage() {
 
   if (!input || !log) return;
 
-  log.innerText += "\nYOU: " + input.value;
+  const text = input.value.trim();
 
-  setTimeout(() => {
-    log.innerText += "\nSYS: MESSAGE RECEIVED";
-  }, 400);
+  if (!text) return;
+
+  log.innerText += "\nYOU: " + text;
 
   input.value = "";
+
+  const replies = [
+    "SYS: MESSAGE RECEIVED",
+    "STAFF: Copy that.",
+    "STAFF: Sector locked.",
+    "STAFF: Movement detected.",
+    "SYS: Connection unstable.",
+    "STAFF: Access granted.",
+    "STAFF: Entity not found.",
+    "STAFF: Repeat last command."
+  ];
+
+  setTimeout(() => {
+    const reply =
+      replies[Math.floor(Math.random() * replies.length)];
+
+    log.innerText += "\n" + reply;
+
+    log.scrollTop = log.scrollHeight;
+  }, 500);
 }
 
 // =========================
 // GAME SAFE
 // =========================
+let gameStarted = false;
+
 function startGame() {
+  if (gameStarted) return;
+
+  gameStarted = true;
+
   const canvas = $("gameCanvas");
   if (!canvas) return;
 
   const ctx = canvas.getContext("2d");
 
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  let x = 50;
+  let y = 120;
 
-  ctx.fillStyle = "#00ff99";
-  ctx.fillText("VOID RUNNER ACTIVE", 50, 120);
+  let speed = 4;
+
+  const keys = {};
+
+  document.addEventListener("keydown", (e) => {
+    keys[e.key.toLowerCase()] = true;
+  });
+
+  document.addEventListener("keyup", (e) => {
+    keys[e.key.toLowerCase()] = false;
+  });
+
+  function loop() {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (keys["w"]) y -= speed;
+    if (keys["s"]) y += speed;
+    if (keys["a"]) x -= speed;
+    if (keys["d"]) x += speed;
+
+    ctx.fillStyle = "#00ff99";
+    ctx.fillRect(x, y, 20, 20);
+
+    ctx.font = "14px Courier New";
+    ctx.fillText("VOID RUNNER ACTIVE", 20, 20);
+
+    requestAnimationFrame(loop);
+  }
+
+  loop();
 }
 
 // =========================
@@ -261,3 +331,34 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("MIRROR-INT 4.0 CORE LOADED");
+
+document.querySelectorAll(".window-header").forEach(header => {
+
+  const win = header.parentElement;
+
+  let dragging = false;
+
+  let offsetX = 0;
+  let offsetY = 0;
+
+  header.addEventListener("mousedown", (e) => {
+
+    dragging = true;
+
+    offsetX = e.clientX - win.offsetLeft;
+    offsetY = e.clientY - win.offsetTop;
+  });
+
+  document.addEventListener("mousemove", (e) => {
+
+    if (!dragging) return;
+
+    win.style.left = e.clientX - offsetX + "px";
+    win.style.top = e.clientY - offsetY + "px";
+  });
+
+  document.addEventListener("mouseup", () => {
+    dragging = false;
+  });
+
+});
