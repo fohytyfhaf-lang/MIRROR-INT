@@ -146,18 +146,17 @@ function loginSystem() {
 
   if (status) status.innerText = "ACCESS GRANTED";
 
- setTimeout(() => {
-  const login = document.getElementById("login");
-  const screen = document.getElementById("screen");
+  setTimeout(() => {
+    const login = document.getElementById("login");
+    const screen = document.getElementById("screen");
 
-  login.classList.remove("active");
-  login.style.display = "none";
+    login.classList.remove("active");
+    screen.style.display = "block";
 
-  screen.style.display = "block";
-
-  systemBooted = true;
-  startClock();
-}, 600);
+    systemBooted = true;
+    startClock();
+  }, 600);
+}
 // =========================
 // WINDOWS
 // =========================
