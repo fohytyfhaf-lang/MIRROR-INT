@@ -246,3 +246,26 @@ function startIntro() {
     }, 1500);
   }, 1200);
 }
+
+// =========================
+// SAFE ELEMENT CHECK
+// =========================
+function $(id) {
+  return document.getElementById(id);
+}
+
+// =========================
+// PREVENT MOBILE ZOOM
+// =========================
+document.addEventListener("gesturestart", e => {
+  e.preventDefault();
+});
+
+// =========================
+// ANDROID PERFORMANCE FIX
+// =========================
+window.addEventListener("touchmove", () => {}, {
+  passive: true
+});
+
+console.log("MIRROR-INT CORE READY");
