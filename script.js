@@ -221,91 +221,129 @@ function openOmega() {
 // CHAT SAFE
 // =========================
 function sendStaffMessage() {
-  const input = $("staffInput");
-  const log = $("staffLog");
+
+  const input = document.getElementById("staffInput");
+  const log = document.getElementById("staffLog");
 
   if (!input || !log) return;
 
-  const text = input.value.trim();
+  const message = input.value.trim();
 
-  if (!text) return;
+  if (message === "") return;
 
-  log.innerText += "\nYOU: " + text;
+  log.innerText += "\nYOU: " + message;
 
   input.value = "";
 
   const replies = [
-    "SYS: MESSAGE RECEIVED",
-    "STAFF: Copy that.",
-    "STAFF: Sector locked.",
-    "STAFF: Movement detected.",
-    "SYS: Connection unstable.",
-    "STAFF: Access granted.",
-    "STAFF: Entity not found.",
-    "STAFF: Repeat last command."
+    "STAFF: Copy.",
+    "STAFF: Access confirmed.",
+    "STAFF: Sector secured.",
+    "STAFF: Unknown signal detected.",
+    "SYS: WARNING.",
+    "STAFF: Entity movement reported.",
+    "STAFF: Repeat command.",
+    "STAFF: Connection unstable."
   ];
 
   setTimeout(() => {
-    const reply =
+
+    const randomReply =
       replies[Math.floor(Math.random() * replies.length)];
 
-    log.innerText += "\n" + reply;
+    log.innerText += "\n" + randomReply;
 
+    // автоскролл
     log.scrollTop = log.scrollHeight;
-  }, 500);
+
+  }, 700);
 }
 
 // =========================
 // GAME SAFE
 // =========================
-let gameStarted = false;
+let gameLoopStarted = false;
 
 function startGame() {
-  if (gameStarted) return;
 
-  gameStarted = true;
+  const canvas = document.getElementById("gameCanvas");
 
-  const canvas = $("gameCanvas");
   if (!canvas) return;
 
   const ctx = canvas.getContext("2d");
 
-  let x = 50;
-  let y = 120;
+  canvas.focus();
 
-  let speed = 4;
+  let player = {
+    x: 100,
+    y: 100,
+    size: 20,
+    speed: 4
+  };
 
-  const keys = {};
+  let keys = {};
 
-  document.addEventListener("keydown", (e) => {
-    keys[e.key.toLowerCase()] = true;
-  });
+  // чтобы не добавлялось миллион listeners
+  if (!gameLoopStarted) {
 
-  document.addEventListener("keyup", (e) => {
-    keys[e.key.toLowerCase()] = false;
-  });
+    document.addEventListener("keydown", (e) => {
+      keys[e.key.toLowerCase()] = true;
+    });
 
-  function loop() {
+    document.addEventListener("keyup", (e) => {
+      keys[e.key.toLowerCase()] = false;
+    });
+
+    gameLoopStarted = true;
+  }
+
+  function update() {
+
+    if (keys["w"]) player.y -= player.speed;
+    if (keys["s"]) player.y += player.speed;
+    if (keys["a"]) player.x -= player.speed;
+    if (keys["d"]) player.x += player.speed;
+
+    // границы
+    if (player.x < 0) player.x = 0;
+    if (player.y < 0) player.y = 0;
+
+    if (player.x > canvas.width - player.size)
+      player.x = canvas.width - player.size;
+
+    if (player.y > canvas.height - player.size)
+      player.y = canvas.height - player.size;
+  }
+
+  function draw() {
+
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    if (keys["w"]) y -= speed;
-    if (keys["s"]) y += speed;
-    if (keys["a"]) x -= speed;
-    if (keys["d"]) x += speed;
-
     ctx.fillStyle = "#00ff99";
-    ctx.fillRect(x, y, 20, 20);
+    ctx.fillRect(
+      player.x,
+      player.y,
+      player.size,
+      player.size
+    );
 
-    ctx.font = "14px Courier New";
-    ctx.fillText("VOID RUNNER ACTIVE", 20, 20);
+    ctx.font = "16px Courier New";
+    ctx.fillText("VOID RUNNER", 20, 20);
+
+    ctx.fillStyle = "white";
+    ctx.fillText("WASD TO MOVE", 20, 45);
+  }
+
+  function loop() {
+    update();
+    draw();
 
     requestAnimationFrame(loop);
   }
 
   loop();
 }
-
 // =========================
 // CLOCK FIX (NO DUPLICATES)
 // =========================
