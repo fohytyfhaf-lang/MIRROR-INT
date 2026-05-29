@@ -69,3 +69,40 @@ canvas {
   background: black;
   display: block;
 }
+
+
+#loading {
+  position: fixed;
+  inset: 0;
+  background: black;
+  color: #00ff99;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#bootLog {
+  width: 420px;
+  height: 200px;
+  overflow: hidden;
+  font-family: monospace;
+  font-size: 12px;
+  background: #111;
+  padding: 10px;
+  border: 1px solid #00ff99;
+}
+
+#bootFill {
+  height: 10px;
+  width: 0%;
+  background: #00ff99;
+  margin-top: 10px;
+  transition: 0.2s;
+}
+
+#bootPercent {
+  margin-top: 5px;
+  font-family: monospace;
+}
