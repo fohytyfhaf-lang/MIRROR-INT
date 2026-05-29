@@ -149,10 +149,9 @@ function loginSystem() {
     const login = document.getElementById("login");
     const screen = document.getElementById("screen");
 
-    login.classList.remove("active");
-    screen.style.display = "block";
+    if (login) login.classList.remove("active");
+    if (screen) screen.style.display = "block";
 
-    systemBooted = true;
     startClock();
   }, 600);
 }
