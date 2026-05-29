@@ -1,41 +1,29 @@
-
 let progress = 0;
 
 window.addEventListener("DOMContentLoaded", () => {
-
-setTimeout(() => {
-
-hide("biosScreen");
-
-startBoot();
-
-}, 1500);
-
+  setTimeout(() => {
+    hide("biosScreen");
+    startBoot();
+  }, 1200);
 });
 
-function startBoot(){
+function startBoot() {
+  const bar = $("bootProgress");
+  const text = $("loadText");
 
-const bar = $("bootProgress");
-const text = $("loadText");
+  const t = setInterval(() => {
+    progress += 5;
 
-const boot = setInterval(() => {
+    if (bar) bar.style.width = progress + "%";
+    if (text) text.innerText = progress + "%";
 
-progress += 4;
+    if (progress >= 100) {
+      clearInterval(t);
 
-bar.style.width = progress + "%";
-text.innerText = progress + "%";
+      hide("loading");
 
-if(progress >= 100){
-
-clearInterval(boot);
-
-hide("loading");
-
-document.getElementById("login").classList.add("active");
-
+      const login = $("login");
+      if (login) login.classList.add("active");
+    }
+  }, 80);
 }
-
-}, 100);
-
-}
-
