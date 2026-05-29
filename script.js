@@ -144,14 +144,13 @@ function loginSystem() {
   if (status) status.innerText = "ACCESS GRANTED";
 
   setTimeout(() => {
-    hide("login");
+    document.getElementById("login").classList.remove("active");
     show("screen");
 
     systemBooted = true;
     startClock();
   }, 600);
 }
-
 // =========================
 // WINDOWS
 // =========================
