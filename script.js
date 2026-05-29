@@ -45,21 +45,28 @@ function initAudio() {
   document.addEventListener("keydown", trigger, { once: true });
 }
 
-
 // =========================
-// UNIVERSAL USER INTERACTION TRIGGER
-// (ANDROID + PC 100%)
+// ANDROID + PC AUDIO INIT
 // =========================
 function initAudio() {
 
-  const start = () => {
+  const trigger = () => {
     startAudioOnce();
-    document.removeEventListener("pointerdown", start);
+
+    document.removeEventListener("pointerdown", trigger);
+    document.removeEventListener("touchstart", trigger);
+    document.removeEventListener("keydown", trigger);
   };
 
-  document.addEventListener("pointerdown", start, { once: true });
-}
+  // ПК
+  document.addEventListener("pointerdown", trigger, { once: true });
 
+  // Android
+  document.addEventListener("touchstart", trigger, { once: true });
+
+  // Клавиатура
+  document.addEventListener("keydown", trigger, { once: true });
+}
 // ---------- SAFE SOUND PLAY ----------
 function playSound(id) {
   const el = document.getElementById(id);
