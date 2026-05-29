@@ -1,7 +1,10 @@
-document.addEventListener("click", () => {
-  const bg = $("bgMusic");
-  if (!bg) return;
+let started = false;
 
-  bg.volume = 0.3;
-  bg.play().catch(()=>{});
-}, { once:true });
+document.addEventListener("click", ()=>{
+  if(started) return;
+  started = true;
+
+  const bgm = $("bgm");
+  bgm.volume = 0.3;
+  bgm.play();
+});
