@@ -8,6 +8,30 @@ window.loginSystem = loginSystem;
 window.sendMsg = sendMsg;
 window.toggleMusic = toggleMusic;
 
+const Apps = {
+  camera: false,
+  chat: false,
+  game: false,
+  entity: false
+};
+
+function openApp(name) {
+  const win = document.getElementById(name + "Window");
+  if (!win) return;
+
+  Apps[name] = true;
+  win.style.display = "block";
+}
+
+function closeApp(name) {
+  const win = document.getElementById(name + "Window");
+  if (!win) return;
+
+  Apps[name] = false;
+  win.style.display = "none";
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
   initBoot();
   initLogin();
