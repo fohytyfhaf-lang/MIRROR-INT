@@ -4,7 +4,20 @@ body {
   font-family:Tahoma;
 }
 
-.hidden { display:none; }
+html, body {
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+#boot, #login, #desktop {
+  width:100vw;
+  height:100vh;
+}
+
+.hidden {
+  display:none !important;
+}
 
 .window {
   background:silver;
