@@ -1,108 +1,97 @@
 const files = [
-
   "audio/background.mp3",
   "sounds/boot.wav",
-
   "images/cam_secret.gif",
   "images/cam_glitch.gif",
-
   "systems/game.js",
   "systems/chat.js",
   "systems/audio.js"
-
 ];
 
 const smileLines = [
-
   "MR.SMILE: hello again.",
   "MR.SMILE: loading memories...",
   "MR.SMILE: someone is watching.",
-  "MR.SMILE: don't open CAM-06.",
-  "MR.SMILE: system damaged :)"
-
+  "MR.SMILE: don't trust CAM-06.",
+  "MR.SMILE: system integrity unstable :)"
 ];
 
-export function initBoot(){
+/* =========================
+SAFE ELEMENT GETTER
+========================= */
+function el(id, fallbackTag = "div") {
+  let node = document.getElementById(id);
 
-  const loading =
-    document.getElementById("loading");
+  if (!node) {
+    node = document.createElement(fallbackTag);
+    node.id = id;
+    document.body.appendChild(node);
+  }
 
-  const login =
-    document.getElementById("login");
+  return node;
+}
 
-  const log =
-    document.getElementById("bootLog");
+/* =========================
+INIT BOOT
+========================= */
+export function initBoot() {
 
-  const fill =
-    document.getElementById("bootFill");
+  const loading = el("loading");
+  const login = el("login");
 
-  const percent =
-    document.getElementById("bootPercent");
+  const log = el("bootLog", "pre");
+  const fill = el("bootFill");
+  const percent = el("bootPercent");
+
+  // SAFE UI RESET
+  loading.style.display = "flex";
+  login.classList.remove("active");
 
   let i = 0;
 
-  function loadNext(){
+  function write(text) {
+    log.innerHTML += text + "<br>";
+    log.scrollTop = log.scrollHeight;
+  }
 
-    if(i >= files.length){
+  function loadNext() {
 
-      log.innerHTML +=
-        "<br>SYSTEM READY";
+    // progress calc
+    const p = Math.floor((i / files.length) * 100);
+
+    if (percent) percent.innerText = p + "%";
+    if (fill) fill.style.width = p + "%";
+
+    // finish
+    if (i >= files.length) {
+
+      write("<br>SYSTEM READY ✔");
 
       setTimeout(() => {
-
         loading.style.display = "none";
-
         login.classList.add("active");
-
-      }, 1000);
+      }, 800);
 
       return;
     }
 
     const file = files[i];
 
-    log.innerHTML +=
-      "LOADING: " + file + "<br>";
+    write("LOADING: " + file);
 
-    if(Math.random() > 0.5){
-
-      const msg =
-        smileLines[
-          Math.floor(
-            Math.random() *
-            smileLines.length
-          )
-        ];
-
-      log.innerHTML +=
-        "<span class='smile'>" +
-        msg +
-        "</span><br>";
+    // Mr.Smile random messages
+    if (Math.random() > 0.5) {
+      const msg = smileLines[
+        Math.floor(Math.random() * smileLines.length)
+      ];
+      write("<span style='color:#ff4d4d'>" + msg + "</span>");
     }
-
-    log.scrollTop =
-      log.scrollHeight;
-
-    const p =
-      Math.floor(
-        ((i + 1) / files.length) * 100
-      );
-
-    fill.style.width = p + "%";
-
-    percent.innerText = p + "%";
 
     i++;
 
-    setTimeout(
-      loadNext,
-      700
-    );
+    setTimeout(loadNext, 500 + Math.random() * 400);
   }
 
-  loading.style.display = "flex";
-
-  login.classList.remove("active");
-
+  write("BOOT SEQUENCE INITIATED...");
   loadNext();
 }
