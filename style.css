@@ -537,3 +537,141 @@ ANDROID FIXES
   }
 
 }
+
+/* =========================
+ANDROID / MOBILE SUPPORT
+========================= */
+
+html,
+body{
+  width:100%;
+  height:100%;
+
+  touch-action:manipulation;
+
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* мобильный скролл */
+body{
+  overflow:auto;
+}
+
+/* окна */
+.window{
+  max-width:95vw;
+  max-height:85vh;
+
+  overflow:auto;
+}
+
+/* desktop */
+#desktop{
+  flex-direction:row;
+  flex-wrap:wrap;
+
+  gap:15px;
+}
+
+/* иконки */
+.desktop-icon{
+  width:72px;
+  font-size:12px;
+}
+
+/* login */
+.loginWindow{
+  width:90vw;
+  max-width:340px;
+}
+
+/* game */
+#gameWindow{
+  width:95vw !important;
+  height:auto !important;
+
+  left:50% !important;
+  top:50% !important;
+
+  transform:translate(-50%, -50%);
+}
+
+#gameCanvas{
+  width:100%;
+  height:auto;
+}
+
+/* камеры */
+#cameraWindow,
+#archiveWindow,
+#staffWindow,
+#smileWindow{
+  width:95vw !important;
+
+  left:50% !important;
+  top:50px !important;
+
+  transform:translateX(-50%);
+}
+
+/* memory */
+.memoryWindow{
+  width:90vw;
+
+  right:50%;
+  transform:translateX(50%);
+
+  bottom:60px;
+}
+
+/* taskbar */
+.taskbar{
+  height:50px;
+
+  padding:0 6px;
+
+  font-size:12px;
+}
+
+/* clock */
+#clock{
+  font-size:11px;
+}
+
+/* input */
+input{
+  width:92%;
+  font-size:16px;
+}
+
+/* buttons */
+button{
+  min-height:40px;
+  font-size:14px;
+}
+
+/* boot */
+#bootWindow{
+  width:90vw;
+}
+
+/* text areas */
+#staffLog,
+#chatLog,
+#viewer,
+#memory{
+  height:180px;
+  font-size:12px;
+}
+
+/* images */
+img{
+  max-width:100%;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+
+/* canvas smoothing off */
+canvas{
+  image-rendering:pixelated;
+}
