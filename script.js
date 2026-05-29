@@ -1,38 +1,21 @@
 // =========================
-// MIRROR-INT CLEAN AUDIO + CORE FIX
-// =========================
-// ---------- AUDIO SYSTEM ----------
+// MIRROR-INT 4.0 CORE ENGINE
 // =========================
 
+// =========================
+// GLOBAL STATE
+// =========================
 let audioStarted = false;
+let progress = 0;
+let accessLevel = 0;
+let systemBooted = false;
 
-function startAudioOnce() {
-  if (audioStarted) return;
-  audioStarted = true;
-
-  const bg = document.getElementById("bgMusic");
-  const boot = document.getElementById("bootMusic");
-
-  const unlock = () => {
-    if (bg) {
-      bg.volume = 0.4;
-      bg.loop = true;
-      bg.muted = false;
-      bg.play().catch(() => {});
-    }
-
-    if (boot) {
-      boot.volume = 0.3;
-      boot.play().catch(() => {});
-    }
-  };
-
-  setTimeout(unlock, 30);
-  console.log("AUDIO STARTED");
-
+// =========================
+// UTIL
+// =========================
+function $(id) {
+  return document.getElementById(id);
 }
-
-let bootStage = 0;
 
 function show(el) {
   if (el) el.style.display = "block";
@@ -42,24 +25,56 @@ function hide(el) {
   if (el) el.style.display = "none";
 }
 
+// =========================
+// AUDIO SYSTEM (ANDROID FIX)
+// =========================
+function startAudioOnce() {
+  if (audioStarted) return;
+  audioStarted = true;
+
+  const bg = $("bgMusic");
+  const boot = $("bootMusic");
+
+  const play = (el, vol, loop = false) => {
+    if (!el) return;
+    el.volume = vol;
+    el.loop = loop;
+    el.muted = false;
+    el.play().catch(() => {});
+  };
+
+  setTimeout(() => {
+    play(bg, 0.4, true);
+    play(boot, 0.3, false);
+    console.log("AUDIO STARTED");
+  }, 50);
+}
 
 function initAudio() {
-  const trigger = () => {
-    startAudioOnce();
-  };
+  const trigger = () => startAudioOnce();
 
   document.addEventListener("pointerdown", trigger, { once: true });
   document.addEventListener("touchstart", trigger, { once: true });
   document.addEventListener("keydown", trigger, { once: true });
 }
 
-// ОДИН УНИВЕРСАЛЬНЫЙ ТРИГГЕР (ANDROID + PC)
 // =========================
-// ANDROID + PC AUDIO INIT
+// BOOT SOUND
+// =========================
+function safeBootSound() {
+  const el = $("bootSound");
+  if (!el) return;
+  el.volume = 0.3;
+  el.play().catch(() => {});
+}
+
+// =========================
+// INTRO (BIOS → HACK → BOOT)
 // =========================
 function startIntro() {
-  const bios = document.getElementById("biosScreen");
-  const hack = document.getElementById("hackScreen");
+  const bios = $("biosScreen");
+  const hack = $("hackScreen");
+  const text = $("hackText");
 
   show(bios);
 
@@ -76,11 +91,11 @@ function startIntro() {
 }
 
 // =========================
-// HACK TYPING EFFECT (ARG FEEL)
+// HACK TEXT EFFECT
 // =========================
-function typeHackText(callback) {
-  const el = document.getElementById("hackText");
-  if (!el) return callback();
+function typeHackText(cb) {
+  const el = $("hackText");
+  if (!el) return cb();
 
   const lines = [
     "injecting MIRROR CORE...",
@@ -91,69 +106,40 @@ function typeHackText(callback) {
   ];
 
   let i = 0;
+  el.innerText = "";
 
   const t = setInterval(() => {
     if (i >= lines.length) {
       clearInterval(t);
-      setTimeout(callback, 500);
+      setTimeout(cb, 500);
       return;
     }
-
     el.innerText += lines[i] + "\n";
     i++;
-  }, 300);
+  }, 250);
 }
 
-// ---------- SAFE SOUND PLAY ----------
-function playSound(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-
-  el.currentTime = 0;
-  el.play().catch(() => {});
-}
-
-
 // =========================
-// BOOT SOUND FIX
-// =========================
-function safeBootSound() {
-  const el = document.getElementById("bootSound");
-  if (!el) return;
-
-  el.volume = 0.3;
-  el.play().catch(() => {});
-}
-
-
-// =========================
-// GLOBAL GAME / SYSTEM STATE
-// =========================
-let progress = 0;
-let accessLevel = 0;
-let systemBooted = false;
-
-
-// =========================
-// START BOOT
+// BOOT SEQUENCE
 // =========================
 function startBoot() {
-  const bar = document.getElementById("bootProgress");
-  const text = document.getElementById("loadText");
-  const status = document.getElementById("bootStatus");
+  progress = 0;
+  safeBootSound();
 
-  let progress = 0;
+  const bar = $("bootProgress");
+  const text = $("loadText");
+  const status = $("bootStatus");
 
   const logs = [
     "Loading system...",
     "Checking hardware...",
-    "Injecting core modules...",
+    "Starting UI...",
     "Mounting registry...",
     "WARNING: ENTITY ACTIVE"
   ];
 
   const boot = setInterval(() => {
-    progress += Math.random() * 3; // ARG FEEL (НЕ линейный)
+    progress += Math.random() * 4;
 
     if (bar) bar.style.width = progress + "%";
     if (text) text.innerText = Math.floor(progress) + "%";
@@ -165,39 +151,30 @@ function startBoot() {
     if (progress >= 100) {
       clearInterval(boot);
 
-      // glitch before login
       setTimeout(() => {
-        document.getElementById("loading").style.opacity = "0";
-
-        setTimeout(() => {
-          hide(document.getElementById("loading"));
-          show(document.getElementById("login"));
-        }, 600);
-
+        hide($("loading"));
+        show($("login"));
       }, 800);
     }
   }, 120);
 }
 
 // =========================
-// LOGIN
+// LOGIN SYSTEM
 // =========================
 function loginSystem() {
-  const user = document.getElementById("user").value;
-  const pass = document.getElementById("pass").value;
-  const status = document.getElementById("loginStatus");
+  const user = $("user").value;
+  const pass = $("pass").value;
+  const status = $("loginStatus");
 
   let ok = false;
 
   if (user === "operator" && pass === "0404") {
-    accessLevel = 1;
-    ok = true;
+    accessLevel = 1; ok = true;
   } else if (user === "research" && pass === "void") {
-    accessLevel = 2;
-    ok = true;
+    accessLevel = 2; ok = true;
   } else if (user === "omega" && pass === "mirror") {
-    accessLevel = 3;
-    ok = true;
+    accessLevel = 3; ok = true;
   }
 
   if (!ok) {
@@ -208,97 +185,122 @@ function loginSystem() {
   status.innerText = "ACCESS GRANTED";
 
   setTimeout(() => {
-    document.getElementById("login").style.display = "none";
-    document.getElementById("screen").style.display = "block";
-
+    hide($("login"));
+    show($("screen"));
     systemBooted = true;
 
     startClock();
-    updateMemory();
   }, 600);
 }
 
-
 // =========================
-// WINDOWS
+// WINDOWS SYSTEM
 // =========================
 function openWindow(id) {
   playSound("clickSound");
-
-  const w = document.getElementById(id);
-  if (w) w.style.display = "block";
+  show($(id));
 }
 
 function closeWindow(id) {
-  const w = document.getElementById(id);
-  if (w) w.style.display = "none";
+  hide($(id));
 }
 
+// =========================
+// SOUND
+// =========================
+function playSound(id) {
+  const el = $(id);
+  if (!el) return;
+  el.currentTime = 0;
+  el.play().catch(() => {});
+}
 
 // =========================
 // CLOCK
 // =========================
 function startClock() {
   setInterval(() => {
-    const c = document.getElementById("clock");
+    const c = $("clock");
     if (c) c.innerText = new Date().toLocaleTimeString();
   }, 1000);
 }
 
-
 // =========================
-// MEMORY
+// CHAT SYSTEM (STAFF + SMILE)
 // =========================
-let systemLog = [];
+function sendStaffMessage() {
+  const input = $("staffInput");
+  const log = $("staffLog");
+  if (!input || !log) return;
 
-function systemSpeak(text) {
-  systemLog.push("[SYS] " + text);
-  updateMemory();
+  log.innerText += "\nYOU: " + input.value;
+  input.value = "";
 }
 
-function updateMemory() {
-  const mem = document.getElementById("memory");
-  if (!mem) return;
+function sendSmile() {
+  const input = $("chatInput");
+  const log = $("chatLog");
+  if (!input || !log) return;
 
-  mem.innerText = systemLog.slice(-10).join("\n");
+  log.innerText += "\nYOU: " + input.value;
+  input.value = "";
 }
 
+// =========================
+// ARCHIVE SYSTEM
+// =========================
+function openFile(type) {
+  const viewer = $("viewer");
+
+  const files = {
+    log: "INCIDENT LOG: SYSTEM BREACH DETECTED",
+    subject: "SUBJECT REPORT: ENTITY CLASS UNKNOWN",
+  };
+
+  viewer.innerText = files[type] || "FILE CORRUPTED";
+}
+
+function openOmega() {
+  $("viewer").innerText = "Ω FILE: ACCESS DENIED BY CORE";
+}
 
 // =========================
-// INIT (ВАЖНО)
+// CAMERA SYSTEM
+// =========================
+let camIndex = 0;
+
+const cams = [
+  "CAMERA 01 ACTIVE",
+  "CAMERA 02 SIGNAL LOST",
+  "CAMERA 03 ENTITY MOVING",
+  "CAMERA 04 STATIC NOISE"
+];
+
+function switchCamera(dir) {
+  camIndex += dir;
+
+  if (camIndex < 0) camIndex = cams.length - 1;
+  if (camIndex >= cams.length) camIndex = 0;
+
+  const name = $("cameraName");
+  const img = $("cam");
+
+  if (name) name.innerText = cams[camIndex];
+
+  if (img) {
+    img.src = "images/cam_" + (camIndex + 1) + ".gif";
+  }
+}
+
+// =========================
+// INIT
 // =========================
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("bootSound")?.volume = 0.3;
   document.getElementById("clickSound")?.volume = 0.4;
-  document.getElementById("glitchSound")?.volume = 0.25;
-  document.getElementById("alertSound")?.volume = 0.5;
 
   startIntro();
-  // 🔥 ВАЖНО ДЛЯ ANDROID
   initAudio();
-})
-
-// =========================
-// SAFE ELEMENT CHECK
-// =========================
-function $(id) {
-  return document.getElementById(id);
-}
-
-// =========================
-// PREVENT MOBILE ZOOM
-// =========================
-if ("ongesturestart" in window) {
-  document.addEventListener("gesturestart", e => {
-    e.preventDefault();
-  });
-}
-
-// =========================
-// ANDROID PERFORMANCE FIX
-// =========================
-window.addEventListener("touchmove", () => {}, {
-  passive: true
 });
 
-console.log("MIRROR-INT CORE READY");
+console.log("MIRROR-INT 4.0 CORE ONLINE");
