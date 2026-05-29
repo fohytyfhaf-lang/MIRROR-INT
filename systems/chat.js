@@ -2,12 +2,11 @@ let chat = [];
 
 function sendMsg(){
   const inp = $("chatInput");
-  const box = $("chatBox");
 
   chat.push("YOU: " + inp.value);
-  chat.push("SYS: message received");
+  chat.push("SYS: worker response active");
 
-  box.innerText = chat.join("\n");
+  $("chatBox").innerText = chat.join("\n");
 
   inp.value = "";
 }
