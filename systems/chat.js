@@ -1,12 +1,29 @@
-let chat = [];
+export function initChat() {
+  const chat = document.getElementById("chat");
 
-function sendMsg(){
-  const inp = $("chatInput");
+  setInterval(() => {
+    const msgs = [
+      "SYS: monitoring active...",
+      "NODE: connection stable",
+      "ENTITY: observing user...",
+      "OPERATOR: signal received"
+    ];
 
-  chat.push("YOU: " + inp.value);
-  chat.push("SYS: worker response active");
+    chat.innerText += "\n" + msgs[Math.floor(Math.random() * msgs.length)];
+  }, 3000);
+}
 
-  $("chatBox").innerText = chat.join("\n");
+export function sendMsg() {
+  const input = document.getElementById("msg");
+  const chat = document.getElementById("chat");
 
-  inp.value = "";
+  if (!input.value.trim()) return;
+
+  chat.innerText += "\nYOU: " + input.value;
+
+  setTimeout(() => {
+    chat.innerText += "\nSYS: message accepted";
+  }, 500);
+
+  input.value = "";
 }
