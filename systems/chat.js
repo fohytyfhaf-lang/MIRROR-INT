@@ -1,35 +1,33 @@
-function sendStaffMessage() {
 
-  const input = $("staffInput");
-  const log = $("staffLog");
+function sendStaffMessage(){
 
-  if (!input || !log) return;
+const input = $("staffInput");
+const log = $("staffLog");
 
-  const text = input.value.trim();
+if(input.value.trim() === "") return;
 
-  if (!text) return;
+log.innerText += "\nYOU: " + input.value;
 
-  log.innerText += "\nYOU: " + text;
+setTimeout(() => {
 
-  input.value = "";
+const replies = [
+"SYSTEM OK",
+"REPORT RECEIVED",
+"UNKNOWN SIGNAL",
+"ENTITY DETECTED",
+"ACCESS LOGGED"
+];
 
-  const replies = [
-    "STAFF: Copy.",
-    "STAFF: Access confirmed.",
-    "STAFF: Unknown signal.",
-    "SYS: WARNING.",
-    "STAFF: Movement detected."
-  ];
+const random =
+replies[Math.floor(Math.random() * replies.length)];
 
-  setTimeout(() => {
+log.innerText += "\nSYS: " + random;
 
-    const reply = replies[
-      Math.floor(Math.random() * replies.length)
-    ];
+log.scrollTop = log.scrollHeight;
 
-    log.innerText += "\n" + reply;
+}, 500);
 
-    log.scrollTop = log.scrollHeight;
+input.value = "";
 
-  }, 600);
 }
+```
