@@ -1,30 +1,26 @@
+function loginSystem() {
+  const user = $("user").value;
+  const pass = $("pass").value;
+  const status = $("loginStatus");
 
-function loginSystem(){
+  const ok =
+    (user === "operator" && pass === "0404") ||
+    (user === "omega" && pass === "mirror") ||
+    (user === "research" && pass === "void");
 
-const user = $("user").value;
-const pass = $("pass").value;
+  if (!ok) {
+    status.innerText = "ACCESS DENIED";
+    return;
+  }
 
-const status = $("loginStatus");
+  status.innerText = "ACCESS GRANTED";
 
-if(user === "omega" && pass === "mirror"){
+  setTimeout(() => {
+    $("login").classList.remove("active");
+    show("screen");
 
-status.innerText = "ACCESS GRANTED";
+    window.state.logged = true;
 
-setTimeout(() => {
-
-document.getElementById("login").classList.remove("active");
-
-show("screen");
-
-startClock();
-
-}, 500);
-
-}else{
-
-status.innerText = "ACCESS DENIED";
-
+    startClock();
+  }, 500);
 }
-
-}
-
