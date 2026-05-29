@@ -1,5 +1,4 @@
-
- const files = [
+const files = [
 
   "audio/background.mp3",
   "sounds/boot.wav",
@@ -13,22 +12,76 @@
 
 ];
 
-async function startBoot(){
+const smileLines = [
 
-  const log = document.getElementById("bootLog");
-  const fill = document.getElementById("bootFill");
-  const percent = document.getElementById("bootPercent");
+  "MR.SMILE: hello again.",
+  "MR.SMILE: loading memories...",
+  "MR.SMILE: someone is watching.",
+  "MR.SMILE: don't open CAM-06.",
+  "MR.SMILE: system damaged :)"
 
-  for(let i = 0; i < files.length; i++){
+];
+
+export function initBoot(){
+
+  const loading =
+    document.getElementById("loading");
+
+  const login =
+    document.getElementById("login");
+
+  const log =
+    document.getElementById("bootLog");
+
+  const fill =
+    document.getElementById("bootFill");
+
+  const percent =
+    document.getElementById("bootPercent");
+
+  let i = 0;
+
+  function loadNext(){
+
+    if(i >= files.length){
+
+      log.innerHTML +=
+        "<br>SYSTEM READY";
+
+      setTimeout(() => {
+
+        loading.style.display = "none";
+
+        login.classList.add("active");
+
+      }, 1000);
+
+      return;
+    }
 
     const file = files[i];
 
-    log.innerText +=
-      "LOADING: " + file + "\n";
+    log.innerHTML +=
+      "LOADING: " + file + "<br>";
 
-    log.scrollTop = log.scrollHeight;
+    if(Math.random() > 0.5){
 
-    await fakeLoad(file);
+      const msg =
+        smileLines[
+          Math.floor(
+            Math.random() *
+            smileLines.length
+          )
+        ];
+
+      log.innerHTML +=
+        "<span class='smile'>" +
+        msg +
+        "</span><br>";
+    }
+
+    log.scrollTop =
+      log.scrollHeight;
 
     const p =
       Math.floor(
@@ -38,31 +91,18 @@ async function startBoot(){
     fill.style.width = p + "%";
 
     percent.innerText = p + "%";
+
+    i++;
+
+    setTimeout(
+      loadNext,
+      700
+    );
   }
 
-  log.innerText +=
-    "\nSYSTEM READY";
+  loading.style.display = "flex";
 
-  setTimeout(() => {
+  login.classList.remove("active");
 
-    document
-      .getElementById("loading")
-      .style.display = "none";
-
-    document
-      .getElementById("login")
-      .classList.add("active");
-
-  }, 1200);
-}
-
-function fakeLoad(file){
-
-  return new Promise(resolve => {
-
-    setTimeout(() => {
-      resolve();
-    }, 400 + Math.random() * 700);
-
-  });
+  loadNext();
 }
