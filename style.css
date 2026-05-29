@@ -17,15 +17,7 @@ body {
 }
 
 /* ================= LOGIN ================= */
-#login {
-  position: fixed;
-  inset: 0;
 
-  display: none;
-  justify-content: center;
-  align-items: center;
-
-  background: #008080;
 }
 
 #login.active {
