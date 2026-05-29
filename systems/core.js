@@ -1,18 +1,13 @@
-window.$ = (id) => document.getElementById(id);
+function $(id){
+  return document.getElementById(id);
+}
 
-window.show = (id) => {
+function show(id){
   const el = $(id);
-  if (el) el.style.display = "block";
-};
+  if(el) el.classList.remove("hidden");
+}
 
-window.hide = (id) => {
+function hide(id){
   const el = $(id);
-  if (el) el.style.display = "none";
-};
-
-window.state = {
-  logged: false,
-  cameraIndex: 0,
-  clockStarted: false,
-  audioStarted: false
-};
+  if(el) el.classList.add("hidden");
+}
