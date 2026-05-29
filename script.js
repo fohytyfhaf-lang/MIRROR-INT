@@ -116,8 +116,10 @@ function startBoot() {
 
       setTimeout(() => {
         hide("loading");
-       const login = document.getElementById("login");
+
+const login = document.getElementById("login");
 login.style.display = "flex";
+login.classList.add("active");
       }, 800);
     }
   }, 120);
@@ -144,18 +146,18 @@ function loginSystem() {
 
   if (status) status.innerText = "ACCESS GRANTED";
 
-  setTimeout(() => {
-    const login = document.getElementById("login");
-    const screen = document.getElementById("screen");
+ setTimeout(() => {
+  const login = document.getElementById("login");
+  const screen = document.getElementById("screen");
 
-    // 🔥 ВАЖНО: правильно скрываем/показываем
-    login.style.display = "none";
-    screen.style.display = "block";
+  login.classList.remove("active");
+  login.style.display = "none";
 
-    systemBooted = true;
-    startClock();
-  }, 600);
-}
+  screen.style.display = "block";
+
+  systemBooted = true;
+  startClock();
+}, 600);
 // =========================
 // WINDOWS
 // =========================
