@@ -1,82 +1,13 @@
-// =====================================
-// MIRROR-INT 4.0 CORE (STABLE FIXED)
-// =====================================
-
-// =========================
-// STATE
-// =========================
-let progress = 0;
-let accessLevel = 0;
-let systemBooted = false;
-let audioStarted = false;
-let clockStarted = false;
-
-let cameraIndex = 0;
-
-// =========================
-// HELPERS
-// =========================
+```js
 const $ = (id) => document.getElementById(id);
 
-function show(id) {
-  const el = $(id);
-  if (el) el.style.display = "block";
-}
+/* =====================
+BOOT
+===================== */
 
-function hide(id) {
-  const el = $(id);
-  if (el) el.style.display = "none";
-}
+let progress = 0;
 
-// =========================
-// AUDIO (SAFE)
-// =========================
-function startAudioOnce() {
-  if (audioStarted) return;
-  audioStarted = true;
-
-  const bg = $("bgMusic");
-
-  if (bg) {
-    bg.volume = 0.4;
-    bg.loop = true;
-    bg.play().catch(() => {});
-  }
-
-  console.log("AUDIO STARTED");
-}
-
-function initAudio() {
-  const trigger = () => startAudioOnce();
-
-  document.addEventListener("pointerdown", trigger, { once: true });
-  document.addEventListener("touchstart", trigger, { once: true });
-  document.addEventListener("keydown", trigger, { once: true });
-}
-
-// =========================
-// INTRO
-// =========================
-function startIntro() {
-  show("biosScreen");
-
-  setTimeout(() => {
-    hide("biosScreen");
-    show("hackScreen");
-
-    setTimeout(() => {
-      hide("hackScreen");
-      startBoot();
-    }, 1200);
-
-  }, 1200);
-}
-
-// =========================
-// BOOT
-// =========================
-function startBoot() {
-  progress = 0;
+function startBoot(){
 
   const bar = $("bootProgress");
   const text = $("loadText");
@@ -84,179 +15,188 @@ function startBoot() {
 
   const logs = [
     "Loading system...",
-    "Checking hardware...",
+    "Checking memory...",
     "Injecting modules...",
-    "Mounting memory...",
     "SYSTEM READY"
   ];
 
   const boot = setInterval(() => {
-    progress += Math.random() * 5;
 
-    if (bar) bar.style.width = progress + "%";
-    if (text) text.innerText = Math.floor(progress) + "%";
-    if (status) status.innerText = logs[Math.floor(progress / 25)] || logs.at(-1);
+    progress += 5;
 
-    if (progress >= 100) {
+    bar.style.width = progress + "%";
+
+    text.innerText = progress + "%";
+
+    status.innerText =
+      logs[Math.floor(progress / 25)] || "READY";
+
+    if(progress >= 100){
+
       clearInterval(boot);
 
       setTimeout(() => {
-        hide("loading");
 
-        const login = document.getElementById("login");
-        if (login) login.classList.add("active");
+        $("loading").style.display = "none";
 
-      }, 800);
+        $("login").classList.add("active");
+
+      }, 500);
     }
+
   }, 120);
 }
-// =========================
-// LOGIN (FIXED)
-// =========================
-function loginSystem() {
-  const user = document.getElementById("user")?.value;
-  const pass = document.getElementById("pass")?.value;
-  const status = document.getElementById("loginStatus");
 
-  let ok = false;
+/* =====================
+LOGIN
+===================== */
 
-  if (user === "operator" && pass === "0404") ok = true;
-  if (user === "research" && pass === "void") ok = true;
-  if (user === "omega" && pass === "mirror") ok = true;
+function loginSystem(){
 
-  if (!ok) {
-    if (status) status.innerText = "ACCESS DENIED";
+  const user = $("user").value;
+  const pass = $("pass").value;
+
+  const status = $("loginStatus");
+
+  if(user === "operator" && pass === "0404"){
+
+    status.innerText = "ACCESS GRANTED";
+
+    setTimeout(() => {
+
+      $("login").classList.remove("active");
+
+      $("screen").style.display = "block";
+
+    }, 500);
+
+  }else{
+
+    status.innerText = "ACCESS DENIED";
+
+  }
+}
+
+/* =====================
+WINDOWS
+===================== */
+
+function openWindow(id){
+
+  $(id).style.display = "block";
+
+}
+
+/* =====================
+CAMERAS
+===================== */
+
+const cameras = [
+  {
+    name:"CAM SECRET",
+    src:"cam_secret.gif"
+  },
+  {
+    name:"CAM GLITCH",
+    src:"cam_glitch.gif"
+  }
+];
+
+let camIndex = 0;
+
+function switchCamera(dir){
+
+  camIndex += dir;
+
+  if(camIndex < 0)
+    camIndex = cameras.length - 1;
+
+  if(camIndex >= cameras.length)
+    camIndex = 0;
+
+  $("cam").src = cameras[camIndex].src;
+
+  $("cameraName").innerText =
+    cameras[camIndex].name;
+}
+
+/* =====================
+CHAT
+===================== */
+
+function sendStaffMessage(){
+
+  const input = $("staffInput");
+  const log = $("staffLog");
+
+  if(input.value.trim() === "")
     return;
-  }
 
-  if (status) status.innerText = "ACCESS GRANTED";
-
-  setTimeout(() => {
-    const login = document.getElementById("login");
-    const screen = document.getElementById("screen");
-
-    if (login) login.classList.remove("active");
-    if (screen) screen.style.display = "block";
-
-    startClock();
-  }, 600);
-}
-// =========================
-// WINDOWS
-// =========================
-function openWindow(id) {
-  const win = document.getElementById(id);
-
-  if (!win) return;
-
-  win.style.display = "block";
-
-  // случайная позиция как Win95
-  if (!win.dataset.opened) {
-    win.style.top = (80 + Math.random() * 120) + "px";
-    win.style.left = (120 + Math.random() * 180) + "px";
-
-    win.dataset.opened = "true";
-  }
-}
-
-function closeWindow(id) {
-  const win = document.getElementById(id);
-
-  if (!win) return;
-
-  win.style.display = "none";
-}
-// =========================
-// CAMERA FIXED
-// =========================
-function switchCamera(dir) {
-  cameraIndex += dir;
-
-  if (cameraIndex < 0) cameraIndex = cameras.length - 1;
-  if (cameraIndex >= cameras.length) cameraIndex = 0;
-
-  const cam = $("cam");
-  const name = $("cameraName");
-
-  if (cam) cam.src = cameras[cameraIndex].src;
-  if (name) name.innerText = cameras[cameraIndex].name;
-}
-
-// =========================
-// ARCHIVE SAFE
-// =========================
-function openFile(type) {
-  const viewer = $("viewer");
-  if (!viewer) return;
-
-  const files = {
-    log: "INCIDENT LOG:\nSYSTEM BREACH DETECTED...",
-    subject: "SUBJECT REPORT:\nUNKNOWN ENTITY CLASS..."
-  };
-
-  viewer.innerText = files[type] || "FILE NOT FOUND";
-}
-
-function openOmega() {
-  const viewer = $("viewer");
-  if (viewer) viewer.innerText = "OMEGA FILE:\nACCESS LEVEL REQUIRED: 3";
-}
-
-
-// =========================
-// CLOCK FIX (NO DUPLICATES)
-// =========================
-function startClock() {
-  if (clockStarted) return;
-  clockStarted = true;
-
-  setInterval(() => {
-    const c = $("clock");
-    if (c) c.innerText = new Date().toLocaleTimeString();
-  }, 1000);
-}
-
-// =========================
-// INIT
-// =========================
-document.addEventListener("DOMContentLoaded", () => {
-  initAudio();
+  log.innerText +=
+    "\nYOU: " + input.value;
 
   setTimeout(() => {
-    startIntro();
-  }, 200);
-});
 
-console.log("MIRROR-INT 4.0 CORE LOADED");
+    log.innerText +=
+      "\nSYS: MESSAGE RECEIVED";
 
-document.querySelectorAll(".window-header").forEach(header => {
+  }, 400);
 
-  const win = header.parentElement;
+  input.value = "";
+}
 
-  let dragging = false;
+/* =====================
+GAME
+===================== */
 
-  let offsetX = 0;
-  let offsetY = 0;
+function startGame(){
 
-  header.addEventListener("mousedown", (e) => {
+  const canvas = $("gameCanvas");
 
-    dragging = true;
+  const ctx =
+    canvas.getContext("2d");
 
-    offsetX = e.clientX - win.offsetLeft;
-    offsetY = e.clientY - win.offsetTop;
-  });
+  let x = 50;
 
-  document.addEventListener("mousemove", (e) => {
+  function draw(){
 
-    if (!dragging) return;
+    ctx.clearRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
 
-    win.style.left = e.clientX - offsetX + "px";
-    win.style.top = e.clientY - offsetY + "px";
-  });
+    ctx.fillStyle = "#00ff99";
 
-  document.addEventListener("mouseup", () => {
-    dragging = false;
-  });
+    ctx.fillRect(
+      x,
+      100,
+      40,
+      40
+    );
 
-});
+    x += 2;
+
+    if(x > canvas.width)
+      x = -40;
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+}
+
+/* =====================
+INIT
+===================== */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    startBoot();
+
+  }
+);
+```
