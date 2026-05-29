@@ -1,133 +1,71 @@
 body {
-  margin:0;
-  background:#008080;
-  font-family:Tahoma;
-  overflow:hidden;
+  margin: 0;
+  background: #008080;
+  font-family: Tahoma, sans-serif;
 }
 
-/* скрытие */
-#bootLog{
-  height:180px;
-  overflow-y:auto;
-  white-space:pre-wrap;
-
-  color:#00ff99;
-  font-family:monospace;
-  font-size:14px;
-}
-
-/* универсальный центр */
-.center {
+/* ================= LOADING ================= */
+#loading {
   position: fixed;
   inset: 0;
+  background: black;
+  color: #00ff99;
+
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* LOADING */
-#loading {
-  background:black;
-  color:lime;
+/* ================= LOGIN ================= */
+#login {
+  position: fixed;
+  inset: 0;
+
+  display: none;
+  justify-content: center;
+  align-items: center;
+
+  background: #008080;
 }
 
-/* LOGIN FIX */
-#login .window{
-  width:320px;
-}
-/* ВАЖНО: активный логин */
 #login.active {
-  display:flex;
+  display: flex;
 }
 
-/* WINDOWS */
+/* ================= WINDOWS ================= */
 .window {
-  background:silver;
-  border:2px solid black;
-  padding:10px;
-
-  min-width:300px;
+  background: silver;
+  border: 2px solid black;
+  padding: 10px;
 
   box-shadow:
-    2px 2px 0 #fff inset,
+    2px 2px 0 white inset,
     -2px -2px 0 #555 inset;
 }
 
-/* desktop windows */
-.draggable{
-  position:absolute;
-}
-
-/* TITLE BAR */
+/* ================= TITLE BAR ================= */
 .title {
-  background:navy;
-  color:white;
-  padding:3px;
+  background: navy;
+  color: white;
+  padding: 3px;
+  font-size: 14px;
 }
 
-/* CANVAS */
-canvas{
-  background:black;
-  display:block;
-  image-rendering:pixelated;
-}
-/* CHAT FIX */
-#chat{
-  width:300px;
-  box-sizing:border-box;
-}
+/* ================= CHAT ================= */
+#chat {
+  height: 150px;
+  overflow-y: auto;
+  white-space: pre-wrap;
 
+  background: black;
+  color: #00ff99;
 
-#bootWindow{
-  width:500px;
-  background:#111;
-  border:2px solid #00ff99;
-  padding:15px;
-  box-shadow:0 0 20px #00ff99;
+  font-family: monospace;
+  padding: 5px;
 }
 
-#bootLog{
-  height:180px;
-  overflow:hidden;
-  color:#00ff99;
-  font-family:monospace;
-  font-size:14px;
-}
-
-#bootBar{
-  width:100%;
-  height:20px;
-  background:black;
-  border:1px solid #00ff99;
-  margin-top:10px;
-}
-
-#bootFill{
-  width:0%;
-  height:100%;
-  background:#00ff99;
-  transition:0.2s;
-}
-
-#bootPercent{
-  margin-top:5px;
-  color:#00ff99;
-  font-family:monospace;
-}
-
-@media(max-width:700px){
-
-  #bootWindow{
-    width:90%;
-  }
-
-  #login .window{
-    width:90%;
-  }
-
-  canvas{
-    width:100%;
-    height:auto;
-  }
-
+/* ================= CANVAS ================= */
+canvas {
+  background: black;
+  display: block;
 }
