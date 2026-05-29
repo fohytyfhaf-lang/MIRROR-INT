@@ -128,7 +128,7 @@ function loginSystem() {
   const status = $("loginStatus");
 
   let ok = false;
-
+show("login"); // OK
   if (user === "operator" && pass === "0404") ok = true;
   if (user === "research" && pass === "void") ok = true;
   if (user === "omega" && pass === "mirror") ok = true;
