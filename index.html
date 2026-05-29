@@ -1,1 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MIRROR-INT 6.5</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<section id="login">
+  <div class="window">
+    <div class="title">AUTH</div>
+
+    <input id="user" placeholder="user">
+    <input id="pass" type="password" placeholder="pass">
+
+    <button onclick="loginSystem()">LOGIN</button>
+    <p id="loginStatus"></p>
+  </div>
+</section>
+
+<!-- GAME / DESKTOP -->
+<main id="screen" class="hidden">
+
+  <div class="window">
+    <div class="title">SYSTEM</div>
+
+    <button onclick="toggleMusic()">MUSIC</button>
+
+    <canvas id="game" width="500" height="200"></canvas>
+
+    <div id="codeBox">CODE: 0</div>
+  </div>
+
+  <div class="window">
+    <div class="title">CHAT</div>
+    <pre id="chat"></pre>
+    <input id="msg">
+    <button onclick="sendMsg()">SEND</button>
+  </div>
+
+</main>
+
+<audio id="music" src="audio/background.mp3" loop></audio>
+
 <script type="module" src="./systems/core.js"></script>
+
+</body>
+</html>
