@@ -116,7 +116,8 @@ function startBoot() {
 
       setTimeout(() => {
         hide("loading");
-        show("login");
+       const login = document.getElementById("login");
+login.style.display = "flex";
       }, 800);
     }
   }, 120);
