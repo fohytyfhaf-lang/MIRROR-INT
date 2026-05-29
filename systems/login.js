@@ -1,4 +1,4 @@
-```js
+
 function loginSystem() {
 
   const user =
@@ -47,4 +47,3 @@ function loginSystem() {
   }, 600);
 }
 ```
-
