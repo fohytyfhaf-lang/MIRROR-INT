@@ -160,12 +160,12 @@ button:active {
 }
 
 #desktop {
-  padding: 40px;
+  padding: 60px;
 
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: 60px;
+  gap: 80px;
 
   width: 100%;
 }
