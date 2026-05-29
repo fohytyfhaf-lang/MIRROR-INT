@@ -2,24 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>MIRROR-INT 6.0</title>
+<title>MIRROR-INT 6.0 FIXED</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <!-- BOOT -->
-<div id="boot">
-  <h2>MIRROR-INT BOOT</h2>
-  <p id="bootText">Loading...</p>
-</div>
+<div id="boot">BOOTING SYSTEM...</div>
 
 <!-- LOGIN -->
 <div id="login" class="hidden">
   <div class="window">
     <div class="title">LOGIN</div>
-    <input id="user" placeholder="user">
-    <input id="pass" type="password" placeholder="pass">
+    <input id="user" placeholder="USER">
+    <input id="pass" type="password" placeholder="PASS">
     <button onclick="login()">ENTER</button>
     <p id="loginStatus"></p>
   </div>
@@ -30,33 +27,26 @@
 
   <div class="taskbar">MIRROR-INT 6.0</div>
 
-  <div class="icons">
+  <button onclick="openApp('chat')">CHAT</button>
+  <button onclick="openApp('camera')">CAM</button>
+  <button onclick="openApp('game')">GAME</button>
 
-    <button onclick="openWindow('chatWin')">CHAT</button>
-    <button onclick="openWindow('camWin')">CAMERAS</button>
-    <button onclick="openWindow('gameWin')">GAME</button>
-
-  </div>
-
-  <!-- CHAT -->
-  <div id="chatWin" class="window hidden">
-    <div class="title">STAFF CHAT</div>
+  <div id="chat" class="window hidden">
+    <div class="title">CHAT</div>
     <pre id="chatBox"></pre>
     <input id="chatInput">
     <button onclick="sendMsg()">SEND</button>
   </div>
 
-  <!-- CAMERA -->
-  <div id="camWin" class="window hidden">
-    <div class="title">CAM SYSTEM</div>
-    <img id="cam" src="images/cam_server.gif">
+  <div id="camera" class="window hidden">
+    <div class="title">CAMERA</div>
+    <img id="camImg">
     <button onclick="nextCam()">NEXT</button>
   </div>
 
-  <!-- GAME -->
-  <div id="gameWin" class="window hidden">
-    <div class="title">VOID JUMP</div>
-    <canvas id="game" width="300" height="150"></canvas>
+  <div id="game" class="window hidden">
+    <div class="title">GAME</div>
+    <canvas id="canvas" width="300" height="150"></canvas>
     <button onclick="startGame()">START</button>
   </div>
 
@@ -65,13 +55,11 @@
 <audio id="bgm" src="audio/background.mp3" loop></audio>
 
 <script src="core.js"></script>
+<script src="boot.js"></script>
 <script src="login.js"></script>
-<script src="windows.js"></script>
 <script src="chat.js"></script>
 <script src="camera.js"></script>
 <script src="game.js"></script>
-<script src="audio.js"></script>
-<script src="boot.js"></script>
 
 </body>
 </html>
