@@ -1,176 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>MIRROR-INT 4.0 CORE</title>
-
-<link rel="stylesheet" href="style.css">
-</head>
-
-<script src="systems/windows.js"></script>
-<script src="systems/chat.js"></script>
-<script src="systems/game.js"></script>
-<script src="script.js"></script>
-  
-<body>
-
-<!-- ================= BIOS ================= -->
-<section id="biosScreen">
-<pre id="biosText">
-AMERICAN MEGATRENDS BIOS v4.0
-
-CPU: MIRROR CORE ONLINE
-MEMORY CHECK: OK
-INITIALIZING SYSTEM...
-</pre>
-</section>
-
-<!-- ================= HACK ================= -->
-<section id="hackScreen" style="display:none;">
-<pre id="hackText"></pre>
-</section>
-
-<!-- ================= BOOT ================= -->
-<section id="loading">
-<div id="bootWindow">
-<img src="images/win95_logo.png" id="bootLogo">
-
-<div id="bootHeader">MIRROR-INT CORE ENGINE</div>
-
-<div id="bootBody">
-<p id="bootStatus">Loading system...</p>
-
-<div id="bootBar">
-<div id="bootProgress"></div>
-</div>
-
-<p id="loadText">0%</p>
-</div>
-</div>
-</section>
-
-<!-- ================= LOGIN (FIXED - NO inline display:none) ================= -->
-<section id="login">
-<div class="window loginWindow">
-
-<div class="window-header">AUTHORIZATION</div>
-
-<div class="window-body">
-
-<input id="user" placeholder="USERNAME">
-<input id="pass" type="password" placeholder="PASSWORD">
-
-<button onclick="loginSystem()">LOGIN</button>
-
-<p id="loginStatus"></p>
-
-</div>
-</div>
-</section>
-
-<!-- ================= DESKTOP ================= -->
-<main id="screen" style="display:none;">
-
-<div id="desktop">
-
-<div class="desktop-icon" onclick="openWindow('archiveWindow')">
-<img src="images/folder.png"><span>ARCHIVE</span>
-</div>
-
-<div class="desktop-icon" onclick="openWindow('cameraWindow')">
-<img src="images/camera.png"><span>CAMERAS</span>
-</div>
-
-<div class="desktop-icon" onclick="openWindow('staffWindow')">
-<img src="images/chat.png"><span>STAFF</span>
-</div>
-
-<div class="desktop-icon" onclick="openWindow('entityWindow')">
-<img src="images/entity.png"><span>ENTITY</span>
-</div>
-
-<div class="desktop-icon" onclick="openWindow('gameWindow')">
-<img src="images/game.png"><span>VOID RUNNER</span>
-</div>
-
-</div>
-
-<!-- ARCHIVE -->
-<div id="archiveWindow" class="window" style="display:none;">
-<div class="window-header">ARCHIVE</div>
-<div class="window-body">
-
-<div class="file" onclick="openFile('log')">INCIDENT LOG</div>
-<div class="file" onclick="openFile('subject')">SUBJECT REPORT</div>
-<div class="file secret" onclick="openOmega()">OMEGA FILE</div>
-
-<pre id="viewer">NO FILE</pre>
-
-<button onclick="closeWindow('archiveWindow')">CLOSE</button>
-
-</div>
-</div>
-
-<!-- CAMERA -->
-<div id="cameraWindow" class="window" style="display:none;">
-<div class="window-header">CAMERAS</div>
-<div class="window-body">
-
-<img id="cam" src="images/cam_server.gif">
-
-<button onclick="switchCamera(-1)">PREV</button>
-<button onclick="switchCamera(1)">NEXT</button>
-
-<div id="cameraName">CAM SERVER</div>
-
-<button onclick="closeWindow('cameraWindow')">CLOSE</button>
-
-</div>
-</div>
-
-<!-- CHAT -->
-<div id="staffWindow" class="window" style="display:none;">
-<div class="window-header">STAFF CHAT</div>
 <div class="window-body">
 
 <pre id="staffLog"></pre>
 
 <input id="staffInput">
-<button onclick="sendStaffMessage()">SEND</button>
 
-<button onclick="closeWindow('staffWindow')">CLOSE</button>
+<button onclick="sendStaffMessage()">
+SEND
+</button>
 
-</div>
-</div>
+<button onclick="closeWindow('staffWindow')">
+CLOSE
+</button>
 
-<!-- ENTITY -->
-<div id="entityWindow" class="window" style="display:none;">
-<div class="window-header">ENTITY</div>
-<div class="window-body">
-<pre id="entityLog">ENTITY STATUS: UNKNOWN</pre>
 </div>
 </div>
 
 <!-- GAME -->
-<div id="gameWindow" class="window" style="display:none;">
-<div class="window-header">VOID RUNNER</div>
-<div class="window-body">
+<div id="gameWindow" class="window">
 
-<canvas id="gameCanvas" width="700" height="250"></canvas>
-
-<button onclick="startGame()">START</button>
-<button onclick="closeWindow('gameWindow')">CLOSE</button>
-
-</div>
+<div class="window-header">
+VOID RUNNER
 </div>
 
-<!-- MEMORY -->
-<div class="window memoryWindow">
-<div class="window-header">MEMORY</div>
 <div class="window-body">
-<pre id="memory">BOOTING...</pre>
+
+<canvas
+id="gameCanvas"
+width="700"
+height="250">
+</canvas>
+
+<button onclick="startGame()">
+START
+</button>
+
+<button onclick="closeWindow('gameWindow')">
+CLOSE
+</button>
+
 </div>
 </div>
 
@@ -183,10 +52,17 @@ INITIALIZING SYSTEM...
 </main>
 
 <!-- AUDIO -->
-<audio id="bootSound" src="audio/boot.wav"></audio>
-<audio id="clickSound" src="audio/click.wav"></audio>
-<audio id="bootMusic" src="audio/boot_ambient.mp3" loop></audio>
 <audio id="bgMusic" src="audio/background.mp3" loop></audio>
+
+<!-- SYSTEMS -->
+<script src="systems/windows.js"></script>
+<script src="systems/audio.js"></script>
+<script src="systems/clock.js"></script>
+<script src="systems/chat.js"></script>
+<script src="systems/game.js"></script>
+<script src="systems/camera.js"></script>
+<script src="systems/login.js"></script>
+<script src="systems/boot.js"></script>
 
 <script src="script.js"></script>
 
