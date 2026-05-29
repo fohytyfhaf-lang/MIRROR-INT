@@ -1,15 +1,7 @@
-
 document.addEventListener("click", () => {
+  const bg = $("bgMusic");
+  if (!bg) return;
 
-const bg = $("bgMusic");
-
-if(bg){
-
-bg.volume = 0.3;
-
-bg.play().catch(()=>{});
-
-}
-
-},{once:true});
-```
+  bg.volume = 0.3;
+  bg.play().catch(()=>{});
+}, { once:true });
