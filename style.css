@@ -40,3 +40,14 @@ canvas {
   background:black;
   display:block;
 }
+
+
+#chat {
+  height: 150px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  background: black;
+  color: #00ff99;
+  padding: 5px;
+  font-family: monospace;
+}
