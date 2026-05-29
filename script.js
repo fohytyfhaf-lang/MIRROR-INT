@@ -233,29 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
   startIntro();
   // 🔥 ВАЖНО ДЛЯ ANDROID
   initAudio();
-});
-
-
-// =========================
-// INTRO FIX
-// =========================
-function startIntro() {
-  const bios = document.getElementById("biosScreen");
-  const hack = document.getElementById("hackScreen");
-  const hackText = document.getElementById("hackText");
-
-  bios.style.display = "block";
-
-  setTimeout(() => {
-    bios.style.display = "none";
-    hack.style.display = "block";
-
-    setTimeout(() => {
-      hack.style.display = "none";
-      startBoot();
-    }, 1500);
-  }, 1200);
-}
+})
 
 // =========================
 // SAFE ELEMENT CHECK
