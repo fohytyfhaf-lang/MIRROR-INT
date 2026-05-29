@@ -1,5 +1,5 @@
 // =====================================
-// MIRROR-INT 4.0 CORE (STABLE BUILD)
+// MIRROR-INT 4.0 CORE (STABLE FIXED)
 // =====================================
 
 // =========================
@@ -9,10 +9,13 @@ let progress = 0;
 let accessLevel = 0;
 let systemBooted = false;
 let audioStarted = false;
+let clockStarted = false;
 
 let cameraIndex = 0;
 
-// 🧠 камеры под твою структуру
+// =========================
+// CAMERAS
+// =========================
 const cameras = [
   { name: "CAM SERVER", src: "images/cam_server.gif" },
   { name: "CAM STORAGE", src: "images/cam_storage.gif" },
@@ -40,7 +43,7 @@ function hide(id) {
 }
 
 // =========================
-// AUDIO SYSTEM
+// AUDIO (SAFE)
 // =========================
 function startAudioOnce() {
   if (audioStarted) return;
@@ -66,7 +69,7 @@ function initAudio() {
 }
 
 // =========================
-// INTRO (BIOS → BOOT)
+// INTRO
 // =========================
 function startIntro() {
   show("biosScreen");
@@ -84,7 +87,7 @@ function startIntro() {
 }
 
 // =========================
-// BOOT SYSTEM
+// BOOT
 // =========================
 function startBoot() {
   progress = 0;
@@ -94,8 +97,8 @@ function startBoot() {
   const status = $("bootStatus");
 
   const logs = [
-    "Loading MIRROR-INT core...",
-    "Checking systems...",
+    "Loading system...",
+    "Checking hardware...",
     "Injecting modules...",
     "Mounting memory...",
     "SYSTEM READY"
@@ -120,7 +123,7 @@ function startBoot() {
 }
 
 // =========================
-// LOGIN
+// LOGIN (FIXED)
 // =========================
 function loginSystem() {
   const user = $("user")?.value;
@@ -128,7 +131,7 @@ function loginSystem() {
   const status = $("loginStatus");
 
   let ok = false;
-show("login"); // OK
+
   if (user === "operator" && pass === "0404") ok = true;
   if (user === "research" && pass === "void") ok = true;
   if (user === "omega" && pass === "mirror") ok = true;
@@ -150,7 +153,7 @@ show("login"); // OK
 }
 
 // =========================
-// WINDOWS SYSTEM
+// WINDOWS
 // =========================
 function openWindow(id) {
   show(id);
@@ -161,7 +164,7 @@ function closeWindow(id) {
 }
 
 // =========================
-// CAMERA SYSTEM
+// CAMERA FIXED
 // =========================
 function switchCamera(dir) {
   cameraIndex += dir;
@@ -177,17 +180,18 @@ function switchCamera(dir) {
 }
 
 // =========================
-// ARCHIVE SYSTEM
+// ARCHIVE SAFE
 // =========================
 function openFile(type) {
   const viewer = $("viewer");
+  if (!viewer) return;
 
   const files = {
     log: "INCIDENT LOG:\nSYSTEM BREACH DETECTED...",
-    subject: "SUBJECT REPORT:\nUNKNOWN ENTITY CLASS...",
+    subject: "SUBJECT REPORT:\nUNKNOWN ENTITY CLASS..."
   };
 
-  if (viewer) viewer.innerText = files[type] || "FILE NOT FOUND";
+  viewer.innerText = files[type] || "FILE NOT FOUND";
 }
 
 function openOmega() {
@@ -196,7 +200,7 @@ function openOmega() {
 }
 
 // =========================
-// STAFF CHAT
+// CHAT SAFE
 // =========================
 function sendStaffMessage() {
   const input = $("staffInput");
@@ -214,7 +218,7 @@ function sendStaffMessage() {
 }
 
 // =========================
-// GAME (PLACEHOLDER)
+// GAME SAFE
 // =========================
 function startGame() {
   const canvas = $("gameCanvas");
@@ -230,9 +234,12 @@ function startGame() {
 }
 
 // =========================
-// CLOCK
+// CLOCK FIX (NO DUPLICATES)
 // =========================
 function startClock() {
+  if (clockStarted) return;
+  clockStarted = true;
+
   setInterval(() => {
     const c = $("clock");
     if (c) c.innerText = new Date().toLocaleTimeString();
@@ -240,7 +247,7 @@ function startClock() {
 }
 
 // =========================
-// INIT (IMPORTANT FIX)
+// INIT
 // =========================
 document.addEventListener("DOMContentLoaded", () => {
   initAudio();
