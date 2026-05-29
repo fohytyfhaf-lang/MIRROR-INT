@@ -21,16 +21,6 @@ function startAudioOnce() {
       bg.play().catch(() => {});
     }
 
-function initAudio() {
-  const trigger = () => {
-    startAudioOnce();
-  };
-
-  document.addEventListener("pointerdown", trigger, { once: true });
-  document.addEventListener("touchstart", trigger, { once: true });
-  document.addEventListener("keydown", trigger, { once: true });
-}
-    
     if (boot) {
       boot.volume = 0.3;
       boot.play().catch(() => {});
@@ -39,6 +29,7 @@ function initAudio() {
 
   setTimeout(unlock, 30);
   console.log("AUDIO STARTED");
+
 }
 
 let bootStage = 0;
