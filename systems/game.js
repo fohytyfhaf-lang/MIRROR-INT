@@ -1,43 +1,33 @@
-let started = false;
 
-function startGame() {
+function startGame(){
 
-  if (started) return;
+const canvas = $("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-  started = true;
+let x = 50;
+let speed = 3;
 
-  const canvas = $("gameCanvas");
+function gameLoop(){
 
-  const ctx = canvas.getContext("2d");
+ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  let x = 100;
-  let y = 100;
+ctx.fillStyle = "#00ff99";
 
-  const keys = {};
+ctx.fillRect(x,100,40,40);
 
-  document.addEventListener("keydown", (e) => {
-    keys[e.key.toLowerCase()] = true;
-  });
+x += speed;
 
-  document.addEventListener("keyup", (e) => {
-    keys[e.key.toLowerCase()] = false;
-  });
+if(x > canvas.width - 40 || x < 0){
 
-  function loop() {
+speed *= -1;
 
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    if (keys["w"]) y -= 4;
-    if (keys["s"]) y += 4;
-    if (keys["a"]) x -= 4;
-    if (keys["d"]) x += 4;
-
-    ctx.fillStyle = "#00ff99";
-    ctx.fillRect(x, y, 20, 20);
-
-    requestAnimationFrame(loop);
-  }
-
-  loop();
 }
+
+requestAnimationFrame(gameLoop);
+
+}
+
+gameLoop();
+
+}
+
