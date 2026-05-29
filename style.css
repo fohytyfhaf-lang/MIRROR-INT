@@ -86,18 +86,13 @@ body {
    LOGIN WINDOW
 ========================= */
 #login {
+  display: none;
   position: fixed;
   inset: 0;
-
-  display: none;
   justify-content: center;
   align-items: center;
-
-  background: #008080;
-  z-index: 999;
 }
 
-/* включение */
 #login.active {
   display: flex;
 }
