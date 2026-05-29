@@ -160,20 +160,23 @@ button:active {
 }
 
 #desktop {
-  padding: 20px;
+  padding: 40px;
+
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 60px;
+
+  width: 100%;
 }
 
 /* ICONS */
 .desktop-icon {
-  width: 90px;
+  width: 100px;
   text-align: center;
   cursor: pointer;
   color: white;
 }
-
 .desktop-icon img {
   width: 48px;
   height: 48px;
@@ -333,3 +336,17 @@ button:active {
     width: 90%;
   }
 }
+
+/*НОРМАЛЬНЫЙ ЦЕНТР LOGIN (ПК)
+*/
+#login {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: #008080;
+}
+
