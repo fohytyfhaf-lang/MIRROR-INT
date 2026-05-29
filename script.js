@@ -1,5 +1,5 @@
 // =====================================
-// MIRROR-INT 4.0 CORE ENGINE (FIXED)
+// MIRROR-INT 4.0 CORE (STABLE BUILD)
 // =====================================
 
 // =========================
@@ -11,52 +11,21 @@ let systemBooted = false;
 let audioStarted = false;
 
 let cameraIndex = 0;
+
+// 🧠 камеры под твою структуру
 const cameras = [
-  { name: "CAM 01", src: "images/cam_server.gif" },
-  { name: "CAM 02", src: "images/cam_storage.gif" },
-  { name: "CAM 03", src: "images/cam_secret.gif" }
+  { name: "CAM SERVER", src: "images/cam_server.gif" },
+  { name: "CAM STORAGE", src: "images/cam_storage.gif" },
+  { name: "CAM LAB", src: "images/cam_lab.gif" },
+  { name: "CAM OFFICE", src: "images/cam_office.gif" },
+  { name: "CAM HALL", src: "images/cam_hall.gif" },
+  { name: "CAM SECRET", src: "images/cam_secret.gif" },
+  { name: "CAM GLITCH", src: "images/cam_glitch.gif" },
+  { name: "CAM ALERT", src: "images/cam_alert.gif" }
 ];
 
 // =========================
-// AUDIO SYSTEM
-// =========================
-function startAudioOnce() {
-  if (audioStarted) return;
-  audioStarted = true;
-
-  const bg = document.getElementById("bgMusic");
-  const boot = document.getElementById("bootMusic");
-
-  if (bg) {
-    bg.volume = 0.4;
-    bg.loop = true;
-    bg.play().catch(() => {});
-  }
-
-  if (boot) {
-    boot.volume = 0.3;
-    boot.play().catch(() => {});
-  }
-
-  console.log("AUDIO STARTED");
-}
-
-// ✅ FIXED GLOBAL initAudio (ВАЖНО)
-function initAudio() {
-  const trigger = () => {
-    startAudioOnce();
-    document.removeEventListener("pointerdown", trigger);
-    document.removeEventListener("touchstart", trigger);
-    document.removeEventListener("keydown", trigger);
-  };
-
-  document.addEventListener("pointerdown", trigger, { once: true });
-  document.addEventListener("touchstart", trigger, { once: true });
-  document.addEventListener("keydown", trigger, { once: true });
-}
-
-// =========================
-// UTIL
+// HELPERS
 // =========================
 const $ = (id) => document.getElementById(id);
 
@@ -71,7 +40,33 @@ function hide(id) {
 }
 
 // =========================
-// INTRO (BIOS → HACK → BOOT)
+// AUDIO SYSTEM
+// =========================
+function startAudioOnce() {
+  if (audioStarted) return;
+  audioStarted = true;
+
+  const bg = $("bgMusic");
+
+  if (bg) {
+    bg.volume = 0.4;
+    bg.loop = true;
+    bg.play().catch(() => {});
+  }
+
+  console.log("AUDIO STARTED");
+}
+
+function initAudio() {
+  const trigger = () => startAudioOnce();
+
+  document.addEventListener("pointerdown", trigger, { once: true });
+  document.addEventListener("touchstart", trigger, { once: true });
+  document.addEventListener("keydown", trigger, { once: true });
+}
+
+// =========================
+// INTRO (BIOS → BOOT)
 // =========================
 function startIntro() {
   show("biosScreen");
@@ -80,39 +75,12 @@ function startIntro() {
     hide("biosScreen");
     show("hackScreen");
 
-    typeHack(() => {
+    setTimeout(() => {
       hide("hackScreen");
       startBoot();
-    });
+    }, 1200);
 
   }, 1200);
-}
-
-function typeHack(cb) {
-  const el = $("hackText");
-  if (!el) return cb();
-
-  const lines = [
-    "MIRROR CORE INIT...",
-    "ACCESSING SYSTEM MEMORY...",
-    "WARNING: UNKNOWN SIGNAL DETECTED",
-    "OVERRIDE ACCEPTED",
-    "BOOT SEQUENCE CONTINUING..."
-  ];
-
-  let i = 0;
-  el.innerText = "";
-
-  const t = setInterval(() => {
-    if (i >= lines.length) {
-      clearInterval(t);
-      setTimeout(cb, 600);
-      return;
-    }
-
-    el.innerText += lines[i] + "\n";
-    i++;
-  }, 300);
 }
 
 // =========================
@@ -126,15 +94,15 @@ function startBoot() {
   const status = $("bootStatus");
 
   const logs = [
-    "Loading system...",
-    "Checking hardware...",
-    "Injecting core...",
-    "Mounting registry...",
+    "Loading MIRROR-INT core...",
+    "Checking systems...",
+    "Injecting modules...",
+    "Mounting memory...",
     "SYSTEM READY"
   ];
 
   const boot = setInterval(() => {
-    progress += Math.random() * 4;
+    progress += Math.random() * 5;
 
     if (bar) bar.style.width = progress + "%";
     if (text) text.innerText = Math.floor(progress) + "%";
@@ -155,8 +123,8 @@ function startBoot() {
 // LOGIN
 // =========================
 function loginSystem() {
-  const user = $("user").value;
-  const pass = $("pass").value;
+  const user = $("user")?.value;
+  const pass = $("pass")?.value;
   const status = $("loginStatus");
 
   let ok = false;
@@ -166,11 +134,11 @@ function loginSystem() {
   if (user === "omega" && pass === "mirror") ok = true;
 
   if (!ok) {
-    status.innerText = "ACCESS DENIED";
+    if (status) status.innerText = "ACCESS DENIED";
     return;
   }
 
-  status.innerText = "ACCESS GRANTED";
+  if (status) status.innerText = "ACCESS GRANTED";
 
   setTimeout(() => {
     hide("login");
@@ -193,7 +161,7 @@ function closeWindow(id) {
 }
 
 // =========================
-// CAMERA SYSTEM (FIXED)
+// CAMERA SYSTEM
 // =========================
 function switchCamera(dir) {
   cameraIndex += dir;
@@ -209,26 +177,26 @@ function switchCamera(dir) {
 }
 
 // =========================
-// ARCHIVE
+// ARCHIVE SYSTEM
 // =========================
 function openFile(type) {
   const viewer = $("viewer");
 
   const files = {
     log: "INCIDENT LOG:\nSYSTEM BREACH DETECTED...",
-    subject: "SUBJECT REPORT:\nENTITY CLASS UNKNOWN...",
+    subject: "SUBJECT REPORT:\nUNKNOWN ENTITY CLASS...",
   };
 
-  if (viewer) viewer.innerText = files[type] || "UNKNOWN FILE";
+  if (viewer) viewer.innerText = files[type] || "FILE NOT FOUND";
 }
 
 function openOmega() {
   const viewer = $("viewer");
-  if (viewer) viewer.innerText = "OMEGA FILE:\nACCESS DENIED // LEVEL 3 REQUIRED";
+  if (viewer) viewer.innerText = "OMEGA FILE:\nACCESS LEVEL REQUIRED: 3";
 }
 
 // =========================
-// STAFF CHAT (LOCAL FAKE)
+// STAFF CHAT
 // =========================
 function sendStaffMessage() {
   const input = $("staffInput");
@@ -237,15 +205,16 @@ function sendStaffMessage() {
   if (!input || !log) return;
 
   log.innerText += "\nYOU: " + input.value;
-  input.value = "";
 
   setTimeout(() => {
     log.innerText += "\nSYS: MESSAGE RECEIVED";
-  }, 500);
+  }, 400);
+
+  input.value = "";
 }
 
 // =========================
-// GAME (SIMPLE VOID RUNNER PLACEHOLDER)
+// GAME (PLACEHOLDER)
 // =========================
 function startGame() {
   const canvas = $("gameCanvas");
@@ -257,7 +226,7 @@ function startGame() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ctx.fillStyle = "#00ff99";
-  ctx.fillText("VOID RUNNER ACTIVE...", 50, 120);
+  ctx.fillText("VOID RUNNER ACTIVE", 50, 120);
 }
 
 // =========================
@@ -271,11 +240,14 @@ function startClock() {
 }
 
 // =========================
-// INIT
+// INIT (IMPORTANT FIX)
 // =========================
 document.addEventListener("DOMContentLoaded", () => {
   initAudio();
-  startIntro();
+
+  setTimeout(() => {
+    startIntro();
+  }, 200);
 });
 
 console.log("MIRROR-INT 4.0 CORE LOADED");
