@@ -1,25 +1,17 @@
-let y = 100;
-let vy = 0;
+export function initGame() {
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
 
-function startGame(){
-  const c = $("canvas");
-  const ctx = c.getContext("2d");
+  let x = 0;
 
-  document.onkeydown = (e)=>{
-    if(e.code === "Space") vy = -8;
-  };
+  function loop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  function loop(){
-    ctx.fillStyle="black";
-    ctx.fillRect(0,0,300,150);
+    ctx.fillStyle = "#00ff99";
+    ctx.fillRect(x, 80, 40, 40);
 
-    vy += 0.5;
-    y += vy;
-
-    if(y > 100){ y = 100; vy = 0; }
-
-    ctx.fillStyle="lime";
-    ctx.fillRect(50,y,20,20);
+    x += 2;
+    if (x > canvas.width) x = -40;
 
     requestAnimationFrame(loop);
   }
