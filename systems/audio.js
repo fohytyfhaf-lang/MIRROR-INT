@@ -1,10 +1,13 @@
-let started = false;
+let playing = false;
 
-document.addEventListener("click", ()=>{
-  if(started) return;
-  started = true;
+export function toggleMusic() {
+  const music = document.getElementById("music");
 
-  const bgm = $("bgm");
-  bgm.volume = 0.3;
-  bgm.play();
-});
+  if (!playing) {
+    music.play();
+    playing = true;
+  } else {
+    music.pause();
+    playing = false;
+  }
+}
