@@ -2,7 +2,7 @@ import { initBoot } from "./boot.js";
 import { initLogin, loginSystem } from "./login.js";
 import { initGame } from "./game.js";
 import { initChat, sendMsg } from "./chat.js";
-import { toggleMusic } from "./audio.js";
+import { toggleMusic, initAudio } from "./audio.js";
 
 /* =========================
 GLOBAL FUNCTIONS
@@ -13,40 +13,21 @@ window.sendMsg = sendMsg;
 window.toggleMusic = toggleMusic;
 
 /* =========================
-APPS
+WINDOW SYSTEM
 ========================= */
-
-const Apps = {
-  camera: false,
-  chat: false,
-  game: false,
-  entity: false
-};
 
 window.openApp = function(name){
 
-  const win =
-    document.getElementById(
-      name + "Window"
-    );
-
+  const win = document.getElementById(name + "Window");
   if(!win) return;
-
-  Apps[name] = true;
 
   win.style.display = "block";
 };
 
 window.closeApp = function(name){
 
-  const win =
-    document.getElementById(
-      name + "Window"
-    );
-
+  const win = document.getElementById(name + "Window");
   if(!win) return;
-
-  Apps[name] = false;
 
   win.style.display = "none";
 };
@@ -59,10 +40,11 @@ document.addEventListener(
   "DOMContentLoaded",
   () => {
 
-    initBoot();
-    initLogin();
-    initGame();
-    initChat();
+    initAudio();   // 🔥 важно (музыка по клику)
+    initBoot();    // boot → login
+    initLogin();   // login system
+    initGame();    // cube game
+    initChat();    // staff chat
 
   }
 );
