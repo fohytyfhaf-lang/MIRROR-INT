@@ -1,3 +1,18 @@
+
+import { startBoot } from "./boot.js";
+import { loginSystem } from "./login.js";
+import { startGame } from "./game.js";
+import { initChat } from "./chat.js";
+import { initCamera } from "./camera.js";
+
+window.startBoot = startBoot;
+window.loginSystem = loginSystem;
+window.startGame = startGame;
+
+document.addEventListener("DOMContentLoaded", () => {
+  startBoot();
+});
+
 const $ = id => document.getElementById(id);
 
 let logged = false;
