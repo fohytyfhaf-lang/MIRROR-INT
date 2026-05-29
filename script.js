@@ -257,9 +257,11 @@ function $(id) {
 // =========================
 // PREVENT MOBILE ZOOM
 // =========================
-document.addEventListener("gesturestart", e => {
-  e.preventDefault();
-});
+if ("ongesturestart" in window) {
+  document.addEventListener("gesturestart", e => {
+    e.preventDefault();
+  });
+}
 
 // =========================
 // ANDROID PERFORMANCE FIX
