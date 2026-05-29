@@ -3,11 +3,13 @@ function $(id){
 }
 
 function show(id){
-  const el = $(id);
-  if(el) el.classList.remove("hidden");
+  $(id)?.classList.remove("hidden");
 }
 
 function hide(id){
-  const el = $(id);
-  if(el) el.classList.add("hidden");
+  $(id)?.classList.add("hidden");
+}
+
+function openApp(id){
+  show(id);
 }
