@@ -1,15 +1,12 @@
-let clockStarted = false;
 
-function startClock() {
+function startClock(){
 
-  if (clockStarted) return;
+setInterval(() => {
 
-  clockStarted = true;
+$("clock").innerText =
+new Date().toLocaleTimeString();
 
-  setInterval(() => {
+},1000);
 
-    $("clock").innerText =
-      new Date().toLocaleTimeString();
-
-  }, 1000);
 }
+```
