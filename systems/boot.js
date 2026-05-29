@@ -1,20 +1,9 @@
-export function startBoot() {
-  let progress = 0;
+export function initBoot() {
+  const login = document.getElementById("login");
+  const screen = document.getElementById("screen");
 
-  const bar = document.getElementById("bootProgress");
-  const text = document.getElementById("loadText");
-
-  const t = setInterval(() => {
-    progress += 5;
-
-    if (bar) bar.style.width = progress + "%";
-    if (text) text.innerText = progress + "%";
-
-    if (progress >= 100) {
-      clearInterval(t);
-
-      document.getElementById("loading").style.display = "none";
-      document.getElementById("login").style.display = "flex";
-    }
-  }, 100);
+  setTimeout(() => {
+    login.style.display = "flex";
+    screen.classList.add("hidden");
+  }, 1000);
 }
