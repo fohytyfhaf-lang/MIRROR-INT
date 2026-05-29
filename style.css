@@ -1,139 +1,28 @@
-
-body{
-margin:0;
-overflow:hidden;
-background:#008080;
-font-family:Tahoma;
+body {
+  margin:0;
+  background:#008080;
+  font-family:Tahoma;
 }
 
-/* BIOS */
-#biosScreen{
-position:fixed;
-inset:0;
-background:black;
-color:#00ff99;
-padding:20px;
-font-family:monospace;
+.hidden { display:none; }
+
+.window {
+  background:silver;
+  border:2px solid black;
+  width:300px;
+  padding:5px;
 }
 
-/* BOOT */
-#loading{
-position:fixed;
-inset:0;
-background:black;
-display:flex;
-justify-content:center;
-align-items:center;
+.title {
+  background:navy;
+  color:white;
+  padding:3px;
 }
 
-#bootWindow{
-width:400px;
-background:#111;
-padding:20px;
-border:2px solid #00ff99;
-color:#00ff99;
-text-align:center;
+.taskbar {
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:silver;
+  padding:5px;
 }
-
-#bootBar{
-width:100%;
-height:20px;
-background:black;
-border:1px solid #00ff99;
-}
-
-#bootProgress{
-width:0%;
-height:100%;
-background:#00ff99;
-}
-
-/* LOGIN */
-#login{
-position:fixed;
-inset:0;
-display:none;
-justify-content:center;
-align-items:center;
-background:#008080;
-}
-
-#login.active{
-display:flex;
-}
-
-/* DESKTOP */
-#screen{
-display:none;
-width:100vw;
-height:100vh;
-}
-
-/* WINDOWS */
-.window{
-position:absolute;
-display:none;
-width:420px;
-background:#c0c0c0;
-border:2px solid black;
-top:100px;
-left:100px;
-}
-
-.window-header{
-background:#000080;
-color:white;
-padding:5px;
-}
-
-.window-body{
-padding:10px;
-}
-
-.desktop-icon{
-width:90px;
-text-align:center;
-cursor:pointer;
-color:white;
-margin:20px;
-}
-
-.desktop-icon img{
-width:48px;
-height:48px;
-}
-
-.taskbar{
-position:fixed;
-bottom:0;
-left:0;
-width:100%;
-height:40px;
-background:#c0c0c0;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:0 10px;
-}
-
-#cam{
-width:100%;
-height:220px;
-object-fit:cover;
-background:black;
-}
-
-#staffLog{
-height:150px;
-overflow:auto;
-background:black;
-color:#00ff99;
-padding:10px;
-font-family:monospace;
-}
-
-#gameCanvas{
-background:black;
-border:2px inset gray;
-}
-```
