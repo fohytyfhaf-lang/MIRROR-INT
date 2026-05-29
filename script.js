@@ -32,19 +32,6 @@ function startAudioOnce() {
 }
 
 // ОДИН УНИВЕРСАЛЬНЫЙ ТРИГГЕР (ANDROID + PC)
-function initAudio() {
-  const trigger = () => {
-    startAudioOnce();
-    document.removeEventListener("pointerdown", trigger);
-    document.removeEventListener("touchstart", trigger);
-    document.removeEventListener("keydown", trigger);
-  };
-
-  document.addEventListener("pointerdown", trigger, { once: true });
-  document.addEventListener("touchstart", trigger, { once: true });
-  document.addEventListener("keydown", trigger, { once: true });
-}
-
 // =========================
 // ANDROID + PC AUDIO INIT
 // =========================
@@ -67,6 +54,7 @@ function initAudio() {
   // Клавиатура
   document.addEventListener("keydown", trigger, { once: true });
 }
+
 // ---------- SAFE SOUND PLAY ----------
 function playSound(id) {
   const el = document.getElementById(id);
