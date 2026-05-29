@@ -2,48 +2,122 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>MIRROR-INT 6.5</title>
+
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- LOGIN -->
-<section id="login" class="center" style="display:none;">
+<!-- LOADING -->
+<section id="loading" class="center">
+
   <div class="window">
 
-    <input id="user" placeholder="user">
-    <input id="pass" type="password" placeholder="pass">
+    <div class="title">
+      MIRROR-INT BOOT
+    </div>
 
-    <button onclick="login()">LOGIN</button>
+    <p id="bootText">BOOTING...</p>
+
+    <div id="bootBar">
+      <div id="bootFill"></div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- LOGIN -->
+<section id="login" class="center">
+
+  <div class="window">
+
+    <div class="title">
+      AUTHORIZATION
+    </div>
+
+    <input id="user" placeholder="user">
+
+    <input
+      id="pass"
+      type="password"
+      placeholder="password"
+    >
+
+    <button onclick="loginSystem()">
+      LOGIN
+    </button>
+
     <p id="loginStatus"></p>
 
   </div>
+
 </section>
-<!-- GAME / DESKTOP -->
+
+<!-- DESKTOP -->
 <main id="screen" class="hidden">
 
-  <div class="window">
-    <div class="title">SYSTEM</div>
+  <!-- GAME WINDOW -->
+  <div
+    class="window draggable"
+    id="gameWindow"
+    style="top:40px;left:40px;"
+  >
 
-    <button onclick="toggleMusic()">MUSIC</button>
+    <div class="title">
+      VOID RUNNER
+    </div>
 
-    <canvas id="game" width="500" height="200"></canvas>
+    <button onclick="toggleMusic()">
+      MUSIC
+    </button>
 
-    <div id="codeBox">CODE: 0</div>
+    <canvas
+      id="game"
+      width="500"
+      height="200"
+    ></canvas>
+
+    <div id="codeBox">
+      CODE: 0
+    </div>
+
   </div>
 
-  <div class="window">
-    <div class="title">CHAT</div>
+  <!-- CHAT WINDOW -->
+  <div
+    class="window draggable"
+    id="chatWindow"
+    style="top:40px;left:600px;"
+  >
+
+    <div class="title">
+      STAFF CHAT
+    </div>
+
     <pre id="chat"></pre>
+
     <input id="msg">
-    <button onclick="sendMsg()">SEND</button>
+
+    <button onclick="sendMsg()">
+      SEND
+    </button>
+
   </div>
 
 </main>
 
-<audio id="music" src="audio/background.mp3" loop></audio>
+<!-- AUDIO -->
+<audio
+  id="music"
+  src="audio/background.mp3"
+  loop
+></audio>
 
+<!-- SYSTEM -->
 <script type="module" src="./systems/core.js"></script>
 
 </body>
