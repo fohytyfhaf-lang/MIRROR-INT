@@ -32,7 +32,14 @@ function closeApp(name) {
 }
 
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    startBoot();
+
+  }
+);
 
   window.loginSystem = loginSystem;
 window.sendMsg = sendMsg;
