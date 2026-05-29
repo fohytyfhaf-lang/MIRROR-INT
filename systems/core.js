@@ -4,9 +4,17 @@ import { initGame } from "./game.js";
 import { initChat, sendMsg } from "./chat.js";
 import { toggleMusic } from "./audio.js";
 
+/* =========================
+GLOBAL FUNCTIONS
+========================= */
+
 window.loginSystem = loginSystem;
 window.sendMsg = sendMsg;
 window.toggleMusic = toggleMusic;
+
+/* =========================
+APPS
+========================= */
 
 const Apps = {
   camera: false,
@@ -15,37 +23,46 @@ const Apps = {
   entity: false
 };
 
-function openApp(name) {
-  const win = document.getElementById(name + "Window");
-  if (!win) return;
+window.openApp = function(name){
+
+  const win =
+    document.getElementById(
+      name + "Window"
+    );
+
+  if(!win) return;
 
   Apps[name] = true;
-  win.style.display = "block";
-}
 
-function closeApp(name) {
-  const win = document.getElementById(name + "Window");
-  if (!win) return;
+  win.style.display = "block";
+};
+
+window.closeApp = function(name){
+
+  const win =
+    document.getElementById(
+      name + "Window"
+    );
+
+  if(!win) return;
 
   Apps[name] = false;
-  win.style.display = "none";
-}
 
+  win.style.display = "none";
+};
+
+/* =========================
+INIT
+========================= */
 
 document.addEventListener(
   "DOMContentLoaded",
   () => {
 
-    startBoot();
+    initBoot();
+    initLogin();
+    initGame();
+    initChat();
 
   }
 );
-
-  window.loginSystem = loginSystem;
-window.sendMsg = sendMsg;
-window.toggleMusic = toggleMusic;
-  initBoot();
-  initLogin();
-  initGame();
-  initChat();
-});
