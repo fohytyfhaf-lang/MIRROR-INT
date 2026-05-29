@@ -19,11 +19,28 @@ export function sendMsg() {
 
   if (!input.value.trim()) return;
 
-  chat.innerText += "\nYOU: " + input.value;
+  const MAX_LINES = 12;
+
+  let lines = chat.innerText.split("\n");
+
+  lines.push("YOU: " + input.value);
+
+  // ограничение
+  if (lines.length > MAX_LINES) {
+    lines = lines.slice(lines.length - MAX_LINES);
+  }
+
+  chat.innerText = lines.join("\n");
 
   setTimeout(() => {
-    chat.innerText += "\nSYS: message accepted";
-  }, 500);
+    lines.push("SYS: message received");
+
+    if (lines.length > MAX_LINES) {
+      lines = lines.slice(lines.length - MAX_LINES);
+    }
+
+    chat.innerText = lines.join("\n");
+  }, 400);
 
   input.value = "";
 }
