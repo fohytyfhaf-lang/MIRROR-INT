@@ -1,33 +1,22 @@
-
 function sendStaffMessage(){
+  const input = $("staffInput");
+  const log = $("staffLog");
 
-const input = $("staffInput");
-const log = $("staffLog");
+  if (!input.value.trim()) return;
 
-if(input.value.trim() === "") return;
+  log.innerText += "\nYOU: " + input.value;
 
-log.innerText += "\nYOU: " + input.value;
+  const replies = [
+    "SYS: OK",
+    "SYS: SIGNAL RECEIVED",
+    "SYS: ENTITY ACTIVE",
+    "SYS: LOG STORED"
+  ];
 
-setTimeout(() => {
+  setTimeout(() => {
+    log.innerText += "\n" + replies[Math.floor(Math.random()*replies.length)];
+    log.scrollTop = log.scrollHeight;
+  }, 400);
 
-const replies = [
-"SYSTEM OK",
-"REPORT RECEIVED",
-"UNKNOWN SIGNAL",
-"ENTITY DETECTED",
-"ACCESS LOGGED"
-];
-
-const random =
-replies[Math.floor(Math.random() * replies.length)];
-
-log.innerText += "\nSYS: " + random;
-
-log.scrollTop = log.scrollHeight;
-
-}, 500);
-
-input.value = "";
-
+  input.value = "";
 }
-```
