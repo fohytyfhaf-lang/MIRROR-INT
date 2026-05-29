@@ -35,26 +35,26 @@ function startAudioOnce() {
 // =========================
 // ANDROID + PC AUDIO INIT
 // =========================
-function initAudio() {
+function startIntro() {
+  const bios = document.getElementById("biosScreen");
+  const hack = document.getElementById("hackScreen");
 
-  const trigger = () => {
-    startAudioOnce();
+  if (bios) bios.style.display = "block";
 
-    document.removeEventListener("pointerdown", trigger);
-    document.removeEventListener("touchstart", trigger);
-    document.removeEventListener("keydown", trigger);
-  };
+  setTimeout(() => {
 
-  // ПК
-  document.addEventListener("pointerdown", trigger, { once: true });
+    if (bios) bios.style.display = "none";
+    if (hack) hack.style.display = "block";
 
-  // Android
-  document.addEventListener("touchstart", trigger, { once: true });
+    setTimeout(() => {
 
-  // Клавиатура
-  document.addEventListener("keydown", trigger, { once: true });
+      if (hack) hack.style.display = "none";
+      startBoot();
+
+    }, 1500);
+
+  }, 1200);
 }
-
 // ---------- SAFE SOUND PLAY ----------
 function playSound(id) {
   const el = document.getElementById(id);
