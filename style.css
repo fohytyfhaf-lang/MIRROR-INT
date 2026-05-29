@@ -195,8 +195,12 @@ button:active {
    WINDOWS
 ========================= */
 .window {
-  position: absolute;
   width: 420px;
+}
+
+/* только окна рабочего стола */
+#screen .window {
+  position: absolute;
   display: none;
 }
 
