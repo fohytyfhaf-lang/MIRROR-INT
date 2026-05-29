@@ -88,10 +88,11 @@ body {
 #login {
   position: fixed;
   inset: 0;
-  display: none; /* важно */
+  display: none;
   justify-content: center;
   align-items: center;
   background: #008080;
+  z-index: 999;
 }
 
 .window {
