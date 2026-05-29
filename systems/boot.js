@@ -1,42 +1,20 @@
-function startBoot(){
+export function startBoot() {
+  let progress = 0;
 
-  const bar = $("bootProgress");
-  const text = $("loadText");
-  const status = $("bootStatus");
+  const bar = document.getElementById("bootProgress");
+  const text = document.getElementById("loadText");
 
-  const logs = [
-    "Loading system...",
-    "Checking memory...",
-    "Injecting modules...",
-    "SYSTEM READY"
-  ];
-
-  const boot = setInterval(() => {
-
+  const t = setInterval(() => {
     progress += 5;
 
-    if(bar) bar.style.width = progress + "%";
-    if(text) text.innerText = progress + "%";
+    if (bar) bar.style.width = progress + "%";
+    if (text) text.innerText = progress + "%";
 
-    if(status){
-      status.innerText =
-        logs[Math.floor(progress / 25)] || "READY";
+    if (progress >= 100) {
+      clearInterval(t);
+
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("login").style.display = "flex";
     }
-
-    if(progress >= 100){
-
-      clearInterval(boot);
-
-      setTimeout(() => {
-
-        const loading = $("loading");
-        const login = $("login");
-
-        if(loading) loading.style.display = "none";
-        if(login) login.classList.add("active");
-
-      }, 500);
-    }
-
-  }, 120);
+  }, 100);
 }
