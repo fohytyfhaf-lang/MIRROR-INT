@@ -1,22 +1,13 @@
-function sendStaffMessage(){
-  const input = $("staffInput");
-  const log = $("staffLog");
+let chat = [];
 
-  if (!input.value.trim()) return;
+function sendMsg(){
+  const inp = $("chatInput");
+  const box = $("chatBox");
 
-  log.innerText += "\nYOU: " + input.value;
+  chat.push("YOU: " + inp.value);
+  chat.push("SYS: message received");
 
-  const replies = [
-    "SYS: OK",
-    "SYS: SIGNAL RECEIVED",
-    "SYS: ENTITY ACTIVE",
-    "SYS: LOG STORED"
-  ];
+  box.innerText = chat.join("\n");
 
-  setTimeout(() => {
-    log.innerText += "\n" + replies[Math.floor(Math.random()*replies.length)];
-    log.scrollTop = log.scrollHeight;
-  }, 400);
-
-  input.value = "";
+  inp.value = "";
 }
