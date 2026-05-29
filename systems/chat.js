@@ -1,7 +1,7 @@
 function sendStaffMessage() {
 
-  const input = document.getElementById("staffInput");
-  const log = document.getElementById("staffLog");
+  const input = $("staffInput");
+  const log = $("staffLog");
 
   if (!input || !log) return;
 
@@ -14,12 +14,11 @@ function sendStaffMessage() {
   input.value = "";
 
   const replies = [
-    "STAFF: Copy that.",
-    "STAFF: Sector secured.",
-    "STAFF: Unknown signal detected.",
+    "STAFF: Copy.",
     "STAFF: Access confirmed.",
+    "STAFF: Unknown signal.",
     "SYS: WARNING.",
-    "STAFF: Entity movement reported."
+    "STAFF: Movement detected."
   ];
 
   setTimeout(() => {
@@ -32,5 +31,5 @@ function sendStaffMessage() {
 
     log.scrollTop = log.scrollHeight;
 
-  }, 700);
+  }, 600);
 }
