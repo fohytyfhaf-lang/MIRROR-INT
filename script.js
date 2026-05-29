@@ -126,9 +126,9 @@ function startBoot() {
 // LOGIN (FIXED)
 // =========================
 function loginSystem() {
-  const user = $("user")?.value;
-  const pass = $("pass")?.value;
-  const status = $("loginStatus");
+  const user = document.getElementById("user")?.value;
+  const pass = document.getElementById("pass")?.value;
+  const status = document.getElementById("loginStatus");
 
   let ok = false;
 
@@ -144,8 +144,12 @@ function loginSystem() {
   if (status) status.innerText = "ACCESS GRANTED";
 
   setTimeout(() => {
-    document.getElementById("login").classList.remove("active");
-    show("screen");
+    const login = document.getElementById("login");
+    const screen = document.getElementById("screen");
+
+    // 🔥 ВАЖНО: правильно скрываем/показываем
+    login.style.display = "none";
+    screen.style.display = "block";
 
     systemBooted = true;
     startClock();
