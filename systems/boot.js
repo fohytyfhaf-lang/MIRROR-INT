@@ -1,29 +1,19 @@
-let progress = 0;
+let boot = 0;
 
-window.addEventListener("DOMContentLoaded", () => {
-  setTimeout(() => {
-    hide("biosScreen");
-    startBoot();
-  }, 1200);
-});
+function startBoot(){
+  const t = $("bootText");
 
-function startBoot() {
-  const bar = $("bootProgress");
-  const text = $("loadText");
+  let i = setInterval(()=>{
+    boot += 10;
+    t.innerText = "Loading " + boot + "%";
 
-  const t = setInterval(() => {
-    progress += 5;
-
-    if (bar) bar.style.width = progress + "%";
-    if (text) text.innerText = progress + "%";
-
-    if (progress >= 100) {
-      clearInterval(t);
-
-      hide("loading");
-
-      const login = $("login");
-      if (login) login.classList.add("active");
+    if(boot >= 100){
+      clearInterval(i);
+      hide("boot");
+      show("login");
     }
-  }, 80);
+  },200);
+}
+
+window.onload = startBoot;
 }
