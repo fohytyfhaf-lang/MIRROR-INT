@@ -42,6 +42,17 @@ function hide(el) {
   if (el) el.style.display = "none";
 }
 
+
+function initAudio() {
+  const trigger = () => {
+    startAudioOnce();
+  };
+
+  document.addEventListener("pointerdown", trigger, { once: true });
+  document.addEventListener("touchstart", trigger, { once: true });
+  document.addEventListener("keydown", trigger, { once: true });
+}
+
 // ОДИН УНИВЕРСАЛЬНЫЙ ТРИГГЕР (ANDROID + PC)
 // =========================
 // ANDROID + PC AUDIO INIT
