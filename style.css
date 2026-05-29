@@ -1,39 +1,82 @@
-/* =========================
-WINDOWS 95 MIRROR-INT
-========================= */
+/* =======================================
+MIRROR-INT 4.0 CORE ENGINE
+WINDOWS 95 ARG SYSTEM
+======================================= */
 
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,
 body{
   margin:0;
+  padding:0;
+
+  width:100%;
+  height:100%;
+
   overflow:hidden;
 
   background:#008080;
 
-  font-family:Tahoma, sans-serif;
+  font-family:Tahoma,sans-serif;
   font-size:14px;
+
+  touch-action:manipulation;
 }
 
-/* =========================
-BOOT
-========================= */
+/* =======================================
+GLOBAL
+======================================= */
 
-#loading{
+.hidden{
+  display:none !important;
+}
+
+.boot-layer{
   position:fixed;
   inset:0;
 
-  background:#000;
+  background:black;
+
+  color:#00ff99;
 
   display:flex;
   justify-content:center;
   align-items:center;
 
-  z-index:9999;
+  z-index:99999;
+
+  font-family:"Courier New",monospace;
+}
+
+pre{
+  margin:0;
+  white-space:pre-wrap;
+}
+
+/* =======================================
+BOOT
+======================================= */
+
+#loading{
+  position:fixed;
+  inset:0;
+
+  background:black;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  z-index:9000;
 
   color:#00ff99;
-  font-family:Courier New;
 }
 
 #bootWindow{
-  width:500px;
+  width:min(500px,90vw);
 
   background:#111;
 
@@ -44,20 +87,36 @@ BOOT
   box-shadow:0 0 20px #00ff99;
 }
 
+#bootLogo{
+  width:80px;
+  display:block;
+  margin:0 auto 10px;
+}
+
 #bootHeader{
   font-size:22px;
   margin-bottom:10px;
+
+  text-align:center;
+}
+
+#bootBody{
+  font-family:"Courier New",monospace;
+
+  color:#c0c0c0;
 }
 
 #bootBar{
   width:100%;
   height:22px;
 
-  background:#000;
+  background:black;
 
   border:1px solid #00ff99;
 
   margin-top:10px;
+
+  overflow:hidden;
 }
 
 #bootProgress{
@@ -66,16 +125,17 @@ BOOT
 
   background:#00ff99;
 
-  transition:0.2s;
+  transition:width .2s linear;
 }
 
 #loadText{
   text-align:right;
+  margin-top:5px;
 }
 
-/* =========================
+/* =======================================
 LOGIN
-========================= */
+======================================= */
 
 #login{
   width:100%;
@@ -87,21 +147,30 @@ LOGIN
 }
 
 .loginWindow{
-  width:340px;
+  width:min(340px,92vw);
 }
+
+/* =======================================
+WINDOWS
+======================================= */
 
 .window{
   position:absolute;
 
   background:#c0c0c0;
 
-  border-top:2px solid #fff;
-  border-left:2px solid #fff;
+  border-top:2px solid white;
+  border-left:2px solid white;
 
-  border-right:2px solid #000;
-  border-bottom:2px solid #000;
+  border-right:2px solid black;
+  border-bottom:2px solid black;
 
-  box-shadow:2px 2px #555;
+  box-shadow:3px 3px #555;
+
+  max-width:95vw;
+  max-height:85vh;
+
+  overflow:hidden;
 }
 
 .window-header{
@@ -109,29 +178,28 @@ LOGIN
 
   color:white;
 
-  padding:5px;
+  padding:5px 8px;
 
   font-weight:bold;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  user-select:none;
 }
 
 .window-body{
   padding:10px;
+
+  overflow:auto;
+
+  max-height:75vh;
 }
 
-input{
-  width:95%;
-
-  margin-top:6px;
-  margin-bottom:6px;
-
-  padding:5px;
-
-  border-top:2px solid #555;
-  border-left:2px solid #555;
-
-  border-right:2px solid white;
-  border-bottom:2px solid white;
-}
+/* =======================================
+BUTTONS
+======================================= */
 
 button{
   margin-top:6px;
@@ -147,6 +215,8 @@ button{
   padding:5px 10px;
 
   cursor:pointer;
+
+  font-family:inherit;
 }
 
 button:active{
@@ -157,9 +227,30 @@ button:active{
   border-bottom:2px solid white;
 }
 
-/* =========================
+/* =======================================
+INPUTS
+======================================= */
+
+input{
+  width:100%;
+
+  margin-top:6px;
+  margin-bottom:6px;
+
+  padding:5px;
+
+  border-top:2px solid #555;
+  border-left:2px solid #555;
+
+  border-right:2px solid white;
+  border-bottom:2px solid white;
+
+  font-family:inherit;
+}
+
+/* =======================================
 DESKTOP
-========================= */
+======================================= */
 
 #screen{
   width:100vw;
@@ -174,6 +265,8 @@ DESKTOP
   display:flex;
   flex-direction:column;
   gap:20px;
+
+  width:max-content;
 }
 
 .desktop-icon{
@@ -184,6 +277,8 @@ DESKTOP
   color:white;
 
   cursor:pointer;
+
+  user-select:none;
 }
 
 .desktop-icon img{
@@ -198,56 +293,61 @@ DESKTOP
   margin-top:4px;
 }
 
-/* =========================
-WINDOWS POSITIONS
-========================= */
-
-#cameraWindow{
-  width:500px;
-  top:70px;
-  left:150px;
-}
+/* =======================================
+WINDOW POSITIONS
+======================================= */
 
 #archiveWindow{
-  width:520px;
-  top:90px;
-  left:220px;
+  width:min(520px,95vw);
+
+  top:80px;
+  left:120px;
+}
+
+#cameraWindow{
+  width:min(500px,95vw);
+
+  top:60px;
+  left:180px;
 }
 
 #staffWindow{
-  width:520px;
-  top:120px;
-  left:260px;
+  width:min(520px,95vw);
+
+  top:100px;
+  left:250px;
 }
 
-#smileWindow{
-  width:450px;
-  top:100px;
+#entityWindow{
+  width:min(420px,95vw);
+
+  top:120px;
   left:300px;
 }
 
 #gameWindow{
-  width:400px;
-  top:140px;
-  left:180px;
+  width:min(760px,95vw);
+
+  top:70px;
+  left:100px;
 }
 
 .memoryWindow{
-  width:300px;
+  width:min(300px,92vw);
 
   right:20px;
   bottom:50px;
 }
 
-/* =========================
-CHAT
-========================= */
+/* =======================================
+TERMINAL AREAS
+======================================= */
 
 #staffLog,
 #chatLog,
 #viewer,
 #memory,
-#gameText{
+#entityLog{
   background:black;
 
   color:#00ff99;
@@ -258,14 +358,14 @@ CHAT
 
   overflow:auto;
 
-  font-family:Courier New;
+  font-family:"Courier New",monospace;
 
   border:2px inset #555;
 }
 
-/* =========================
+/* =======================================
 FILES
-========================= */
+======================================= */
 
 .file{
   background:white;
@@ -288,9 +388,9 @@ FILES
   color:red;
 }
 
-/* =========================
-CAMERA
-========================= */
+/* =======================================
+CAMERAS
+======================================= */
 
 #cam{
   width:100%;
@@ -305,6 +405,9 @@ CAMERA
 
 .camButtons{
   margin-top:10px;
+
+  display:flex;
+  gap:10px;
 }
 
 #cameraName{
@@ -312,9 +415,34 @@ CAMERA
   font-weight:bold;
 }
 
-/* =========================
+/* =======================================
+GAME
+======================================= */
+
+#gameCanvas{
+  width:100%;
+  height:auto;
+
+  background:black;
+
+  border:2px inset #808080;
+
+  display:block;
+
+  margin-bottom:10px;
+}
+
+.gameInfo{
+  color:#00ff99;
+
+  font-size:13px;
+
+  margin-bottom:10px;
+}
+
+/* =======================================
 TASKBAR
-========================= */
+======================================= */
 
 .taskbar{
   position:fixed;
@@ -335,7 +463,7 @@ TASKBAR
 
   padding:0 10px;
 
-  box-sizing:border-box;
+  z-index:5000;
 }
 
 .start-button{
@@ -360,11 +488,13 @@ TASKBAR
   padding:5px 10px;
 
   border:2px inset #555;
+
+  font-family:"Courier New",monospace;
 }
 
-/* =========================
-GLITCH
-========================= */
+/* =======================================
+GLITCH EFFECT
+======================================= */
 
 .glitch{
   animation:flicker 2s infinite;
@@ -372,49 +502,38 @@ GLITCH
 
 @keyframes flicker{
   0%{opacity:1;}
-  50%{opacity:0.8;}
+  50%{opacity:.8;}
   100%{opacity:1;}
 }
 
-/* =========================
-VOID RUNNER GAME
-========================= */
+/* =======================================
+ANDROID FIXES
+======================================= */
 
-#gameWindow {
+@media (max-width:700px){
 
-  width: 760px;
-  height: 430px;
+  .window{
+    left:10px !important;
+    top:10px !important;
 
-  left: 220px;
-  top: 90px;
-}
+    width:95vw !important;
+  }
 
-#gameCanvas {
+  #desktop{
+    flex-direction:row;
+    flex-wrap:wrap;
 
-  background: black;
+    width:100%;
 
-  border:
-    2px inset #808080;
+    gap:16px;
+  }
 
-  display: block;
+  .desktop-icon{
+    width:72px;
+  }
 
-  margin-bottom: 10px;
-}
+  #cam{
+    height:180px;
+  }
 
-.gameInfo {
-
-  color: #00ff99;
-
-  font-size: 13px;
-
-  margin-bottom: 10px;
-}
-
-
-}
-
-#bootBody {
-  font-family: "Courier New", monospace;
-  background: black;
-  color: #c0c0c0;
 }
