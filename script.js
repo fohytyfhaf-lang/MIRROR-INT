@@ -117,14 +117,13 @@ function startBoot() {
       setTimeout(() => {
         hide("loading");
 
-const login = document.getElementById("login");
-login.style.display = "flex";
-login.classList.add("active");
+        const login = document.getElementById("login");
+        if (login) login.classList.add("active");
+
       }, 800);
     }
   }, 120);
 }
-
 // =========================
 // LOGIN (FIXED)
 // =========================
