@@ -1,3 +1,12 @@
+
+function openCamera() {
+  openApp("camera");
+  if (!Apps.camInit) {
+    Apps.camInit = true;
+    switchCamera(0);
+  }
+}
+
 let cams = [
 "images/cam_server.gif",
 "images/cam_storage.gif",
