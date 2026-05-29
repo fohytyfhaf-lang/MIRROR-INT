@@ -1,9 +1,7 @@
-
 function openWindow(id){
-show(id);
+  show(id);
 }
 
 function closeWindow(id){
-hide(id);
+  hide(id);
 }
-
