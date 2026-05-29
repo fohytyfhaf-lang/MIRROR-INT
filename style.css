@@ -89,13 +89,17 @@ body {
   position: fixed;
   inset: 0;
   display: none;
-  background: #008080;
-}
 
-#login.active {
-  display: flex;
   justify-content: center;
   align-items: center;
+
+  background: #008080;
+  z-index: 999;
+}
+
+/* когда активен */
+#login.active {
+  display: flex;
 }
 
 .window {
