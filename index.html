@@ -2,64 +2,49 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>MIRROR-INT 6.0 FIXED</title>
+<title>MIRROR-INT 6.0</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- BOOT -->
-<div id="boot">BOOTING SYSTEM...</div>
-
 <!-- LOGIN -->
-<div id="login" class="hidden">
+<section id="login">
   <div class="window">
-    <div class="title">LOGIN</div>
-    <input id="user" placeholder="USER">
-    <input id="pass" type="password" placeholder="PASS">
-    <button onclick="login()">ENTER</button>
+    <div class="title">AUTH</div>
+
+    <input id="user" placeholder="user">
+    <input id="pass" type="password" placeholder="pass">
+
+    <button onclick="loginSystem()">LOGIN</button>
     <p id="loginStatus"></p>
   </div>
-</div>
+</section>
 
-<!-- DESKTOP -->
-<div id="desktop" class="hidden">
+<!-- GAME -->
+<main id="screen" class="hidden">
 
-  <div class="taskbar">MIRROR-INT 6.0</div>
+  <div class="window">
+    <div class="title">SYSTEM</div>
 
-  <button onclick="openApp('chat')">CHAT</button>
-  <button onclick="openApp('camera')">CAM</button>
-  <button onclick="openApp('game')">GAME</button>
+    <button onclick="toggleMusic()">MUSIC</button>
 
-  <div id="chat" class="window hidden">
+    <canvas id="game" width="500" height="200"></canvas>
+
+    <div id="codeBox">CODE: 0</div>
+  </div>
+
+  <div class="window">
     <div class="title">CHAT</div>
-    <pre id="chatBox"></pre>
-    <input id="chatInput">
+    <pre id="chat"></pre>
+    <input id="msg">
     <button onclick="sendMsg()">SEND</button>
   </div>
 
-  <div id="camera" class="window hidden">
-    <div class="title">CAMERA</div>
-    <img id="camImg">
-    <button onclick="nextCam()">NEXT</button>
-  </div>
+</main>
 
-  <div id="game" class="window hidden">
-    <div class="title">GAME</div>
-    <canvas id="canvas" width="300" height="150"></canvas>
-    <button onclick="startGame()">START</button>
-  </div>
-
-</div>
-
-<audio id="bgm" src="audio/background.mp3" loop></audio>
+<audio id="music" src="audio/background.mp3" loop></audio>
 
 <script src="core.js"></script>
-<script src="boot.js"></script>
-<script src="login.js"></script>
-<script src="chat.js"></script>
-<script src="camera.js"></script>
-<script src="game.js"></script>
-
 </body>
 </html>
