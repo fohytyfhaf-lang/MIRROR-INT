@@ -1,19 +1,15 @@
-let boot = 0;
+window.onload = () => {
+  let p = 0;
+  const boot = $("boot");
 
-function startBoot(){
-  const t = $("bootText");
+  const i = setInterval(()=>{
+    p += 10;
+    boot.innerText = "BOOT " + p + "%";
 
-  let i = setInterval(()=>{
-    boot += 10;
-    t.innerText = "Loading " + boot + "%";
-
-    if(boot >= 100){
+    if(p >= 100){
       clearInterval(i);
       hide("boot");
       show("login");
     }
   },200);
-}
-
-window.onload = startBoot;
-}
+};
