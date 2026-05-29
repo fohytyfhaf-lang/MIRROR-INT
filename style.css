@@ -53,8 +53,8 @@ body {
     -2px -2px 0 #555 inset;
 }
 
-
-.draggable {
+/* desktop windows */
+.draggable{
   position:absolute;
 }
 
