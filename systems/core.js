@@ -91,6 +91,10 @@ window.openApp = function(name) {
   }
 };
 
+window.toggleStart = function () {
+  const menu = document.getElementById("startMenu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+};
 
 /* =========================
 LOGIN WRAPPER
