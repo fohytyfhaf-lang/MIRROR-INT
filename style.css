@@ -30,14 +30,15 @@ body {
 }
 
 /* ================= WINDOWS ================= */
+/* WINDOWS */
 .window {
+  display: none;
   position: absolute;
-  width: 320px;
+  width: 300px;
   background: silver;
   border: 2px solid black;
-  box-shadow: 2px 2px 0 #fff inset, -2px -2px 0 #555 inset;
-  user-select: none;
 }
+
 /* ================= TITLE BAR ================= */
 .title {
   background: navy;
@@ -52,18 +53,43 @@ body {
   display: none !important;
 }
 
+#screen {
+  display: none;
+  width: 100%;
+  height: 100vh;
+  background: #008080;
+}
+
+/* DESKTOP */
+#desktop {
+  position: absolute;
+  inset: 0;
+  padding: 20px;
+}
+
+/* ICONS */
+.icon {
+  width: 120px;
+  padding: 10px;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+}
+
+.icon:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+
+
 /* TASKBAR */
 #taskbar {
   position: fixed;
   bottom: 0;
   left: 0;
-  height: 30px;
   width: 100%;
+  height: 30px;
   background: #c0c0c0;
-  border-top: 2px solid #fff;
-  display: flex;
-  align-items: center;
-  padding: 2px;
 }
 
 /* START MENU */
@@ -72,7 +98,7 @@ body {
   bottom: 30px;
   left: 0;
   width: 150px;
-  background: #c0c0c0;
+  background: silver;
   border: 2px solid black;
   display: none;
 }
