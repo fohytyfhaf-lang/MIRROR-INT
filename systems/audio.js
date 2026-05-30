@@ -1,13 +1,21 @@
-let playing = false;
+let musicStarted = false;
+let audio;
+
+export function initAudio() {
+  audio = document.getElementById("music");
+}
 
 export function toggleMusic() {
-  const music = document.getElementById("music");
+  if (!audio) return;
 
-  if (!playing) {
-    music.play();
-    playing = true;
+  if (!musicStarted) {
+    audio.play();
+    musicStarted = true;
   } else {
-    music.pause();
-    playing = false;
+    if (audio.paused) {
+      audio.play();
+    } else {
+      audio.pause();
+    }
   }
 }
