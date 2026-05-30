@@ -1,26 +1,21 @@
-let chatInterval = null;
+let chatInit = false;
 
 export function initChat() {
   const chat = document.getElementById("chat");
-  if (!chat) return;
+  if (!chat || chatInit) return;
 
-  if (chat.dataset.init === "true") return;
-  chat.dataset.init = "true";
-
+  chatInit = true;
   chat.innerText = "SYS: CHAT ONLINE";
 
-  const msgs = [
-    "SYS: monitoring active...",
-    "NODE: connection stable",
-    "ENTITY: observing user...",
-    "OPERATOR: signal received"
-  ];
+  setInterval(() => {
+    const msgs = [
+      "SYS: monitoring...",
+      "NODE: stable",
+      "MR.SMILE: watching...",
+      "OPERATOR: signal active"
+    ];
 
-  chatInterval = setInterval(() => {
-    chat.innerText +=
-      "\n" + msgs[Math.floor(Math.random() * msgs.length)];
-
-    chat.scrollTop = chat.scrollHeight;
+    chat.innerText += "\n" + msgs[Math.floor(Math.random() * msgs.length)];
   }, 3000);
 }
 
@@ -28,30 +23,22 @@ export function sendMsg() {
   const input = document.getElementById("msg");
   const chat = document.getElementById("chat");
 
-  if (!input || !chat) return;
   if (!input.value.trim()) return;
 
-  const MAX_LINES = 12;
+  const MAX = 12;
 
   let lines = chat.innerText.split("\n");
-
   lines.push("YOU: " + input.value);
 
-  if (lines.length > MAX_LINES) {
-    lines = lines.slice(-MAX_LINES);
-  }
-
-  setTimeout(() => {
-    lines.push("SYS: message received");
-
-    if (lines.length > MAX_LINES) {
-      lines = lines.slice(-MAX_LINES);
-    }
-
-    chat.innerText = lines.join("\n");
-    chat.scrollTop = chat.scrollHeight;
-  }, 400);
+  if (lines.length > MAX) lines = lines.slice(-MAX);
 
   chat.innerText = lines.join("\n");
+
+  setTimeout(() => {
+    lines.push("SYS: received");
+    if (lines.length > MAX) lines = lines.slice(-MAX);
+    chat.innerText = lines.join("\n");
+  }, 300);
+
   input.value = "";
 }
