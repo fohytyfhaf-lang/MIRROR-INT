@@ -1,3 +1,5 @@
+console.log("BOOT LOADED");
+
 const files = [
   "audio/background.mp3",
   "sounds/boot.wav",
