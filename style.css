@@ -83,14 +83,7 @@ body {
   height: 150px;
   overflow-y: auto;
   white-space: pre-wrap;
-
-  background: black;
-  color: #00ff99;
-
-  font-family: monospace;
-  padding: 5px;
 }
-
 /* ================= CANVAS ================= */
 canvas {
   background: black;
