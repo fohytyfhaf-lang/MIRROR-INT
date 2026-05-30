@@ -35,7 +35,7 @@ function el(id, fallbackTag = "div") {
 INIT BOOT
 ========================= */
 export function initBoot() {
-
+console.log("BOOT LOADED");
   const loading = el("loading");
   const login = el("login");
 
