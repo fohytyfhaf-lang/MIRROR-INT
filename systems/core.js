@@ -48,6 +48,50 @@ function closeWindow(name) {
 window.openApp = openWindow;
 window.closeApp = closeWindow;
 
+let z = 10;
+
+/* DRAG SYSTEM */
+function makeDraggable(win) {
+  const title = win.querySelector(".title");
+  let offsetX = 0, offsetY = 0, drag = false;
+
+  title.addEventListener("mousedown", (e) => {
+    drag = true;
+    offsetX = e.clientX - win.offsetLeft;
+    offsetY = e.clientY - win.offsetTop;
+    win.style.zIndex = ++z;
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!drag) return;
+    win.style.left = (e.clientX - offsetX) + "px";
+    win.style.top = (e.clientY - offsetY) + "px";
+  });
+
+  document.addEventListener("mouseup", () => drag = false);
+}
+
+/* INIT WINDOWS */
+export function initWindows() {
+  document.querySelectorAll(".window").forEach(makeDraggable);
+}
+
+/* CLOSE WINDOW */
+window.closeApp = function(name) {
+  const w = document.getElementById(name + "Window");
+  if (w) w.style.display = "none";
+};
+
+/* OPEN WINDOW */
+window.openApp = function(name) {
+  const w = document.getElementById(name + "Window");
+  if (w) {
+    w.style.display = "block";
+    w.style.zIndex = ++z;
+  }
+};
+
+
 /* =========================
 LOGIN WRAPPER
 ========================= */
