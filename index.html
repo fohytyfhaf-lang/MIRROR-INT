@@ -4,33 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MIRROR-INT 6.5</title>
+<title>MIRROR-INT 6.5 WINDOWS ENGINE</title>
 
 <link rel="stylesheet" href="style.css">
 </head>
 
-<div id="taskbar">
-  <button onclick="toggleStart()">START</button>
-</div>
-
-<div id="startMenu">
-  <div onclick="openApp('myComputer')">🖥 My Computer</div>
-  <div onclick="openApp('explorer')">📁 Explorer</div>
-  <div onclick="openApp('chat')">💬 Chat</div>
-  <div onclick="openApp('game')">🎮 Cube Game</div>
-</div>
-  
 <body>
 
-<!-- LOADING -->
-
+<!-- ================= BOOT ================= -->
 <section id="loading" class="center">
-
   <div id="bootWindow">
 
-    <div class="title">
-      MIRROR-INT BOOT
-    </div>
+    <div class="title">MIRROR-INT BOOT</div>
 
     <pre id="bootLog"></pre>
 
@@ -38,101 +23,91 @@
       <div id="bootFill"></div>
     </div>
 
-    <div id="bootPercent">
-      0%
-    </div>
+    <div id="bootPercent">0%</div>
 
   </div>
-
 </section>
-<!-- LOGIN -->
-<section id="login" class="center">
 
+<!-- ================= LOGIN ================= -->
+<section id="login" class="center">
   <div class="window">
 
-    <div class="title">
-      AUTHORIZATION
-    </div>
+    <div class="title">AUTH</div>
 
     <input id="user" placeholder="user">
+    <input id="pass" type="password" placeholder="pass">
 
-    <input
-      id="pass"
-      type="password"
-      placeholder="password"
-    >
-
-    <button onclick="loginSystem()">
-      LOGIN
-    </button>
+    <button onclick="loginSystem()">LOGIN</button>
 
     <p id="loginStatus"></p>
 
   </div>
-
 </section>
 
-<!-- DESKTOP -->
+<!-- ================= DESKTOP ================= -->
 <main id="screen" class="hidden">
 
-  <!-- GAME WINDOW -->
-  <div
-    class="window draggable"
-    id="gameWindow"
-    style="top:40px;left:40px;"
-  >
+  <!-- ICONS (как ПК) -->
+  <div id="desktop">
 
-    <div class="title">
-      VOID RUNNER
-    </div>
-
-    <button onclick="toggleMusic()">
-      MUSIC
-    </button>
-
-    <canvas
-      id="game"
-      width="500"
-      height="200"
-    ></canvas>
-
-    <div id="codeBox">
-      CODE: 0
-    </div>
+    <div onclick="openApp('myComputer')">🖥 My Computer</div>
+    <div onclick="openApp('explorer')">📁 Explorer</div>
+    <div onclick="openApp('chat')">💬 Chat</div>
+    <div onclick="openApp('game')">🎮 Cube Game</div>
 
   </div>
 
-  <!-- CHAT WINDOW -->
-  <div
-    class="window draggable"
-    id="chatWindow"
-    style="top:40px;left:600px;"
-  >
+  <!-- ================= WINDOWS ================= -->
 
+  <!-- MY COMPUTER -->
+  <div class="window" id="myComputerWindow" style="top:50px;left:50px;display:none;">
     <div class="title">
-      STAFF CHAT
+      My Computer
+      <button onclick="closeApp('myComputer')">X</button>
+    </div>
+    <p>System: MIRROR-INT</p>
+  </div>
+
+  <!-- EXPLORER -->
+  <div class="window" id="explorerWindow" style="top:100px;left:120px;display:none;">
+    <div class="title">
+      Explorer
+      <button onclick="closeApp('explorer')">X</button>
+    </div>
+    <p>Files system loaded...</p>
+  </div>
+
+  <!-- CHAT -->
+  <div class="window" id="chatWindow" style="top:60px;left:500px;display:none;">
+    <div class="title">
+      Chat
+      <button onclick="closeApp('chat')">X</button>
     </div>
 
     <pre id="chat"></pre>
 
     <input id="msg">
+    <button onclick="sendMsg()">SEND</button>
+  </div>
 
-    <button onclick="sendMsg()">
-      SEND
-    </button>
+  <!-- GAME -->
+  <div class="window" id="gameWindow" style="top:200px;left:200px;display:none;">
+    <div class="title">
+      Cube Runner
+      <button onclick="closeApp('game')">X</button>
+    </div>
 
+    <canvas id="game" width="500" height="200"></canvas>
+
+    <button onclick="startGame()">START</button>
   </div>
 
 </main>
 
-<!-- AUDIO -->
-<audio
-  id="music"
-  src="audio/background.mp3"
-  loop
-></audio>
+<!-- ================= AUDIO ================= -->
+<audio id="music" src="audio/background.mp3" loop></audio>
 
-<!-- SYSTEM -->
+<!-- ================= CORE ================= -->
 <script type="module" src="./systems/core.js"></script>
 
 </body>
