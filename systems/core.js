@@ -100,14 +100,20 @@ window.toggleStart = function () {
 LOGIN WRAPPER
 ========================= */
 
-window.loginSystem = () => {
-  loginSystem();
-  State.loggedIn = true;
+window.loginSystem = function () {
+  const u = document.getElementById("user").value;
+  const p = document.getElementById("pass").value;
 
-  setTimeout(() => {
-    el("login").classList.remove("active");
-    el("screen").style.display = "block";
-  }, 300);
+  if (u === "operator" && p === "0404") {
+
+    document.getElementById("login").classList.remove("active");
+
+    const screen = document.getElementById("screen");
+    screen.style.display = "block";
+
+  } else {
+    document.getElementById("loginStatus").innerText = "ACCESS DENIED";
+  }
 };
 
 /* =========================
