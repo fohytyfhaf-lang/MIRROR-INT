@@ -1,3 +1,5 @@
+console.log("CORE LOADED");
+
 import { initBoot } from "./boot.js";
 import { initLogin, loginSystem } from "./login.js";
 import { initGame } from "./game.js";
