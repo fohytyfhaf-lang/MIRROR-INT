@@ -31,22 +31,52 @@ body {
 
 /* ================= WINDOWS ================= */
 .window {
+  position: absolute;
+  width: 320px;
   background: silver;
   border: 2px solid black;
-  padding: 10px;
-
-  box-shadow:
-    2px 2px 0 white inset,
-    -2px -2px 0 #555 inset;
+  box-shadow: 2px 2px 0 #fff inset, -2px -2px 0 #555 inset;
+  user-select: none;
 }
-
 /* ================= TITLE BAR ================= */
 .title {
   background: navy;
   color: white;
   padding: 3px;
-  font-size: 14px;
+  cursor: grab;
+  display: flex;
+  justify-content: space-between;
 }
+
+.hidden {
+  display: none !important;
+}
+
+/* TASKBAR */
+#taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 30px;
+  width: 100%;
+  background: #c0c0c0;
+  border-top: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+}
+
+/* START MENU */
+#startMenu {
+  position: fixed;
+  bottom: 30px;
+  left: 0;
+  width: 150px;
+  background: #c0c0c0;
+  border: 2px solid black;
+  display: none;
+}
+
 
 /* ================= CHAT ================= */
 #chat {
