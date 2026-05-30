@@ -1,139 +1,42 @@
-let canvas, ctx;
+let started = false;
+let y = 150;
+let v = 0;
+let g = 0.8;
+let jump = false;
 
-let cube = {
-  x: 50,
-  y: 150,
-  size: 20,
-  vy: 0,
-  grounded: true
-};
+export function initGame() {}
 
-let gravity = 0.6;
-let jumpPower = -10;
+export function startGameLoop() {
+  if (started) return;
+  started = true;
 
-let letters = [];
-let code = "";
-
-let running = false;
-
-/* =====================
-INIT GAME
-===================== */
-export function initGame() {
-  canvas = document.getElementById("game");
-  if (!canvas) return;
-
-  ctx = canvas.getContext("2d");
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
 
   document.addEventListener("keydown", (e) => {
-    if (e.code === "Space") jump();
+    if (e.code === "Space" && !jump) {
+      v = -12;
+      jump = true;
+    }
   });
 
-  canvas.addEventListener("click", jump);
+  function loop() {
+    ctx.clearRect(0, 0, 500, 200);
 
-  spawnLetters();
+    v += g;
+    y += v;
 
-  running = true;
+    if (y >= 150) {
+      y = 150;
+      v = 0;
+      jump = false;
+    }
+
+    ctx.fillStyle = "lime";
+    ctx.fillRect(50, y, 30, 30);
+
+    requestAnimationFrame(loop);
+  }
+
   loop();
-}
-
-/* =====================
-JUMP
-===================== */
-function jump() {
-  if (!cube.grounded) return;
-  cube.vy = jumpPower;
-  cube.grounded = false;
-}
-
-/* =====================
-LETTERS
-===================== */
-function spawnLetters() {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-  setInterval(() => {
-    letters.push({
-      x: 500,
-      y: 130 + Math.random() * 40,
-      char: chars[Math.floor(Math.random() * chars.length)],
-      size: 14
-    });
-  }, 1500);
-}
-
-/* =====================
-GAME LOOP
-===================== */
-function loop() {
-  if (!running) return;
-
-  update();
-  draw();
-
-  requestAnimationFrame(loop);
-}
-
-/* =====================
-UPDATE
-===================== */
-function update() {
-  cube.vy += gravity;
-  cube.y += cube.vy;
-
-  if (cube.y >= 150) {
-    cube.y = 150;
-    cube.vy = 0;
-    cube.grounded = true;
-  }
-
-  for (let i = 0; i < letters.length; i++) {
-    let l = letters[i];
-    l.x -= 3;
-
-    // collision
-    if (
-      l.x < cube.x + cube.size &&
-      l.x + 10 > cube.x &&
-      l.y < cube.y + cube.size &&
-      l.y + 10 > cube.y
-    ) {
-      code += l.char;
-      document.getElementById("codeBox").innerText =
-        "CODE: " + code;
-
-      letters.splice(i, 1);
-      i--;
-    }
-
-    if (l.x < -20) {
-      letters.splice(i, 1);
-      i--;
-    }
-  }
-
-  if (code.length > 12) {
-    code = code.slice(-12);
-  }
-}
-
-/* =====================
-DRAW
-===================== */
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // ground
-  ctx.fillStyle = "#222";
-  ctx.fillRect(0, 170, 500, 30);
-
-  // cube
-  ctx.fillStyle = "#00ff99";
-  ctx.fillRect(cube.x, cube.y, cube.size, cube.size);
-
-  // letters
-  ctx.fillStyle = "white";
-  for (let l of letters) {
-    ctx.fillText(l.char, l.x, l.y);
-  }
 }
