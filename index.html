@@ -47,15 +47,55 @@
 <!-- ================= DESKTOP ================= -->
 <main id="screen" class="hidden">
 
-  <!-- ICONS (как ПК) -->
+  <!-- DESKTOP BACKGROUND -->
   <div id="desktop">
 
-    <div onclick="openApp('myComputer')">🖥 My Computer</div>
-    <div onclick="openApp('explorer')">📁 Explorer</div>
-    <div onclick="openApp('chat')">💬 Chat</div>
-    <div onclick="openApp('game')">🎮 Cube Game</div>
+    <!-- ICONS -->
+    <div class="icon" onclick="openApp('myComputer')">🖥 My Computer</div>
+    <div class="icon" onclick="openApp('explorer')">📁 Explorer</div>
+    <div class="icon" onclick="openApp('chat')">💬 Chat</div>
+    <div class="icon" onclick="openApp('game')">🎮 Cube Game</div>
 
   </div>
+
+  <!-- WINDOWS -->
+  <div class="window" id="myComputerWindow">
+    <div class="title">My Computer <button onclick="closeApp('myComputer')">X</button></div>
+    SYSTEM OK
+  </div>
+
+  <div class="window" id="explorerWindow">
+    <div class="title">Explorer <button onclick="closeApp('explorer')">X</button></div>
+    FILES LOADED
+  </div>
+
+  <div class="window" id="chatWindow">
+    <div class="title">Chat <button onclick="closeApp('chat')">X</button></div>
+    <pre id="chat"></pre>
+    <input id="msg">
+    <button onclick="sendMsg()">SEND</button>
+  </div>
+
+  <div class="window" id="gameWindow">
+    <div class="title">Game <button onclick="closeApp('game')">X</button></div>
+    <canvas id="game" width="500" height="200"></canvas>
+    <button onclick="startGame()">START</button>
+  </div>
+
+  <!-- TASKBAR -->
+  <div id="taskbar">
+    <button onclick="toggleStart()">START</button>
+  </div>
+
+  <!-- START MENU -->
+  <div id="startMenu">
+    <div onclick="openApp('myComputer')">My Computer</div>
+    <div onclick="openApp('explorer')">Explorer</div>
+    <div onclick="openApp('chat')">Chat</div>
+    <div onclick="openApp('game')">Game</div>
+  </div>
+
+</main>
 
   <!-- ================= WINDOWS ================= -->
 
