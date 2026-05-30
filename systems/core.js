@@ -139,8 +139,10 @@ INIT SEQUENCE
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM READY");
 
-  initAudio();
   initBoot();
   initLogin();
   initChat();
+  initGame();
+  initAudio();
+  initWindows(); // 🔥 ВОТ ЭТО ДОБАВИЛИ
 });
