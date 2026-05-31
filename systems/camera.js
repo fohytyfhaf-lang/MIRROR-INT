@@ -1,22 +1,16 @@
-
-function openCamera() {
-  openApp("camera");
-  if (!Apps.camInit) {
-    Apps.camInit = true;
-    switchCamera(0);
-  }
-}
-
-let cams = [
-"images/cam_server.gif",
-"images/cam_storage.gif",
-"images/cam_lab.gif"
+const cams = [
+  "images/cam_secret.gif",
+  "images/cam_glitch.gif",
+  "images/cam_lab.gif"
 ];
 
 let i = 0;
 
-function nextCam(){
-  i++;
-  if(i >= cams.length) i = 0;
-  $("cam").src = cams[i];
+export function initCamera() {
+  document.getElementById("camView").src = cams[0];
+}
+
+export function nextCam() {
+  i = (i + 1) % cams.length;
+  document.getElementById("camView").src = cams[i];
 }
