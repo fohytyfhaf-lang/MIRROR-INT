@@ -23,13 +23,5 @@ export function initBoot() {
     i++;
     setTimeout(step, 400);
   }
-
-  setTimeout(() => {
-  document.getElementById("boot").style.display = "none";
-  document.getElementById("login").classList.remove("hidden");
-}, 1000);
-
-  }
-
   step();
 }
