@@ -1,20 +1,10 @@
 export function initBoot() {
-
   const loading = document.getElementById("loading");
   const login = document.getElementById("login");
 
   const log = document.getElementById("bootLog");
   const fill = document.getElementById("bootFill");
   const percent = document.getElementById("bootPercent");
-
-  // 🔥 ВАЖНО: СКРЫВАЕМ ВСЕ ОКНА ПРИ ЗАГРУЗКЕ
-  document.querySelectorAll(".window").forEach(w => {
-    w.style.display = "none";
-  });
-
-  // 🔥 СКРЫВАЕМ РАБОЧИЙ СТОЛ
-  const screen = document.getElementById("screen");
-  if (screen) screen.classList.add("hidden");
 
   const files = ["kernel", "chat.sys", "audio.sys", "game.sys"];
 
@@ -28,12 +18,10 @@ export function initBoot() {
 
     if (i >= files.length) {
       log.innerHTML += "\nSYSTEM READY";
-
       setTimeout(() => {
         loading.style.display = "none";
         login.classList.add("active");
       }, 600);
-
       return;
     }
 
