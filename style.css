@@ -5,13 +5,8 @@ body {
   font-family: monospace;
 }
 
-.hidden { display:none; }
-
-.window {
-  position:absolute;
-  background:#111;
-  border:1px solid #00ff99;
-  padding:10px;
+.hidden {
+  display:none;
 }
 
 #boot {
@@ -21,4 +16,15 @@ body {
   flex-direction:column;
   justify-content:center;
   align-items:center;
+}
+
+.window {
+  position:absolute;
+  background:#111;
+  border:1px solid #00ff99;
+  padding:10px;
+}
+
+#desktop {
+  padding:20px;
 }
