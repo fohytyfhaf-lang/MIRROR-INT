@@ -1,142 +1,33 @@
 body {
   margin: 0;
+  font-family: Tahoma;
   background: #008080;
-  font-family: Tahoma, sans-serif;
 }
 
-/* ================= LOADING ================= */
-#loading {
-  position: fixed;
-  inset: 0;
-  background: black;
-  color: #00ff99;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-/* ================= LOGIN ================= */
-#login {
-  display: none;
-  position: fixed;
-  inset: 0;
-  justify-content: center;
-  align-items: center;
-}
-
-#login.active {
-  display: flex;
-}
-
-/* ================= WINDOWS ================= */
-/* WINDOWS */
-.window {
-  position: absolute;
-  width: 300px;
-  background: silver;
-  border: 2px solid black;
-  
-
-}
-/* ================= TITLE BAR ================= */
-.title {
-  background: navy;
-  color: white;
-  padding: 3px;
-  cursor: grab;
-  display: flex;
-  justify-content: space-between;
-}
-
+/* скрытие */
 .hidden {
   display: none !important;
 }
 
-#screen {
-  display: none;
-  width: 100%;
-  height: 100vh;
-  background: #008080;
-}
-
-/* DESKTOP */
-#desktop {
+/* окна */
+.window {
   position: absolute;
-  inset: 0;
-  padding: 20px;
-}
-
-/* ICONS */
-.icon {
-  width: 120px;
-  padding: 10px;
-  background: transparent;
-  color: white;
-  cursor: pointer;
-}
-
-.icon:hover {
-  background: rgba(255,255,255,0.2);
-}
-
-
-
-/* TASKBAR */
-#taskbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 30px;
-  background: #c0c0c0;
-}
-
-/* START MENU */
-#startMenu {
-  position: fixed;
-  bottom: 30px;
-  left: 0;
-  width: 150px;
   background: silver;
   border: 2px solid black;
-  display: none;
+  width: 300px;
 }
 
-
-/* ================= CHAT ================= */
-#chat {
-  height: 150px;
-  overflow-y: auto;
-  white-space: pre-wrap;
-}
-/* ================= CANVAS ================= */
-canvas {
-  background: black;
-  display: block;
+/* экран */
+#screen {
+  position: fixed;
+  inset: 0;
 }
 
-
-#bootLog {
-  width: 420px;
-  height: 200px;
-  overflow: hidden;
-  font-family: monospace;
-  font-size: 12px;
-  background: #111;
-  padding: 10px;
-  border: 1px solid #00ff99;
-}
-
-#bootFill {
-  height: 10px;
-  width: 0%;
-  background: #00ff99;
-  margin-top: 10px;
-  transition: 0.2s;
-}
-
-#bootPercent {
-  margin-top: 5px;
-  font-family: monospace;
+/* login / boot */
+.center {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
