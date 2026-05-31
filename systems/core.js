@@ -25,7 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
   initChat();
   initCamera();
   initLore();
-
+enableDebugMode();
+fixBootBlock();
+  
   MrSmile.init(); // 👁 запускаем скрытую систему
 
 });
