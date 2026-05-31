@@ -32,7 +32,6 @@ body {
 /* ================= WINDOWS ================= */
 /* WINDOWS */
 .window {
-  display: none;
   position: absolute;
   width: 300px;
   background: silver;
