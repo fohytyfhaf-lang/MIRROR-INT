@@ -99,17 +99,25 @@ window.toggleStart = function () {
 /* =========================
 LOGIN WRAPPER
 ========================= */
-
 window.loginSystem = function () {
   const u = document.getElementById("user").value;
   const p = document.getElementById("pass").value;
 
   if (u === "operator" && p === "0404") {
 
-    document.getElementById("login").classList.remove("active");
+    document.getElementById("loginStatus").innerText = "ACCESS GRANTED";
 
-    const screen = document.getElementById("screen");
-    screen.style.display = "block";
+    setTimeout(() => {
+
+      document.getElementById("login").classList.remove("active");
+
+      const screen = document.getElementById("screen");
+
+      // 🔥 ВАЖНО ИСПРАВЛЕНИЕ
+      screen.classList.remove("hidden");
+      screen.style.display = "block";
+
+    }, 300);
 
   } else {
     document.getElementById("loginStatus").innerText = "ACCESS DENIED";
