@@ -1,3 +1,4 @@
+import { enableDebugMode, fixBootBlock } from "./debug.js";
 import { initBoot } from "./boot.js";
 import { loginSystem } from "./login.js";
 import { initChat, sendChat } from "./chat.js";
