@@ -1,27 +1,24 @@
 export function initBoot() {
 
-  const loading = $("loading");
-  const login = $("login");
-  const screen = $("screen");
+  const log = document.getElementById("bootLog");
+  const fill = document.getElementById("bootFill");
 
-  // 🔥 ВСЁ СКРЫТЬ
-  login.classList.add("hidden");
-  screen.classList.add("hidden");
-
-  const files = ["kernel", "chat.sys", "audio.sys", "game.sys"];
+  const files = ["kernel", "chat.sys", "camera.sys"];
   let i = 0;
 
   function step() {
 
     if (i >= files.length) {
-
       setTimeout(() => {
-        loading.classList.add("hidden");
-        login.classList.remove("hidden");
+        document.getElementById("boot").classList.add("hidden");
+        document.getElementById("login").classList.remove("hidden");
       }, 500);
-
       return;
     }
+
+    log.innerHTML += "\nLOAD: " + files[i];
+
+    fill.style.width = ((i / files.length) * 100) + "%";
 
     i++;
     setTimeout(step, 400);
