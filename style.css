@@ -1,33 +1,24 @@
 body {
-  margin: 0;
-  font-family: Tahoma;
-  background: #008080;
+  margin:0;
+  background:#000;
+  color:#00ff99;
+  font-family: monospace;
 }
 
-/* скрытие */
-.hidden {
-  display: none !important;
-}
+.hidden { display:none; }
 
-/* окна */
 .window {
-  position: absolute;
-  background: silver;
-  border: 2px solid black;
-  width: 300px;
+  position:absolute;
+  background:#111;
+  border:1px solid #00ff99;
+  padding:10px;
 }
 
-/* экран */
-#screen {
-  position: fixed;
-  inset: 0;
-}
-
-/* login / boot */
-.center {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+#boot {
+  position:fixed;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
 }
