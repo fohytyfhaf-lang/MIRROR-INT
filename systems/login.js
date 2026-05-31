@@ -1,29 +1,21 @@
-export function initLogin() {}
-
 export function loginSystem() {
-  const u = document.getElementById("user").value;
-  const p = document.getElementById("pass").value;
 
-  const status = document.getElementById("loginStatus");
+  const u = $("user").value;
+  const p = $("pass").value;
+
+  const login = $("login");
+  const screen = $("screen");
 
   if (u === "operator" && p === "0404") {
 
-    status.innerText = "ACCESS GRANTED";
+    $("loginStatus").innerText = "ACCESS GRANTED";
 
     setTimeout(() => {
-
-      document.getElementById("login").classList.remove("active");
-
-      const screen = document.getElementById("screen");
-
+      login.classList.add("hidden");
       screen.classList.remove("hidden");
-      screen.style.display = "block";
-
     }, 300);
 
   } else {
-
-    status.innerText = "ACCESS DENIED";
-
+    $("loginStatus").innerText = "ACCESS DENIED";
   }
 }
