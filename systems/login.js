@@ -1,21 +1,18 @@
 export function loginSystem() {
 
-  const u = $("user").value;
-  const p = $("pass").value;
-
-  const login = $("login");
-  const screen = $("screen");
+  const u = document.getElementById("user").value;
+  const p = document.getElementById("pass").value;
 
   if (u === "operator" && p === "0404") {
 
-    $("loginStatus").innerText = "ACCESS GRANTED";
+    document.getElementById("loginStatus").innerText = "OK";
 
     setTimeout(() => {
-      login.classList.add("hidden");
-      screen.classList.remove("hidden");
-    }, 300);
+      document.getElementById("login").classList.add("hidden");
+      document.getElementById("desktop").classList.remove("hidden");
+    }, 500);
 
   } else {
-    $("loginStatus").innerText = "ACCESS DENIED";
+    document.getElementById("loginStatus").innerText = "NO ACCESS";
   }
 }
