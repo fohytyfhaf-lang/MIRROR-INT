@@ -2,107 +2,48 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>MIRROR-INT 6.5 WINDOWS ENGINE</title>
-
+<title>OMEGA SYSTEM</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- ================= BOOT ================= -->
-<section id="loading" class="center">
-  <div id="bootWindow">
-
-    <div class="title">MIRROR-INT BOOT</div>
-
-    <pre id="bootLog"></pre>
-
-    <div id="bootBar">
-      <div id="bootFill"></div>
-    </div>
-
-    <div id="bootPercent">0%</div>
-
-  </div>
+<!-- BOOT -->
+<section id="boot">
+  <pre id="bootLog"></pre>
+  <div id="bootBar"><div id="bootFill"></div></div>
 </section>
 
-<!-- ================= LOGIN ================= -->
-<section id="login" class="center">
-  <div class="window">
-
-    <div class="title">AUTH</div>
-
-    <input id="user" placeholder="user">
-    <input id="pass" type="password" placeholder="pass">
-
-    <button onclick="loginSystem()">LOGIN</button>
-
-    <p id="loginStatus"></p>
-
-  </div>
+<!-- LOGIN -->
+<section id="login" class="hidden">
+  <input id="user" placeholder="user">
+  <input id="pass" type="password" placeholder="pass">
+  <button onclick="login()">LOGIN</button>
+  <p id="loginStatus"></p>
 </section>
 
-<!-- ================= DESKTOP ================= -->
-<main id="screen" class="hidden">
+<!-- DESKTOP -->
+<main id="desktop" class="hidden">
 
-  <!-- DESKTOP BACKGROUND -->
-  <div id="desktop">
+  <div onclick="openApp('chat')">Chat</div>
+  <div onclick="openApp('camera')">Camera</div>
+  <div onclick="openApp('files')">Files</div>
 
-    <!-- ICONS -->
-    <div class="icon" onclick="openApp('myComputer')">🖥 My Computer</div>
-    <div class="icon" onclick="openApp('explorer')">📁 Explorer</div>
-    <div class="icon" onclick="openApp('chat')">💬 Chat</div>
-    <div class="icon" onclick="openApp('game')">🎮 Cube Game</div>
-
+  <div id="chatWindow" class="window hidden">
+    <div class="title">CHAT <button onclick="closeApp('chat')">X</button></div>
+    <pre id="chatLog"></pre>
+    <input id="chatInput">
+    <button onclick="sendChat()">SEND</button>
   </div>
 
-  <!-- WINDOWS -->
-  <div class="window" id="myComputerWindow">
-    <div class="title">My Computer <button onclick="closeApp('myComputer')">X</button></div>
-    SYSTEM OK
-  </div>
-
-  <div class="window" id="explorerWindow">
-    <div class="title">Explorer <button onclick="closeApp('explorer')">X</button></div>
-    FILES LOADED
-  </div>
-
-  <div class="window" id="chatWindow">
-    <div class="title">Chat <button onclick="closeApp('chat')">X</button></div>
-    <pre id="chat"></pre>
-    <input id="msg">
-    <button onclick="sendMsg()">SEND</button>
-  </div>
-
-  <div class="window" id="gameWindow">
-    <div class="title">Game <button onclick="closeApp('game')">X</button></div>
-    <canvas id="game" width="500" height="200"></canvas>
-    <button onclick="startGame()">START</button>
-  </div>
-
-  <!-- TASKBAR -->
-  <div id="taskbar">
-    <button onclick="toggleStart()">START</button>
-  </div>
-
-  <!-- START MENU -->
-  <div id="startMenu">
-    <div onclick="openApp('myComputer')">My Computer</div>
-    <div onclick="openApp('explorer')">Explorer</div>
-    <div onclick="openApp('chat')">Chat</div>
-    <div onclick="openApp('game')">Game</div>
+  <div id="cameraWindow" class="window hidden">
+    <div class="title">CAMERA <button onclick="closeApp('camera')">X</button></div>
+    <img id="camView" width="300">
+    <button onclick="nextCam()">NEXT</button>
   </div>
 
 </main>
-<!-- ================= AUDIO ================= -->
-<audio id="music" src="audio/background.mp3" loop></audio>
 
 <script type="module" src="./systems/core.js"></script>
-
-<!-- ================= CORE ================= -->
-<script type="module" src="./systems/core.js"></script>
-
 </body>
 </html>
