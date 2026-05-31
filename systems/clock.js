@@ -1,8 +1,14 @@
-function startClock(){
-  if(window.state.clockStarted) return;
-  window.state.clockStarted = true;
+export function initClock() {
+
+  const chat = document.getElementById("chatLog");
 
   setInterval(() => {
-    $("clock").innerText = new Date().toLocaleTimeString();
-  }, 1000);
+
+    const h = new Date().getHours();
+
+    if (h >= 22 || h <= 5) {
+      chat.innerText += "\nSYSTEM: night protocol active";
+    }
+
+  }, 15000);
 }
