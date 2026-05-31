@@ -4,14 +4,26 @@ export function loginSystem() {
   const u = document.getElementById("user").value;
   const p = document.getElementById("pass").value;
 
+  const status = document.getElementById("loginStatus");
+
   if (u === "operator" && p === "0404") {
-    document.getElementById("loginStatus").innerText = "ACCESS GRANTED";
+
+    status.innerText = "ACCESS GRANTED";
 
     setTimeout(() => {
+
       document.getElementById("login").classList.remove("active");
-      document.getElementById("screen").style.display = "block";
+
+      const screen = document.getElementById("screen");
+
+      screen.classList.remove("hidden");
+      screen.style.display = "block";
+
     }, 300);
+
   } else {
-    document.getElementById("loginStatus").innerText = "ACCESS DENIED";
+
+    status.innerText = "ACCESS DENIED";
+
   }
 }
