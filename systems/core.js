@@ -1,12 +1,13 @@
 import { enableDebugMode, fixBootBlock } from "./debug.js";
 import { initBoot } from "./boot.js";
-import { loginSystem } from "./login.js";
 import { initChat, sendChat } from "./chat.js";
 import { initCamera, nextCam } from "./camera.js";
 import { openApp, closeApp } from "./windows.js";
 import { initLore } from "./lore.js";
 import { MrSmile } from "./mrsmile.js";
+import { loginSystem } from "./login.js";
 
+window.loginSystem = loginSystem;
 window.login = loginSystem;
 window.sendChat = sendChat;
 window.openApp = openApp;
