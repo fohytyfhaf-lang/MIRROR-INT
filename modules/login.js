@@ -1,3 +1,4 @@
+import { playMusic } from "./audio.js";
 export function loginSystem() {
   const u = document.getElementById("user").value;
   const p = document.getElementById("pass").value;
@@ -11,7 +12,6 @@ export function loginSystem() {
       document.getElementById("desktop").classList.remove("hidden");
     }, 500);
 
-import { playMusic } from "./audio.js";
 playMusic("background.mp3");
     
   } else {
