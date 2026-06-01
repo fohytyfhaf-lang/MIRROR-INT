@@ -21,13 +21,20 @@ window.gameState = {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  initBoot();
-  initChat();
-  initCamera();
-  initLore();
-enableDebugMode();
-fixBootBlock();
-  
-  MrSmile.init(); // 👁 запускаем скрытую систему
+  console.log("CORE READY");
+
+  try { initBoot(); } catch(e) { console.error("BOOT FAIL", e); }
+  try { initChat(); } catch(e) { console.error("CHAT FAIL", e); }
+  try { initCamera(); } catch(e) { console.error("CAMERA FAIL", e); }
+  try { initLore(); } catch(e) { console.error("LORE FAIL", e); }
+
+  try { enableDebugMode(); } catch(e) { console.error("DEBUG FAIL", e); }
+  try { fixBootBlock(); } catch(e) { console.error("FIX FAIL", e); }
+
+  try {
+    MrSmile?.init?.();
+  } catch(e) {
+    console.error("MRSMILE FAIL", e);
+  }
 
 });
