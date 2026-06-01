@@ -1,5 +1,11 @@
 import { playMusic } from "./audio.js";
 
+const accounts = {
+  operator: "0404",
+  admin: "0000",
+  guest: "1234"
+};
+
 export function loginSystem() {
   const u = document.getElementById("user");
   const p = document.getElementById("pass");
@@ -9,14 +15,19 @@ export function loginSystem() {
 
   if (!u || !p || !login || !desktop) return;
 
-  if (u.value === "operator" && p.value === "0404") {
+  const user = u.value;
+  const pass = p.value;
 
-    status.innerText = "Welcome";
+  if (accounts[user] && accounts[user] === pass) {
 
-    login.classList.add("hidden");
-    desktop.classList.remove("hidden");
+    status.innerText = "Welcome " + user;
 
-    playMusic("background.mp3");
+    setTimeout(() => {
+      login.classList.add("hidden");
+      desktop.classList.remove("hidden");
+
+      playMusic("background.mp3");
+    }, 400);
 
   } else {
     status.innerText = "Access Denied";
