@@ -1,3 +1,8 @@
+
+import { playMusic } from "./audio.js";
+
+window.playMusic = playMusic;
+
 function login() {
   const u = document.getElementById("user").value;
   const p = document.getElementById("pass").value;
@@ -27,15 +32,6 @@ function closeApp(name) {
 
 function sendChat() {}
 function nextCam() {}
-
-
-const bgm = document.getElementById("bgm");
-
-function playMusic(name) {
-  bgm.src = "audio/" + name;
-  bgm.loop = true;
-  bgm.play();
-}
 
 
 window.login = login;
