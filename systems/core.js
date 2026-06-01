@@ -1,10 +1,11 @@
+let MrSmileModule = null;
+
 import { enableDebugMode, fixBootBlock } from "./debug.js";
 import { initBoot } from "./boot.js";
 import { initChat, sendChat } from "./chat.js";
 import { initCamera, nextCam } from "./camera.js";
 import { openApp, closeApp } from "./windows.js";
 import { initLore } from "./lore.js";
-import { MrSmile } from "./mrsmile.js";
 import { loginSystem } from "./login.js";
 
 window.loginSystem = loginSystem;
@@ -20,9 +21,20 @@ window.gameState = {
   alertLevel: 0
 };
 
-document.addEventListener("DOMContentLoaded", () => {
+async function loadMrSmile() {
+  try {
+    const mod = await import("./mrsmile.js");
+    MrSmileModule = mod.MrSmile;
+  } catch (e) {
+    console.warn("MRSMILE NOT LOADED");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
 
   console.log("CORE READY");
+
+  await loadMrSmile();
 
   try { initBoot(); } catch(e) { console.error("BOOT FAIL", e); }
   try { initChat(); } catch(e) { console.error("CHAT FAIL", e); }
@@ -33,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
   try { fixBootBlock(); } catch(e) { console.error("FIX FAIL", e); }
 
   try {
-    MrSmile?.init?.();
+    MrSmileModule?.init?.();
   } catch(e) {
     console.error("MRSMILE FAIL", e);
   }
