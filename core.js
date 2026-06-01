@@ -2,4 +2,9 @@ import { loginSystem } from "./login.js";
 import { playMusic } from "./audio.js";
 
 window.login = loginSystem;
-window.playMusic = playMusic;
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    loginSystem();
+  }
+});
