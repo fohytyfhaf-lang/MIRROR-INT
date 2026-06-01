@@ -6,9 +6,10 @@ body {
 }
 
 .hidden {
-  display:none;
+  display:none !important;
 }
 
+/* BOOT */
 #boot {
   position:fixed;
   inset:0;
@@ -18,13 +19,29 @@ body {
   align-items:center;
 }
 
+/* LOGIN */
+#login {
+  position:fixed;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* DESKTOP */
+#desktop {
+  position:fixed;
+  inset:0;
+  padding:20px;
+}
+
+/* WINDOWS */
 .window {
   position:absolute;
   background:#111;
   border:1px solid #00ff99;
   padding:10px;
-}
-
-#desktop {
-  padding:20px;
+  min-width:200px;
+  min-height:100px;
+  z-index:10;
 }
