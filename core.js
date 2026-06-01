@@ -11,6 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initMrSmile();
 });
 
-window.login = loginSystem;
+window.loginSystem = loginSystem;
 window.openApp = openApp;
 window.closeApp = closeApp;
