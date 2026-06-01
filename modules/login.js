@@ -7,12 +7,13 @@ export function loginSystem() {
 
     document.getElementById("status").innerText = "Welcome";
 
-    setTimeout(() => {
-      document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("desktop").classList.remove("hidden");
-    }, 500);
+  setTimeout(() => {
+  document.getElementById("loginScreen").classList.add("hidden");
+  document.getElementById("desktop").classList.remove("hidden");
 
-playMusic("background.mp3");
+  playMusic("background.mp3");
+
+}, 500);
     
   } else {
     document.getElementById("status").innerText = "Access Denied";
