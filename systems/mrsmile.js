@@ -12,27 +12,35 @@ export const MrSmile = {
 
   init() {
 
-    setInterval(() => {
+    console.log("MR.SMILE INIT");
+
+    this.tick = setInterval(() => {
 
       const hour = new Date().getHours();
 
       if (hour >= 22 || hour <= 5) {
-        this.active = true;
-        this.showMessage();
+        if (!this.active) {
+          this.active = true;
+          this.showMessage();
+        }
       }
 
-    }, 10000);
-
+    }, 5000);
   },
 
   showMessage() {
 
-    const log = document.getElementById("chatLog");
-    if (!log) return;
+    const log =
+      document.getElementById("chatLog") ||
+      document.getElementById("chat");
 
-    const msg = this.lines[
-      Math.floor(Math.random() * this.lines.length)
-    ];
+    if (!log) {
+      console.warn("MR.SMILE: chat not found");
+      return;
+    }
+
+    const msg =
+      this.lines[Math.floor(Math.random() * this.lines.length)];
 
     log.innerText += "\nMR.SMILE: " + msg;
   }
