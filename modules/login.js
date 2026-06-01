@@ -18,3 +18,4 @@ playMusic("background.mp3");
     document.getElementById("status").innerText = "Access Denied";
   }
 }
+window.login = loginSystem;
