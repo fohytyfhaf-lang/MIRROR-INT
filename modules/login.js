@@ -11,7 +11,7 @@ export function loginSystem() {
       document.getElementById("desktop").classList.remove("hidden");
     }, 500);
 
-
+import { playMusic } from "./audio.js";
 playMusic("background.mp3");
     
   } else {
