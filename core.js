@@ -10,3 +10,7 @@ window.closeApp = closeApp;
 document.addEventListener("DOMContentLoaded", () => {
   initMrSmile();
 });
+
+window.login = loginSystem;
+window.openApp = openApp;
+window.closeApp = closeApp;
