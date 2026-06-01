@@ -2,15 +2,18 @@ function login() {
   const u = document.getElementById("user").value;
   const p = document.getElementById("pass").value;
 
+  const login = document.getElementById("login");
+  const desktop = document.getElementById("desktop");
+
   if (u === "operator" && p === "0404") {
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("desktop").classList.remove("hidden");
+
+    login.classList.add("hidden");
+    desktop.classList.remove("hidden");
+
   } else {
     document.getElementById("status").innerText = "NO ACCESS";
   }
 }
-
-window.login = login;
 
 function openApp(name) {
   const w = document.getElementById(name + "Window");
