@@ -2,51 +2,52 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>OMEGA SYSTEM</title>
+<title>WINDOWS 7 // ARG SYSTEM</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- BOOT -->
-<section id="boot">
-  <pre id="bootLog"></pre>
-  <div id="bootBar"><div id="bootFill"></div></div>
-</section>
-
 <!-- LOGIN -->
-<section id="login" class="hidden">
-  <input id="user" placeholder="user">
-  <input id="pass" type="password" placeholder="pass">
-  <button onclick="login()">LOGIN</button>
-  <p id="loginStatus"></p>
+<section id="login">
+  <div class="window" style="position:relative;">
+    <div class="title">System Login</div>
+    <input id="user" placeholder="User">
+    <input id="pass" type="password" placeholder="Password">
+    <button onclick="login()">Enter</button>
+    <p id="status"></p>
+  </div>
 </section>
 
 <!-- DESKTOP -->
 <main id="desktop" class="hidden">
 
-  <div onclick="openApp('chat')">Chat</div>
-  <div onclick="openApp('camera')">Camera</div>
-  <div onclick="openApp('files')">Files</div>
-
-  <!-- CHAT -->
-  <div id="chatWindow" class="window hidden">
-    <div class="title">CHAT <button onclick="closeApp('chat')">X</button></div>
-    <pre id="chatLog"></pre>
-    <input id="chatInput">
-    <button onclick="sendChat()">SEND</button>
+  <div id="taskbar">
+    <div id="start">Start</div>
   </div>
 
-  <!-- CAMERA -->
+  <!-- ICONS -->
+  <div onclick="openApp('chat')">📁 Logs</div>
+  <div onclick="openApp('camera')">📷 Surveillance</div>
+
+  <!-- CHAT WINDOW -->
+  <div id="chatWindow" class="window hidden">
+    <div class="title">LOG TERMINAL <button onclick="closeApp('chat')">X</button></div>
+    <pre id="chatLog"></pre>
+    <input id="chatInput">
+    <button onclick="sendChat()">Send</button>
+  </div>
+
+  <!-- CAMERA WINDOW -->
   <div id="cameraWindow" class="window hidden">
-    <div class="title">CAMERA <button onclick="closeApp('camera')">X</button></div>
-    <img id="camView" width="300">
+    <div class="title">CAM FEED <button onclick="closeApp('camera')">X</button></div>
+    <p>NO SIGNAL</p>
     <button onclick="nextCam()">NEXT</button>
   </div>
 
 </main>
 
-<script src="./systems/core.js"></script>
+<script type="module" src="./core.js"></script>
 
 </body>
 </html>
