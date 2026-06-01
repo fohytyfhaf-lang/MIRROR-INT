@@ -58,3 +58,15 @@ body {
 .hidden {
   display: none;
 }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #0a4a7a;
+}
+
+#desktop {
+  position: fixed;
+  inset: 0;
+  background: #0a4a7a !important;
+}
