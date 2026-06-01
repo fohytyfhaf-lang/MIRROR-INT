@@ -1,47 +1,28 @@
 body {
-  margin:0;
-  background:#000;
-  color:#00ff99;
+  margin: 0;
+  background: #000;
+  color: #00ff99;
   font-family: monospace;
 }
 
 .hidden {
-  display:none !important;
+  display: none;
 }
 
-/* BOOT */
 #boot {
-  position:fixed;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-/* LOGIN */
-#login {
-  position:fixed;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-
-/* DESKTOP */
-#desktop {
-  position:fixed;
-  inset:0;
-  padding:20px;
-}
-
-/* WINDOWS */
 .window {
-  position:absolute;
-  background:#111;
-  border:1px solid #00ff99;
-  padding:10px;
-  min-width:200px;
-  min-height:100px;
-  z-index:10;
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  background: #111;
+  border: 1px solid #00ff99;
+  padding: 10px;
 }
