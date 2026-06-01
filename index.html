@@ -7,7 +7,7 @@
 </head>
 
 <body>
-<h1>TEST</h1>
+
 <!-- BOOT -->
 <section id="boot">
   <pre id="bootLog"></pre>
@@ -29,6 +29,7 @@
   <div onclick="openApp('camera')">Camera</div>
   <div onclick="openApp('files')">Files</div>
 
+  <!-- CHAT -->
   <div id="chatWindow" class="window hidden">
     <div class="title">CHAT <button onclick="closeApp('chat')">X</button></div>
     <pre id="chatLog"></pre>
@@ -36,6 +37,7 @@
     <button onclick="sendChat()">SEND</button>
   </div>
 
+  <!-- CAMERA -->
   <div id="cameraWindow" class="window hidden">
     <div class="title">CAMERA <button onclick="closeApp('camera')">X</button></div>
     <img id="camView" width="300">
@@ -44,6 +46,7 @@
 
 </main>
 
-<script type="module" src="./systems/core.js"></script>
+<script src="./systems/core.js"></script>
+
 </body>
 </html>
