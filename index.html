@@ -2,53 +2,28 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>WINDOWS 7 // ARG SYSTEM</title>
+<title>ARG SYSTEM</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  
+
 <audio id="bgm"></audio>
+
 <!-- LOGIN -->
-<section id="loginSystem">
-  <div class="window" style="position:relative;">
-    <div class="title">System Login</div>
-    <input id="user" placeholder="User">
-    <input id="pass" type="password" placeholder="Password">
-    <button onclick="loginSystem()">Enter</button>
-    <p id="status"></p>
-  </div>
+<section id="loginScreen">
+  <input id="user" placeholder="User">
+  <input id="pass" type="password" placeholder="Password">
+  <button onclick="login()">Enter</button>
+  <p id="status"></p>
 </section>
 
 <!-- DESKTOP -->
 <main id="desktop" class="hidden">
-
-  <div id="taskbar">
-    <div id="start">Start</div>
-  </div>
-
-  <!-- ICONS -->
-  <div onclick="openApp('chat')">📁 Logs</div>
-  <div onclick="openApp('camera')">📷 Surveillance</div>
-
-  <!-- CHAT WINDOW -->
-  <div id="chatWindow" class="window hidden">
-    <div class="title">LOG TERMINAL <button onclick="closeApp('chat')">X</button></div>
-    <pre id="chatLog"></pre>
-    <input id="chatInput">
-    <button onclick="sendChat()">Send</button>
-  </div>
-
-  <!-- CAMERA WINDOW -->
-  <div id="cameraWindow" class="window hidden">
-    <div class="title">CAM FEED <button onclick="closeApp('camera')">X</button></div>
-    <p>NO SIGNAL</p>
-    <button onclick="nextCam()">NEXT</button>
-  </div>
-
+  <h1>DESKTOP</h1>
 </main>
 
 <script src="./core.js"></script>
-  
+
 </body>
 </html>
