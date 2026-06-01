@@ -7,7 +7,7 @@ function login() {
   const u = document.getElementById("user").value;
   const p = document.getElementById("pass").value;
 
-  const login = document.getElementById("login");
+  const login = document.getElementById("loginScreen");
   const desktop = document.getElementById("desktop");
 
   if (u === "operator" && p === "0404") {
