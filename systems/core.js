@@ -1,5 +1,3 @@
-let MrSmileModule = null;
-
 import { enableDebugMode, fixBootBlock } from "./debug.js";
 import { initBoot } from "./boot.js";
 import { initChat, sendChat } from "./chat.js";
@@ -21,6 +19,8 @@ window.gameState = {
   alertLevel: 0
 };
 
+let MrSmileModule = null;
+
 async function loadMrSmile() {
   try {
     const mod = await import("./mrsmile.js");
@@ -30,24 +30,25 @@ async function loadMrSmile() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
 
   console.log("CORE READY");
 
-  await loadMrSmile();
+  // 🚀 boot ВСЕГДА первым
+  initBoot();
 
-  try { initBoot(); } catch(e) { console.error("BOOT FAIL", e); }
-  try { initChat(); } catch(e) { console.error("CHAT FAIL", e); }
-  try { initCamera(); } catch(e) { console.error("CAMERA FAIL", e); }
-  try { initLore(); } catch(e) { console.error("LORE FAIL", e); }
+  // UI systems
+  initChat();
+  initCamera();
+  initLore();
 
-  try { enableDebugMode(); } catch(e) { console.error("DEBUG FAIL", e); }
-  try { fixBootBlock(); } catch(e) { console.error("FIX FAIL", e); }
+  // debug tools
+  enableDebugMode();
+  fixBootBlock();
 
-  try {
+  // MrSmile НЕ блокирует систему
+  loadMrSmile().then(() => {
     MrSmileModule?.init?.();
-  } catch(e) {
-    console.error("MRSMILE FAIL", e);
-  }
+  });
 
 });
