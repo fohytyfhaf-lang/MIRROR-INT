@@ -1,22 +1,26 @@
 import { playMusic } from "./audio.js";
+
 export function loginSystem() {
-  const u = document.getElementById("user").value;
-  const p = document.getElementById("pass").value;
+  const u = document.getElementById("user");
+  const p = document.getElementById("pass");
+  const screen = document.getElementById("loginScreen");
+  const desktop = document.getElementById("desktop");
+  const status = document.getElementById("status");
 
-  if (u === "operator" && p === "0404") {
+  if (!u || !p || !screen || !desktop) return;
 
-    document.getElementById("status").innerText = "Welcome";
+  if (u.value === "operator" && p.value === "0404") {
 
-  setTimeout(() => {
-  document.getElementById("loginScreen").classList.add("hidden");
-  document.getElementById("desktop").classList.remove("hidden");
+    status.innerText = "Welcome";
 
-  playMusic("background.mp3");
+    setTimeout(() => {
+      screen.classList.add("hidden");
+      desktop.classList.remove("hidden");
 
-}, 500);
-    
+      playMusic("background.mp3", 0.4);
+    }, 400);
+
   } else {
-    document.getElementById("status").innerText = "Access Denied";
+    status.innerText = "Access Denied";
   }
 }
-window.login = loginSystem;
