@@ -1,8 +1,6 @@
 
 import { playMusic } from "./audio.js";
 
-window.playMusic = playMusic;
-
 function login() {
   const u = document.getElementById("user").value;
   const p = document.getElementById("pass").value;
