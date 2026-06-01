@@ -7,7 +7,7 @@ export function loginSystem() {
     document.getElementById("status").innerText = "Welcome";
 
     setTimeout(() => {
-      document.getElementById("login").classList.add("hidden");
+      document.getElementById("loginScreen").classList.add("hidden");
       document.getElementById("desktop").classList.remove("hidden");
     }, 500);
 
