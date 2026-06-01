@@ -28,8 +28,19 @@ function closeApp(name) {
 function sendChat() {}
 function nextCam() {}
 
+
+const bgm = document.getElementById("bgm");
+
+function playMusic(name) {
+  bgm.src = "audio/" + name;
+  bgm.loop = true;
+  bgm.play();
+}
+
+
 window.login = login;
 window.openApp = openApp;
 window.closeApp = closeApp;
 window.sendChat = sendChat;
 window.nextCam = nextCam;
+window.playMusic=audio;
