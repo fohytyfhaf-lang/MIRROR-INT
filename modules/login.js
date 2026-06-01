@@ -11,6 +11,9 @@ export function loginSystem() {
       document.getElementById("desktop").classList.remove("hidden");
     }, 500);
 
+
+playMusic("background.mp3");
+    
   } else {
     document.getElementById("status").innerText = "Access Denied";
   }
