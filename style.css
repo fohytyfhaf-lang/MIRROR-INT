@@ -1,28 +1,60 @@
 body {
   margin: 0;
-  background: #000;
-  color: #00ff99;
-  font-family: monospace;
+  font-family: Segoe UI, Tahoma, sans-serif;
+  background: url("bg.jpg") no-repeat center center fixed;
+  background-size: cover;
+}
+
+/* LOGIN */
+#login {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.6);
+}
+
+/* WINDOWS 7 WINDOW */
+.window {
+  position: absolute;
+  width: 300px;
+  background: rgba(240,240,240,0.9);
+  border: 1px solid #999;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  border-radius: 6px;
+}
+
+/* TITLE BAR (AERO STYLE) */
+.title {
+  background: linear-gradient(to bottom, #4c8bf5, #2d5fdd);
+  color: white;
+  padding: 6px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* TASKBAR */
+#taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: rgba(30,30,30,0.9);
+  display: flex;
+  align-items: center;
+}
+
+/* START BUTTON */
+#start {
+  background: #2d5fdd;
+  color: white;
+  padding: 8px 15px;
+  cursor: pointer;
 }
 
 .hidden {
   display: none;
-}
-
-#boot {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.window {
-  position: absolute;
-  top: 100px;
-  left: 100px;
-  background: #111;
-  border: 1px solid #00ff99;
-  padding: 10px;
 }
