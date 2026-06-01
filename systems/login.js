@@ -1,4 +1,5 @@
 export function loginSystem() {
+  console.log("LOGIN CLICKED");
 
   const u = document.getElementById("user").value;
   const p = document.getElementById("pass").value;
