@@ -13,7 +13,14 @@ window.readFile = readFile;
 function openApp(name) {
   const win = document.getElementById(name + "Window");
   if (win) win.classList.remove("hidden");
-
+  
+if (name === "files") {
+  const view = document.querySelector("#filesWindow p");
+  if (view) {
+    view.innerText = listFiles("/files").join("\n");
+  }
+}
+  
   switch (name) {
     case "console":
       setSoundState("console");
