@@ -7,6 +7,8 @@ import { listFiles, readFile } from "./filesystem.js";
 window.playMusic = playMusic;
 window.setSoundState = setSoundState;
 window.runCommand = runCommand;
+window.listFiles = listFiles;
+window.readFile = readFile;
 /* WINDOW SYSTEM */
 function openApp(name) {
   const win = document.getElementById(name + "Window");
