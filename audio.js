@@ -1,46 +1,38 @@
-let bgm = null;
+const bgm = document.getElementById("bgm");
 
-/* =========================
-   INIT AUDIO SYSTEM
-========================= */
+let currentTrack = null;
 
-function initAudio() {
-  bgm = document.getElementById("bgm");
-
-  if (!bgm) {
-    console.warn("AUDIO ELEMENT NOT FOUND (#bgm)");
-    return;
-  }
-
-  bgm.loop = true;
-  bgm.volume = 0.5;
-}
-
-/* =========================
-   PLAY MUSIC SAFE
-========================= */
-
-export function playMusic(file) {
-  if (!bgm) initAudio();
+export function playMusic(file, volume = 0.5) {
   if (!bgm) return;
 
-  bgm.src = "audio/" + file;
+  const path = `./audio/${file}`;
+
+  // не перезапускаем ту же музыку
+  if (currentTrack === path) return;
+
+  currentTrack = path;
+
+  bgm.src = path;
+  bgm.loop = true;
+  bgm.volume = volume;
 
   const playPromise = bgm.play();
 
   if (playPromise !== undefined) {
     playPromise.catch(err => {
-      console.warn("AUDIO BLOCKED BY BROWSER:", err);
+      console.log("Audio blocked or failed:", err);
     });
   }
 }
 
-/* =========================
-   STOP MUSIC (optional)
-========================= */
-
 export function stopMusic() {
   if (!bgm) return;
+
   bgm.pause();
   bgm.currentTime = 0;
+  currentTrack = null;
+}
+
+export function setVolume(v) {
+  if (bgm) bgm.volume = v;
 }
