@@ -89,17 +89,14 @@ Logs
 
 <div id="cameraWindow" class="window hidden">
 
-<div class="title">
+  <div class="title">
+    Camera
+    <button onclick="closeApp('camera')">X</button>
+  </div>
 
-Camera
+  <p id="cameraView">NO SIGNAL</p>
 
-<button onclick="closeApp('camera')">X</button>
-
-</div>
-
-<p>NO SIGNAL</p>
-
-<button id="nextCamBtn">NEXT CAMERA</button>
+  <button onclick="nextCam()">NEXT CAMERA</button>
 
 </div>
 
