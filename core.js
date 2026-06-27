@@ -8,30 +8,42 @@ import { playMusic } from "./audio.js";
    GLOBAL WINDOW ACCESS
 ========================= */
 
-window.login = loginSystem;
+
 window.openApp = openApp;
 window.closeApp = closeApp;
 /* =========================
    LOGIN ENTER KEY FIX
 ========================= */
+import { loginSystem } from "./login.js";
 
-window.login = loginSystem;
+/* WAIT MODULE SAFE INIT */
+window.addEventListener("DOMContentLoaded", () => {
 
-document.addEventListener("DOMContentLoaded", () => {
+  // SAFE BIND
+  window.loginSystem = loginSystem;
+  window.login = loginSystem;
+
   const btn = document.getElementById("loginBtn");
 
   if (btn) {
-    btn.addEventListener("click", loginSystem);
-  }
-});
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    const loginScreen = document.getElementById("loginScreen");
-    if (loginScreen && !loginScreen.classList.contains("hidden")) {
+    btn.addEventListener("click", () => {
       loginSystem();
-    }
+    });
   }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+
+      const screen = document.getElementById("loginScreen");
+
+      if (!screen || screen.classList.contains("hidden")) return;
+
+      if (typeof loginSystem === "function") {
+        loginSystem();
+      }
+    }
+  });
+
 });
 
 /* =========================
