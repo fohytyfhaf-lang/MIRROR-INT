@@ -15,7 +15,12 @@ window.bringToFront = bringToFront;
 /* WINDOW SYSTEM */
 function openApp(name) {
   const win = document.getElementById(name + "Window");
-  if (win) win.classList.remove("hidden");
+
+  if (win) {
+    win.classList.remove("hidden");
+    bringToFront(win);
+    makeWindowDraggable(win);
+  }
   
 if (name === "files") {
   const view = document.querySelector("#filesWindow p");
