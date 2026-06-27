@@ -1,8 +1,8 @@
 import { loginSystem } from "./login.js";
 import { playMusic } from "./audio.js";
 import { initCamera, nextCam } from "./camera.js";
+import { runCommand } from "./console.js";
 
-window.nextCam = nextCam;
 
 /* =========================
    GLOBAL WINDOW ACCESS
@@ -11,7 +11,9 @@ window.nextCam = nextCam;
 window.login = loginSystem;
 window.openApp = openApp;
 window.closeApp = closeApp;
+window.runCommand = runCommand;
 
+window.nextCam = nextCam;
 /* =========================
    LOGIN ENTER KEY FIX
 ========================= */
