@@ -17,7 +17,7 @@ window.closeApp = closeApp;
 /* =========================
    LOGIN ENTER KEY FIX
 ========================= */
-import { loginSystem } from "./login.js";
+
 
 /* WAIT MODULE SAFE INIT */
 window.addEventListener("DOMContentLoaded", () => {
