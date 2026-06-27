@@ -1,27 +1,22 @@
-const log = document.getElementById("consoleLog");
-
-function print(text) {
-  if (!log) return;
-  log.textContent += "\n" + text;
-}
-
 export function runCommand() {
+  const log = document.getElementById("consoleLog");
   const input = document.getElementById("consoleInput");
-  if (!input) return;
+
+  if (!log || !input) return;
 
   const cmd = input.value.trim().toLowerCase();
   input.value = "";
 
-  print("> " + cmd);
+  log.textContent += "\n> " + cmd;
 
   switch (cmd) {
 
     case "help":
-      print("COMMANDS: help, time, clear, status, mrsmile");
+      log.textContent += "\nhelp, time, clear, status";
       break;
 
     case "time":
-      print(new Date().toString());
+      log.textContent += "\n" + new Date().toString();
       break;
 
     case "clear":
@@ -29,16 +24,14 @@ export function runCommand() {
       break;
 
     case "status":
-      print("SYSTEM: OK");
-      print("CAMERA: ONLINE");
-      print("MR.SMILE: UNKNOWN");
+      log.textContent += "\nsystem ok";
       break;
 
     case "mrsmile":
-      print("...he is watching you.");
+      log.textContent += "\n...he is watching.";
       break;
 
     default:
-      print("UNKNOWN COMMAND");
+      log.textContent += "\nunknown command";
   }
 }
