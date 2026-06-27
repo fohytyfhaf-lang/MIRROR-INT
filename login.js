@@ -1,35 +1,47 @@
 import { playMusic } from "./audio.js";
 
+/* =========================
+   ACCOUNTS DATABASE
+========================= */
+
 const accounts = {
   operator: "0404",
   admin: "0000",
-  guest: "1234"
+  guest: "1234",
+  doctor1987: "blackblood",
 };
 
+/* =========================
+   LOGIN SYSTEM
+========================= */
+
 export function loginSystem() {
-  const u = document.getElementById("user");
-  const p = document.getElementById("pass");
-  const login = document.getElementById("loginScreen");
+  const user = document.getElementById("user");
+  const pass = document.getElementById("pass");
+
+  const loginScreen = document.getElementById("loginScreen");
   const desktop = document.getElementById("desktop");
   const status = document.getElementById("status");
 
-  if (!u || !p || !login || !desktop) return;
+  if (!user || !pass || !loginScreen || !desktop) return;
 
-  const user = u.value;
-  const pass = p.value;
+  const u = user.value;
+  const p = pass.value;
 
-  if (accounts[user] && accounts[user] === pass) {
+  if (accounts[u] && accounts[u] === p) {
 
-    status.innerText = "Welcome " + user;
+    status.textContent = "Welcome " + u;
 
     setTimeout(() => {
-      login.classList.add("hidden");
+      loginScreen.classList.add("hidden");
       desktop.classList.remove("hidden");
 
+      // start music after login
       playMusic("background.mp3");
-    }, 400);
+
+    }, 500);
 
   } else {
-    status.innerText = "Access Denied";
+    status.textContent = "Access Denied";
   }
 }
