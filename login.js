@@ -38,8 +38,6 @@ export function loginSystem() {
 
   status.textContent = "WELCOME " + u;
    
-unlockAudio();
-   
   setTimeout(() => {
     loginScreen.classList.add("hidden");
     desktop.classList.remove("hidden");
