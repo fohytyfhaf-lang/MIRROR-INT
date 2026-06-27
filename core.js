@@ -1,10 +1,11 @@
 import { loginSystem } from "./login.js";
 import { playMusic, unlockAudio } from "./audio.js";
 import { runCommand } from "./console.js";
-
+import { setSoundState } from "./soundManager.js";
 /* GLOBAL */
 window.playMusic = playMusic;
 window.unlockAudio = unlockAudio;
+window.setSoundState = setSoundState;
 window.runCommand = runCommand;
 /* WINDOW SYSTEM */
 function openApp(name) {
