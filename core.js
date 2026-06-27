@@ -11,11 +11,26 @@ window.runCommand = runCommand;
 function openApp(name) {
   const win = document.getElementById(name + "Window");
   if (win) win.classList.remove("hidden");
+
+  switch (name) {
+    case "console":
+      setSoundState("console");
+      break;
+
+    case "camera":
+      setSoundState("camera");
+      break;
+
+    default:
+      setSoundState("desktop");
+  }
 }
 
 function closeApp(name) {
   const win = document.getElementById(name + "Window");
   if (win) win.classList.add("hidden");
+
+  setSoundState("desktop");
 }
 
 window.openApp = openApp;
