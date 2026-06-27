@@ -1,36 +1,77 @@
 body {
   margin: 0;
   font-family: Segoe UI, Tahoma, sans-serif;
-  background: url("bg.jpg") no-repeat center center fixed;
-  background-size: cover;
+  background: #0a4a7a;
+  overflow: hidden;
 }
 
-/* LOGIN */
+/* LOGIN SCREEN */
 #loginScreen {
   position: fixed;
   inset: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(0,0,0,0.6);
+  background: radial-gradient(circle, #1b3f66, #000);
 }
 
-/* WINDOWS 7 WINDOW */
+#loginBox {
+  width: 320px;
+  padding: 20px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  color: white;
+  text-align: center;
+  border-radius: 10px;
+}
+
+#loginBox input {
+  width: 90%;
+  padding: 8px;
+  margin: 5px 0;
+}
+
+/* DESKTOP */
+#desktop {
+  position: fixed;
+  inset: 0;
+  background: #0a4a7a;
+}
+
+/* ICONS */
+#icons {
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+}
+
+.icon {
+  width: 80px;
+  text-align: center;
+  color: white;
+  cursor: pointer;
+}
+
+.icon:hover {
+  transform: scale(1.05);
+}
+
+/* WINDOW */
 .window {
   position: absolute;
+  top: 100px;
+  left: 100px;
   width: 300px;
-  background: rgba(240,240,240,0.9);
+  background: #e6e6e6;
   border: 1px solid #999;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-  border-radius: 6px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
 
-/* TITLE BAR (AERO STYLE) */
 .title {
   background: linear-gradient(to bottom, #4c8bf5, #2d5fdd);
   color: white;
-  padding: 6px;
-  font-weight: bold;
+  padding: 5px;
   display: flex;
   justify-content: space-between;
 }
@@ -42,31 +83,28 @@ body {
   left: 0;
   right: 0;
   height: 40px;
-  background: rgba(30,30,30,0.9);
+  background: rgba(20,20,20,0.9);
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  color: white;
 }
 
-/* START BUTTON */
-#start {
+#startButton {
   background: #2d5fdd;
+  border: none;
   color: white;
-  padding: 8px 15px;
+  padding: 5px 10px;
   cursor: pointer;
 }
 
+/* CLOCK */
+#clock {
+  font-size: 14px;
+}
+
+/* HIDE */
 .hidden {
   display: none;
-}
-
-html, body {
-  margin: 0;
-  height: 100%;
-  background: #0a4a7a;
-}
-
-#desktop {
-  position: fixed;
-  inset: 0;
-  background: #0a4a7a !important;
 }
