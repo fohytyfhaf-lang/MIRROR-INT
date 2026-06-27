@@ -4,7 +4,6 @@ import { runCommand } from "./console.js";
 import { setSoundState } from "./soundManager.js";
 /* GLOBAL */
 window.playMusic = playMusic;
-window.unlockAudio = unlockAudio;
 window.setSoundState = setSoundState;
 window.runCommand = runCommand;
 /* WINDOW SYSTEM */
