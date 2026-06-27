@@ -1,6 +1,6 @@
 import { loginSystem } from "./login.js";
 import { playMusic } from "./audio.js";
-import { initCamera, nextCam } from "./camera.js";
+
 
 
 
@@ -11,7 +11,6 @@ import { initCamera, nextCam } from "./camera.js";
 window.login = loginSystem;
 window.openApp = openApp;
 window.closeApp = closeApp;
-window.nextCam = nextCam;
 /* =========================
    LOGIN ENTER KEY FIX
 ========================= */
