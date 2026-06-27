@@ -2,6 +2,7 @@ import { loginSystem } from "./login.js";
 import { playMusic } from "./audio.js";
 import { runCommand } from "./console.js";
 import { setSoundState } from "./soundManager.js";
+import { listFiles, readFile } from "./filesystem.js";
 /* GLOBAL */
 window.playMusic = playMusic;
 window.setSoundState = setSoundState;
