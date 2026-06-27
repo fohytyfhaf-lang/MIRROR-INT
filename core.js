@@ -13,6 +13,23 @@ window.closeApp = closeApp;
    LOGIN ENTER KEY FIX
 ========================= */
 
+import { loginSystem } from "./login.js";
+
+window.addEventListener("DOMContentLoaded", () => {
+
+  const btn = document.getElementById("loginBtn");
+
+  if (!btn) {
+    console.warn("LOGIN BUTTON NOT FOUND");
+    return;
+  }
+
+  btn.addEventListener("click", () => {
+    loginSystem();
+  });
+
+});
+
 document.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     const loginScreen = document.getElementById("loginScreen");
