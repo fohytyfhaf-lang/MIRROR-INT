@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>ARG SYSTEM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OMEGA SYSTEM</title>
+
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -11,19 +13,115 @@
 <audio id="bgm"></audio>
 
 <!-- LOGIN -->
+
 <section id="loginScreen">
-  <input id="user" placeholder="User">
-  <input id="pass" type="password" placeholder="Password">
-  <button onclick="login()">Enter</button>
-  <p id="status"></p>
+
+<div id="loginBox">
+
+<h1>OMEGA SYSTEM</h1>
+
+<input id="user" placeholder="Username">
+
+<input id="pass" type="password" placeholder="Password">
+
+<button id="loginBtn">Log In</button>
+
+<p id="status"></p>
+
+</div>
+
 </section>
 
 <!-- DESKTOP -->
+
 <main id="desktop" class="hidden">
-  <h1>DESKTOP</h1>
+
+<div id="icons">
+
+<div class="icon" onclick="openApp('logs')">
+📁
+<span>Logs</span>
+</div>
+
+<div class="icon" onclick="openApp('camera')">
+📷
+<span>Camera</span>
+</div>
+
+<div class="icon" onclick="openApp('files')">
+🗂️
+<span>Files</span>
+</div>
+
+</div>
+
+<!-- TASKBAR -->
+
+<div id="taskbar">
+
+<button id="startButton">Start</button>
+
+<div id="clock">00:00</div>
+
+</div>
+
+<!-- LOG WINDOW -->
+
+<div id="logsWindow" class="window hidden">
+
+<div class="title">
+
+Logs
+
+<button onclick="closeApp('logs')">X</button>
+
+</div>
+
+<pre id="chatLog"></pre>
+
+<input id="chatInput">
+
+<button id="sendBtn">Send</button>
+
+</div>
+
+<!-- CAMERA -->
+
+<div id="cameraWindow" class="window hidden">
+
+<div class="title">
+
+Camera
+
+<button onclick="closeApp('camera')">X</button>
+
+</div>
+
+<p>NO SIGNAL</p>
+
+<button id="nextCamBtn">NEXT CAMERA</button>
+
+</div>
+
+<!-- FILES -->
+
+<div id="filesWindow" class="window hidden">
+
+<div class="title">
+
+Files
+
+<button onclick="closeApp('files')">X</button>
+
+</div>
+
+<p>Directory Empty</p>
+
+</div>
+
 </main>
 
-<script type="module" src="./core.js"></script>
+<script type="module" src="core.js"></script>
 
 </body>
 </html>
