@@ -1,17 +1,29 @@
-const secretData = {
-  accessLevel: 0,
+let clearance = 0;
 
-  files: {
-    "memo_01.txt": "The government is not in control.",
-    "memo_02.txt": "OMEGA SYSTEM is watching.",
-    "memo_03.txt": "Entity: MR.SMILE confirmed active."
+const files = {
+  level0: {
+    "welcome.txt": "SYSTEM ACTIVE",
+  },
+
+  level1: {
+    "memo_01.txt": "They are watching the system.",
+    "memo_02.txt": "Government denies anomaly reports.",
+  },
+
+  level2: {
+    "ENTITY_MRSMILE.txt": "DO NOT ENGAGE",
+    "log_corruption.txt": "Reality instability detected."
   }
 };
 
-export function getSecretFile(name) {
-  return secretData.files[name] || "ACCESS DENIED";
+export function getFile(level, name) {
+  return files[level]?.[name] || "ACCESS DENIED";
 }
 
-export function increaseAccess() {
-  secretData.accessLevel++;
+export function setClearance(level) {
+  clearance = level;
+}
+
+export function getClearance() {
+  return clearance;
 }
