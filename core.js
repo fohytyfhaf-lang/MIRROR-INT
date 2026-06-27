@@ -1,5 +1,8 @@
 import { loginSystem } from "./login.js";
 import { playMusic } from "./audio.js";
+import { initCamera, nextCam } from "./camera.js";
+
+window.nextCam = nextCam;
 
 /* =========================
    GLOBAL WINDOW ACCESS
