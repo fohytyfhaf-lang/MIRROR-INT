@@ -1,4 +1,4 @@
-import { playMusic } from "./audio.js";
+import { playMusic, unlockAudio } from "./audio.js";
 
 /* =========================
    ACCOUNTS DATABASE
