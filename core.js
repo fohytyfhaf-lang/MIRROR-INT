@@ -1,57 +1,12 @@
-
+import { loginSystem } from "./login.js";
 import { playMusic } from "./audio.js";
 import { runCommand } from "./console.js";
-import { loginSystem } from "./login.js";
 
+/* GLOBAL */
 window.runCommand = runCommand;
+window.playMusic = playMusic;
 
-
-
-/* =========================
-   GLOBAL WINDOW ACCESS
-========================= */
-
-
-window.openApp = openApp;
-window.closeApp = closeApp;
-/* =========================
-   LOGIN ENTER KEY FIX
-========================= */
-
-
-/* WAIT MODULE SAFE INIT */
-window.addEventListener("DOMContentLoaded", () => {
-
-  // SAFE BIND
-
-
-  const btn = document.getElementById("loginBtn");
-
-  if (btn) {
-    btn.addEventListener("click", () => {
-      loginSystem();
-    });
-  }
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-
-      const screen = document.getElementById("loginScreen");
-
-      if (!screen || screen.classList.contains("hidden")) return;
-
-      if (typeof loginSystem === "function") {
-        loginSystem();
-      }
-    }
-  });
-
-});
-
-/* =========================
-   WINDOW SYSTEM
-========================= */
-
+/* WINDOW SYSTEM */
 function openApp(name) {
   const win = document.getElementById(name + "Window");
   if (win) win.classList.remove("hidden");
@@ -62,10 +17,31 @@ function closeApp(name) {
   if (win) win.classList.add("hidden");
 }
 
-/* =========================
-   CLOCK SYSTEM
-========================= */
+window.openApp = openApp;
+window.closeApp = closeApp;
 
+/* LOGIN INIT */
+window.addEventListener("DOMContentLoaded", () => {
+
+  const btn = document.getElementById("loginBtn");
+
+  if (btn) {
+    btn.addEventListener("click", loginSystem);
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+
+      const screen = document.getElementById("loginScreen");
+      if (!screen || screen.classList.contains("hidden")) return;
+
+      loginSystem();
+    }
+  });
+
+});
+
+/* CLOCK */
 function updateClock() {
   const clock = document.getElementById("clock");
   if (!clock) return;
@@ -79,9 +55,3 @@ function updateClock() {
 
 setInterval(updateClock, 1000);
 updateClock();
-
-/* =========================
-   INIT AUDIO (SAFE)
-========================= */
-
-window.playMusic = playMusic;
