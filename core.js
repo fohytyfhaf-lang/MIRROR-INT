@@ -11,8 +11,6 @@ import { runCommand } from "./console.js";
 window.login = loginSystem;
 window.openApp = openApp;
 window.closeApp = closeApp;
-window.runCommand = runCommand;
-
 window.nextCam = nextCam;
 /* =========================
    LOGIN ENTER KEY FIX
