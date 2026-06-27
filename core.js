@@ -17,7 +17,11 @@ function openApp(name) {
 if (name === "files") {
   const view = document.querySelector("#filesWindow p");
   if (view) {
-    view.innerText = listFiles("/files").join("\n");
+    const files = listFiles("/files");
+
+    view.innerText = files.length
+      ? files.join("\n")
+      : "NO FILES FOUND";
   }
 }
   
