@@ -37,7 +37,10 @@ export function loginSystem() {
   }
 
   status.textContent = "WELCOME " + u;
-
+   
+unlockAudio();
+playMusic("background.mp3", 0.4);
+   
   setTimeout(() => {
     loginScreen.classList.add("hidden");
     desktop.classList.remove("hidden");
