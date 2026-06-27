@@ -1,5 +1,5 @@
 import { loginSystem } from "./login.js";
-import { playMusic, unlockAudio } from "./audio.js";
+import { playMusic } from "./audio.js";
 import { runCommand } from "./console.js";
 import { setSoundState } from "./soundManager.js";
 /* GLOBAL */
