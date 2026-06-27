@@ -3,45 +3,43 @@ import { playMusic } from "./audio.js";
 /* =========================
    ACCOUNTS DATABASE
 ========================= */
-
 const accounts = {
   operator: "0404",
   admin: "0000",
   guest: "1234",
-  doctor1987: "blackblood",
+  test: "1111"
 };
 
-/* =========================
-   LOGIN SYSTEM
-========================= */
-
 export function loginSystem() {
-  const user = document.getElementById("user");
-  const pass = document.getElementById("pass");
 
+  const userEl = document.getElementById("user");
+  const passEl = document.getElementById("pass");
+
+  const status = document.getElementById("status");
   const loginScreen = document.getElementById("loginScreen");
   const desktop = document.getElementById("desktop");
-  const status = document.getElementById("status");
 
-  if (!user || !pass || !loginScreen || !desktop) return;
+  if (!userEl || !passEl) return;
 
-  const u = user.value;
-  const p = pass.value;
+  const u = userEl.value.trim();
+  const p = passEl.value.trim();
 
-  if (accounts[u] && accounts[u] === p) {
+  console.log("LOGIN TRY:", u, p);
 
-    status.textContent = "Welcome " + u;
-
-    setTimeout(() => {
-      loginScreen.classList.add("hidden");
-      desktop.classList.remove("hidden");
-
-      // start music after login
-      playMusic("background.mp3");
-
-    }, 500);
-
-  } else {
-    status.textContent = "Access Denied";
+  if (!accounts.hasOwnProperty(u)) {
+    status.textContent = "UNKNOWN USER";
+    return;
   }
+
+  if (accounts[u] !== p) {
+    status.textContent = "WRONG PASSWORD";
+    return;
+  }
+
+  status.textContent = "WELCOME " + u;
+
+  setTimeout(() => {
+    loginScreen.classList.add("hidden");
+    desktop.classList.remove("hidden");
+  }, 400);
 }
