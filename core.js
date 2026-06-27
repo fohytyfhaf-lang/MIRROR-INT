@@ -23,8 +23,7 @@ import { loginSystem } from "./login.js";
 window.addEventListener("DOMContentLoaded", () => {
 
   // SAFE BIND
-  window.loginSystem = loginSystem;
-  window.login = loginSystem;
+
 
   const btn = document.getElementById("loginBtn");
 
