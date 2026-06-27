@@ -1,13 +1,9 @@
 const bgm = document.getElementById("bgm");
-let unlocked = false;
+
 let currentTrack = null;
 
-export function unlockAudio() {
-  unlocked = true;
-}
-
-export function playMusic(file, volume = 0.5) {
-  if (!bgm || !unlocked) return;
+export function playMusic(file, volume = 0.4) {
+  if (!bgm) return;
 
   const path = `./audio/${file}`;
 
@@ -19,7 +15,13 @@ export function playMusic(file, volume = 0.5) {
   bgm.loop = true;
   bgm.volume = volume;
 
-  bgm.play().catch(err => {
-    console.log("Audio blocked:", err);
-  });
+  bgm.play().catch(() => {});
+}
+
+export function stopMusic() {
+  if (!bgm) return;
+
+  bgm.pause();
+  bgm.currentTime = 0;
+  currentTrack = null;
 }
