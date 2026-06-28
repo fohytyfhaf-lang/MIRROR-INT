@@ -6,7 +6,7 @@ import { listFiles, readFile } from "./filesystem.js";
 import { makeWindowDraggable, bringToFront } from "./windowManager.js";
 import { getFile } from "./secretOrg.js";
 import { nextCam } from "./camera.js";
-
+import { openExplorer } from "./explorer.js";
 /* GLOBAL */
 window.playMusic = playMusic;
 window.setSoundState = setSoundState;
