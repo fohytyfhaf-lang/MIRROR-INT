@@ -1,5 +1,34 @@
 // mrsmileChat.js
+export function initMrSmileChat() {
 
+    console.log("[MR.SMILE CHAT] initialized");
+
+    const input = document.getElementById("chatInput");
+    const button = document.getElementById("sendBtn");
+
+    if (!input || !button) return;
+
+    button.addEventListener("click", async () => {
+
+        const text = input.value;
+        input.value = "";
+
+        if (!text) return;
+
+        const log = document.getElementById("chatLog");
+
+        if (log) {
+            log.innerText += "\nYOU: " + text;
+        }
+
+        // сюда потом подключишь speech.js
+        if (log) {
+            log.innerText += "\nMR.SMILE: ...";
+        }
+
+    });
+
+}
 let memory = [];
 let trust = 20;
 
