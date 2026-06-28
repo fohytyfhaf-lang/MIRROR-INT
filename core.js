@@ -4,7 +4,7 @@ import { runCommand } from "./console.js";
 import { setSoundState } from "./soundManager.js";
 import { listFiles, readFile } from "./filesystem.js";
 import { makeWindowDraggable, bringToFront } from "./windowManager.js";
-import { getSecretFile } from "./secretOrg.js";
+import { getFile } from "./secretOrg.js";
 
 /* GLOBAL */
 window.playMusic = playMusic;
