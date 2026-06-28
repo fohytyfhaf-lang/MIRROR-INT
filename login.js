@@ -37,6 +37,10 @@ export function loginSystem() {
   }
 
   status.textContent = "WELCOME " + u;
+
+if (u === "admin") setRole("admin");
+else if (u === "operator") setRole("operator");
+else setRole("guest");
    
   setTimeout(() => {
     loginScreen.classList.add("hidden");
