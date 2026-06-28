@@ -2,7 +2,11 @@
 // MR.SMILE KNOWLEDGE DATABASE
 // OMEGA SYSTEM
 // =======================================
+export function knowledgeInit() {
+    console.log("[KNOWLEDGE] initialized");
 
+    // здесь можно позже добавить лор, документы, доступы
+}
 const knowledge = {
 
     omega: [
