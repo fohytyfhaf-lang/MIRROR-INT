@@ -164,3 +164,42 @@ body.mrsmile {
 #filesList div:hover {
   background: rgba(0,0,0,0.1);
 }
+body.mrsmile .window {
+   text-shadow: 0 0 1px rgba(255,0,0,0.3);
+  animation: windowGlitch 0.3s infinite;
+  filter: contrast(1.2) brightness(0.8);
+}
+
+@keyframes windowGlitch {
+  0% {
+    transform: translate(0px, 0px);
+  }
+  25% {
+    transform: translate(1px, -1px);
+  }
+  50% {
+    transform: translate(-1px, 1px);
+  }
+  75% {
+    transform: translate(1px, 1px);
+  }
+  100% {
+    transform: translate(0px, 0px);
+  }
+}
+body.mrsmile .title {
+  background: linear-gradient(
+    90deg,
+    #2d5fdd,
+    #ff0000,
+    #2d5fdd
+  );
+  background-size: 200%;
+  animation: titleGlitch 1s infinite;
+}
+
+@keyframes titleGlitch {
+  0% { background-position: 0% }
+  50% { background-position: 100% }
+  100% { background-position: 0% }
+}
