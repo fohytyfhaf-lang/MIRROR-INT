@@ -41,7 +41,7 @@ function enable() {
   }
 
   startAudio();
-
+spawnEyes();
   interval = setInterval(() => {
     whisper();
   }, 20000);
@@ -104,4 +104,32 @@ function whisper() {
   const msg = msgs[Math.floor(Math.random() * msgs.length)];
 
   log.innerText += "\nMR.SMILE: " + msg;
+}
+/* ===== 👁 EYES SYSTEM ===== */
+function spawnEyes() {
+  const layer = document.getElementById("eyesLayer");
+  if (!layer) return;
+
+  layer.innerHTML = "";
+  layer.style.display = "block";
+
+  for (let i = 0; i < 12; i++) {
+    const eye = document.createElement("div");
+    eye.className = "eye";
+
+    eye.style.left = Math.random() * 100 + "vw";
+    eye.style.top = Math.random() * 100 + "vh";
+
+    eye.style.transform = `scale(${0.5 + Math.random()})`;
+
+    layer.appendChild(eye);
+  }
+}
+
+function removeEyes() {
+  const layer = document.getElementById("eyesLayer");
+  if (!layer) return;
+
+  layer.style.display = "none";
+  layer.innerHTML = "";
 }
