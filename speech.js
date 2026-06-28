@@ -393,3 +393,222 @@ export async function generateSpeech(playerMessage){
     return reply;
 
 }
+// =======================================
+// MR.SMILE SPEECH ENGINE v2 — PART 2
+// DECISION LAYER
+// =======================================
+
+import { getTrust, canGiveGame, canRevealLore, canUnlockFiles } from "./mrsmileTrust.js";
+
+import { getMemory, findMemory, openedFile } from "./mrsmileMemory.js";
+
+import { getPersonality, increaseCuriosity, annoy } from "./personality.js";
+
+import { getKnowledge } from "./knowledge.js";
+
+import { getSecretHint, getGameLink } from "./secrets.js";
+
+
+// =======================================
+// ВНУТРЕННЯЯ ЛОГИКА ОТВЕТОВ
+// =======================================
+
+function shouldBeVague() {
+
+    const trust = getTrust();
+
+    const personality = getPersonality();
+
+    // чем меньше доверие — тем более размыто
+
+    if (trust < 10) return true;
+
+    if (personality.irritation > 3) return true;
+
+    if (Math.random() < 0.2) return true;
+
+    return false;
+
+}
+
+
+// =======================================
+// ПРОВЕРКА СЕКРЕТОВ
+// =======================================
+
+function trySecretResponse(intent, text) {
+
+    const trust = getTrust();
+
+    // доступ к игре
+
+    if (intent === "game" && canGiveGame()) {
+
+        return "Я могу дать тебе доступ... но не сейчас.";
+
+    }
+
+    // лор
+
+    if (intent === "omega" && canRevealLore()) {
+
+        return "OMEGA — это не просто система наблюдения.";
+
+    }
+
+    // файлы
+
+    if (intent === "file" && canUnlockFiles()) {
+
+        return "Некоторые файлы теперь доступны тебе.";
+
+    }
+
+    return null;
+
+}
+
+
+// =======================================
+// РЕАКЦИЯ НА ПАМЯТЬ
+// =======================================
+
+function memoryReaction(text) {
+
+    const history = findMemory("questions");
+
+    if (history.length > 5) {
+
+        return "Ты задаешь много вопросов...";
+
+    }
+
+    const files = findMemory("file");
+
+    if (files.length > 3) {
+
+        return "Ты часто открываешь файлы.";
+
+    }
+
+    return null;
+
+}
+
+
+// =======================================
+// ОШИБКА СИСТЕМЫ (редкие события)
+// =======================================
+
+function systemGlitch() {
+
+    if (Math.random() < 0.05) {
+
+        const glitches = [
+
+            "[SYSTEM] interference detected",
+
+            "[OMEGA] signal unstable",
+
+            "..."
+
+        ];
+
+        return glitches[Math.floor(Math.random()*glitches.length)];
+
+    }
+
+    return null;
+
+}
+
+
+// =======================================
+// ВЫБОР СТИЛЯ ОТВЕТА
+// =======================================
+
+function styleResponse(text) {
+
+    const trust = getTrust();
+
+    if (trust < 0) {
+
+        return "...";
+
+    }
+
+    if (trust < 10) {
+
+        return "Я не уверен, что должен это говорить.";
+
+    }
+
+    if (trust < 30) {
+
+        return text;
+
+    }
+
+    if (trust < 60) {
+
+        return text + " ...если тебе это важно.";
+
+    }
+
+    return text;
+
+}
+
+
+// =======================================
+// ГЕНЕРАЦИЯ ОТВЕТА УРОВНЕМ ВЫШЕ
+// =======================================
+
+export function processSpeech(baseReply, intent, playerText) {
+
+    let reply = baseReply;
+
+    const secret = trySecretResponse(intent, playerText);
+
+    if (secret) {
+
+        return secret;
+
+    }
+
+    const memory = memoryReaction(playerText);
+
+    if (memory) {
+
+        reply = memory;
+
+    }
+
+    const glitch = systemGlitch();
+
+    if (glitch) {
+
+        reply = glitch;
+
+    }
+
+    if (shouldBeVague()) {
+
+        reply = "…";
+
+    }
+
+    reply = styleResponse(reply);
+
+    increaseCuriosity();
+
+    if (Math.random() < 0.1) {
+
+        annoy();
+
+    }
+
+    return reply;
+
+}
+
