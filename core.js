@@ -28,13 +28,14 @@ window.bringToFront = bringToFront;
 window.getFile = getFile;
 window.nextCam = nextCam;
 window.addEventListener("DOMContentLoaded", () => {
-
+ initMrSmile();
+     
      setTimeout(() => {
         openApp("logs");
         console.log("[SYSTEM] unknown UI module activated");
     }, 2000);
 
-    // INIT ORDER (ВАЖНО!)
+
     initMrSmile();
     initMemory();
     loadTrust();
