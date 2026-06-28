@@ -32,7 +32,20 @@ export function listFiles(path = "/") {
 
   return Object.keys(node.content);
 }
+import { canAccess } from "./security.js";
 
+
+export function readFile(path) {
+  const node = getNode(path);
+
+  if (!node || node.type !== "file") return null;
+
+  if (!canAccess(node.level || 0)) {
+    return "ACCESS DENIED";
+  }
+
+  return node.data;
+}
 export function readFile(path) {
   const node = getNode(path);
   if (!node || node.type !== "file") return null;
