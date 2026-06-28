@@ -86,13 +86,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 window.openFile = function(path) {
-  const parts = path.split("/");
-  const fileName = parts.pop();
-  const folder = parts.pop();
+  const content = readFile(path);
 
-  const content = readFile(`/${folder}/${fileName}`);
-
-  // выводим в файловом окне
   const view = document.querySelector("#filesWindow p");
 
   if (view) {
