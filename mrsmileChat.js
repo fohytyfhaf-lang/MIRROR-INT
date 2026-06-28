@@ -60,7 +60,7 @@ function delay(ms) {
   addMemory("PLAYER: " + text);
 
   const log = document.getElementById("chatLog");
-  if (!log) return;
+  if (!log);
 
   // если режим молчания активен
   if (silenceMode) {
