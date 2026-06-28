@@ -1,3 +1,4 @@
+import { canAccess } from "./security.js";
 const filesystem = {
   "/": {
     type: "dir",
@@ -32,8 +33,6 @@ export function listFiles(path = "/") {
 
   return Object.keys(node.content);
 }
-import { canAccess } from "./security.js";
-
 
 export function readFile(path) {
   const node = getNode(path);
