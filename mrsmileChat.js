@@ -65,7 +65,7 @@ function delay(ms) {
   // если режим молчания активен
   if (silenceMode) {
     maybeBreakSilence();
-    return;
+    
   }
 
   // иногда игнорирует сразу
