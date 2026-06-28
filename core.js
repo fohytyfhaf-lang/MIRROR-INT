@@ -16,6 +16,7 @@ window.readFile = readFile;
 window.makeWindowDraggable = makeWindowDraggable;
 window.bringToFront = bringToFront;
 window.getFile = getFile;
+window.nextCam = nextCam;
 /* WINDOW SYSTEM */
 function openApp(name) {
   const win = document.getElementById(name + "Window");
