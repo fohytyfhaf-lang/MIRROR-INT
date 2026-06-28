@@ -29,7 +29,7 @@ function openApp(name) {
   }
   
 if (name === "files") {
-  renderExplorer("/files");
+  openExplorer();
 }
   
   switch (name) {
