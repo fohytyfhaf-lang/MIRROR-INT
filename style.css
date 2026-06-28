@@ -153,3 +153,13 @@ body.mrsmile {
   50% { transform: translate(1px, -1px); }
   100% { transform: translate(-1px, 1px); }
 }
+
+#filesList div {
+  padding: 4px;
+  cursor: pointer;
+  font-family: Consolas, monospace;
+}
+
+#filesList div:hover {
+  background: rgba(0,0,0,0.1);
+}
