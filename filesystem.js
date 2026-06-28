@@ -9,7 +9,10 @@ const filesystem = {
           "log2.txt": { type: "file", data: "User login detected" }
         }
       },
-
+      
+files: {
+  "readme.txt": { type: "file", data: "OMEGA SYSTEM ACTIVE" }
+}
       files: {
         type: "dir",
         content: {
