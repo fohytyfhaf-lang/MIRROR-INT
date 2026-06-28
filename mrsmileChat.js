@@ -22,9 +22,11 @@ export function initMrSmileChat() {
         }
 
         // сюда потом подключишь speech.js
-        if (log) {
-            log.innerText += "\nMR.SMILE: ...";
-        }
+       const response = await mrSmileSay(text);
+
+if (response) {
+    log.innerText += "\nMR.SMILE: " + response;
+}
 
     });
 
