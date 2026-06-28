@@ -28,13 +28,10 @@ window.bringToFront = bringToFront;
 window.getFile = getFile;
 window.nextCam = nextCam;
 window.addEventListener("DOMContentLoaded", () => {
-  initMrSmile();
-});
-
-    window.addEventListener("DOMContentLoaded", () => {
 
     console.log("CORE START");
 
+    // INIT ORDER (ВАЖНО!)
     initMrSmile();
     initMemory();
     loadTrust();
@@ -49,8 +46,9 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     console.log("MRSMILE READY");
+    console.log("[OMEGA] MR.SMILE MODULE LOADED");
 
-
+});
 
     // память
     initMemory();
