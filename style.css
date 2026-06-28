@@ -124,3 +124,32 @@ body.mrsmile {
   filter: contrast(1.3) brightness(0.65) hue-rotate(15deg);
   animation: flicker 1.5s infinite;
 }
+
+#mrsmileEntity {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  font-size: 60px;
+  z-index: 99999;
+  opacity: 0.85;
+  pointer-events: none;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+.anomaly {
+  color: red;
+  text-shadow: 0 0 5px red;
+  animation: glitchText 0.2s infinite;
+}
+
+@keyframes glitchText {
+  0% { transform: translate(0px); }
+  50% { transform: translate(1px, -1px); }
+  100% { transform: translate(-1px, 1px); }
+}
