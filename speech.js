@@ -612,3 +612,226 @@ export function processSpeech(baseReply, intent, playerText) {
 
 }
 
+// =======================================
+// MR.SMILE SPEECH ENGINE v2 — PART 3
+// LIVE SYSTEM LAYER
+// =======================================
+
+import { getTrust, canGiveGame } from "./mrsmileTrust.js";
+import { getPersonality, canReply } from "./personality.js";
+import { getMemory } from "./mrsmileMemory.js";
+import { processSpeech } from "./speech.js"; // PART 2
+import { getGameLink } from "./secrets.js";
+
+let active = false;
+let nightInterval = null;
+let selfTalkInterval = null;
+
+
+// =======================================
+// АКТИВАЦИЯ СИСТЕМЫ
+// =======================================
+
+export function activateMrSmile() {
+
+    active = true;
+
+    startNightBehaviour();
+
+    startSelfTalk();
+
+    console.log("[MR.SMILE] ONLINE");
+
+}
+
+
+// =======================================
+// ДЕАКТИВАЦИЯ
+// =======================================
+
+export function deactivateMrSmile() {
+
+    active = false;
+
+    clearInterval(nightInterval);
+
+    clearInterval(selfTalkInterval);
+
+    console.log("[MR.SMILE] OFFLINE");
+
+}
+
+
+// =======================================
+// ИМИТАЦИЯ “ДУМАНИЯ”
+// =======================================
+
+export function thinkingDelay() {
+
+    const trust = getTrust();
+
+    let base = 800;
+
+    if (trust < 10) base = 2000;
+
+    if (trust > 50) base = 500;
+
+    return base + Math.random() * 1500;
+
+}
+
+
+// =======================================
+// САМ СЕБЕ ПИШЕТ (очень редкое поведение)
+// =======================================
+
+function startSelfTalk() {
+
+    selfTalkInterval = setInterval(() => {
+
+        if (!active) return;
+
+        const log = document.getElementById("chatLog");
+
+        if (!log) return;
+
+        if (Math.random() < 0.15) {
+
+            const msgs = [
+
+                "[MR.SMILE] ...",
+
+                "[MR.SMILE] ты всё ещё здесь?",
+
+                "[MR.SMILE] система нестабильна",
+
+                "[MR.SMILE] я помню тебя"
+
+            ];
+
+            log.innerText += "\n" + msgs[Math.floor(Math.random() * msgs.length)];
+
+        }
+
+    }, 30000);
+
+}
+
+
+// =======================================
+// НОЧНОЙ РЕЖИМ
+// =======================================
+
+function startNightBehaviour() {
+
+    nightInterval = setInterval(() => {
+
+        const h = new Date().getHours();
+
+        const isNight = h >= 22 || h <= 5;
+
+        const log = document.getElementById("chatLog");
+
+        if (!log) return;
+
+        if (isNight && active) {
+
+            if (Math.random() < 0.2) {
+
+                log.innerText += "\n[SYSTEM] unauthorized presence detected";
+
+            }
+
+        }
+
+    }, 20000);
+
+}
+
+
+// =======================================
+// ОТВЕТ С ЗАДЕРЖКОЙ
+// =======================================
+
+export async function sendMrSmileReply(playerText, intent, baseReply) {
+
+    if (!canReply()) return null;
+
+    const delay = thinkingDelay();
+
+    await new Promise(res => setTimeout(res, delay));
+
+    const finalReply = processSpeech(baseReply, intent, playerText);
+
+    return finalReply;
+
+}
+
+
+// =======================================
+// ВЫДАЧА ИГРЫ
+// =======================================
+
+export function tryGiveGame() {
+
+    const log = document.getElementById("chatLog");
+
+    if (!log) return null;
+
+    if (canGiveGame() && Math.random() < 0.3) {
+
+        const link = getGameLink();
+
+        log.innerText += "\n[MR.SMILE] ...";
+
+        log.innerText += "\n[MR.SMILE] use this carefully";
+
+        log.innerText += "\n[LINK] " + link;
+
+        return link;
+
+    }
+
+    return null;
+
+}
+
+
+// =======================================
+// ВЗЛОМ / ПОМЕХИ
+// =======================================
+
+export function systemInterference() {
+
+    const log = document.getElementById("chatLog");
+
+    if (!log) return;
+
+    if (Math.random() < 0.08) {
+
+        log.innerText += "\n[SYSTEM] MR.SMILE CONTAINMENT FAILURE";
+
+        log.innerText += "\n[SYSTEM] stabilizing...";
+
+    }
+
+}
+
+
+// =======================================
+// АДМИН-АКТИВАЦИЯ (для теста)
+// =======================================
+
+window.forceMrSmile = function () {
+
+    activateMrSmile();
+
+    const log = document.getElementById("chatLog");
+
+    if (log) {
+
+        log.innerText += "\n[ADMIN] MR.SMILE FORCED ONLINE";
+
+    }
+
+};
