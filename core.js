@@ -50,11 +50,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
     console.log("BEFORE MRSMILE DEBUG");
 
-    window.MRSMILE_DEBUG = {
-        start: () => initMrSmileChat(),
-        test: (t) => mrSmileSay(t)
-    };
-
     console.log("MRSMILE READY");
 
 
