@@ -18,11 +18,6 @@ window.bringToFront = bringToFront;
 window.getFile = getFile;
 window.nextCam = nextCam;
 
-
-
-let currentExplorerPath = "/files";
-
-
 /* WINDOW SYSTEM */
 function openApp(name) {
   const win = document.getElementById(name + "Window");
