@@ -48,22 +48,8 @@ window.addEventListener("DOMContentLoaded", () => {
     console.log("MRSMILE READY");
     console.log("[OMEGA] MR.SMILE MODULE LOADED");
 
-});
-
-    // память
-    initMemory();
-
-    // доверие
-    loadTrust();
-
-    // личность
-    updatePersonality();
 
     // чат
-    if (initMrSmileChat) initMrSmileChat();
-
-    // события
-    if (initMrSmileEvents) initMrSmileEvents();
 
     // знания
     if (knowledgeInit) knowledgeInit();
