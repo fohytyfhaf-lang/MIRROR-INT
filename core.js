@@ -14,7 +14,7 @@ window.listFiles = listFiles;
 window.readFile = readFile;
 window.makeWindowDraggable = makeWindowDraggable;
 window.bringToFront = bringToFront;
-window.getSecretFile = getSecretFile;
+window.getFile = getFile;
 /* WINDOW SYSTEM */
 function openApp(name) {
   const win = document.getElementById(name + "Window");
