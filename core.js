@@ -28,17 +28,14 @@ window.bringToFront = bringToFront;
 window.getFile = getFile;
 window.nextCam = nextCam;
 window.MRSMILE.start()
-window.MRSMILE_DEBUG = {
-    start: initMrSmileChat,
-    test: mrSmileSay
 };
 window.addEventListener("DOMContentLoaded", () => {
   initMrSmile();
 });
 
-window.addEventListener("DOMContentLoaded", () => {
-    
- console.log("CORE START");
+    window.addEventListener("DOMContentLoaded", () => {
+
+    console.log("CORE START");
 
     initMrSmile();
     initMemory();
@@ -48,9 +45,13 @@ window.addEventListener("DOMContentLoaded", () => {
     initMrSmileChat();
     initMrSmileEvents();
 
-    console.log("BEFORE MRSMILE DEBUG");
+    window.MRSMILE_DEBUG = {
+        start: () => initMrSmileChat(),
+        test: (t) => mrSmileSay(t)
+    };
 
     console.log("MRSMILE READY");
+
 
 
     // память
