@@ -58,7 +58,7 @@ function disable() {
   }
 
   stopAudio();
-
+removeEyes()
   const log = document.getElementById("chatLog");
   if (log) {
     log.innerText += "\n[SYSTEM] MR.SMILE DISCONNECTED";
