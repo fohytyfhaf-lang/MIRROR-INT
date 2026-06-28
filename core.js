@@ -29,11 +29,12 @@ function openApp(name) {
   
 if (name === "files") {
   const view = document.querySelector("#filesWindow p");
+
   if (view) {
     const files = listFiles("/files");
 
-    view.innerText = files.length
-      ? files.join("\n")
+    view.innerHTML = files.length
+      ? files.map(f => `<div onclick="openFile('/files/${f}')">📄 ${f}</div>`).join("")
       : "NO FILES FOUND";
   }
 }
