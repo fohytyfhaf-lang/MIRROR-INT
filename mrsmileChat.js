@@ -71,7 +71,6 @@ function delay(ms) {
   // иногда игнорирует сразу
   if (!shouldRespond()) {
     addMemory("MRSMILE: ... (ignored)");
-    return;
   }
 
   // "задержка мышления"
@@ -82,7 +81,6 @@ function delay(ms) {
 
   if (!response) {
     addMemory("MRSMILE: silence");
-    return;
   }
 
   log.innerText += "\nMR.SMILE: " + response;
