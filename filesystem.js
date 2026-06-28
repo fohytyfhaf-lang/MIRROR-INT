@@ -10,9 +10,6 @@ const filesystem = {
         }
       },
       
-files: {
-  "readme.txt": { type: "file", data: "OMEGA SYSTEM ACTIVE" }
-}
       files: {
         type: "dir",
         content: {
