@@ -27,6 +27,7 @@ window.makeWindowDraggable = makeWindowDraggable;
 window.bringToFront = bringToFront;
 window.getFile = getFile;
 window.nextCam = nextCam;
+window.MRSMILE.start()
 window.MRSMILE_DEBUG = {
     start: initMrSmileChat,
     test: mrSmileSay
