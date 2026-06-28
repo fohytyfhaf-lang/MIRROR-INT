@@ -66,6 +66,7 @@ body {
   background: #e6e6e6;
   border: 1px solid #999;
   box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  border-radius: 2px;
 }
 
 .title {
