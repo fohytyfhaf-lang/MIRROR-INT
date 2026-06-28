@@ -5,7 +5,7 @@ import { setSoundState } from "./soundManager.js";
 import { listFiles, readFile } from "./filesystem.js";
 import { makeWindowDraggable, bringToFront } from "./windowManager.js";
 import { getFile } from "./secretOrg.js";
-import { nextCam } from "./camera.js";
+import { nextCam } from "./modules/camera.js";
 
 /* GLOBAL */
 window.playMusic = playMusic;
