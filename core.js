@@ -28,7 +28,7 @@ function openApp(name) {
   }
   
 if (name === "files") {
-  const view = document.querySelector("#filesWindow p");
+  const view = document.querySelector("#filesList");
 
   if (view) {
     const files = listFiles("/files");
