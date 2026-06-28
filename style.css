@@ -203,3 +203,41 @@ body.mrsmile .title {
   50% { background-position: 100% }
   100% { background-position: 0% }
 }
+
+#eyesLayer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  display: none;
+}
+
+/* один глаз */
+.eye {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255,0,0,0.2);
+  animation: blink 3s infinite;
+}
+
+/* зрачок */
+.eye::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background: rgba(255,0,0,0.6);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.6; }
+}
