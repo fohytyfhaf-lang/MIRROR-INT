@@ -2,18 +2,22 @@ const filesystem = {
   "/": {
     type: "dir",
     content: {
-      logs: {
-        type: "dir",
-        content: {
-          "log1.txt": { type: "file", data: "System boot OK" },
-          "log2.txt": { type: "file", data: "User login detected" }
-        }
-      },
-      
       files: {
         type: "dir",
         content: {
-          "readme.txt": { type: "file", data: "OMEGA SYSTEM ACTIVE" }
+          "readme.txt": { type: "file", data: "PUBLIC INFO", level: 0 },
+
+          "memo.txt": { 
+            type: "file", 
+            data: "Operator notes: system unstable", 
+            level: 1 
+          },
+
+          "entity_mrsmile.txt": { 
+            type: "file", 
+            data: "DO NOT ENGAGE", 
+            level: 2 
+          }
         }
       }
     }
