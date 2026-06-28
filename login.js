@@ -1,5 +1,5 @@
 import { playMusic } from "./audio.js";
-
+import { setRole } from "./security.js";
 /* =========================
    ACCOUNTS DATABASE
 ========================= */
