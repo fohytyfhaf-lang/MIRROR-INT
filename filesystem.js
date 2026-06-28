@@ -46,12 +46,6 @@ export function readFile(path) {
 
   return node.data;
 }
-export function readFile(path) {
-  const node = getNode(path);
-  if (!node || node.type !== "file") return null;
-
-  return node.data;
-}
 
 function getNode(path) {
   const parts = path.split("/").filter(Boolean);
