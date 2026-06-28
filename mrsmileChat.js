@@ -57,7 +57,6 @@ function delay(ms) {
 ========================= */
 
 // игрок пишет сообщение сюда
-export async function mrSmileSay(text) {
   addMemory("PLAYER: " + text);
 
   const log = document.getElementById("chatLog");
