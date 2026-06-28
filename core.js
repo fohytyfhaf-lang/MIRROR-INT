@@ -8,6 +8,15 @@ import { getFile } from "./secretOrg.js";
 import { nextCam } from "./camera.js";
 import { openExplorer } from "./explorer.js";
 import { initMrSmile } from "./mrsmile.js";
+import { initMemory } from "./mrsmileMemory.js";
+import { loadTrust } from "./mrsmileTrust.js";
+import { updatePersonality } from "./personality.js";
+
+import { initMrSmileChat } from "./mrsmileChat.js";
+import { initMrSmileEvents } from "./mrsmileEvents.js";
+
+import { knowledgeInit } from "./knowledge.js"; // если есть init
+
 /* GLOBAL */
 window.playMusic = playMusic;
 window.setSoundState = setSoundState;
@@ -21,6 +30,31 @@ window.nextCam = nextCam;
 window.addEventListener("DOMContentLoaded", () => {
   initMrSmile();
 });
+
+window.addEventListener("DOMContentLoaded", () => {
+
+    // память
+    initMemory();
+
+    // доверие
+    loadTrust();
+
+    // личность
+    updatePersonality();
+
+    // чат
+    if (initMrSmileChat) initMrSmileChat();
+
+    // события
+    if (initMrSmileEvents) initMrSmileEvents();
+
+    // знания
+    if (knowledgeInit) knowledgeInit();
+
+    console.log("[OMEGA] MR.SMILE MODULE LOADED");
+
+});
+
 /* WINDOW SYSTEM */
 function openApp(name) {
   const win = document.getElementById(name + "Window");
