@@ -39,9 +39,8 @@ function enable() {
   if (log) {
     log.innerText += "\n[SYSTEM] UNKNOWN PROCESS: MR.SMILE";
   }
-
+spawnEyes()
   startAudio();
-spawnEyes();
   interval = setInterval(() => {
     whisper();
   }, 20000);
