@@ -2,12 +2,16 @@ import { listFiles, readFile } from "./filesystem.js";
 
 let currentExplorerPath = "/files";
 
+/* ===== INTERNAL RENDER ===== */
 function renderExplorer(path) {
   const view = document.getElementById("filesList");
+  const pathBar = document.getElementById("pathBar");
 
   if (!view) return;
 
   currentExplorerPath = path;
+
+  if (pathBar) pathBar.textContent = path;
 
   const items = listFiles(path);
 
@@ -22,6 +26,7 @@ function renderExplorer(path) {
     : "EMPTY FOLDER";
 }
 
+/* ===== GLOBAL UI ===== */
 window.openExplorerItem = function(path) {
   const content = readFile(path);
 
@@ -43,6 +48,7 @@ window.goBack = function() {
   renderExplorer(newPath);
 };
 
+/* ===== ENTRY POINT ===== */
 export function openExplorer() {
   renderExplorer("/files");
 }
