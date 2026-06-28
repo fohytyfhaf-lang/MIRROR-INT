@@ -7,6 +7,7 @@ import { makeWindowDraggable, bringToFront } from "./windowManager.js";
 import { getFile } from "./secretOrg.js";
 import { nextCam } from "./camera.js";
 import { openExplorer } from "./explorer.js";
+import { initMrSmile } from "./mrsmile.js";
 /* GLOBAL */
 window.playMusic = playMusic;
 window.setSoundState = setSoundState;
@@ -17,7 +18,9 @@ window.makeWindowDraggable = makeWindowDraggable;
 window.bringToFront = bringToFront;
 window.getFile = getFile;
 window.nextCam = nextCam;
-
+window.addEventListener("DOMContentLoaded", () => {
+  initMrSmile();
+});
 /* WINDOW SYSTEM */
 function openApp(name) {
   const win = document.getElementById(name + "Window");
