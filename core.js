@@ -27,7 +27,6 @@ window.makeWindowDraggable = makeWindowDraggable;
 window.bringToFront = bringToFront;
 window.getFile = getFile;
 window.nextCam = nextCam;
-window.MRSMILE.start()
 };
 window.addEventListener("DOMContentLoaded", () => {
   initMrSmile();
