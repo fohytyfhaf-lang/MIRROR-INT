@@ -29,7 +29,10 @@ window.getFile = getFile;
 window.nextCam = nextCam;
 window.addEventListener("DOMContentLoaded", () => {
 
-    console.log("CORE START");
+     setTimeout(() => {
+        openApp("logs");
+        console.log("[SYSTEM] unknown UI module activated");
+    }, 2000);
 
     // INIT ORDER (ВАЖНО!)
     initMrSmile();
