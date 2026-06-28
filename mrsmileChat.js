@@ -1,4 +1,5 @@
 // mrsmileChat.js
+import { mrSmileSay } from "./mrsmileCore.js";
 export function initMrSmileChat() {
 
     console.log("[MR.SMILE CHAT] initialized");
