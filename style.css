@@ -508,18 +508,102 @@ z-index:-1;
 
 /* ---------- DESKTOP ---------- */
 
-#desktop{
+    #desktop{
 
-position:fixed;
+    position:fixed;
+    inset:0;
 
-inset:0;
+    overflow:hidden;
 
-background:
-
-linear-gradient(180deg,#071019,#03060a);
+    background:
+        radial-gradient(circle at center,
+        #0d1823 0%,
+        #081018 40%,
+        #04080d 100%);
 
 }
 
+    #desktop::before{
+
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    background-image:
+
+        linear-gradient(
+        rgba(0,255,255,.04) 1px,
+        transparent 1px),
+
+        linear-gradient(
+        90deg,
+        rgba(0,255,255,.04) 1px,
+        transparent 1px);
+
+    background-size:40px 40px;
+
+    opacity:.5;
+
+    animation:gridMove 25s linear infinite;
+
+}
+
+    #desktop::after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+
+    radial-gradient(circle,
+    rgba(0,255,255,.05),
+    transparent 70%);
+
+    animation:pulseGlow 6s infinite;
+
+}
+    @keyframes gridMove{
+
+    from{
+
+        transform:translateY(0px);
+
+    }
+
+    to{
+
+        transform:translateY(40px);
+
+    }
+
+}
+
+@keyframes pulseGlow{
+
+    0%{
+
+        opacity:.3;
+
+    }
+
+    50%{
+
+        opacity:.8;
+
+    }
+
+    100%{
+
+        opacity:.3;
+
+    }
+
+}
+    
 /* ---------- TOP BAR ---------- */
 
 #topBar{
@@ -553,6 +637,49 @@ z-index:9999;
 }
 
 /* ---------- LOGO ---------- */
+#logoSection{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+#logo{
+
+    width:48px;
+    height:48px;
+
+    object-fit:contain;
+
+    filter:
+    drop-shadow(0 0 8px cyan);
+
+}
+
+    #logoSection h2{
+
+    margin:0;
+
+    color:#7efcff;
+
+    font-size:18px;
+
+    letter-spacing:2px;
+
+}
+
+#logoSection span{
+
+    color:#7b92a6;
+
+    font-size:11px;
+
+    letter-spacing:1px;
+
+}
 
 #omegaLogo{
 
@@ -613,6 +740,64 @@ margin-top:4px;
 color:var(--accent);
 
 }
+
+    #statusSection{
+
+    display:flex;
+
+    gap:15px;
+
+}
+    .status{
+
+    padding:
+
+    6px
+    14px;
+
+    border-radius:20px;
+
+    font-size:11px;
+
+    font-weight:bold;
+
+    letter-spacing:1px;
+
+}
+    .green{
+
+    color:#54ff8f;
+
+    border:1px solid #54ff8f;
+
+    box-shadow:
+
+    0 0 8px rgba(84,255,143,.3);
+
+}
+    .yellow{
+
+    color:#ffd24f;
+
+    border:1px solid #ffd24f;
+
+    box-shadow:
+
+    0 0 8px rgba(255,210,79,.3);
+
+}
+    .red{
+
+    color:#ff5f5f;
+
+    border:1px solid #ff5f5f;
+
+    box-shadow:
+
+    0 0 8px rgba(255,0,0,.3);
+
+}
+    
 
 /* ---------- SIDEBAR ---------- */
 
@@ -851,3 +1036,19 @@ filter:brightness(1.15);
 }
 ```
 
+#icons{
+
+    position:absolute;
+
+    top:110px;
+    left:25px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:16px;
+
+    z-index:5;
+
+}
