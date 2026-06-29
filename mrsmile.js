@@ -69,6 +69,20 @@ function disable() {
 /* =========================
    AUDIO CONTROL
 ========================= */
+function removeEyes() {
+
+    const layer = document.getElementById("eyesLayer");
+
+    if (!layer) return;
+
+    layer.style.display = "none";
+    layer.innerHTML = "";
+
+    eyes = [];
+
+}
+
+
 function startAudio() {
   stopAudio(); // защита от дубля
 
