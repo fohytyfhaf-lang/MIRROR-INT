@@ -1,6 +1,63 @@
 /* =========================
         OMEGA UI CLEAN
 ========================= */
+/* ================= LOGIN ================= */
+
+#loginScreen {
+  position:fixed;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#05080d;
+  z-index:99999;
+}
+
+#loginBox {
+  width:320px;
+  padding:20px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:10px;
+  text-align:center;
+  backdrop-filter:blur(10px);
+}
+
+.loginLogo img {
+  width:60px;
+  height:60px;
+}
+
+.loginLogo h1 {
+  margin:10px 0 0;
+  letter-spacing:3px;
+}
+
+/* ================= WINDOWS INPUT FIX ================= */
+
+.chatInput,
+.consoleInput {
+  display:flex;
+  gap:10px;
+  padding:10px;
+}
+
+#cameraView {
+  height:200px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#aaa;
+  border:1px dashed #2d556f;
+  margin:10px;
+}
+
+/* ================= HIDDEN FIX (optional smooth) ================= */
+
+.hidden {
+  display:none !important;
+}
+
 
 :root {
   --bg:#05080d;
