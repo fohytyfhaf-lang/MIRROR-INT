@@ -31,3 +31,15 @@ export function initMrSmileChat() {
     });
 
 }
+
+function addMessage(text, type) {
+  const log = document.getElementById("chatLog");
+
+  log.innerHTML += `
+    <div class="msg ${type}">
+      ${text}
+    </div>
+  `;
+
+  log.scrollTop = log.scrollHeight;
+}
