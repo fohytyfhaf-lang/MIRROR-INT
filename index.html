@@ -1,32 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>OMEGA SYSTEM</title>
 
+<link rel="icon" href="favicon.png">
 <link rel="stylesheet" href="style.css">
-  
-  <link rel="icon" type="image/png" href="favicon.png">
+
 </head>
 
 <body>
 
 <audio id="bgm"></audio>
 
-<!-- LOGIN -->
+<!-- ===========================
+     LOGIN
+============================ -->
 
 <section id="loginScreen">
 
+<div id="loginBackground"></div>
+
 <div id="loginBox">
 
-<h1>OMEGA SYSTEM</h1>
+<div class="loginLogo">
 
-<input id="user" placeholder="Username">
+<img src="logo.png">
 
-<input id="pass" type="password" placeholder="Password">
+<h1>OMEGA</h1>
 
-<button id="loginBtn">Log In</button>
+<p>SECRET ORGANIZATION TERMINAL</p>
+
+</div>
+
+<input id="user" placeholder="USERNAME">
+
+<input id="pass" type="password" placeholder="PASSWORD">
+
+<button id="loginBtn">
+
+LOGIN
+
+</button>
 
 <p id="status"></p>
 
@@ -34,92 +52,131 @@
 
 </section>
 
-<!-- DESKTOP -->
+<!-- ===========================
+     DESKTOP
+============================ -->
 
 <main id="desktop" class="hidden">
 
-<div id="icons">
+<!-- Background -->
 
-<div class="icon" onclick="openApp('logs')">
-📁
-<span>Logs</span>
-</div>
+<div id="desktopBackground"></div>
 
-<div class="icon" onclick="openApp('camera')">
-📷
-<span>Camera</span>
-</div>
-  
-<div class="icon" onclick="openApp('console')">
-⌨️
-<span>Console</span>
-</div>
+<!-- HUD -->
 
-<div class="icon" onclick="openApp('files')">
-🗂️
-<span>Files</span>
-</div>
+<header id="topBar">
+
+<div id="omegaLogo">
+
+<img src="logo.png">
+
+<div>
+
+<h2>OMEGA SYSTEM</h2>
+
+<span>AUTHORIZED ACCESS ONLY</span>
 
 </div>
 
-  
-<div id="consoleWindow" class="window hidden">
-
-  <div class="title">
-    SYSTEM CONSOLE
-    <button onclick="closeApp('console')">X</button>
-  </div>
-
-  <pre id="consoleLog"></pre>
-
-  <input id="consoleInput" placeholder="type command...">
-
-  <button id="consoleEnter">ENTER</button>
-
 </div>
-  
-<!-- TASKBAR -->
 
-<div id="taskbar">
+<div id="systemInfo">
 
-<button id="startButton">Start</button>
+<div>
 
-<div id="clock">00:00</div>
+STATUS
+
+<span id="statusLight"></span>
 
 </div>
 
-<!-- LOG WINDOW -->
+<div>
+
+TIME
+
+<span id="clock">00:00</span>
+
+</div>
+
+</div>
+
+</header>
+
+<!-- Left panel -->
+
+<aside id="sidebar">
+
+<div class="menuTitle">
+
+MODULES
+
+</div>
+
+<button onclick="openApp('logs')">
+
+📄 LOGS
+
+</button>
+
+<button onclick="openApp('files')">
+
+🗂 FILES
+
+</button>
+
+<button onclick="openApp('camera')">
+
+📷 CAMERAS
+
+</button>
+
+<button onclick="openApp('console')">
+
+⌨ CONSOLE
+
+</button>
+
+</aside>
+
+<!-- Desktop content -->
+
+<section id="workspace">
+
+<!-- LOGS -->
 
 <div id="logsWindow" class="window hidden">
 
-<div class="title">
+<div class="windowHeader">
 
-Logs
+<span>
 
-<button onclick="closeApp('logs')">X</button>
+LOG DATABASE
+
+</span>
+
+<button onclick="closeApp('logs')">
+
+✕
+
+</button>
 
 </div>
 
 <div id="chatLog" class="chat"></div>
 
-<input id="chatInput">
+<div class="chatInput">
 
-<button id="sendBtn">Send</button>
+<input
+id="chatInput"
+placeholder="TYPE MESSAGE">
+
+<button id="sendBtn">
+
+SEND
+
+</button>
 
 </div>
-
-<!-- CAMERA -->
-
-<div id="cameraWindow" class="window hidden">
-
-  <div class="title">
-    Camera
-    <button onclick="closeApp('camera')">X</button>
-  </div>
-
-  <p id="cameraView">NO SIGNAL</p>
-
-  <button onclick="nextCam()">NEXT CAMERA</button>
 
 </div>
 
@@ -127,22 +184,140 @@ Logs
 
 <div id="filesWindow" class="window hidden">
 
-  <div class="title">
-    Files Explorer
-    <button onclick="closeApp('files')">X</button>
-  </div>
+<div class="windowHeader">
 
-  <div id="pathBar">/files</div>
+<span>
 
-  <button onclick="goBack()">⬅ BACK</button>
+FILE EXPLORER
 
-  <div id="filesList"></div>
+</span>
+
+<button onclick="closeApp('files')">
+
+✕
+
+</button>
 
 </div>
 
+<div id="pathBar">
+
+/files
+
+</div>
+
+<button onclick="goBack()">
+
+⬅ BACK
+
+</button>
+
+<div id="filesList"></div>
+
+</div>
+
+<!-- CAMERA -->
+
+<div id="cameraWindow" class="window hidden">
+
+<div class="windowHeader">
+
+<span>
+
+SECURITY CAMERAS
+
+</span>
+
+<button onclick="closeApp('camera')">
+
+✕
+
+</button>
+
+</div>
+
+<div id="cameraView">
+
+NO SIGNAL
+
+</div>
+
+<button onclick="nextCam()">
+
+NEXT CAMERA
+
+</button>
+
+</div>
+
+<!-- CONSOLE -->
+
+<div id="consoleWindow" class="window hidden">
+
+<div class="windowHeader">
+
+<span>
+
+SYSTEM CONSOLE
+
+</span>
+
+<button onclick="closeApp('console')">
+
+✕
+
+</button>
+
+</div>
+
+<pre id="consoleLog"></pre>
+
+<div class="consoleInput">
+
+<input
+id="consoleInput"
+placeholder="ENTER COMMAND">
+
+<button id="consoleEnter">
+
+RUN
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- Footer -->
+
+<footer id="bottomBar">
+
+<div>
+
+SECURITY LEVEL
+
+<b>
+
+OMEGA
+
+</b>
+
+</div>
+
+<div>
+
+CONNECTED
+
+</div>
+
+</footer>
+
 </main>
+
 <div id="eyesLayer"></div>
-  
+
 <script type="module" src="core.js"></script>
 
 </body>
