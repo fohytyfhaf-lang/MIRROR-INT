@@ -187,3 +187,10 @@ document.addEventListener("mousemove", (e) => {
 
 });
 
+export function forceEnableMrSmile() {
+    enable();
+}
+
+export function forceDisableMrSmile() {
+    disable();
+}
