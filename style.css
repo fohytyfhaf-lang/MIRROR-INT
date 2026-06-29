@@ -205,23 +205,46 @@ body.mrsmile .title {
 }
 
 #eyesLayer {
- #eyesLayer{
     position: fixed;
     inset: 0;
     pointer-events: none;
-
     z-index: 999999;
+    overflow: hidden;
+    display: none;
 }
 
-/* один глаз */
 .eye {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 50%;
-  box-shadow: 0 0 10px rgba(255,0,0,0.2);
-  animation: blink 3s infinite;
+    position: absolute;
+
+    width: 40px;
+    height: 40px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.08);
+
+    box-shadow: 0 0 10px rgba(255,0,0,.25);
+
+    animation: blink 3s infinite;
+
+    overflow: hidden;
+}
+
+.pupil {
+
+    position: absolute;
+
+    left: 15px;
+    top: 15px;
+
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background: rgba(255,0,0,.9);
+
+    box-shadow: 0 0 8px red;
 }
 
 
