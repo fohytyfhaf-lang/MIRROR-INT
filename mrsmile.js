@@ -105,6 +105,8 @@ function whisper() {
   log.innerText += "\nMR.SMILE: " + msg;
 }
 /* ===== 👁 EYES SYSTEM ===== */
+let eyes = [];
+
 function spawnEyes() {
   const layer = document.getElementById("eyesLayer");
   if (!layer) return;
@@ -112,23 +114,27 @@ function spawnEyes() {
   layer.innerHTML = "";
   layer.style.display = "block";
 
+  eyes = [];
+
   for (let i = 0; i < 12; i++) {
+
     const eye = document.createElement("div");
     eye.className = "eye";
 
-    eye.style.left = Math.random() * 100 + "vw";
-    eye.style.top = Math.random() * 100 + "vh";
+    const pupil = document.createElement("div");
+    pupil.className = "pupil";
 
+    eye.appendChild(pupil);
+
+    eye.style.left = Math.random() * 90 + "vw";
+    eye.style.top = Math.random() * 90 + "vh";
     eye.style.transform = `scale(${0.5 + Math.random()})`;
 
     layer.appendChild(eye);
+
+    eyes.push({
+      eye,
+      pupil
+    });
   }
-}
-
-function removeEyes() {
-  const layer = document.getElementById("eyesLayer");
-  if (!layer) return;
-
-  layer.style.display = "none";
-  layer.innerHTML = "";
 }
