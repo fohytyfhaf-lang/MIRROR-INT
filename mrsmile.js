@@ -181,8 +181,8 @@ document.addEventListener("mousemove", (e) => {
             dy = dy / len * max;
         }
 
-        pupil.style.transform = `translate(${dx}px, ${dy}px)`;
-
+   pupil.style.transform =
+`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
     });
 
 });
