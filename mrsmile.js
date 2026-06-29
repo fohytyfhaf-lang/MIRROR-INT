@@ -69,19 +69,6 @@ function disable() {
 /* =========================
    AUDIO CONTROL
 ========================= */
-function removeEyes() {
-
-    const layer = document.getElementById("eyesLayer");
-
-    if (!layer) return;
-
-    layer.style.display = "none";
-    layer.innerHTML = "";
-
-    eyes = [];
-
-}
-
 
 function startAudio() {
   stopAudio(); // защита от дубля
@@ -159,3 +146,44 @@ function spawnEyes() {
     }
 
 }
+
+function removeEyes() {
+
+    const layer = document.getElementById("eyesLayer");
+
+    if (!layer) return;
+
+    layer.style.display = "none";
+    layer.innerHTML = "";
+
+    eyes = [];
+
+}
+document.addEventListener("mousemove", (e) => {
+
+    if (!active) return;
+
+    eyes.forEach(({ eye, pupil }) => {
+
+        const rect = eye.getBoundingClientRect();
+
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+
+        let dx = e.clientX - cx;
+        let dy = e.clientY - cy;
+
+        const len = Math.sqrt(dx * dx + dy * dy);
+        const max = 6;
+
+        if (len > max) {
+            dx = dx / len * max;
+            dy = dy / len * max;
+        }
+
+        pupil.style.transform = `translate(${dx}px, ${dy}px)`;
+
+    });
+
+});
+
