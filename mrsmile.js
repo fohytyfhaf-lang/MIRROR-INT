@@ -109,36 +109,39 @@ function whisper() {
 let eyes = [];
 
 function spawnEyes() {
-  const layer = document.getElementById("eyesLayer");
-  if (!layer) return;
 
-  layer.innerHTML = "";
-  layer.style.display = "block";
+    const layer = document.getElementById("eyesLayer");
+    if (!layer) return;
 
-  eyes = [];
+    layer.innerHTML = "";
+    layer.style.display = "block";
 
-  for (let i = 0; i < 12; i++) {
+    eyes = [];
 
-    const eye = document.createElement("div");
-    eye.className = "eye";
+    for (let i = 0; i < 12; i++) {
 
-    const pupil = document.createElement("div");
-    pupil.className = "pupil";
-     
-pupil.style.transition =
-    `${0.03 + Math.random() * 0.12}s linear`;
-     
-    eye.appendChild(pupil);
+        const eye = document.createElement("div");
+        eye.className = "eye";
 
-    eye.style.left = Math.random() * 90 + "vw";
-    eye.style.top = Math.random() * 90 + "vh";
-    eye.style.transform = `scale(${0.5 + Math.random()})`;
+        const pupil = document.createElement("div");
+        pupil.className = "pupil";
 
-    layer.appendChild(eye);
+        pupil.style.transition =
+            `transform ${0.03 + Math.random() * 0.12}s linear`;
 
-    eyes.push({
-      eye,
-      pupil
-    });
-  }
+        eye.appendChild(pupil);
+
+        eye.style.left = Math.random() * 90 + "vw";
+        eye.style.top = Math.random() * 90 + "vh";
+        eye.style.transform = `scale(${0.5 + Math.random()})`;
+
+        layer.appendChild(eye);
+
+        eyes.push({
+            eye,
+            pupil
+        });
+
+    }
+
 }
