@@ -402,3 +402,452 @@ body.mrsmile .title {
   color: #7fffd4;
   border-left: 2px solid #00ff99;
 }
+
+    ```css
+/* =======================================================
+                      OMEGA UI V2
+======================================================= */
+
+/* ---------- Цветовая палитра ---------- */
+
+:root{
+
+--bg:#05080d;
+
+--panel:#0e151d;
+
+--panel2:#111b25;
+
+--border:#2d556f;
+
+--accent:#4fd8ff;
+
+--text:#d7edf8;
+
+--danger:#ff4343;
+
+--shadow:0 0 25px rgba(0,180,255,.08);
+
+}
+
+/* ---------- ОСНОВА ---------- */
+
+*{
+
+box-sizing:border-box;
+
+margin:0;
+
+padding:0;
+
+}
+
+html,
+body{
+
+width:100%;
+height:100%;
+
+background:var(--bg);
+
+color:var(--text);
+
+font-family:Segoe UI,sans-serif;
+
+overflow:hidden;
+
+}
+
+/* ---------- СЕТКА ---------- */
+
+body::before{
+
+content:"";
+
+position:fixed;
+
+inset:0;
+
+background:
+
+linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+
+linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+
+background-size:42px 42px;
+
+opacity:.22;
+
+pointer-events:none;
+
+z-index:-2;
+
+}
+
+/* ---------- ВИНЬЕТКА ---------- */
+
+body::after{
+
+content:"";
+
+position:fixed;
+
+inset:0;
+
+background:
+
+radial-gradient(circle at center,
+transparent 55%,
+rgba(0,0,0,.55));
+
+pointer-events:none;
+
+z-index:-1;
+
+}
+
+/* ---------- DESKTOP ---------- */
+
+#desktop{
+
+position:fixed;
+
+inset:0;
+
+background:
+
+linear-gradient(180deg,#071019,#03060a);
+
+}
+
+/* ---------- TOP BAR ---------- */
+
+#topBar{
+
+position:fixed;
+
+left:0;
+
+right:0;
+
+top:0;
+
+height:72px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:0 30px;
+
+background:rgba(8,15,22,.92);
+
+backdrop-filter:blur(12px);
+
+border-bottom:1px solid var(--border);
+
+z-index:9999;
+
+}
+
+/* ---------- LOGO ---------- */
+
+#omegaLogo{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+}
+
+#omegaLogo img{
+
+width:42px;
+
+height:42px;
+
+}
+
+#omegaLogo h2{
+
+font-size:20px;
+
+letter-spacing:3px;
+
+font-weight:700;
+
+}
+
+#omegaLogo span{
+
+font-size:11px;
+
+opacity:.7;
+
+}
+
+/* ---------- STATUS ---------- */
+
+#systemInfo{
+
+display:flex;
+
+gap:30px;
+
+font-size:13px;
+
+text-align:right;
+
+}
+
+#systemInfo span{
+
+display:block;
+
+margin-top:4px;
+
+color:var(--accent);
+
+}
+
+/* ---------- SIDEBAR ---------- */
+
+#sidebar{
+
+position:fixed;
+
+top:72px;
+
+bottom:34px;
+
+left:0;
+
+width:220px;
+
+background:rgba(12,20,30,.95);
+
+border-right:1px solid var(--border);
+
+padding:20px;
+
+display:flex;
+
+flex-direction:column;
+
+gap:12px;
+
+}
+
+/* ---------- MODULE TITLE ---------- */
+
+.menuTitle{
+
+font-size:11px;
+
+letter-spacing:4px;
+
+opacity:.5;
+
+margin-bottom:10px;
+
+}
+
+/* ---------- BUTTONS ---------- */
+
+#sidebar button{
+
+background:#15202b;
+
+border:none;
+
+border-left:3px solid transparent;
+
+color:var(--text);
+
+padding:15px;
+
+cursor:pointer;
+
+text-align:left;
+
+transition:.25s;
+
+font-size:14px;
+
+}
+
+#sidebar button:hover{
+
+padding-left:22px;
+
+border-left:3px solid var(--accent);
+
+background:#1b2b39;
+
+box-shadow:0 0 15px rgba(0,200,255,.08);
+
+}
+
+/* ---------- WORKSPACE ---------- */
+
+#workspace{
+
+position:absolute;
+
+left:240px;
+
+top:92px;
+
+right:20px;
+
+bottom:45px;
+
+}
+
+/* ---------- WINDOWS ---------- */
+
+.window{
+
+position:absolute;
+
+background:rgba(12,20,28,.96);
+
+border:1px solid var(--border);
+
+border-radius:10px;
+
+box-shadow:var(--shadow);
+
+overflow:hidden;
+
+min-width:320px;
+
+min-height:180px;
+
+color:var(--text);
+
+}
+
+/* ---------- WINDOW HEADER ---------- */
+
+.windowHeader{
+
+height:42px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+padding:0 15px;
+
+background:#16212d;
+
+border-bottom:1px solid var(--border);
+
+font-weight:600;
+
+letter-spacing:1px;
+
+}
+
+/* ---------- CLOSE BUTTON ---------- */
+
+.windowHeader button{
+
+background:none;
+
+border:none;
+
+color:#9fdfff;
+
+cursor:pointer;
+
+font-size:18px;
+
+transition:.25s;
+
+}
+
+.windowHeader button:hover{
+
+color:var(--danger);
+
+transform:scale(1.2);
+
+}
+
+/* ---------- FOOTER ---------- */
+
+#bottomBar{
+
+position:fixed;
+
+left:0;
+
+right:0;
+
+bottom:0;
+
+height:34px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:0 20px;
+
+background:#0c131a;
+
+border-top:1px solid var(--border);
+
+font-size:12px;
+
+}
+
+/* ---------- INPUT ---------- */
+
+input{
+
+background:#0b1219;
+
+border:1px solid var(--border);
+
+color:white;
+
+padding:10px;
+
+outline:none;
+
+}
+
+input:focus{
+
+border-color:var(--accent);
+
+box-shadow:0 0 8px rgba(0,200,255,.25);
+
+}
+
+/* ---------- BUTTON ---------- */
+
+button{
+
+transition:.25s;
+
+}
+
+button:hover{
+
+filter:brightness(1.15);
+
+}
+```
+
