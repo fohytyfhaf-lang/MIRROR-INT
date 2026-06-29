@@ -205,12 +205,12 @@ body.mrsmile .title {
 }
 
 #eyesLayer {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  overflow: hidden;
-  display: none;
+ #eyesLayer{
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+
+    z-index: 999999;
 }
 
 /* один глаз */
@@ -225,16 +225,22 @@ body.mrsmile .title {
 }
 
 /* зрачок */
-.eye::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  background: rgba(255,0,0,0.6);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
+.pupil {
+    position: absolute;
+
+    width: 10px;
+    height: 10px;
+
+    left: 15px;
+    top: 15px;
+
+    border-radius: 50%;
+
+    background: rgba(255,0,0,.85);
+
+    box-shadow: 0 0 8px red;
+
+    transition: transform .05s linear;
 }
 
 @keyframes blink {
