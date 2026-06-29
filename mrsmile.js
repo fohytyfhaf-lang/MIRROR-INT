@@ -150,7 +150,7 @@ function spawnEyes() {
     const pupil = document.createElement("div");
     pupil.className = "pupil";
      
-obj.pupil.style.transition =
+pupil.style.transition =
     `${0.03 + Math.random() * 0.12}s linear`;
      
     eye.appendChild(pupil);
