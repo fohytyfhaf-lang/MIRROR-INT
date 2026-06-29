@@ -19,7 +19,7 @@ export function initMrSmileChat() {
         const log = document.getElementById("chatLog");
 
         if (log) {
-            log.innerText += "\nYOU: " + text;
+           log.innerHTML += `<div class="msg user">YOU: ${text}</div>`;
         }
 
         const response = await mrSmileSay(text);
