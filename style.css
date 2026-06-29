@@ -241,3 +241,34 @@ body.mrsmile .title {
   0%, 100% { opacity: 0.2; }
   50% { opacity: 0.6; }
 }
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  height: 300px;
+  overflow-y: auto;
+  font-family: monospace;
+  color: #c8ffda;
+}
+
+.msg {
+  padding: 6px 10px;
+  border-radius: 6px;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+.msg.user {
+  background: #1f2a1f;
+  align-self: flex-end;
+  color: #9cffb1;
+}
+
+.msg.mrsmile {
+  background: #0f1f1a;
+  align-self: flex-start;
+  color: #7fffd4;
+  border-left: 2px solid #00ff99;
+}
