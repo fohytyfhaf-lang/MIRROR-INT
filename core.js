@@ -14,7 +14,7 @@ import { updatePersonality } from "./personality.js";
 import { mrSmileSay } from "./mrsmileCore.js";
 import { initMrSmileChat } from "./mrsmileChat.js";
 import { initMrSmileEvents } from "./mrsmileEvents.js";
-
+import { forceEnableMrSmile, forceDisableMrSmile } from "./mrsmile.js";
 import { knowledgeInit } from "./knowledge.js"; // если есть init
 
 /* GLOBAL */
