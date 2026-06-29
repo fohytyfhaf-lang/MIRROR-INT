@@ -132,8 +132,8 @@ function spawnEyes() {
 
         eye.appendChild(pupil);
 
-        eye.style.left = Math.random() * 90 + "vw";
-        eye.style.top = Math.random() * 90 + "vh";
+eye.style.left = (10 + Math.random() * 80) + "vw";
+eye.style.top = (10 + Math.random() * 80) + "vh";
         eye.style.transform = `scale(${0.5 + Math.random()})`;
 
         layer.appendChild(eye);
