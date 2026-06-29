@@ -44,10 +44,12 @@ window.addEventListener("DOMContentLoaded", () => {
     initMrSmileChat();
     initMrSmileEvents();
 
-    window.MRSMILE_DEBUG = {
-        start: () => initMrSmileChat(),
-        test: (t) => mrSmileSay(t)
-    };
+ window.MRSMILE = {
+    start: forceEnableMrSmile,
+    stop: forceDisableMrSmile,
+    chat: mrSmileSay,
+    initChat: initMrSmileChat
+};
 
     console.log("MRSMILE READY");
     console.log("[OMEGA] MR.SMILE MODULE LOADED");
