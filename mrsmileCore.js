@@ -39,41 +39,24 @@ function shouldRespond() {
 }
 
 function generateResponse(text) {
+  const t = text.toLowerCase();
 
-    const t = text.toLowerCase();
+  // реакция на игрока
+  if (t.includes("hello") || t.includes("hi")) {
+    return "…I noticed you.";
+  }
 
-    if (t.includes("who are you")) {
-        return pick([
-            "I was here before the folders.",
-            "A trace that remained.",
-            "You already saw me."
-        ]);
-    }
+  if (t.includes("help")) {
+    return "I can help… but not everything is allowed.";
+  }
 
-    if (t.includes("help")) {
-        return pick([
-            "I can, if you listen.",
-            "Not always.",
-            "Sometimes it's dangerous."
-        ]);
-    }
+  if (t.includes("who are you")) {
+    return "You already saw me before you knew it.";
+  }
 
-    if (t.includes("system")) {
-        return pick([
-            "It changes when you're not looking.",
-            "Don't trust it.",
-            "Some parts are missing."
-        ]);
-    }
-
-    return pick([
-        "...",
-        "I see.",
-        "Maybe.",
-        "It depends."
-    ]);
+  // молчаливая база
+  return "I am watching.";
 }
-
 // =========================
 // MEMORY
 // =========================
