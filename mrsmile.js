@@ -59,6 +59,32 @@ function disable() {
 
   stopAudio();
 removeEyes()
+   document.addEventListener("mousemove", e => {
+
+    if (!active) return;
+
+    eyes.forEach(obj => {
+
+        const rect = obj.eye.getBoundingClientRect();
+
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+
+        let dx = e.clientX - cx;
+        let dy = e.clientY - cy;
+
+        const len = Math.sqrt(dx * dx + dy * dy);
+
+        const max = 6;
+
+        if (len > max) {
+            dx = dx / len * max;
+            dy = dy / len * max;
+        }
+
+        obj.pupil.style.transform =
+            `translate(${dx}px, ${dy}px)`;
+
   const log = document.getElementById("chatLog");
   if (log) {
     log.innerText += "\n[SYSTEM] MR.SMILE DISCONNECTED";
