@@ -17,6 +17,7 @@ import { knowledgeInit } from "./knowledge.js";
 import { initSettings, applyLanguage } from "./settings.js";
 import { Storage } from "./storage.js";
 import { initClock } from "./clock.js";
+import { initPersonnel } from "./personnel.js";
 /* =========================
         GLOBAL
 ========================= */
@@ -144,6 +145,7 @@ function initLogin() {
 function bootSystem() {
     initMrSmile();
         updateClock(); 
+        initPersonnel();
     initMemory();
     loadTrust();
     updatePersonality();
