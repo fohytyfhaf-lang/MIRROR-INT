@@ -34,63 +34,108 @@ body {
         LOGIN SCREEN
 ========================= */
 
+/* =========================
+        LOGIN FIX
+========================= */
+
 #loginScreen {
     position: fixed;
     inset: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: radial-gradient(circle at center, #0c1a25, #05080d);
+    background: radial-gradient(circle at center, #0b1620, #05080d);
 }
 
 #loginBox {
-    width: 340px;
-    padding: 25px;
-    background: var(--panel);
-    border: 1px solid var(--border);
+    width: 360px;
+    padding: 30px;
+    background: rgba(10, 18, 26, 0.95);
+    border: 1px solid #2a4b63;
     border-radius: 10px;
-    box-shadow: var(--shadow);
+    box-shadow: 0 0 25px rgba(0, 200, 255, 0.08);
     text-align: center;
 }
 
+/* ===== LOGO BLOCK ===== */
+
+.loginLogo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
 .loginLogo img {
-    width: 60px;
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
     margin-bottom: 10px;
+    filter: drop-shadow(0 0 10px #4fd8ff);
 }
 
 .loginLogo h1 {
+    margin: 0;
+    font-size: 22px;
     letter-spacing: 6px;
+    color: #cfe9ff;
 }
 
 .loginLogo p {
+    margin: 5px 0 0 0;
     font-size: 11px;
+    letter-spacing: 2px;
     opacity: 0.7;
+}
+
+/* ===== INPUTS ===== */
+
+.loginFields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .loginFields input {
     width: 100%;
     padding: 10px;
-    margin-top: 10px;
     background: #0b1219;
-    border: 1px solid var(--border);
+    border: 1px solid #2a4b63;
     color: white;
     outline: none;
+    font-size: 13px;
+    letter-spacing: 1px;
 }
 
-.loginFields button {
-    width: 100%;
-    margin-top: 15px;
+.loginFields input:focus {
+    border-color: #4fd8ff;
+    box-shadow: 0 0 8px rgba(79, 216, 255, 0.3);
+}
+
+/* ===== BUTTON ===== */
+
+#loginBtn {
     padding: 10px;
-    background: var(--accent);
+    background: #4fd8ff;
     border: none;
     cursor: pointer;
     font-weight: bold;
+    letter-spacing: 2px;
+    margin-top: 5px;
+    transition: 0.2s;
 }
+
+#loginBtn:hover {
+    filter: brightness(1.2);
+}
+
+/* ===== STATUS TEXT ===== */
 
 #status {
     margin-top: 10px;
     font-size: 11px;
     opacity: 0.7;
+    letter-spacing: 1px;
 }
 
 /* =========================
