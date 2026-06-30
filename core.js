@@ -5,8 +5,6 @@ import { setSoundState } from "./soundManager.js";
 import { makeWindowDraggable, bringToFront } from "./windowManager.js";
 import { nextCam } from "./camera.js";
 import { openExplorer } from "./explorer.js";
-import { initSettings } from "./settings.js";
-import { Storage } from "./storage.js";
 import { initMrSmile } from "./mrsmile.js";
 import { initMemory } from "./mrsmileMemory.js";
 import { loadTrust } from "./mrsmileTrust.js";
@@ -17,6 +15,8 @@ import { initMrSmileEvents } from "./mrsmileEvents.js";
 import { forceEnableMrSmile, forceDisableMrSmile } from "./mrsmile.js";
 import { knowledgeInit } from "./knowledge.js";
 import { applyLanguage } from "./language.js";
+import { initSettings, applyLanguage } from "./settings.js";
+import { Storage } from "./storage.js";
 /* =========================
         GLOBAL
 ========================= */
