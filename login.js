@@ -1,6 +1,6 @@
 import { playMusic } from "./audio.js";
 import { setRole } from "./security.js";
-
+import { Storage } from "./storage.js";
 
 const accounts = {
   operator: "0404",
@@ -10,7 +10,6 @@ const accounts = {
 };
 
 export function loginSystem() {
-
   const userEl = document.getElementById("user");
   const passEl = document.getElementById("pass");
   const status = document.getElementById("status");
@@ -41,22 +40,34 @@ export function loginSystem() {
 
   if (status) status.textContent = "WELCOME " + u;
 
-  
+  // 🎭 ROLE SYSTEM
   if (u === "admin") setRole("admin");
   else if (u === "operator") setRole("operator");
   else setRole("guest");
 
+  // 💾 SAVE USER (ВАЖНО ДЛЯ НАСТРОЕК)
+  Storage.set("currentUser", u);
+
+  // 💾 CREATE USER PROFILE IF NOT EXISTS
+  const users = Storage.get("users", {});
+  if (!users[u]) {
+    users[u] = {
+      settings: {
+        language: "en",
+        volume: 0.4
+      }
+    };
+    Storage.set("users", users);
+  }
+
   setTimeout(() => {
     if (loginScreen) loginScreen.classList.add("hidden");
     if (desktop) desktop.classList.remove("hidden");
-
-    Storage.set("currentUser", u);
 
     try {
       playMusic("background.mp3", 0.4);
     } catch (e) {
       console.warn("Audio error:", e);
     }
-
   }, 400);
 }
