@@ -1,112 +1,106 @@
 /* =========================
-        OMEGA UI CLEAN
+        OMEGA SYSTEM UI
 ========================= */
-/* ================= LOGIN ================= */
-
-#loginScreen {
-  position:fixed;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:#05080d;
-  z-index:99999;
-}
-
-#loginBox {
-  width:320px;
-  padding:20px;
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.15);
-  border-radius:10px;
-  text-align:center;
-  backdrop-filter:blur(10px);
-}
-
-.loginLogo img {
-  width:60px;
-  height:60px;
-}
-
-.loginLogo h1 {
-  margin:10px 0 0;
-  letter-spacing:3px;
-}
-
-/* ================= WINDOWS INPUT FIX ================= */
-
-.chatInput,
-.consoleInput {
-  display:flex;
-  gap:10px;
-  padding:10px;
-}
-
-#cameraView {
-  height:200px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#aaa;
-  border:1px dashed #2d556f;
-  margin:10px;
-}
-
-/* ================= HIDDEN FIX (optional smooth) ================= */
-
-.hidden {
-  display:none !important;
-}
-
 
 :root {
-  --bg:#05080d;
-  --panel:#0e151d;
-  --panel2:#111b25;
-  --border:#2d556f;
-  --accent:#4fd8ff;
-  --text:#d7edf8;
-  --danger:#ff4343;
-  --shadow:0 0 25px rgba(0,180,255,.08);
-}
-
-* {
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
-html, body {
-  width:100%;
-  height:100%;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Segoe UI, sans-serif;
-  overflow:hidden;
+    --bg: #05080d;
+    --panel: rgba(12, 18, 26, 0.92);
+    --panel2: #0f1722;
+    --border: #2a4b63;
+    --text: #cfe9ff;
+    --accent: #4fd8ff;
+    --danger: #ff3b3b;
+    --shadow: 0 0 20px rgba(0, 200, 255, 0.08);
 }
 
 /* =========================
-        BACKGROUND
+        GLOBAL
 ========================= */
 
-body::before {
-  content:"";
-  position:fixed;
-  inset:0;
-  background:
-    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-  background-size:42px 42px;
-  opacity:.2;
-  pointer-events:none;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-body::after {
-  content:"";
-  position:fixed;
-  inset:0;
-  background:radial-gradient(circle at center, transparent 55%, rgba(0,0,0,.6));
-  pointer-events:none;
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", sans-serif;
+    overflow: hidden;
+}
+
+/* =========================
+        LOGIN SCREEN
+========================= */
+
+#loginScreen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, #0c1a25, #05080d);
+}
+
+#loginBox {
+    width: 340px;
+    padding: 25px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.loginLogo img {
+    width: 60px;
+    margin-bottom: 10px;
+}
+
+.loginLogo h1 {
+    letter-spacing: 6px;
+}
+
+.loginLogo p {
+    font-size: 11px;
+    opacity: 0.7;
+}
+
+.loginFields input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background: #0b1219;
+    border: 1px solid var(--border);
+    color: white;
+    outline: none;
+}
+
+.loginFields button {
+    width: 100%;
+    margin-top: 15px;
+    padding: 10px;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#status {
+    margin-top: 10px;
+    font-size: 11px;
+    opacity: 0.7;
+}
+
+/* =========================
+        DESKTOP
+========================= */
+
+#desktop {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, #0a1622, #05080d);
 }
 
 /* =========================
@@ -114,40 +108,32 @@ body::after {
 ========================= */
 
 #topBar {
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  height:72px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:0 30px;
-  background:rgba(8,15,22,.92);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);
-  z-index:9999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    background: rgba(10, 15, 22, 0.9);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(10px);
 }
 
 #omegaLogo {
-  display:flex;
-  align-items:center;
-  gap:15px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 #omegaLogo img {
-  width:42px;
-  height:42px;
+    width: 40px;
 }
 
-#omegaLogo h2 {
-  font-size:20px;
-  letter-spacing:3px;
-}
-
-#omegaLogo span {
-  font-size:11px;
-  opacity:.7;
+#systemInfo {
+    font-size: 12px;
 }
 
 /* =========================
@@ -155,34 +141,31 @@ body::after {
 ========================= */
 
 #sidebar {
-  position:fixed;
-  top:72px;
-  bottom:34px;
-  left:0;
-  width:220px;
-  background:rgba(12,20,30,.95);
-  border-right:1px solid var(--border);
-  padding:20px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+    position: fixed;
+    top: 65px;
+    bottom: 34px;
+    left: 0;
+    width: 220px;
+    background: rgba(8, 12, 18, 0.95);
+    border-right: 1px solid var(--border);
+    padding: 15px;
 }
 
 #sidebar button {
-  background:#15202b;
-  border:none;
-  border-left:3px solid transparent;
-  color:var(--text);
-  padding:15px;
-  cursor:pointer;
-  text-align:left;
-  transition:.25s;
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    background: #0f1a24;
+    border: 1px solid transparent;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
 #sidebar button:hover {
-  padding-left:22px;
-  border-left:3px solid var(--accent);
-  background:#1b2b39;
+    border-left: 3px solid var(--accent);
+    background: #132331;
 }
 
 /* =========================
@@ -190,162 +173,108 @@ body::after {
 ========================= */
 
 #workspace {
-  position:absolute;
-  left:240px;
-  top:92px;
-  right:20px;
-  bottom:45px;
+    position: absolute;
+    top: 80px;
+    left: 240px;
+    right: 20px;
+    bottom: 50px;
 }
 
 /* =========================
-        WINDOW
+        WINDOWS
 ========================= */
 
 .window {
-  position:absolute;
-  background:rgba(12,20,28,.96);
-  border:1px solid var(--border);
-  border-radius:10px;
-  box-shadow:var(--shadow);
-  overflow:hidden;
-  min-width:320px;
-  min-height:180px;
+    position: absolute;
+    width: 500px;
+    min-height: 250px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .windowHeader {
-  height:42px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:0 15px;
-  background:#16212d;
-  border-bottom:1px solid var(--border);
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    background: #101a26;
+    border-bottom: 1px solid var(--border);
+}
+
+.windowBody {
+    padding: 10px;
+}
+
+.windowFooter {
+    padding: 10px;
+    background: #0d141d;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+}
+
+.windowFooter input {
+    flex: 1;
+    padding: 8px;
+    background: #0b1219;
+    border: 1px solid var(--border);
+    color: white;
 }
 
 /* =========================
-        INPUT / BUTTON
-========================= */
-
-input {
-  background:#0b1219;
-  border:1px solid var(--border);
-  color:white;
-  padding:10px;
-  outline:none;
-}
-
-input:focus {
-  border-color:var(--accent);
-  box-shadow:0 0 8px rgba(0,200,255,.25);
-}
-
-button {
-  transition:.25s;
-}
-
-button:hover {
-  filter:brightness(1.15);
-}
-
-/* =========================
-        TASKBAR
-========================= */
-
-#bottomBar {
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  height:34px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:0 20px;
-  background:#0c131a;
-  border-top:1px solid var(--border);
-  font-size:12px;
-}
-
-/* =========================
-        MR SMILE EFFECTS
-========================= */
-
-body.mrsmile {
-  filter:contrast(1.3) brightness(0.65) hue-rotate(15deg);
-  animation:flicker 1.5s infinite;
-}
-
-@keyframes flicker {
-  0% { opacity:1; }
-  50% { opacity:.95; }
-  100% { opacity:1; }
-}
-
-body.mrsmile .window {
-  animation:windowGlitch .3s infinite;
-}
-
-@keyframes windowGlitch {
-  0% { transform:translate(0,0); }
-  25% { transform:translate(1px,-1px); }
-  50% { transform:translate(-1px,1px); }
-  75% { transform:translate(1px,1px); }
-  100% { transform:translate(0,0); }
-}
-
-body.mrsmile .title {
-  background:linear-gradient(90deg,#2d5fdd,#ff0000,#2d5fdd);
-  background-size:200%;
-  animation:titleGlitch 1s infinite;
-}
-
-@keyframes titleGlitch {
-  0% { background-position:0%; }
-  50% { background-position:100%; }
-  100% { background-position:0%; }
-}
-
-/* =========================
-        CHAT
+        CHAT / LOGS
 ========================= */
 
 .chat {
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  padding:10px;
-  height:300px;
-  overflow-y:auto;
-  font-family:monospace;
-}
-
-.msg {
-  padding:6px 10px;
-  border-radius:6px;
-  max-width:80%;
-}
-
-.msg.user {
-  background:#1f2a1f;
-  align-self:flex-end;
-}
-
-.msg.mrsmile {
-  background:#0f1f1a;
-  align-self:flex-start;
-  border-left:2px solid #00ff99;
+    height: 200px;
+    overflow-y: auto;
+    font-size: 12px;
 }
 
 /* =========================
-        ICONS
+        EFFECTS
 ========================= */
 
-#icons {
-  position:absolute;
-  top:110px;
-  left:25px;
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-  z-index:5;
+.hidden {
+    display: none;
+}
+
+/* glitch */
+#glitchLayer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: transparent;
+}
+
+/* eyes */
+#eyesLayer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.2;
+}
+
+/* mr smile */
+#mrsmileEntity {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-size: 40px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* notifications */
+#notificationArea {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
