@@ -1,3 +1,7 @@
+/* =========================
+        IMPORTS
+========================= */
+
 import { loginSystem } from "./login.js";
 import { playMusic } from "./audio.js";
 import { runCommand } from "./console.js";
@@ -15,9 +19,12 @@ import { mrSmileSay } from "./mrsmileCore.js";
 import { initMrSmileChat } from "./mrsmileChat.js";
 import { initMrSmileEvents } from "./mrsmileEvents.js";
 import { forceEnableMrSmile, forceDisableMrSmile } from "./mrsmile.js";
-import { knowledgeInit } from "./knowledge.js"; // если есть init
+import { knowledgeInit } from "./knowledge.js";
 
-/* GLOBAL */
+/* =========================
+        GLOBAL EXPORTS
+========================= */
+
 window.playMusic = playMusic;
 window.setSoundState = setSoundState;
 window.runCommand = runCommand;
@@ -27,114 +34,120 @@ window.makeWindowDraggable = makeWindowDraggable;
 window.bringToFront = bringToFront;
 window.getFile = getFile;
 window.nextCam = nextCam;
-window.addEventListener("DOMContentLoaded", () => {
- initMrSmile();
-     
-     setTimeout(() => {
-        openApp("logs");
-        console.log("[SYSTEM] unknown UI module activated");
-    }, 2000);
 
+/* =========================
+        WINDOW SYSTEM (FIXED)
+========================= */
 
-    initMrSmile();
-    initMemory();
-    loadTrust();
-    updatePersonality();
-
-    initMrSmileChat();
-    initMrSmileEvents();
-
- window.MRSMILE = {
-    start: forceEnableMrSmile,
-    stop: forceDisableMrSmile,
-    chat: mrSmileSay,
-    initChat: initMrSmileChat
-};
-
-    console.log("MRSMILE READY");
-    console.log("[OMEGA] MR.SMILE MODULE LOADED");
-
-
-    // чат
-
-    // знания
-    if (knowledgeInit) knowledgeInit();
-
-    console.log("[OMEGA] MR.SMILE MODULE LOADED");
-
-});
-
-/* WINDOW SYSTEM */
 function openApp(name) {
-  const win = document.getElementById(name + "Window");
+    const win = document.getElementById(name + "Window");
 
-  if (win) {
+    if (!win) return;
+
     win.classList.remove("hidden");
     bringToFront(win);
     makeWindowDraggable(win);
-  }
-  
-if (name === "files") {
-  openExplorer();
-}
-  
-  switch (name) {
-    case "console":
-      setSoundState("console");
-      break;
 
-    case "camera":
-      setSoundState("camera");
-      break;
+    if (name === "files") {
+        openExplorer();
+    }
 
-    default:
-      setSoundState("desktop");
-  }
+    if (name === "console") {
+        setSoundState("console");
+    } else if (name === "camera") {
+        setSoundState("camera");
+    } else {
+        setSoundState("desktop");
+    }
 }
 
 function closeApp(name) {
-  const win = document.getElementById(name + "Window");
-  if (win) win.classList.add("hidden");
+    const win = document.getElementById(name + "Window");
 
-  setSoundState("desktop");
+    if (!win) return;
+
+    win.classList.add("hidden");
+    setSoundState("desktop");
 }
 
 window.openApp = openApp;
 window.closeApp = closeApp;
 
-/* LOGIN INIT */
-window.addEventListener("DOMContentLoaded", () => {
+/* =========================
+        LOGIN SYSTEM INIT (FIXED)
+========================= */
 
-  const btn = document.getElementById("loginBtn");
+function initLogin() {
+    const btn = document.getElementById("loginBtn");
 
-  if (btn) {
-    btn.addEventListener("click", loginSystem);
-  }
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-
-      const screen = document.getElementById("loginScreen");
-      if (!screen || screen.classList.contains("hidden")) return;
-
-      loginSystem();
+    if (btn) {
+        btn.addEventListener("click", loginSystem);
     }
-  });
 
-});
-
-
-/* CLOCK */
-function updateClock() {
-  const clock = document.getElementById("clock");
-  if (!clock) return;
-
-  const now = new Date();
-  const h = String(now.getHours()).padStart(2, "0");
-  const m = String(now.getMinutes()).padStart(2, "0");
-
-  clock.textContent = `${h}:${m}`;
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            const screen = document.getElementById("loginScreen");
+            if (screen && !screen.classList.contains("hidden")) {
+                loginSystem();
+            }
+        }
+    });
 }
 
-setInterval(updateClock, 1000);
-updateClock();
+/* =========================
+        CLOCK (FIXED)
+========================= */
+
+function updateClock() {
+    const clock = document.getElementById("clock");
+    if (!clock) return;
+
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, "0");
+    const m = String(now.getMinutes()).padStart(2, "0");
+
+    clock.textContent = `${h}:${m}`;
+}
+
+/* =========================
+        SYSTEM BOOT
+========================= */
+
+function bootSystem() {
+    initMrSmile();
+    initMemory();
+    loadTrust();
+    updatePersonality();
+    initMrSmileChat();
+    initMrSmileEvents();
+
+    if (knowledgeInit) knowledgeInit();
+
+    setTimeout(() => {
+        openApp("logs");
+        console.log("[OMEGA] SYSTEM MODULE ACTIVE");
+    }, 2000);
+
+    window.MRSMILE = {
+        start: forceEnableMrSmile,
+        stop: forceDisableMrSmile,
+        chat: mrSmileSay,
+        initChat: initMrSmileChat
+    };
+
+    console.log("[OMEGA] MR.SMILE READY");
+}
+
+/* =========================
+        STARTUP (ONLY ONCE)
+========================= */
+
+window.addEventListener("DOMContentLoaded", () => {
+
+    initLogin();
+    bootSystem();
+
+    updateClock();
+    setInterval(updateClock, 1000);
+
+});
