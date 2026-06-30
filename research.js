@@ -91,7 +91,7 @@ export function initResearch() {
   const list = document.getElementById("researchList");
   if (!list) return;
 
-  const data = Storage.get("research", defaultResearch);
+  const data = Storage.get("research", researchData);
 
   Storage.set("research", data);
 
@@ -134,7 +134,7 @@ function render(data) {
 ========================= */
 
 export function addResearch(entry) {
-  const data = Storage.get("research", defaultResearch);
+ const data = Storage.get("research", researchData);
 
   data.unshift(entry);
 
