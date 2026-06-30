@@ -1,5 +1,8 @@
 import { Storage } from "./storage.js";
-import { setSetting } from "./settings.js";
+
+/* =========================
+   GET SETTINGS
+========================= */
 export function getSettings() {
   const user = Storage.get("currentUser");
   const users = Storage.get("users", {});
@@ -7,6 +10,9 @@ export function getSettings() {
   return users[user]?.settings || null;
 }
 
+/* =========================
+   SET SETTING
+========================= */
 export function setSetting(key, value) {
   const user = Storage.get("currentUser");
   let users = Storage.get("users", {});
@@ -17,19 +23,44 @@ export function setSetting(key, value) {
   Storage.set("users", users);
 }
 
+/* =========================
+   INIT SETTINGS UI
+========================= */
+export function initSettings() {
+  const slider = document.getElementById("volume");
+  const langSelect = document.getElementById("language");
 
-
-const slider = document.getElementById("volume");
-
-slider.addEventListener("input", (e) => {
-  const value = Number(e.target.value);
-
-  setSetting("volume", value);
+  const settings = getSettings();
+  if (!settings) return;
 
   const audio = document.getElementById("bgm");
-  audio.volume = value;
-});
 
+  /* volume */
+  if (slider) {
+    slider.value = settings.volume;
+
+    slider.addEventListener("input", (e) => {
+      const value = Number(e.target.value);
+
+      setSetting("volume", value);
+      if (audio) audio.volume = value;
+    });
+  }
+
+  /* language */
+  if (langSelect) {
+    langSelect.value = settings.language;
+
+    langSelect.addEventListener("change", (e) => {
+      setSetting("language", e.target.value);
+      applyLanguage(e.target.value);
+    });
+  }
+}
+
+/* =========================
+   LANGUAGE SYSTEM
+========================= */
 const langPack = {
   en: {
     login: "LOGIN",
@@ -43,10 +74,15 @@ const langPack = {
   }
 };
 
-export function setLanguage(lang) {
-  localStorage.setItem("lang", lang);
+export function applyLanguage(lang) {
+  const pack = langPack[lang];
+  if (!pack) return;
 
-  document.getElementById("loginBtn").textContent = langPack[lang].login;
-  document.getElementById("user").placeholder = langPack[lang].username;
-  document.getElementById("pass").placeholder = langPack[lang].password;
+  const loginBtn = document.getElementById("loginBtn");
+  const user = document.getElementById("user");
+  const pass = document.getElementById("pass");
+
+  if (loginBtn) loginBtn.textContent = pack.login;
+  if (user) user.placeholder = pack.username;
+  if (pass) pass.placeholder = pack.password;
 }
