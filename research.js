@@ -4,27 +4,82 @@ import { Storage } from "./storage.js";
    RESEARCH DATABASE
 ========================= */
 
-const defaultResearch = [
+const researchData = [
   {
-    id: "R-001",
-    title: "UNKNOWN ENTITY SIGNALS",
-    status: "ACTIVE",
-    level: 3,
-    description: "Detected unstable signal patterns across restricted network zones.",
+    name: "KITCH",
+    type: "Entity",
+    danger: 4,
+    status: "Neutral",
+    description: `
+A living organism with tentacle-like needles containing toxin.
+Not aggressive unless provoked.
+
+Behavior:
+- Calm when unprovoked
+- Attacks when attacked
+- High intelligence
+    `
   },
+
   {
-    id: "R-002",
-    title: "MR.SMILE BEHAVIOR LOG",
-    status: "CLASSIFIED",
-    level: 5,
-    description: "Entity demonstrates adaptive awareness and UI manipulation.",
+    name: "MICH",
+    type: "Entity",
+    danger: 5,
+    status: "Hostile",
+    description: `
+Blind predator relying on extreme hearing.
+
+Behavior:
+- Attracts victims using sound mimicry
+- Extremely aggressive when target approaches
+- Cannot see, only hears
+    `
   },
+
   {
-    id: "R-003",
-    title: "SYSTEM ANOMALY INDEX",
-    status: "MONITORING",
-    level: 2,
-    description: "Minor glitches detected in UI rendering and audio sync.",
+    name: "GARDENER",
+    type: "Entity",
+    danger: 3,
+    status: "Conditional",
+    description: `
+Non-hostile unless flowers are damaged.
+
+Behavior:
+- Passive if environment intact
+- Becomes hostile if plants are destroyed
+- Protects biological growth
+    `
+  },
+
+  {
+    name: "SURGEON",
+    type: "Entity",
+    danger: 6,
+    status: "Dual-State",
+    description: `
+Two-headed immortal former soldier.
+
+Behavior:
+- Calm during daytime
+- Night cycle triggers aggression
+- Constant hunger state
+- Extremely dangerous in combat
+    `
+  },
+
+  {
+    name: "TEN",
+    type: "Entity",
+    danger: 5,
+    status: "Unknown",
+    description: `
+Unstable anomaly entity.
+
+Behavior:
+- Unknown patterns
+- Possible reality distortion
+- High aggression level
+    `
   }
 ];
 
