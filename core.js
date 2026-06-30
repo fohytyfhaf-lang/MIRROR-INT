@@ -73,6 +73,56 @@ function closeApp(name) {
 window.openApp = openApp;
 window.closeApp = closeApp;
 
+
+
+/* =========================
+        BOOT SCREEN LOGIC
+========================= */
+
+const bootScreen = document.getElementById("bootScreen");
+const bootText = document.getElementById("bootText");
+const bootProgress = document.getElementById("bootProgress");
+const loginScreen = document.getElementById("loginScreen");
+
+const bootLines = [
+    "[SYSTEM] Initializing OMEGA core...",
+    "[SYSTEM] Loading security modules...",
+    "[SYSTEM] Checking database integrity...",
+    "[SYSTEM] Connecting to main server...",
+    "[SYSTEM] Loading MR.SMILE subsystem...",
+    "[SYSTEM] Warning: unknown anomaly detected...",
+    "[SYSTEM] Boot sequence almost complete..."
+];
+
+function startBoot() {
+    let i = 0;
+    let progress = 0;
+
+    const textInterval = setInterval(() => {
+        if (i < bootLines.length) {
+            bootText.innerHTML += bootLines[i] + "<br>";
+            i++;
+        }
+    }, 600);
+
+    const progressInterval = setInterval(() => {
+        progress += 5;
+        bootProgress.style.width = progress + "%";
+
+        if (progress >= 100) {
+            clearInterval(progressInterval);
+            clearInterval(textInterval);
+
+            setTimeout(() => {
+                bootScreen.style.display = "none";
+                loginScreen.classList.remove("hidden");
+            }, 500);
+        }
+    }, 150);
+}
+
+
+
 /* =========================
         LOGIN SYSTEM INIT (FIXED)
 ========================= */
