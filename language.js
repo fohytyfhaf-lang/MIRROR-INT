@@ -1,9 +1,5 @@
 import { Storage } from "./storage.js";
 
-/* =========================
-        LANGUAGE PACK
-========================= */
-
 const langPack = {
   en: {
     login: "LOGIN",
@@ -16,10 +12,6 @@ const langPack = {
     password: "ПАРОЛЬ"
   }
 };
-
-/* =========================
-        APPLY LANGUAGE
-========================= */
 
 export function applyLanguage(lang) {
   if (!lang) return;
@@ -36,4 +28,16 @@ export function applyLanguage(lang) {
   loginBtn.textContent = pack.login;
   user.placeholder = pack.username;
   pass.placeholder = pack.password;
+
+  const currentUser = Storage.get("currentUser");
+  const users = Storage.get("users", {});
+
+  if (currentUser && users[currentUser]) {
+    users[currentUser].settings ||= {};
+    users[currentUser].settings.language = lang;
+
+    Storage.set("users", users);
+  }
+
+  localStorage.setItem("lang", lang);
 }
