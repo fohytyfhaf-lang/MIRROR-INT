@@ -147,29 +147,35 @@ function bootSystem() {
 /* =========================
         START
 ========================= */
-
 window.addEventListener("DOMContentLoaded", () => {
-        
+
     startBoot();
     initLogin();
     bootSystem();
 
-    // =========================
-    // SETTINGS LOAD FIX
-    // =========================
+    setTimeout(() => {
+        const user = Storage.get("currentUser");
 
-   const user = Storage.get("currentUser");
+        if (!user) return;
 
-if (user) {
-    const users = Storage.get("users", {});
-    const settings = users[user]?.settings;
+        const users = Storage.get("users", {});
+        const settings = users[user]?.settings;
 
-    if (settings) {
-        initSettings(); // сначала загрузка UI
+        if (!settings) return;
 
+        // сначала UI settings
+        initSettings();
+
+        // потом язык
         if (settings.language) {
             applyLanguage(settings.language);
         }
-    }
-}
+
+        // потом звук
+        if (settings.volume !== undefined) {
+            const audio = document.getElementById("bgm");
+            if (audio) audio.volume = settings.volume;
+        }
+
+    }, 0);
 });
