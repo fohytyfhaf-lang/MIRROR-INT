@@ -1,7 +1,6 @@
 import { playMusic } from "./audio.js";
 import { setRole } from "./security.js";
-import { initSettings, applyLanguage } from "./settings.js";
-import { Storage } from "./storage.js";
+
 
 const accounts = {
   operator: "0404",
