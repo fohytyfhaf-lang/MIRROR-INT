@@ -142,6 +142,7 @@ function initLogin() {
 
 function bootSystem() {
     initMrSmile();
+        updateClock(); 
     initMemory();
     loadTrust();
     updatePersonality();
