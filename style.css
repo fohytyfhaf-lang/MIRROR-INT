@@ -369,3 +369,16 @@ body {
     background: #4fd8ff;
     transition: width 0.2s;
 }
+
+#clock {
+  transition: 0.2s;
+}
+
+#clock.glitch {
+  color: #ff0033;
+  text-shadow:
+    2px 0 red,
+    -2px 0 cyan;
+  transform: translateX(1px);
+  filter: blur(0.5px);
+}
