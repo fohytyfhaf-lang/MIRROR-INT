@@ -158,20 +158,17 @@ window.addEventListener("DOMContentLoaded", () => {
     // SETTINGS LOAD FIX
     // =========================
 
-    const user = Storage.get("currentUser");
+   const user = Storage.get("currentUser");
 
-    if (user) {
-        const users = Storage.get("users", {});
-        const settings = users[user]?.settings;
+if (user) {
+    const users = Storage.get("users", {});
+    const settings = users[user]?.settings;
 
-        if (settings) {
-            if (settings.language) {
-                applyLanguage(settings.language);
-            }
+    if (settings) {
+        initSettings(); // сначала загрузка UI
 
-            if (initSettings) {
-                initSettings();
-            }
+        if (settings.language) {
+            applyLanguage(settings.language);
         }
     }
-});
+}
