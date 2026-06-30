@@ -5,7 +5,7 @@ import { setSoundState } from "./soundManager.js";
 import { makeWindowDraggable, bringToFront } from "./windowManager.js";
 import { nextCam } from "./camera.js";
 import { openExplorer } from "./explorer.js";
-import { initSettings, applyLanguage } from "./settings.js";
+import { initSettings } from "./settings.js";
 import { Storage } from "./storage.js";
 import { initMrSmile } from "./mrsmile.js";
 import { initMemory } from "./mrsmileMemory.js";
