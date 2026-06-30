@@ -196,11 +196,52 @@
 
         </button>
 
+        <button onclick="openApp('settings')">
+    ⚙ SETTINGS
+</button>
+
     </aside>
 
     <!-- Workspace -->
 
     <section id="workspace">
+
+        <!-- ==================================
+        SETTINGS WINDOW
+=================================== -->
+
+<div id="settingsWindow" class="window hidden">
+
+    <div class="windowHeader">
+
+        <div class="windowTitle">
+            ⚙ SETTINGS
+        </div>
+
+        <div class="windowControls">
+
+            <button onclick="closeApp('settings')">✕</button>
+
+        </div>
+
+    </div>
+
+    <div class="windowBody">
+
+        <label>Language</label>
+        <select id="language">
+            <option value="en">English</option>
+            <option value="ru">Русский</option>
+        </select>
+
+        <br><br>
+
+        <label>Volume</label>
+        <input id="volume" type="range" min="0" max="1" step="0.01">
+
+    </div>
+
+</div>
 
          <!-- ==================================
             LOG DATABASE
