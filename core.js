@@ -155,12 +155,4 @@ window.addEventListener("DOMContentLoaded", () => {
     initLogin();
     bootSystem();
 
-        const user = Storage.get("currentUser");
-        if (user) {
-          
-  initSettings(); // загрузка громкости + языка
-  applyLanguage(
-    Storage.get("users")[user].settings.language
-  );
-}
 });
