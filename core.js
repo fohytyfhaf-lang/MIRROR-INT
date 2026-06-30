@@ -194,16 +194,16 @@ function bootSystem() {
 
 window.addEventListener("DOMContentLoaded", () => {
 
-    // скрываем login сразу
+    const bootScreen = document.getElementById("bootScreen");
+    const loginScreen = document.getElementById("loginScreen");
+
+    if (!bootScreen || !loginScreen) {
+        console.error("BOOT ERROR: missing elements");
+        return;
+    }
+
     loginScreen.classList.add("hidden");
 
     startBoot();
-
-    initLogin();
-    bootSystem();
-
-    updateClock();
-    setInterval(updateClock, 1000);
-});
 
 });
