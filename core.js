@@ -14,7 +14,7 @@ import { initMrSmileChat } from "./mrsmileChat.js";
 import { initMrSmileEvents } from "./mrsmileEvents.js";
 import { forceEnableMrSmile, forceDisableMrSmile } from "./mrsmile.js";
 import { knowledgeInit } from "./knowledge.js";
-import { applyLanguage } from "./language.js";
+import { initSettings, applyLanguage } from "./settings.js";
 import { Storage } from "./storage.js";
 /* =========================
         GLOBAL
