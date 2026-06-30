@@ -398,3 +398,32 @@ body {
   50% { opacity: 0.4; }
   100% { opacity: 1; }
 }
+
+.personCard {
+  background: rgba(0,0,0,0.6);
+  border: 1px solid #444;
+  padding: 10px;
+  margin: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.personCard:hover {
+  transform: scale(1.02);
+  border-color: #00ffcc;
+}
+
+.personHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge {
+  font-size: 12px;
+  color: #00ffcc;
+}
+
+.personProfile {
+  padding: 10px;
+}
