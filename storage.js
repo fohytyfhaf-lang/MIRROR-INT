@@ -1,14 +1,26 @@
 export const Storage = {
   get(key, fallback = null) {
-    const value = localStorage.getItem(key);
-    return value ? JSON.parse(value) : fallback;
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : fallback;
   },
 
   set(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
-  },
-
-  remove(key) {
-    localStorage.removeItem(key);
   }
 };
+{
+  admin: {
+    password: "0000",
+    settings: {
+      language: "en",
+      volume: 0.4
+
+      operator:{
+        password: "0404",
+    settings: {
+      language: "en",
+      volume: 0.4
+    }
+  }
+}
+{
