@@ -323,3 +323,49 @@ body {
     flex-direction: column;
     gap: 10px;
 }
+
+/* =========================
+        BOOT SCREEN
+========================= */
+
+#bootScreen {
+    position: fixed;
+    inset: 0;
+    background: black;
+    color: #4fd8ff;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+}
+
+#bootLogo {
+    font-size: 28px;
+    letter-spacing: 6px;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px #4fd8ff;
+}
+
+#bootText {
+    font-size: 12px;
+    width: 60%;
+    height: 120px;
+    overflow: hidden;
+    opacity: 0.8;
+}
+
+#bootBar {
+    width: 60%;
+    height: 8px;
+    border: 1px solid #2a4b63;
+    margin-top: 20px;
+}
+
+#bootProgress {
+    width: 0%;
+    height: 100%;
+    background: #4fd8ff;
+    transition: width 0.2s;
+}
