@@ -194,10 +194,16 @@ function bootSystem() {
 
 window.addEventListener("DOMContentLoaded", () => {
 
+    // скрываем login сразу
+    loginScreen.classList.add("hidden");
+
+    startBoot();
+
     initLogin();
     bootSystem();
 
     updateClock();
     setInterval(updateClock, 1000);
+});
 
 });
