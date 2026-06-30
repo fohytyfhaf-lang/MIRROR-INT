@@ -1,16 +1,11 @@
-/* =========================
-        IMPORTS
-========================= */
-
 import { loginSystem } from "./login.js";
 import { playMusic } from "./audio.js";
 import { runCommand } from "./console.js";
 import { setSoundState } from "./soundManager.js";
-import { listFiles, readFile } from "./filesystem.js";
 import { makeWindowDraggable, bringToFront } from "./windowManager.js";
-import { getFile } from "./secretOrg.js";
 import { nextCam } from "./camera.js";
 import { openExplorer } from "./explorer.js";
+
 import { initMrSmile } from "./mrsmile.js";
 import { initMemory } from "./mrsmileMemory.js";
 import { loadTrust } from "./mrsmileTrust.js";
@@ -22,122 +17,105 @@ import { forceEnableMrSmile, forceDisableMrSmile } from "./mrsmile.js";
 import { knowledgeInit } from "./knowledge.js";
 
 /* =========================
-        GLOBAL EXPORTS
+        GLOBAL
 ========================= */
 
 window.playMusic = playMusic;
-window.setSoundState = setSoundState;
 window.runCommand = runCommand;
-window.listFiles = listFiles;
-window.readFile = readFile;
+window.setSoundState = setSoundState;
 window.makeWindowDraggable = makeWindowDraggable;
 window.bringToFront = bringToFront;
-window.getFile = getFile;
 window.nextCam = nextCam;
 
 /* =========================
-        WINDOW SYSTEM (FIXED)
+        WINDOWS
 ========================= */
 
 function openApp(name) {
     const win = document.getElementById(name + "Window");
-
     if (!win) return;
 
     win.classList.remove("hidden");
     bringToFront(win);
     makeWindowDraggable(win);
 
-    if (name === "files") {
-        openExplorer();
-    }
+    if (name === "files") openExplorer();
 
-    if (name === "console") {
-        setSoundState("console");
-    } else if (name === "camera") {
-        setSoundState("camera");
-    } else {
-        setSoundState("desktop");
-    }
+    setSoundState(name === "console" ? "console"
+        : name === "camera" ? "camera"
+        : "desktop");
 }
 
 function closeApp(name) {
     const win = document.getElementById(name + "Window");
+    if (win) win.classList.add("hidden");
 
-    if (!win) return;
-
-    win.classList.add("hidden");
     setSoundState("desktop");
 }
 
 window.openApp = openApp;
 window.closeApp = closeApp;
 
-
-
 /* =========================
-        BOOT SCREEN LOGIC
+        BOOT
 ========================= */
 
-const bootScreen = document.getElementById("bootScreen");
-const bootText = document.getElementById("bootText");
-const bootProgress = document.getElementById("bootProgress");
-const loginScreen = document.getElementById("loginScreen");
-
-const bootLines = [
-    "[SYSTEM] Initializing OMEGA core...",
-    "[SYSTEM] Loading security modules...",
-    "[SYSTEM] Checking database integrity...",
-    "[SYSTEM] Connecting to main server...",
-    "[SYSTEM] Loading MR.SMILE subsystem...",
-    "[SYSTEM] Warning: unknown anomaly detected...",
-    "[SYSTEM] Boot sequence almost complete..."
-];
-
 function startBoot() {
+    const boot = document.getElementById("bootScreen");
+    const login = document.getElementById("loginScreen");
+    const text = document.getElementById("bootText");
+    const bar = document.getElementById("bootProgress");
+
+    if (!boot || !login) return;
+
+    const lines = [
+        "Initializing OMEGA...",
+        "Loading modules...",
+        "Connecting systems...",
+        "Starting MR.SMILE...",
+        "Boot complete"
+    ];
+
     let i = 0;
-    let progress = 0;
+    let p = 0;
 
-    const textInterval = setInterval(() => {
-        if (i < bootLines.length) {
-            bootText.innerHTML += bootLines[i] + "<br>";
-            i++;
+    const t = setInterval(() => {
+        if (i < lines.length) {
+            text.innerHTML += lines[i++] + "<br>";
         }
-    }, 600);
+    }, 500);
 
-    const progressInterval = setInterval(() => {
-        progress += 5;
-        bootProgress.style.width = progress + "%";
+    const b = setInterval(() => {
+        p += 5;
+        if (bar) bar.style.width = p + "%";
 
-        if (progress >= 100) {
-            clearInterval(progressInterval);
-            clearInterval(textInterval);
+        if (p >= 100) {
+            clearInterval(t);
+            clearInterval(b);
 
             setTimeout(() => {
-                bootScreen.style.display = "none";
-                loginScreen.classList.remove("hidden");
+                boot.style.display = "none";
+                login.classList.remove("hidden");
             }, 500);
         }
-    }, 150);
+    }, 120);
 }
 
-
-
 /* =========================
-        LOGIN SYSTEM INIT (FIXED)
+        LOGIN
 ========================= */
 
 function initLogin() {
     const btn = document.getElementById("loginBtn");
 
-    if (btn) {
-        btn.addEventListener("click", loginSystem);
-    }
+    if (!btn) return;
+
+    btn.addEventListener("click", loginSystem);
 
     document.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
-            const screen = document.getElementById("loginScreen");
-            if (screen && !screen.classList.contains("hidden")) {
+            const login = document.getElementById("loginScreen");
+            if (login && !login.classList.contains("hidden")) {
                 loginSystem();
             }
         }
@@ -145,22 +123,7 @@ function initLogin() {
 }
 
 /* =========================
-        CLOCK (FIXED)
-========================= */
-
-function updateClock() {
-    const clock = document.getElementById("clock");
-    if (!clock) return;
-
-    const now = new Date();
-    const h = String(now.getHours()).padStart(2, "0");
-    const m = String(now.getMinutes()).padStart(2, "0");
-
-    clock.textContent = `${h}:${m}`;
-}
-
-/* =========================
-        SYSTEM BOOT
+        SYSTEM INIT
 ========================= */
 
 function bootSystem() {
@@ -173,37 +136,20 @@ function bootSystem() {
 
     if (knowledgeInit) knowledgeInit();
 
-    setTimeout(() => {
-        openApp("logs");
-        console.log("[OMEGA] SYSTEM MODULE ACTIVE");
-    }, 2000);
-
     window.MRSMILE = {
         start: forceEnableMrSmile,
         stop: forceDisableMrSmile,
         chat: mrSmileSay,
         initChat: initMrSmileChat
     };
-
-    console.log("[OMEGA] MR.SMILE READY");
 }
 
 /* =========================
-        STARTUP (ONLY ONCE)
+        START
 ========================= */
 
 window.addEventListener("DOMContentLoaded", () => {
-
-    const bootScreen = document.getElementById("bootScreen");
-    const loginScreen = document.getElementById("loginScreen");
-
-    if (!bootScreen || !loginScreen) {
-        console.error("BOOT ERROR: missing elements");
-        return;
-    }
-
-    loginScreen.classList.add("hidden");
-
     startBoot();
-
+    initLogin();
+    bootSystem();
 });
