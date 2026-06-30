@@ -374,11 +374,27 @@ body {
   transition: 0.2s;
 }
 
+/* глитч */
 #clock.glitch {
   color: #ff0033;
-  text-shadow:
-    2px 0 red,
-    -2px 0 cyan;
+  text-shadow: 2px 0 red, -2px 0 cyan;
   transform: translateX(1px);
-  filter: blur(0.5px);
+}
+
+/* тревога */
+#clock.danger {
+  color: red;
+  animation: pulseRed 1s infinite;
+}
+
+/* MR.SMILE режим */
+#clock.smile {
+  color: #00ff99;
+  text-shadow: 0 0 8px #00ff99;
+}
+
+@keyframes pulseRed {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
 }
