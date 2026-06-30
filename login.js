@@ -41,6 +41,7 @@ export function loginSystem() {
 
   if (status) status.textContent = "WELCOME " + u;
 
+  Storage.set("currentUser", u);
   
   if (u === "admin") setRole("admin");
   else if (u === "operator") setRole("operator");
