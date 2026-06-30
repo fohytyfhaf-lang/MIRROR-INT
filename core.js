@@ -155,4 +155,24 @@ window.addEventListener("DOMContentLoaded", () => {
     initLogin();
     bootSystem();
 
+    // =========================
+    // SETTINGS LOAD FIX
+    // =========================
+
+    const user = Storage.get("currentUser");
+
+    if (user) {
+        const users = Storage.get("users", {});
+        const settings = users[user]?.settings;
+
+        if (settings) {
+            if (settings.language) {
+                applyLanguage(settings.language);
+            }
+
+            if (initSettings) {
+                initSettings();
+            }
+        }
+    }
 });
