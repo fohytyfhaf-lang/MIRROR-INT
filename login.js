@@ -41,7 +41,6 @@ export function loginSystem() {
 
   if (status) status.textContent = "WELCOME " + u;
 
-  Storage.set("currentUser", u);
   
   if (u === "admin") setRole("admin");
   else if (u === "operator") setRole("operator");
@@ -50,6 +49,8 @@ export function loginSystem() {
   setTimeout(() => {
     if (loginScreen) loginScreen.classList.add("hidden");
     if (desktop) desktop.classList.remove("hidden");
+
+    Storage.set("currentUser", u);
 
     try {
       playMusic("background.mp3", 0.4);
