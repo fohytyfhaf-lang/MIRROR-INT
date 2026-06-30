@@ -1,324 +1,564 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>OMEGA SYSTEM</title>
+    <title>OMEGA SYSTEM</title>
 
-<link rel="icon" href="favicon.png">
-<link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
 
 </head>
 
 <body>
 
-<audio id="bgm"></audio>
+    <!-- ==========================
+            GLOBAL AUDIO
+    =========================== -->
 
-<!-- ===========================
-     LOGIN
-============================ -->
+    <audio id="bgm" loop></audio>
+    <audio id="sfx"></audio>
 
-<section id="loginScreen">
+    <!-- ==========================
+            LOGIN SCREEN
+    =========================== -->
 
-<div id="loginBackground"></div>
+    <section id="loginScreen">
 
-<div id="loginBox">
+        <div id="loginBackground"></div>
 
-<div class="loginLogo">
+        <div id="loginBox">
 
-<img src="logo.png">
+            <div class="loginLogo">
 
-<h1>OMEGA</h1>
+                <img src="logo.png" alt="OMEGA Logo">
 
-<p>SECRET ORGANIZATION TERMINAL</p>
+                <h1>OMEGA</h1>
 
-</div>
+                <p>SECRET ORGANIZATION TERMINAL</p>
 
-<input id="user" placeholder="USERNAME">
+            </div>
 
-<input id="pass" type="password" placeholder="PASSWORD">
+            <div class="loginFields">
 
-<button id="loginBtn">
+                <input
+                    id="user"
+                    type="text"
+                    placeholder="USERNAME">
 
-LOGIN
+                <input
+                    id="pass"
+                    type="password"
+                    placeholder="PASSWORD">
 
-</button>
+                <button id="loginBtn">
 
-<p id="status"></p>
+                    LOGIN
 
-</div>
+                </button>
 
-</section>
+                <p id="status">
 
-<!-- ===========================
-     DESKTOP
-============================ -->
+                    Awaiting authorization...
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+     <!-- ==========================
+        DESKTOP
+========================== -->
 
 <main id="desktop" class="hidden">
 
-<!-- Background -->
+    <!-- Background -->
 
-<div id="desktopBackground"></div>
+    <div id="desktopBackground"></div>
 
-<!-- HUD -->
+    <!-- Desktop Icons -->
 
-<header id="topBar">
+    <div id="icons"></div>
 
-<div id="omegaLogo">
+    <!-- Top Bar -->
 
-<img src="logo.png">
+    <header id="topBar">
 
-<div>
+        <div id="omegaLogo">
 
-<h2>OMEGA SYSTEM</h2>
+            <img src="logo.png" alt="OMEGA">
 
-<span>AUTHORIZED ACCESS ONLY</span>
+            <div>
+
+                <h2>OMEGA SYSTEM</h2>
+
+                <span>AUTHORIZED ACCESS ONLY</span>
+
+            </div>
+
+        </div>
+
+        <div id="systemInfo">
+
+            <div class="systemItem">
+
+                STATUS
+
+                <span>
+
+                    <span id="statusLight"></span>
+
+                    ONLINE
+
+                </span>
+
+            </div>
+
+            <div class="systemItem">
+
+                TIME
+
+                <span id="clock">
+
+                    00:00
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <!-- Sidebar -->
+
+    <aside id="sidebar">
+
+        <div class="menuTitle">
+
+            MODULES
+
+        </div>
+
+        <button onclick="openApp('logs')">
+
+            📄 LOG DATABASE
+
+        </button>
+
+        <button onclick="openApp('files')">
+
+            🗂 FILE EXPLORER
+
+        </button>
+
+        <button onclick="openApp('camera')">
+
+            📷 CAMERAS
+
+        </button>
+
+        <button onclick="openApp('console')">
+
+            ⌨ SYSTEM CONSOLE
+
+        </button>
+
+        <button onclick="openApp('personnel')">
+
+            👤 PERSONNEL
+
+        </button>
+
+        <button onclick="openApp('research')">
+
+            🧪 RESEARCH
+
+        </button>
+
+    </aside>
+
+    <!-- Workspace -->
+
+    <section id="workspace">
+
+         <!-- ==================================
+            LOG DATABASE
+=================================== -->
+
+<div id="logsWindow"
+     class="window hidden">
+
+    <div class="windowHeader">
+
+        <div class="windowTitle">
+
+            📄 LOG DATABASE
+
+        </div>
+
+        <div class="windowControls">
+
+            <button onclick="minimizeWindow('logs')">─</button>
+
+            <button onclick="maximizeWindow('logs')">□</button>
+
+            <button onclick="closeApp('logs')">✕</button>
+
+        </div>
+
+    </div>
+
+    <div class="windowBody">
+
+        <div id="chatLog" class="chat"></div>
+
+    </div>
+
+    <div class="windowFooter">
+
+        <input
+            id="chatInput"
+            type="text"
+            placeholder="Enter message...">
+
+        <button id="sendBtn">
+
+            SEND
+
+        </button>
+
+    </div>
 
 </div>
 
-</div>
-
-<div id="systemInfo">
-
-<div>
-
-STATUS
-
-<span id="statusLight"></span>
-
-</div>
-
-<div>
-
-TIME
-
-<span id="clock">00:00</span>
-
-</div>
-
-</div>
-
-</header>
-
-<!-- Left panel -->
-
-<aside id="sidebar">
-
-<div class="menuTitle">
-
-MODULES
-
-</div>
-
-<button onclick="openApp('logs')">
-
-📄 LOGS
-
-</button>
-
-<button onclick="openApp('files')">
-
-🗂 FILES
-
-</button>
-
-<button onclick="openApp('camera')">
-
-📷 CAMERAS
-
-</button>
-
-<button onclick="openApp('console')">
-
-⌨ CONSOLE
-
-</button>
-
-</aside>
-
-<!-- Desktop content -->
-
-<section id="workspace">
-
-<!-- LOGS -->
-
-<div id="logsWindow" class="window hidden">
-
-<div class="windowHeader">
-
-<span>
-
-LOG DATABASE
-
-</span>
-
-<button onclick="closeApp('logs')">
-
-✕
-
-</button>
-
-</div>
-
-<div id="chatLog" class="chat"></div>
-
-<div class="chatInput">
-
-<input
-id="chatInput"
-placeholder="TYPE MESSAGE">
-
-<button id="sendBtn">
-
-SEND
-
-</button>
-
-</div>
-
-</div>
-
-<!-- FILES -->
+         <!-- ==================================
+            FILE EXPLORER
+=================================== -->
 
 <div id="filesWindow" class="window hidden">
 
-<div class="windowHeader">
+    <div class="windowHeader">
 
-<span>
+        <div class="windowTitle">
+            🗂 FILE EXPLORER
+        </div>
 
-FILE EXPLORER
+        <div class="windowControls">
 
-</span>
+            <button onclick="minimizeWindow('files')">─</button>
 
-<button onclick="closeApp('files')">
+            <button onclick="maximizeWindow('files')">□</button>
 
-✕
+            <button onclick="closeApp('files')">✕</button>
 
-</button>
+        </div>
+
+    </div>
+
+    <div class="windowBody">
+
+        <div id="pathBar">
+            /OMEGA/DATABASE
+        </div>
+
+        <button id="backButton" onclick="goBack()">
+
+            ⬅ BACK
+
+        </button>
+
+        <div id="filesList"></div>
+
+    </div>
 
 </div>
 
-<div id="pathBar">
-
-/files
-
-</div>
-
-<button onclick="goBack()">
-
-⬅ BACK
-
-</button>
-
-<div id="filesList"></div>
-
-</div>
-
-<!-- CAMERA -->
+         <!-- ==================================
+            CAMERAS
+=================================== -->
 
 <div id="cameraWindow" class="window hidden">
 
-<div class="windowHeader">
+    <div class="windowHeader">
 
-<span>
+        <div class="windowTitle">
 
-SECURITY CAMERAS
+            📷 SECURITY CAMERAS
 
-</span>
+        </div>
 
-<button onclick="closeApp('camera')">
+        <div class="windowControls">
 
-✕
+            <button onclick="minimizeWindow('camera')">─</button>
 
-</button>
+            <button onclick="maximizeWindow('camera')">□</button>
+
+            <button onclick="closeApp('camera')">✕</button>
+
+        </div>
+
+    </div>
+
+    <div class="windowBody">
+
+        <div id="cameraView">
+
+            NO SIGNAL
+
+        </div>
+
+    </div>
+
+    <div class="windowFooter">
+
+        <button onclick="previousCam()">
+
+            ◀ PREVIOUS
+
+        </button>
+
+        <button onclick="nextCam()">
+
+            NEXT ▶
+
+        </button>
+
+    </div>
 
 </div>
 
-<div id="cameraView">
-
-NO SIGNAL
-
-</div>
-
-<button onclick="nextCam()">
-
-NEXT CAMERA
-
-</button>
-
-</div>
-
-<!-- CONSOLE -->
+         <!-- ==================================
+            SYSTEM CONSOLE
+=================================== -->
 
 <div id="consoleWindow" class="window hidden">
 
-<div class="windowHeader">
+    <div class="windowHeader">
 
-<span>
+        <div class="windowTitle">
 
-SYSTEM CONSOLE
+            ⌨ SYSTEM CONSOLE
 
-</span>
+        </div>
 
-<button onclick="closeApp('console')">
+        <div class="windowControls">
 
-✕
+            <button onclick="minimizeWindow('console')">─</button>
 
-</button>
+            <button onclick="maximizeWindow('console')">□</button>
 
-</div>
+            <button onclick="closeApp('console')">✕</button>
 
-<pre id="consoleLog"></pre>
+        </div>
 
-<div class="consoleInput">
+    </div>
 
-<input
-id="consoleInput"
-placeholder="ENTER COMMAND">
+    <div class="windowBody">
 
-<button id="consoleEnter">
+        <pre id="consoleLog"></pre>
 
-RUN
+    </div>
 
-</button>
+    <div class="windowFooter">
 
-</div>
+        <input
+            id="consoleInput"
+            type="text"
+            placeholder="Enter command...">
 
-</div>
+        <button id="consoleEnter">
 
-</section>
+            RUN
 
-<!-- Footer -->
+        </button>
 
-<footer id="bottomBar">
-
-<div>
-
-SECURITY LEVEL
-
-<b>
-
-OMEGA
-
-</b>
+    </div>
 
 </div>
 
-<div>
+       <!-- ==================================
+            PERSONNEL
+=================================== -->
 
-CONNECTED
+<div id="personnelWindow" class="window hidden">
+
+    <div class="windowHeader">
+
+        <div class="windowTitle">
+            👤 PERSONNEL DATABASE
+        </div>
+
+        <div class="windowControls">
+
+            <button onclick="minimizeWindow('personnel')">─</button>
+            <button onclick="maximizeWindow('personnel')">□</button>
+            <button onclick="closeApp('personnel')">✕</button>
+
+        </div>
+
+    </div>
+
+    <div class="windowBody">
+
+        <div id="personnelList">
+
+            <!-- JavaScript заполнит сотрудников -->
+
+        </div>
+
+    </div>
 
 </div>
 
-</footer>
+         <!-- ==================================
+            RESEARCH
+=================================== -->
 
-</main>
+<div id="researchWindow" class="window hidden">
 
-<div id="eyesLayer"></div>
+    <div class="windowHeader">
 
-<script type="module" src="core.js"></script>
+        <div class="windowTitle">
+
+            🧪 RESEARCH ARCHIVE
+
+        </div>
+
+        <div class="windowControls">
+
+            <button onclick="minimizeWindow('research')">─</button>
+            <button onclick="maximizeWindow('research')">□</button>
+            <button onclick="closeApp('research')">✕</button>
+
+        </div>
+
+    </div>
+
+    <div class="windowBody">
+
+        <div id="researchList">
+
+        </div>
+
+    </div>
+
+</div>
+
+         <!-- ==================================
+            ANOMALIES
+=================================== -->
+
+<div id="anomalyWindow" class="window hidden">
+
+    <div class="windowHeader">
+
+        <div class="windowTitle">
+
+            🧬 ANOMALY DATABASE
+
+        </div>
+
+        <div class="windowControls">
+
+            <button onclick="minimizeWindow('anomaly')">─</button>
+            <button onclick="maximizeWindow('anomaly')">□</button>
+            <button onclick="closeApp('anomaly')">✕</button>
+
+        </div>
+
+    </div>
+
+    <div class="windowBody">
+
+        <div id="anomalyList">
+
+        </div>
+
+    </div>
+
+</div>
+
+         <!-- ==================================
+            COMMUNICATIONS
+=================================== -->
+
+<div id="communicationsWindow" class="window hidden">
+<!-- ==================================
+        DOCUMENT VIEWER
+=================================== -->
+
+<div id="documentWindow" class="window hidden">
+
+    <div class="windowHeader">
+
+        <div class="windowTitle">
+            📄 DOCUMENT
+        </div>
+
+        <div class="windowControls">
+
+            <button onclick="closeApp('document')">✕</button>
+
+        </div>
+
+    </div>
+
+    <div class="windowBody">
+
+        <div id="documentContent">
+
+            Select a file...
+
+        </div>
+
+    </div>
+
+</div>
+     <div id="notificationArea"></div>
+
+     <div id="eyesLayer"></div>
+
+<div id="mrsmileEntity"></div>
+
+<div id="glitchLayer"></div>
+     
+    <div class="windowHeader">
+
+        <div class="windowTitle">
+
+            📡 INTERNAL COMMUNICATION
+
+        </div>
+
+        <div class="windowControls">
+
+            <button onclick="minimizeWindow('communications')">─</button>
+            <button onclick="maximizeWindow('communications')">□</button>
+            <button onclick="closeApp('communications')">✕</button>
+
+        </div>
+
+    </div>
+
+    <div class="windowBody">
+
+        <div id="messages">
+
+        </div>
+
+    </div>
+
+</div>
+
+         <script type="module" src="core.js"></script>
 
 </body>
 </html>
+         
