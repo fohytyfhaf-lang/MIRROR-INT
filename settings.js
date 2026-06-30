@@ -1,23 +1,62 @@
 import { Storage } from "./storage.js";
 
-export function getUser() {
-  return Storage.get("currentUser");
+/* =========================
+        LANGUAGE PACK
+========================= */
+
+const langPack = {
+  en: {
+    login: "LOGIN",
+    username: "USERNAME",
+    password: "PASSWORD"
+  },
+  ru: {
+    login: "ВХОД",
+    username: "ИМЯ ПОЛЬЗОВАТЕЛЯ",
+    password: "ПАРОЛЬ"
+  }
+};
+
+/* =========================
+        APPLY LANGUAGE
+========================= */
+
+export function applyLanguage(lang) {
+  if (!lang) return;
+
+  const loginBtn = document.getElementById("loginBtn");
+  const user = document.getElementById("user");
+  const pass = document.getElementById("pass");
+
+  const pack = langPack[lang];
+  if (!pack || !loginBtn || !user || !pass) return;
+
+  loginBtn.textContent = pack.login;
+  user.placeholder = pack.username;
+  pass.placeholder = pack.password;
 }
 
-export function getUsers() {
-  return Storage.get("users", {});
-}
+/* =========================
+        INIT SETTINGS
+========================= */
 
-export function saveUsers(users) {
-  Storage.set("users", users);
-}
+export function initSettings() {
+  const currentUser = Storage.get("currentUser");
+  const users = Storage.get("users", {});
 
-export function setSetting(key, value) {
-  const user = getUser();
-  const users = getUsers();
+  if (!currentUser || !users[currentUser]) return;
 
-  if (!user || !users[user]) return;
+  const settings = users[currentUser].settings || {};
 
-  users[user].settings[key] = value;
-  saveUsers(users);
+  if (settings.language) {
+    applyLanguage(settings.language);
+  }
+
+  const volumeSlider = document.getElementById("volume");
+  const audio = document.getElementById("bgm");
+
+  if (volumeSlider && audio && settings.volume != null) {
+    volumeSlider.value = settings.volume;
+    audio.volume = settings.volume;
+  }
 }
