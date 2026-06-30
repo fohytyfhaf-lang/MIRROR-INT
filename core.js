@@ -150,6 +150,14 @@ function bootSystem() {
 ========================= */
 
 window.addEventListener("DOMContentLoaded", () => {
+        const user = Storage.get("currentUser");
+
+if (user) {
+  initSettings(); // загрузка громкости + языка
+  applyLanguage(
+    Storage.get("users")[user].settings.language
+  );
+}
     startBoot();
     initLogin();
     bootSystem();
