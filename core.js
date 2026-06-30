@@ -18,6 +18,7 @@ import { initSettings, applyLanguage } from "./settings.js";
 import { Storage } from "./storage.js";
 import { startClock } from "./clock.js";
 import { initPersonnel } from "./personnel.js";
+import { initResearch } from "./research.js";
 /* =========================
         GLOBAL
 ========================= */
@@ -146,6 +147,7 @@ function bootSystem() {
     initMrSmile();
         updateClock(); 
         initPersonnel();
+        initResearch();
     initMemory();
     loadTrust();
     updatePersonality();
