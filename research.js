@@ -101,7 +101,6 @@ export function initResearch() {
 /* =========================
    RENDER
 ========================= */
-
 function render(data) {
   const list = document.getElementById("researchList");
   if (!list) return;
@@ -114,20 +113,22 @@ function render(data) {
 
     el.innerHTML = `
       <div class="researchHeader">
-        <span class="researchId">${item.id}</span>
+        <span class="researchName">${item.name}</span>
         <span class="researchStatus">${item.status}</span>
       </div>
 
-      <div class="researchTitle">${item.title}</div>
+      <div><b>TYPE:</b> ${item.type}</div>
+      <div><b>DANGER:</b> ${item.danger}</div>
 
-      <div class="researchDesc">${item.description}</div>
-
-      <div class="researchLevel">LEVEL: ${item.level}</div>
+      <div class="researchDesc">
+        ${item.description}
+      </div>
     `;
 
     list.appendChild(el);
   });
 }
+
 
 /* =========================
    ADD ENTRY (for MR.SMILE later)
