@@ -16,6 +16,7 @@ import { forceEnableMrSmile, forceDisableMrSmile } from "./mrsmile.js";
 import { knowledgeInit } from "./knowledge.js";
 import { initSettings, applyLanguage } from "./settings.js";
 import { Storage } from "./storage.js";
+import { initClock } from "./clock.js";
 /* =========================
         GLOBAL
 ========================= */
