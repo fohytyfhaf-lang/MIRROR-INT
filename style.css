@@ -1,20 +1,21 @@
 /* =========================
-        OMEGA SYSTEM UI
+        ROOT THEME
 ========================= */
 
 :root {
-    --bg: #05080d;
-    --panel: rgba(12, 18, 26, 0.92);
-    --panel2: #0f1722;
-    --border: #2a4b63;
+    --bg: #05070c;
+    --panel: rgba(10, 16, 24, 0.92);
+    --panel2: #0b1220;
+    --border: #23364a;
     --text: #cfe9ff;
     --accent: #4fd8ff;
     --danger: #ff3b3b;
-    --shadow: 0 0 20px rgba(0, 200, 255, 0.08);
+    --good: #00ff99;
+    --shadow: 0 0 25px rgba(0, 200, 255, 0.08);
 }
 
 /* =========================
-        GLOBAL
+        RESET
 ========================= */
 
 * {
@@ -31,11 +32,7 @@ body {
 }
 
 /* =========================
-        LOGIN SCREEN
-========================= */
-
-/* =========================
-        LOGIN FIX
+        LOGIN
 ========================= */
 
 #loginScreen {
@@ -44,98 +41,17 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: radial-gradient(circle at center, #0b1620, #05080d);
+    background: radial-gradient(circle, #0b1620, #05070c);
 }
 
 #loginBox {
     width: 360px;
     padding: 30px;
-    background: rgba(10, 18, 26, 0.95);
-    border: 1px solid #2a4b63;
-    border-radius: 10px;
-    box-shadow: 0 0 25px rgba(0, 200, 255, 0.08);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
     text-align: center;
-}
-
-/* ===== LOGO BLOCK ===== */
-
-.loginLogo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.loginLogo img {
-    width: 64px;
-    height: 64px;
-    object-fit: contain;
-    margin-bottom: 10px;
-    filter: drop-shadow(0 0 10px #4fd8ff);
-}
-
-.loginLogo h1 {
-    margin: 0;
-    font-size: 22px;
-    letter-spacing: 6px;
-    color: #cfe9ff;
-}
-
-.loginLogo p {
-    margin: 5px 0 0 0;
-    font-size: 11px;
-    letter-spacing: 2px;
-    opacity: 0.7;
-}
-
-/* ===== INPUTS ===== */
-
-.loginFields {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.loginFields input {
-    width: 100%;
-    padding: 10px;
-    background: #0b1219;
-    border: 1px solid #2a4b63;
-    color: white;
-    outline: none;
-    font-size: 13px;
-    letter-spacing: 1px;
-}
-
-.loginFields input:focus {
-    border-color: #4fd8ff;
-    box-shadow: 0 0 8px rgba(79, 216, 255, 0.3);
-}
-
-/* ===== BUTTON ===== */
-
-#loginBtn {
-    padding: 10px;
-    background: #4fd8ff;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    letter-spacing: 2px;
-    margin-top: 5px;
-    transition: 0.2s;
-}
-
-#loginBtn:hover {
-    filter: brightness(1.2);
-}
-
-/* ===== STATUS TEXT ===== */
-
-#status {
-    margin-top: 10px;
-    font-size: 11px;
-    opacity: 0.7;
-    letter-spacing: 1px;
+    border-radius: 8px;
 }
 
 /* =========================
@@ -145,7 +61,7 @@ body {
 #desktop {
     position: fixed;
     inset: 0;
-    background: radial-gradient(circle at center, #0a1622, #05080d);
+    background: radial-gradient(circle at center, #0a1622, #05070c);
 }
 
 /* =========================
@@ -157,28 +73,14 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 65px;
+    height: 60px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
-    background: rgba(10, 15, 22, 0.9);
+    background: rgba(10, 14, 20, 0.9);
     border-bottom: 1px solid var(--border);
     backdrop-filter: blur(10px);
-}
-
-#omegaLogo {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-#omegaLogo img {
-    width: 40px;
-}
-
-#systemInfo {
-    font-size: 12px;
 }
 
 /* =========================
@@ -187,22 +89,22 @@ body {
 
 #sidebar {
     position: fixed;
-    top: 65px;
-    bottom: 34px;
+    top: 60px;
     left: 0;
     width: 220px;
+    bottom: 0;
     background: rgba(8, 12, 18, 0.95);
     border-right: 1px solid var(--border);
-    padding: 15px;
+    padding: 12px;
 }
 
 #sidebar button {
     width: 100%;
-    padding: 12px;
-    margin-top: 8px;
-    background: #0f1a24;
+    padding: 10px;
+    margin-bottom: 6px;
+    background: var(--panel2);
     border: 1px solid transparent;
-    color: white;
+    color: var(--text);
     text-align: left;
     cursor: pointer;
     transition: 0.2s;
@@ -210,7 +112,7 @@ body {
 
 #sidebar button:hover {
     border-left: 3px solid var(--accent);
-    background: #132331;
+    background: #122235;
 }
 
 /* =========================
@@ -219,55 +121,73 @@ body {
 
 #workspace {
     position: absolute;
-    top: 80px;
+    top: 70px;
     left: 240px;
     right: 20px;
-    bottom: 50px;
+    bottom: 20px;
 }
 
 /* =========================
-        WINDOWS
+        WINDOWS CORE
 ========================= */
 
 .window {
     position: absolute;
-    width: 500px;
-    min-height: 250px;
+    width: 520px;
+    min-height: 260px;
     background: var(--panel);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
-    border-radius: 8px;
+    border-radius: 6px;
     overflow: hidden;
 }
 
 .windowHeader {
-    height: 40px;
+    height: 38px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 10px;
-    background: #101a26;
+    background: #0d1622;
     border-bottom: 1px solid var(--border);
+    font-size: 13px;
 }
 
 .windowBody {
-    padding: 10px;
+    padding: 12px;
 }
 
 .windowFooter {
     padding: 10px;
-    background: #0d141d;
+    background: #0b121b;
     border-top: 1px solid var(--border);
     display: flex;
     gap: 10px;
 }
 
-.windowFooter input {
-    flex: 1;
+/* =========================
+        INPUTS
+========================= */
+
+input {
+    width: 100%;
     padding: 8px;
-    background: #0b1219;
+    background: #0a111a;
     border: 1px solid var(--border);
-    color: white;
+    color: var(--text);
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--accent);
+}
+
+/* =========================
+        BUTTONS
+========================= */
+
+button {
+    cursor: pointer;
 }
 
 /* =========================
@@ -275,9 +195,36 @@ body {
 ========================= */
 
 .chat {
+    font-size: 12px;
     height: 200px;
     overflow-y: auto;
-    font-size: 12px;
+}
+
+/* =========================
+        PERSONNEL
+========================= */
+
+.personCard {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid #2a3a4a;
+    padding: 10px;
+    margin-bottom: 8px;
+    transition: 0.2s;
+}
+
+.personCard:hover {
+    border-color: var(--accent);
+    transform: scale(1.01);
+}
+
+.personCard.online {
+    border-left: 3px solid var(--good);
+    animation: pulse 1s infinite;
+}
+
+.personCard.missing {
+    border-left: 3px solid var(--danger);
+    animation: glitch 0.2s infinite;
 }
 
 /* =========================
@@ -288,319 +235,61 @@ body {
     display: none;
 }
 
-/* glitch */
-#glitchLayer {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background: transparent;
-}
-
-/* eyes */
-#eyesLayer {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.2;
-}
-
-/* mr smile */
+/* MR.SMILE ENTITY */
 #mrsmileEntity {
     position: fixed;
-    bottom: 20px;
     right: 20px;
+    bottom: 20px;
     font-size: 40px;
-    opacity: 0.6;
-    pointer-events: none;
+    opacity: 0.5;
 }
 
-/* notifications */
-#notificationArea {
-    position: fixed;
-    top: 80px;
-    right: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+/* GLITCH */
+@keyframes glitch {
+    0% { transform: translate(0); }
+    25% { transform: translate(1px, -1px); }
+    50% { transform: translate(-1px, 1px); }
+    100% { transform: translate(0); }
+}
+
+/* PULSE */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
 }
 
 /* =========================
-        BOOT SCREEN
+        CLOCK
 ========================= */
 
-#bootScreen {
-    position: fixed;
-    inset: 0;
-    background: black;
-    color: #4fd8ff;
-    font-family: monospace;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 999999;
-}
-
-#bootLogo {
-    font-size: 28px;
-    letter-spacing: 6px;
-    margin-bottom: 20px;
-    text-shadow: 0 0 10px #4fd8ff;
-}
-
-#bootText {
-    font-size: 12px;
-    width: 60%;
-    height: 120px;
-    overflow: hidden;
-    opacity: 0.8;
-}
-
-#bootBar {
-    width: 60%;
-    height: 8px;
-    border: 1px solid #2a4b63;
-    margin-top: 20px;
-}
-
-#bootProgress {
-    width: 0%;
-    height: 100%;
-    background: #4fd8ff;
-    transition: width 0.2s;
-}
-
 #clock {
-  transition: 0.2s;
+    transition: 0.2s;
 }
 
-/* глитч */
 #clock.glitch {
-  color: #ff0033;
-  text-shadow: 2px 0 red, -2px 0 cyan;
-  transform: translateX(1px);
+    color: #ff0044;
+    text-shadow: 2px 0 red, -2px 0 cyan;
 }
 
-/* тревога */
 #clock.danger {
-  color: red;
-  animation: pulseRed 1s infinite;
+    color: red;
+    animation: pulse 1s infinite;
 }
 
-/* MR.SMILE режим */
 #clock.smile {
-  color: #00ff99;
-  text-shadow: 0 0 8px #00ff99;
+    color: var(--good);
+    text-shadow: 0 0 10px var(--good);
 }
 
-@keyframes pulseRed {
-  0% { opacity: 1; }
-  50% { opacity: 0.4; }
-  100% { opacity: 1; }
+/* =========================
+        SCROLLBAR
+========================= */
+
+::-webkit-scrollbar {
+    width: 6px;
 }
 
-.personCard {
-  background: rgba(0,0,0,0.6);
-  border: 1px solid #444;
-  padding: 10px;
-  margin: 8px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.personCard:hover {
-  transform: scale(1.02);
-  border-color: #00ffcc;
-}
-
-.personHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.badge {
-  font-size: 12px;
-  color: #00ffcc;
-}
-
-.personProfile {
-  padding: 10px;
-}
-
-
-.personCard.online {
-  border-left: 3px solid #00ffcc;
-  animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
-  100% { opacity: 1; }
-}
-
-
-.personCard.missing {
-  border-left: 3px solid red;
-  animation: glitch 0.2s infinite;
-}
-
-@keyframes glitch {
-  0% { transform: translate(0); }
-  25% { transform: translate(1px, -1px); }
-  50% { transform: translate(-1px, 1px); }
-  75% { transform: translate(1px, 1px); }
-  100% { transform: translate(0); }
-}
-
-/* ===========================
-   RESEARCH ARCHIVE
-=========================== */
-
-#researchLayout{
-display:flex;
-height:100%;
-}
-
-#researchSidebar{
-width:220px;
-background:#06130c;
-border-right:1px solid #00ff99;
-display:flex;
-flex-direction:column;
-}
-
-.sidebarTitle{
-padding:15px;
-font-weight:bold;
-border-bottom:1px solid #00ff99;
-}
-
-.researchCategory{
-background:none;
-border:none;
-color:#00ff99;
-padding:12px;
-text-align:left;
-cursor:pointer;
-font-family:inherit;
-}
-
-.researchCategory:hover{
-background:#00361f;
-}
-
-#researchFiles{
-width:260px;
-border-right:1px solid #00ff99;
-overflow-y:auto;
-}
-
-.researchFilesTitle{
-padding:15px;
-border-bottom:1px solid #00ff99;
-font-weight:bold;
-}
-
-#researchViewer{
-flex:1;
-display:flex;
-flex-direction:column;
-background:#04110a;
-}
-
-.viewerHeader{
-display:flex;
-justify-content:space-between;
-padding:15px;
-border-bottom:1px solid #00ff99;
-}
-
-#researchDocument{
-padding:20px;
-overflow-y:auto;
-white-space:pre-wrap;
-font-family:Consolas,monospace;
-line-height:1.6;
-}
-
-#researchStatus{
-color:#00ff99;
-}
-
-body::after{
-
-content:"";
-
-position:fixed;
-
-left:0;
-
-top:0;
-
-width:100%;
-
-height:100%;
-
-pointer-events:none;
-
-background:
-
-repeating-linear-gradient(
-
-0deg,
-
-rgba(255,255,255,.02) 0px,
-
-rgba(255,255,255,.02) 1px,
-
-transparent 2px,
-
-transparent 4px
-
-);
-
-opacity:.25;
-
-animation:scanlines .2s linear infinite;
-
-}
-
-@keyframes scanlines{
-
-from{
-
-transform:translateY(0);
-
-}
-
-to{
-
-transform:translateY(4px);
-
-}
-
-}
-
-body{
-
-text-shadow:
-
-0 0 3px rgba(0,255,170,.18);
-
-}
-
-
-
-button{
-
-cursor:pointer;
-
-}
-
-input{
-
-caret-color:#00ff99;
-
+::-webkit-scrollbar-thumb {
+    background: var(--accent);
 }
