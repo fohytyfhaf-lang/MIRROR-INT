@@ -475,36 +475,127 @@
          <!-- ==================================
             RESEARCH
 =================================== -->
-
 <div id="researchWindow" class="window hidden">
 
     <div class="windowHeader">
 
         <div class="windowTitle">
-
             🧪 RESEARCH ARCHIVE
-
         </div>
 
         <div class="windowControls">
-
             <button onclick="minimizeWindow('research')">─</button>
             <button onclick="maximizeWindow('research')">□</button>
             <button onclick="closeApp('research')">✕</button>
+        </div>
+
+    </div>
+
+    <div class="windowBody" id="researchLayout">
+
+        <!-- LEFT PANEL -->
+
+        <div id="researchSidebar">
+
+            <div class="sidebarTitle">
+                DATABASE
+            </div>
+
+            <button class="researchCategory" data-category="entities">
+                🧬 ENTITIES
+            </button>
+
+            <button class="researchCategory" data-category="projects">
+                ⚙ PROJECTS
+            </button>
+
+            <button class="researchCategory" data-category="incidents">
+                📄 INCIDENTS
+            </button>
+
+            <button class="researchCategory" data-category="personnel">
+                👤 PERSONNEL FILES
+            </button>
+
+            <button class="researchCategory" data-category="experiments">
+                🧪 EXPERIMENTS
+            </button>
+
+            <button class="researchCategory" data-category="recovered">
+                💾 RECOVERED FILES
+            </button>
+
+        </div>
+
+        <!-- FILE LIST -->
+
+        <div id="researchFiles">
+
+            <div class="researchFilesTitle">
+                SELECT CATEGORY
+            </div>
+
+        </div>
+
+        <!-- DOCUMENT -->
+
+        <div id="researchViewer">
+
+            <div class="viewerHeader">
+
+                <div>
+
+                    OMEGA RESEARCH DATABASE
+
+                </div>
+
+                <div id="researchClearance">
+
+                    CLEARANCE LEVEL II
+
+                </div>
+
+            </div>
+
+            <div id="researchDocument">
+
+WELCOME TO OMEGA DATABASE
+
+──────────────────────────────
+
+Select a category on the left.
+
+Research files will appear here.
+
+Only personnel with proper clearance
+can access classified information.
+
+──────────────────────────────
+
+STATUS : CONNECTED
+
+DATABASE : ONLINE
+
+            </div>
 
         </div>
 
     </div>
 
-    <div class="windowBody">
+    <div class="windowFooter">
 
-        <div id="researchList">
+        <span id="researchStatus">
 
-        </div>
+            DATABASE ONLINE
+
+        </span>
 
     </div>
 
 </div>
+
+
+
 
          <!-- ==================================
             ANOMALIES
