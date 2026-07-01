@@ -1,145 +1,343 @@
 import { Storage } from "./storage.js";
 
 /* =========================
-   RESEARCH DATABASE
+        RESEARCH ARCHIVE
 ========================= */
 
-const researchData = [
-  {
-    name: "KITCH",
-    type: "Entity",
-    danger: 4,
-    status: "Neutral",
-    description: `
-A living organism with tentacle-like needles containing toxin.
-Not aggressive unless provoked.
+const database = {
 
-Behavior:
-- Calm when unprovoked
-- Attacks when attacked
-- High intelligence
-    `
-  },
+    entities: {
 
-  {
-    name: "MICH",
-    type: "Entity",
-    danger: 5,
-    status: "Hostile",
-    description: `
-Blind predator relying on extreme hearing.
+        title: "🧬 ENTITIES",
 
-Behavior:
-- Attracts victims using sound mimicry
-- Extremely aggressive when target approaches
-- Cannot see, only hears
-    `
-  },
+        files: [
 
-  {
-    name: "GARDENER",
-    type: "Entity",
-    danger: 3,
-    status: "Conditional",
-    description: `
-Non-hostile unless flowers are damaged.
+            {
+                id: "ENTITY-001",
+                name: "KITCH",
+                clearance: "LEVEL II",
+                image: "images/kitch.png",
 
-Behavior:
-- Passive if environment intact
-- Becomes hostile if plants are destroyed
-- Protects biological growth
-    `
-  },
+                text: `
+KITCH
 
-  {
-    name: "SURGEON",
-    type: "Entity",
-    danger: 6,
-    status: "Dual-State",
-    description: `
-Two-headed immortal former soldier.
+STATUS
+Stable
 
-Behavior:
-- Calm during daytime
-- Night cycle triggers aggression
-- Constant hunger state
-- Extremely dangerous in combat
-    `
-  },
+DANGER
+LEVEL IV
 
-  {
-    name: "TEN",
-    type: "Entity",
-    danger: 5,
-    status: "Unknown",
-    description: `
-Unstable anomaly entity.
+DESCRIPTION
 
-Behavior:
-- Unknown patterns
-- Possible reality distortion
-- High aggression level
-    `
-  }
-];
+A calm biological organism.
 
-/* =========================
-   INIT
-========================= */
+Uses poisonous needle-like tentacles.
+
+Shows no aggression until attacked.
+
+LIKES
+
+• Books
+• Silence
+
+ABILITIES
+
+• Toxic needles
+• High regeneration
+
+NOTES
+
+Do not provoke.
+`
+            },
+
+            {
+                id: "ENTITY-002",
+                name: "MICH",
+                clearance: "LEVEL IV",
+                image: "images/mich.png",
+
+                text: `
+MICH
+
+STATUS
+Hostile
+
+DANGER
+LEVEL V
+
+DESCRIPTION
+
+Blind predator.
+
+Tracks victims through sound.
+
+Frequently imitates human voices.
+
+Do not respond to unknown calls.
+`
+            },
+
+            {
+                id: "ENTITY-003",
+                name: "GARDENER",
+                clearance: "LEVEL III",
+                image: "images/gardener.png",
+
+                text: `
+GARDENER
+
+STATUS
+
+Passive
+
+Will attack only if flowers are damaged.
+
+Protects biological zones.
+`
+            },
+
+            {
+                id: "ENTITY-004",
+                name: "SURGEON",
+                clearance: "LEVEL V",
+                image: "images/surgeon.png",
+
+                text: `
+SURGEON
+
+Former military unit.
+
+Immortal.
+
+Two heads.
+
+Always hungry.
+
+Extremely dangerous.
+`
+            },
+
+            {
+                id: "ENTITY-005",
+                name: "TEN",
+                clearance: "LEVEL V",
+                image: "images/ten.png",
+
+                text: `
+TEN
+
+Unknown anomaly.
+
+Information incomplete.
+
+Further research required.
+`
+            }
+
+        ]
+
+    },
+
+    projects: {
+
+        title: "⚙ PROJECTS",
+
+        files: [
+
+            {
+
+                id: "PR-001",
+
+                name: "Project Lazarus",
+
+                clearance: "LEVEL IV",
+
+                image: "",
+
+                text: `
+Experimental resurrection program.
+
+STATUS
+
+Suspended.
+`
+            }
+
+        ]
+
+    },
+
+    incidents: {
+
+        title: "📄 INCIDENTS",
+
+        files: [
+
+            {
+
+                id: "INC-004",
+
+                name: "Containment Failure",
+
+                clearance: "LEVEL III",
+
+                image: "",
+
+                text: `
+Containment breach.
+
+Sector C locked.
+
+Casualties:
+
+12
+`
+            }
+
+        ]
+
+    },
+
+    personnel: {
+
+        title: "👤 PERSONNEL FILES",
+
+        files: [
+
+            {
+
+                id: "EMP-001",
+
+                name: "Director",
+
+                clearance: "OMEGA",
+
+                image: "",
+
+                text: `
+Director file.
+
+ACCESS RESTRICTED.
+`
+            }
+
+        ]
+
+    },
+
+    recovered: {
+
+        title: "💾 RECOVERED FILES",
+
+        files: [
+
+            {
+
+                id: "REC-001",
+
+                name: "Unknown.txt",
+
+                clearance: "UNKNOWN",
+
+                image: "",
+
+                text: `
+██████████████
+
+:)
+
+██████████████
+`
+            }
+
+        ]
+
+    }
+
+};
+
+/* ========================= */
 
 export function initResearch() {
-  const list = document.getElementById("researchList");
-  if (!list) return;
 
-  const data = Storage.get("research", researchData);
+    const categories = document.getElementById("researchCategories");
 
-  Storage.set("research", data);
+    if (!categories) return;
 
-  render(data);
+    categories.innerHTML = "";
+
+    Object.keys(database).forEach(key => {
+
+        const btn = document.createElement("button");
+
+        btn.className = "researchCategory";
+
+        btn.innerText = database[key].title;
+
+        btn.onclick = () => loadCategory(key);
+
+        categories.appendChild(btn);
+
+    });
+
 }
 
-/* =========================
-   RENDER
-========================= */
-function render(data) {
-  const list = document.getElementById("researchList");
-  if (!list) return;
+/* ========================= */
 
-  list.innerHTML = "";
+function loadCategory(key) {
 
-  data.forEach(item => {
-    const el = document.createElement("div");
-    el.className = "researchItem";
+    const list = document.getElementById("researchFileList");
 
-    el.innerHTML = `
-      <div class="researchHeader">
-        <span class="researchName">${item.name}</span>
-        <span class="researchStatus">${item.status}</span>
-      </div>
+    list.innerHTML = "";
 
-      <div><b>TYPE:</b> ${item.type}</div>
-      <div><b>DANGER:</b> ${item.danger}</div>
+    database[key].files.forEach(file => {
 
-      <div class="researchDesc">
-        ${item.description}
-      </div>
-    `;
+        const item = document.createElement("div");
 
-    list.appendChild(el);
-  });
+        item.className = "researchFile";
+
+        item.innerHTML = `
+<b>${file.name}</b><br>
+<small>${file.id}</small>
+`;
+
+        item.onclick = () => openDocument(file);
+
+        list.appendChild(item);
+
+    });
+
 }
 
+/* ========================= */
 
-/* =========================
-   ADD ENTRY (for MR.SMILE later)
-========================= */
+function openDocument(file) {
 
-export function addResearch(entry) {
- const data = Storage.get("research", researchData);
+    document.getElementById("viewerTitle").innerText =
+        file.name;
 
-  data.unshift(entry);
+    document.getElementById("viewerLevel").innerText =
+        file.clearance;
 
-  Storage.set("research", data);
+    const image = document.getElementById("viewerImage");
 
-  render(data);
+    if (file.image) {
+
+        image.innerHTML =
+        `<img src="${file.image}">`;
+
+    } else {
+
+        image.innerHTML = "";
+
+    }
+
+    document.getElementById("viewerContent").innerText =
+        file.text;
+
 }
+
+/* ========================= */
+
+window.openResearchDocument = openDocument;
