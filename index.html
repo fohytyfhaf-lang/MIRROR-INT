@@ -475,120 +475,87 @@
          <!-- ==================================
             RESEARCH
 =================================== -->
-<div id="researchWindow" class="window hidden">
+<div class="windowBody" id="researchLayout">
 
-    <div class="windowHeader">
+    <!-- Левая колонка -->
 
-        <div class="windowTitle">
-            🧪 RESEARCH ARCHIVE
+    <div id="researchSidebar">
+
+        <div class="sidebarTitle">
+            DATABASE
         </div>
 
-        <div class="windowControls">
-            <button onclick="minimizeWindow('research')">─</button>
-            <button onclick="maximizeWindow('research')">□</button>
-            <button onclick="closeApp('research')">✕</button>
+        <button class="researchCategory" data-category="entities">
+            🧬 ENTITIES
+        </button>
+
+        <button class="researchCategory" data-category="projects">
+            ⚙ PROJECTS
+        </button>
+
+        <button class="researchCategory" data-category="incidents">
+            📄 INCIDENTS
+        </button>
+
+        <button class="researchCategory" data-category="staff">
+            👤 PERSONNEL
+        </button>
+
+        <button class="researchCategory" data-category="archive">
+            💾 ARCHIVE
+        </button>
+
+    </div>
+
+    <!-- Средняя колонка -->
+
+    <div id="researchFiles">
+
+        <div class="researchFilesTitle">
+            FILES
+        </div>
+
+        <div id="researchFileList">
+
+            Select category...
+
         </div>
 
     </div>
 
-    <div class="windowBody" id="researchLayout">
+    <!-- Правая колонка -->
 
-        <!-- LEFT PANEL -->
+    <div id="researchViewer">
 
-        <div id="researchSidebar">
+        <div class="viewerHeader">
 
-            <div class="sidebarTitle">
-                DATABASE
-            </div>
+            <span id="researchTitle">
+                OMEGA DATABASE
+            </span>
 
-            <button class="researchCategory" data-category="entities">
-                🧬 ENTITIES
-            </button>
-
-            <button class="researchCategory" data-category="projects">
-                ⚙ PROJECTS
-            </button>
-
-            <button class="researchCategory" data-category="incidents">
-                📄 INCIDENTS
-            </button>
-
-            <button class="researchCategory" data-category="personnel">
-                👤 PERSONNEL FILES
-            </button>
-
-            <button class="researchCategory" data-category="experiments">
-                🧪 EXPERIMENTS
-            </button>
-
-            <button class="researchCategory" data-category="recovered">
-                💾 RECOVERED FILES
-            </button>
+            <span id="researchStatus">
+                ONLINE
+            </span>
 
         </div>
 
-        <!-- FILE LIST -->
-
-        <div id="researchFiles">
-
-            <div class="researchFilesTitle">
-                SELECT CATEGORY
-            </div>
-
-        </div>
-
-        <!-- DOCUMENT -->
-
-        <div id="researchViewer">
-
-            <div class="viewerHeader">
-
-                <div>
-
-                    OMEGA RESEARCH DATABASE
-
-                </div>
-
-                <div id="researchClearance">
-
-                    CLEARANCE LEVEL II
-
-                </div>
-
-            </div>
-
-            <div id="researchDocument">
+        <div id="researchDocument">
 
 WELCOME TO OMEGA DATABASE
 
-──────────────────────────────
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Select a category on the left.
+Select a category.
 
-Research files will appear here.
+Select a file.
 
-Only personnel with proper clearance
-can access classified information.
+The document will appear here.
 
-──────────────────────────────
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-STATUS : CONNECTED
-
-DATABASE : ONLINE
-
-            </div>
+CLEARANCE LEVEL II
 
         </div>
-
-    </div>
-
-    <div class="windowFooter">
-
-        <span id="researchStatus">
-
-            DATABASE ONLINE
-
-        </span>
 
     </div>
 
