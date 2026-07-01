@@ -475,85 +475,83 @@
          <!-- ==================================
             RESEARCH
 =================================== -->
-<div class="windowBody" id="researchLayout">
+<div id="researchWindow" class="window hidden">
 
-    <!-- Левая колонка -->
+    <div class="windowHeader">
 
-    <div id="researchSidebar">
-
-        <div class="sidebarTitle">
-            DATABASE
+        <div class="windowTitle">
+            🧪 RESEARCH ARCHIVE
         </div>
 
-        <button class="researchCategory" data-category="entities">
-            🧬 ENTITIES
-        </button>
-
-        <button class="researchCategory" data-category="projects">
-            ⚙ PROJECTS
-        </button>
-
-        <button class="researchCategory" data-category="incidents">
-            📄 INCIDENTS
-        </button>
-
-        <button class="researchCategory" data-category="staff">
-            👤 PERSONNEL
-        </button>
-
-        <button class="researchCategory" data-category="archive">
-            💾 ARCHIVE
-        </button>
-
-    </div>
-
-    <!-- Средняя колонка -->
-
-    <div id="researchFiles">
-
-        <div class="researchFilesTitle">
-            FILES
-        </div>
-
-        <div id="researchFileList">
-
-            Select category...
-
+        <div class="windowControls">
+            <button onclick="minimizeWindow('research')">─</button>
+            <button onclick="maximizeWindow('research')">□</button>
+            <button onclick="closeApp('research')">✕</button>
         </div>
 
     </div>
 
-    <!-- Правая колонка -->
+    <div id="researchLayout">
 
-    <div id="researchViewer">
+        <!-- DATABASE -->
 
-        <div class="viewerHeader">
+        <div id="researchDatabase">
 
-            <span id="researchTitle">
-                OMEGA DATABASE
-            </span>
+            <div class="researchBlockTitle">
+                DATABASE
+            </div>
 
-            <span id="researchStatus">
-                ONLINE
-            </span>
+            <div id="researchCategories"></div>
 
         </div>
 
-        <div id="researchDocument">
+        <!-- FILES -->
 
-WELCOME TO OMEGA DATABASE
+        <div id="researchFiles">
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            <div class="researchBlockTitle">
+                FILES
+            </div>
+
+            <div id="researchFileList">
+
+                Select category...
+
+            </div>
+
+        </div>
+
+        <!-- DOCUMENT -->
+
+        <div id="researchViewer">
+
+            <div id="viewerHeader">
+
+                <div id="viewerTitle">
+
+                    OMEGA DATABASE
+
+                </div>
+
+                <div id="viewerLevel">
+
+                    CLEARANCE II
+
+                </div>
+
+            </div>
+
+            <div id="viewerImage"></div>
+
+            <div id="viewerContent">
+
+Welcome to OMEGA Research Archive.
 
 Select a category.
 
-Select a file.
+Then choose a file.
 
-The document will appear here.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-CLEARANCE LEVEL II
+            </div>
 
         </div>
 
