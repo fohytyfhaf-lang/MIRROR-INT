@@ -590,3 +590,17 @@ text-shadow:
 0 0 3px rgba(0,255,170,.18);
 
 }
+
+
+
+button{
+
+cursor:pointer;
+
+}
+
+input{
+
+caret-color:#00ff99;
+
+}
