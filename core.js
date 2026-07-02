@@ -2,7 +2,6 @@ import { loginSystem } from "./login.js";
 import { playMusic } from "./audio.js";
 import { runCommand } from "./console.js";
 import { setSoundState } from "./soundManager.js";
-import { makeWindowDraggable, bringToFront } from "./windowManager.js";
 import { nextCam } from "./camera.js";
 import { openExplorer } from "./explorer.js";
 import { initMrSmile } from "./mrsmile.js";
