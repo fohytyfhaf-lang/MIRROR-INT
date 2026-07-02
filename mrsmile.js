@@ -161,7 +161,6 @@ function removeEyes() {
 
 }
 document.addEventListener("mousemove", (e) => {
-
     if (!active) return;
 
     eyes.forEach(({ eye, pupil }) => {
