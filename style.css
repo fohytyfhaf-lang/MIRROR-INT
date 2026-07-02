@@ -34,11 +34,17 @@ body {
 /* =========================
         LOGIN
 ========================= */
+.loginLogo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
 .loginLogo img {
-    width: 120px;
+    width: 110px;
     height: auto;
     display: block;
-    margin: 0 auto;
 }
 
 
