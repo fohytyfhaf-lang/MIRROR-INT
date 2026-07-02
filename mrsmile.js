@@ -200,6 +200,3 @@ export function forceDisableMrSmile() {
     disable();
 }
 
-
-export function whisper() {
-
