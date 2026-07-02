@@ -36,11 +36,15 @@ function enable() {
   active = true;
 
   const log = document.getElementById("chatLog");
-  if (log) {
-    log.innerText += "\n[SYSTEM] UNKNOWN PROCESS: MR.SMILE";
+  if (log) log.innerText += "\n[SYSTEM] UNKNOWN PROCESS: MR.SMILE";
+
+  if (!eyesActive) {
+    spawnEyes();
+    eyesActive = true;
   }
-spawnEyes()
+
   startAudio();
+
   interval = setInterval(() => {
     whisper();
   }, 20000);
