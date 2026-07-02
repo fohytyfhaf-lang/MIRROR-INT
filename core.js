@@ -147,6 +147,9 @@ function bootSystem() {
     initMrSmile();
         updateClock(); 
         initPersonnel();
+        minimizeWindow()
+maximizeWindow()
+closeApp()
         initResearch();
     initMemory();
     loadTrust();
