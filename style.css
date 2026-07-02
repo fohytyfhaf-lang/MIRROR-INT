@@ -422,3 +422,30 @@ button {
 ::-webkit-scrollbar-thumb {
     background: var(--accent);
 }
+
+
+#eyesLayer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    display: none;
+}
+
+body.night #eyesLayer {
+    display: block;
+}
+
+.eye {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px white;
+    animation: blink 3s infinite;
+}
+
+@keyframes blink {
+    0%, 95%, 100% { transform: scaleY(1); }
+    97% { transform: scaleY(0.1); }
+}
