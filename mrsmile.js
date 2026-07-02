@@ -1,5 +1,5 @@
 import { playMusic } from "./audio.js";
-
+let eyesActive = false;
 let active = false;
 let interval = null;
 let audio = null;
