@@ -199,3 +199,5 @@ export function forceEnableMrSmile() {
 export function forceDisableMrSmile() {
     disable();
 }
+
+window.whisper = whisper;
