@@ -202,4 +202,4 @@ export function forceDisableMrSmile() {
 
 
 export function whisper() {
-window.whisper = whisper;
+
