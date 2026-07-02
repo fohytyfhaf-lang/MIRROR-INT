@@ -54,20 +54,17 @@ function enable() {
    DISABLE MR.SMILE
 ========================= */
 function disable() {
-    active = false;
+  active = false;
 
-    if (interval) {
-        clearInterval(interval);
-        interval = null;
-    }
+  if (interval) {
+    clearInterval(interval);
+    interval = null;
+  }
 
-    stopAudio();
-    removeEyes();
+  stopAudio();
+  removeEyes();
 
-    const log = document.getElementById("chatLog");
-    if (log) {
-        log.innerText += "\n[SYSTEM] MR.SMILE DISCONNECTED";
-    }
+  eyesActive = false;
 }
 
 /* =========================
