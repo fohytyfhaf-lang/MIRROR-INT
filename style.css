@@ -34,35 +34,10 @@ body {
 /* =========================
         LOGIN
 ========================= */
-#Logo{
-
-display:flex;
-
-align-items:center;
-
-gap:12px;
-
-}
-
-#Logo img{
-
-width:32px;
-height:32px;
-
-object-fit:contain;
-
-filter:
-
-drop-shadow(0 0 5px #4fd8ff);
-
-}
-
-#omegaLogo h2{
-
-font-size:18px;
-
-letter-spacing:3px;
-
+.loginLogo img {
+    max-width: 150px;
+    width: 40%;
+    height: auto;
 }
 
 
