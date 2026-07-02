@@ -437,12 +437,21 @@ body.night #eyesLayer {
 
 .eye {
     position: absolute;
-    width: 18px;
-    height: 18px;
+    width: 26px;
+    height: 26px;
     background: white;
     border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     box-shadow: 0 0 10px white;
-    animation: blink 3s infinite;
+}
+
+.pupil {
+    width: 8px;
+    height: 8px;
+    background: black;
+    border-radius: 50%;
 }
 
 @keyframes blink {
