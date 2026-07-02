@@ -29,7 +29,9 @@ window.setSoundState = setSoundState;
 window.makeWindowDraggable = makeWindowDraggable;
 window.bringToFront = bringToFront;
 window.nextCam = nextCam;
-
+window.minimizeWindow = minimizeWindow;
+window.maximizeWindow = maximizeWindow;
+window.closeApp = closeApp;
 /* =========================
         WINDOWS
 ========================= */
