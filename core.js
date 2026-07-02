@@ -19,6 +19,15 @@ import { Storage } from "./storage.js";
 import { startClock } from "./clock.js";
 import { initPersonnel } from "./personnel.js";
 import { initResearch } from "./research.js";
+import {
+    openWindow,
+    closeWindow,
+    minimizeWindow,
+    maximizeWindow,
+    restoreWindow,
+    makeWindowDraggable,
+    bringToFront
+} from "./windowManager.js";
 /* =========================
         GLOBAL
 ========================= */
@@ -29,9 +38,11 @@ window.setSoundState = setSoundState;
 window.makeWindowDraggable = makeWindowDraggable;
 window.bringToFront = bringToFront;
 window.nextCam = nextCam;
+window.openApp = openWindow;
+window.closeApp = closeWindow;
 window.minimizeWindow = minimizeWindow;
 window.maximizeWindow = maximizeWindow;
-window.closeApp = closeApp;
+window.restoreWindow = restoreWindow;
 /* =========================
         WINDOWS
 ========================= */
