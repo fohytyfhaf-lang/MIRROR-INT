@@ -42,6 +42,7 @@ window.closeApp = closeWindow;
 window.minimizeWindow = minimizeWindow;
 window.maximizeWindow = maximizeWindow;
 window.restoreWindow = restoreWindow;
+window.whisper = whisper;
 window.testMrSmile = () => {
     forceEnableMrSmile();
 };
