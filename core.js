@@ -4,7 +4,7 @@ import { runCommand } from "./console.js";
 import { setSoundState } from "./soundManager.js";
 import { nextCam } from "./camera.js";
 import { openExplorer } from "./explorer.js";
-import { initMrSmile } from "./mrsmile.js";
+import { initMrSmile,whisper } from "./mrsmile.js";
 import { initMemory } from "./mrsmileMemory.js";
 import { loadTrust } from "./mrsmileTrust.js";
 import { updatePersonality } from "./personality.js";
