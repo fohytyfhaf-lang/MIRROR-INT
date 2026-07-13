@@ -91,7 +91,7 @@ function stopAudio() {
 /* =========================
    WHISPERS
 ========================= */
-function whisper() {
+export function whisper() {
   const log = document.getElementById("chatLog");
   if (!log) return;
 
