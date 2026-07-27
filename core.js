@@ -209,6 +209,7 @@ window.addEventListener("DOMContentLoaded", () => {
     bootSystem();
 
       initSettings();
+      console.log("Settings initialized");
 
     setTimeout(() => {
         const user = Storage.get("currentUser");
