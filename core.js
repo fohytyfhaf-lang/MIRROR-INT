@@ -58,7 +58,7 @@ window.glitch = function(){
         document.body.classList.remove("screenGlitch");
     },120);
 
-
+console.log("GLITCH LOADED", window.glitch);
     
 };
 /* =========================
