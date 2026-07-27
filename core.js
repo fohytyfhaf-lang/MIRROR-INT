@@ -45,8 +45,21 @@ window.restoreWindow = restoreWindow;
 window.mrSmileSay = mrSmileSay;
 window.closeWindow = closeWindow;
 window.whisper = whisper;
+
 window.testMrSmile = () => {
     forceEnableMrSmile();
+};
+
+window.glitch = function(){
+
+    document.body.classList.add("screenGlitch");
+
+    setTimeout(()=>{
+        document.body.classList.remove("screenGlitch");
+    },120);
+
+
+    
 };
 /* =========================
         WINDOWS
