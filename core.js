@@ -18,7 +18,6 @@ import { Storage } from "./storage.js";
 import { startClock } from "./clock.js";
 import { initPersonnel } from "./personnel.js";
 import { initResearch } from "./research.js";
-import { initLanguage } from "./languageManager.js";
 import {initLanguage,changeLanguage} from "./languageManager.js";
 import {
     openWindow,
