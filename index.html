@@ -209,39 +209,58 @@
         <!-- ==================================
         SETTINGS WINDOW
 =================================== -->
-
 <div id="settingsWindow" class="window hidden">
 
     <div class="windowHeader">
-
-        <div class="windowTitle">
-            ⚙ SETTINGS
-        </div>
+        <span>⚙ SETTINGS</span>
 
         <div class="windowControls">
+            <button onclick="minimizeWindow('settingsWindow')">─</button>
+            <button onclick="maximizeWindow('settingsWindow')">□</button>
+            <button onclick="closeWindow('settingsWindow')">✕</button>
+        </div>
+    </div>
 
-            <button onclick="closeApp('settings')">✕</button>
+    <div id="settingsLayout">
+
+        <div id="settingsSidebar">
+
+            <button class="settingsTab active" data-page="language">
+                🌐 Language
+            </button>
+
+            <button class="settingsTab" data-page="appearance">
+                🎨 Appearance
+            </button>
+
+            <button class="settingsTab" data-page="audio">
+                🔊 Audio
+            </button>
+
+            <button class="settingsTab" data-page="interface">
+                🖥 Interface
+            </button>
+
+            <button class="settingsTab" data-page="security">
+                🔒 Security
+            </button>
+
+            <button class="settingsTab" data-page="system">
+                💾 System
+            </button>
 
         </div>
 
-    </div>
+        <div id="settingsContent">
 
-    <div class="windowBody">
+            <!-- сюда JS будет подставлять страницы -->
 
-        <label>Language</label>
-        <select id="language">
-            <option value="en">English</option>
-            <option value="ru">Русский</option>
-        </select>
-
-        <br><br>
-
-        <label>Volume</label>
-        <input id="volume" type="range" min="0" max="1" step="0.01">
+        </div>
 
     </div>
 
 </div>
+
 
          <!-- ==================================
             LOG DATABASE
