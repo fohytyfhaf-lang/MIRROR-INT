@@ -80,9 +80,17 @@ body {
 }
 
 
-#omegaLogo img {
-    width: 36px;
-    height: 36px;
+
+    #omegaLogo{   
+    display:flex;
+    align-items:center;
+    gap:12px;
+    }
+            
+    #omegaLogo img{
+    width:30px;
+    height:30px;
+    object-fit:contain;
     filter: drop-shadow(0 0 6px var(--accent));
 }
 /* =========================
@@ -139,7 +147,6 @@ inset -1px 0 rgba(255,255,255,.05),
     color: var(--text);
     text-align: left;
     cursor: pointer;
-    transition: 0.2s;
 }
 
 #sidebar button:hover {
@@ -203,11 +210,6 @@ transform:scale(1);
 
 }
 
-.window{
-
-animation:openWindow .15s ease;
-
-}
 
 
 .window{
@@ -247,7 +249,7 @@ min-height:0;
 
 left:2vw;
 top:70px;
-
+}
 
 }
 
@@ -276,9 +278,7 @@ transition:.2s;
 }
 
 .windowControls button:hover{
-
 background:#16314b;
-
 color:white;
 
 }
@@ -288,7 +288,6 @@ color:white;
 .window{
 
 backdrop-filter:blur(12px);
-
 border-top:1px solid rgba(255,255,255,.08);
 
 }
