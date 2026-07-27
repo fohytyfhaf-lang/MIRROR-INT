@@ -1,31 +1,30 @@
 import { SettingsPages } from "./settingsPages.js";
+import { initLanguage, changeLanguage } from "./languageManager.js";
 
-export function initSettings(){
+export function initSettings() {
 
-const tabs=document.querySelectorAll(".settingsTab");
+    const tabs = document.querySelectorAll(".settingsTab");
+    const content = document.getElementById("settingsContent");
 
-const content=document.getElementById("settingsContent");
+    tabs.forEach(tab => {
 
-tabs.forEach(tab=>{
+        tab.onclick = () => {
 
-tab.onclick=()=>{
+            tabs.forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
 
-tabs.forEach(t=>t.classList.remove("active"));
+            const page = tab.dataset.page;
 
-tab.classList.add("active");
+            content.innerHTML = SettingsPages[page] || "";
 
-const page=tab.dataset.page;
+            initLanguage();
 
-content.innerHTML=SettingsPages[page]||"";
+        };
 
-initLanguage();
+    });
 
-};
+    content.innerHTML = SettingsPages.language;
 
-});
-
-content.innerHTML=SettingsPages.language;
-
-initLanguage();
+    initLanguage();
 
 }
