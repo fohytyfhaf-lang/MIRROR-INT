@@ -6,25 +6,44 @@ export function initSettings() {
     const tabs = document.querySelectorAll(".settingsTab");
     const content = document.getElementById("settingsContent");
 
+    function loadPage(page) {
+
+        content.innerHTML = SettingsPages[page] || "";
+
+        // Инициализация языков
+        if (page === "language") {
+
+            initLanguage();
+
+            const select = document.getElementById("languageSelect");
+            const save = document.getElementById("saveLanguage");
+
+            if (save && select) {
+
+                save.onclick = () => {
+                    changeLanguage(select.value);
+                };
+
+            }
+
+        }
+
+    }
+
     tabs.forEach(tab => {
 
-        tab.onclick = () => {
+        tab.addEventListener("click", () => {
 
             tabs.forEach(t => t.classList.remove("active"));
             tab.classList.add("active");
 
-            const page = tab.dataset.page;
+            loadPage(tab.dataset.page);
 
-            content.innerHTML = SettingsPages[page] || "";
-
-            initLanguage();
-
-        };
+        });
 
     });
 
-    content.innerHTML = SettingsPages.language;
-
-    initLanguage();
+    // Загружаем первую страницу
+    loadPage("language");
 
 }
