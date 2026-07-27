@@ -18,6 +18,10 @@ language: `
 
 </div>
 
+<button id="saveLanguage">
+Apply
+</button>
+
 </div>
 `,
 
