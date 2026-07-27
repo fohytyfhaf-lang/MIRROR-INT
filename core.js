@@ -223,7 +223,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
         // потом язык
         if (settings.language) {
-            applyLanguage(settings.language);
+            changeLanguage(settings.language);
+        } else {
+            initLanguage();
         }
 
         // потом звук
