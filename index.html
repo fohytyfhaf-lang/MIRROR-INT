@@ -212,55 +212,86 @@
 <div id="settingsWindow" class="window hidden">
 
     <div class="windowHeader">
-        <span>⚙ SETTINGS</span>
+
+        <div class="windowTitle">
+            <span class="windowIcon">⚙</span>
+            <span>SETTINGS</span>
+        </div>
 
         <div class="windowControls">
-            <button onclick="minimizeWindow('settingsWindow')">─</button>
-            <button onclick="maximizeWindow('settingsWindow')">□</button>
-            <button onclick="closeWindow('settingsWindow')">✕</button>
+            <button onclick="minimizeWindow('settingsWindow')" title="Minimize">─</button>
+            <button onclick="maximizeWindow('settingsWindow')" title="Maximize">□</button>
+            <button onclick="closeWindow('settingsWindow')" title="Close">✕</button>
         </div>
+
     </div>
 
     <div id="settingsLayout">
 
-        <div id="settingsSidebar">
+        <aside id="settingsSidebar">
 
             <button class="settingsTab active" data-page="language">
-                🌐 Language
+                🌐 <span>Language</span>
             </button>
 
             <button class="settingsTab" data-page="appearance">
-                🎨 Appearance
+                🎨 <span>Appearance</span>
             </button>
 
             <button class="settingsTab" data-page="audio">
-                🔊 Audio
+                🔊 <span>Audio</span>
             </button>
 
             <button class="settingsTab" data-page="interface">
-                🖥 Interface
+                🖥 <span>Interface</span>
             </button>
 
             <button class="settingsTab" data-page="security">
-                🔒 Security
+                🔒 <span>Security</span>
             </button>
 
             <button class="settingsTab" data-page="system">
-                💾 System
+                💾 <span>System</span>
             </button>
 
-        </div>
+            <button class="settingsTab" data-page="about">
+                ℹ <span>About</span>
+            </button>
 
-        <div id="settingsContent">
+        </aside>
 
-            <!-- сюда JS будет подставлять страницы -->
+        <main id="settingsContent">
 
-        </div>
+            <div class="settingsWelcome">
+
+                <h2>OMEGA Settings</h2>
+
+                <p>
+                    Configure the operating system, interface,
+                    security, language and experimental functions.
+                </p>
+
+                <div class="settingsInfo">
+
+                    <div class="infoCard">
+                        <strong>Version</strong>
+                        <span>OMEGA OS DEV 0.2</span>
+                    </div>
+
+                    <div class="infoCard">
+                        <strong>Status</strong>
+                        <span class="online">ONLINE</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
 
     </div>
 
 </div>
-
 
          <!-- ==================================
             LOG DATABASE
