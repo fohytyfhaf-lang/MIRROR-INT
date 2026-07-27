@@ -459,27 +459,38 @@ body.night #eyesLayer {
 }
 
 .screenGlitch {
-    animation: glitchEffect 0.12s;
+    animation: glitchEffect 0.25s;
 }
 
 @keyframes glitchEffect {
 
     0% {
         transform: translate(0);
+        filter: none;
     }
 
-    25% {
-        transform: translate(-5px, 0);
-        filter: hue-rotate(90deg);
+    20% {
+        transform: translate(-15px, 3px);
+        filter: hue-rotate(90deg) contrast(2);
     }
 
-    50% {
-        transform: translate(5px, 0);
-        filter: contrast(2);
+    40% {
+        transform: translate(15px, -3px);
+        filter: invert(0.2);
+    }
+
+    60% {
+        transform: translate(-8px, 5px);
+        filter: hue-rotate(180deg);
+    }
+
+    80% {
+        transform: translate(8px, -2px);
+        filter: contrast(3);
     }
 
     100% {
         transform: translate(0);
+        filter: none;
     }
-
 }
