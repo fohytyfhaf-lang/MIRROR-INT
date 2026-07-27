@@ -43,6 +43,8 @@ window.minimizeWindow = minimizeWindow;
 window.maximizeWindow = maximizeWindow;
 window.restoreWindow = restoreWindow;
 window.mrSmileSay = mrSmileSay;
+window.closeWindow = function() {
+    document.getElementById("settingsWindow").classList.add("hidden");
 window.whisper = whisper;
 window.testMrSmile = () => {
     forceEnableMrSmile();
