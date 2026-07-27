@@ -56,7 +56,7 @@ window.glitch = function(){
 
     setTimeout(()=>{
         document.body.classList.remove("screenGlitch");
-    },120);
+    },250);
 
 console.log("GLITCH LOADED", window.glitch);
     
