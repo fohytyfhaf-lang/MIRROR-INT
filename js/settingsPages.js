@@ -73,6 +73,45 @@ audio: `
 </div>
 `,
 
+interface: `
+<div class="settingsCard">
+
+<h2>INTERFACE</h2>
+
+<p>Interface configuration.</p>
+
+<div class="settingsRow">
+
+<span>UI Scale</span>
+
+<input
+id="uiScale"
+type="range"
+min="75"
+max="150"
+value="100">
+
+</div>
+
+<div class="settingsRow">
+
+<span>Window Animations</span>
+
+<div class="switch active"></div>
+
+</div>
+
+<div class="settingsRow">
+
+<span>Large Text</span>
+
+<div class="switch"></div>
+
+</div>
+
+</div>
+`,
+
 security: `
 <div class="settingsCard">
 
