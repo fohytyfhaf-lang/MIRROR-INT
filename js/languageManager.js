@@ -9,6 +9,10 @@ export async function loadLanguage(lang) {
     dictionary = await response.json();
 
     translatePage();
+    const select = document.getElementById("languageSelect");
+    if (select) {
+        select.value = lang;
+    }
 
     localStorage.setItem("omega-language", lang);
 }
