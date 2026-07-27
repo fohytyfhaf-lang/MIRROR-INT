@@ -1,111 +1,106 @@
-export const pages = {
+export const SettingsPages = {
 
-language:`
-
-<h1 class="settingsTitle">🌐 Language</h1>
-
+language: `
 <div class="settingsCard">
 
-<h3>System Language</h3>
+<h2>LANGUAGE</h2>
 
-<p>Select the language used by OMEGA.</p>
+<p>Select system language.</p>
 
-<div class="settingsOption">
+<div class="settingsRow">
 
-<label>English</label>
+<span>Language</span>
 
-<input type="radio" name="lang" checked>
+<select id="languageSelect">
 
-</div>
+<option value="en">English</option>
 
-<div class="settingsOption">
+<option value="ru">Русский</option>
 
-<label>Русский</label>
+<option value="ua">Українська</option>
 
-<input type="radio" name="lang">
-
-</div>
-
-<div class="settingsOption">
-
-<label>Українська</label>
-
-<input type="radio" name="lang">
+</select>
 
 </div>
 
-</div>
+<button id="saveLanguage">
+Apply
+</button>
 
+</div>
 `,
 
-appearance:`
-
-<h1 class="settingsTitle">🎨 Appearance</h1>
-
+appearance: `
 <div class="settingsCard">
 
-<h3>Theme</h3>
+<h2>DISPLAY</h2>
 
-<p>Customize OMEGA interface.</p>
+<p>Display configuration.</p>
 
+<div class="settingsRow">
+<span>Animations</span>
+<div class="switch active"></div>
 </div>
 
+<div class="settingsRow">
+<span>Scanlines</span>
+<div class="switch active"></div>
+</div>
+
+<div class="settingsRow">
+<span>CRT Effect</span>
+<div class="switch active"></div>
+</div>
+
+</div>
 `,
 
-audio:`
-
-<h1 class="settingsTitle">🔊 Audio</h1>
-
+audio: `
 <div class="settingsCard">
 
-<h3>Sound</h3>
+<h2>AUDIO</h2>
 
-<p>Adjust music and effects.</p>
+<p>System sound configuration.</p>
+
+<div class="settingsRow">
+
+<span>Volume</span>
+
+<input type="range" min="0" max="100" value="70">
 
 </div>
 
+</div>
 `,
 
-interface:`
-
-<h1 class="settingsTitle">🖥 Interface</h1>
-
+security: `
 <div class="settingsCard">
 
-<h3>Visual Effects</h3>
+<h2>SECURITY</h2>
 
-<p>Animations and interface.</p>
+<p>Security options.</p>
+
+<div class="settingsRow">
+
+<span>Auto Lock</span>
+
+<div class="switch"></div>
 
 </div>
 
+</div>
 `,
 
-security:`
-
-<h1 class="settingsTitle">🔒 Security</h1>
-
+system: `
 <div class="settingsCard">
 
-<h3>Account</h3>
+<h2>SYSTEM</h2>
 
-<p>Clearance and session.</p>
+<p>OMEGA Operating Environment</p>
 
-</div>
-
-`,
-
-system:`
-
-<h1 class="settingsTitle">💾 System</h1>
-
-<div class="settingsCard">
-
-<h3>OMEGA OS</h3>
-
-<p>Version 0.2 DEV BUILD</p>
+<p>Version 0.2 DEV</p>
 
 </div>
-
 `
 
 };
