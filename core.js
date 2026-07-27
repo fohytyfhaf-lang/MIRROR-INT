@@ -208,6 +208,8 @@ window.addEventListener("DOMContentLoaded", () => {
     initLogin();
     bootSystem();
 
+      initSettings();
+
     setTimeout(() => {
         const user = Storage.get("currentUser");
 
@@ -217,9 +219,6 @@ window.addEventListener("DOMContentLoaded", () => {
         const settings = users[user]?.settings;
 
         if (!settings) return;
-
-        // сначала UI settings
-        initSettings();
 
         // потом язык
         if (settings.language) {
