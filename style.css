@@ -457,3 +457,29 @@ body.night #eyesLayer {
     0%, 95%, 100% { transform: scaleY(1); }
     97% { transform: scaleY(0.1); }
 }
+
+.screenGlitch {
+    animation: glitchEffect 0.12s;
+}
+
+@keyframes glitchEffect {
+
+    0% {
+        transform: translate(0);
+    }
+
+    25% {
+        transform: translate(-5px, 0);
+        filter: hue-rotate(90deg);
+    }
+
+    50% {
+        transform: translate(5px, 0);
+        filter: contrast(2);
+    }
+
+    100% {
+        transform: translate(0);
+    }
+
+}
