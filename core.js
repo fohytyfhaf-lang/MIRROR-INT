@@ -69,6 +69,10 @@ console.log("GLITCH LOADED", window.glitch);
 function openApp(name) {
     const win = document.getElementById(name + "Window");
     if (!win) return;
+    
+    if (name === "settings") {
+    initSettings();
+    }
 
     win.classList.remove("hidden");
     bringToFront(win);
