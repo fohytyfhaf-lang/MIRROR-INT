@@ -9,6 +9,8 @@ export function initSettings() {
     function loadPage(page) {
 
         content.innerHTML = SettingsPages[page] || "";
+        console.log("Страница:", page);
+        console.log("HTML:", content.innerHTML);
 
         // Инициализация языков
         if (page === "language") {
