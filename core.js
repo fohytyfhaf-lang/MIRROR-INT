@@ -13,7 +13,7 @@ import { initMrSmileChat } from "./mrsmileChat.js";
 import { initMrSmileEvents } from "./mrsmileEvents.js";
 import { forceEnableMrSmile, forceDisableMrSmile } from "./mrsmile.js";
 import { knowledgeInit } from "./knowledge.js";
-import { initSettings} from "./settings.js";
+import { initSettings} from "./js/settings.js";
 import { Storage } from "./storage.js";
 import { startClock } from "./clock.js";
 import { initPersonnel } from "./personnel.js";
