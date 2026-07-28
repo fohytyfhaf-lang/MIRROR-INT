@@ -9,6 +9,12 @@ export function initSettings() {
     function loadPage(page) {
 
         content.innerHTML = SettingsPages[page] || "";
+        content.innerHTML = `
+        <div class="settingsCard">
+            <h2 style="color:white;">TEST</h2>
+            <p style="color:white;">Если ты видишь этот текст — settings.js работает.</p>
+        </div>
+        `;
         console.log("Страница:", page);
         console.log("HTML:", content.innerHTML);
 
