@@ -1,4 +1,4 @@
-import { SettingsPages } from "./js/settingsPages.js";
+import { SettingsPages } from "./settingsPages.js";
 import { initLanguage, changeLanguage } from "./languageManager.js";
 
 export function initSettings() {
