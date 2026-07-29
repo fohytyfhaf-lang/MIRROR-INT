@@ -1,5 +1,5 @@
 import { Storage } from "./storage.js";
-import { changeLanguage } from "./languageManager.js";
+import { changeLanguage } from "./languageManager4.js";
 
 const DEFAULT_SETTINGS = {
 
