@@ -209,40 +209,64 @@
         <!-- ==================================
         SETTINGS WINDOW
 =================================== -->
-
 <div id="settingsWindow" class="window hidden">
 
     <div class="windowHeader">
 
         <div class="windowTitle">
-            ⚙ SETTINGS
+            <span class="windowIcon">⚙</span>
+            <span>SETTINGS</span>
         </div>
 
         <div class="windowControls">
-
-            <button onclick="closeApp('settings')">✕</button>
-
+            <button onclick="minimizeWindow('settingsWindow')" title="Minimize">─</button>
+            <button onclick="maximizeWindow('settingsWindow')" title="Maximize">□</button>
+            <button onclick="closeWindow('settingsWindow')" title="Close">✕</button>
         </div>
 
     </div>
 
-    <div class="windowBody">
+    <div id="settingsLayout">
 
-        <label>Language</label>
-        <select id="language">
-            <option value="en">English</option>
-            <option value="ru">Русский</option>
-        </select>
+        <aside id="settingsSidebar">
 
-        <br><br>
+            <button class="settingsTab active" data-page="language">
+                🌐 <span>Language</span>
+            </button>
 
-        <label>Volume</label>
-        <input id="volume" type="range" min="0" max="1" step="0.01">
+            <button class="settingsTab" data-page="appearance">
+                🎨 <span>Appearance</span>
+            </button>
 
+            <button class="settingsTab" data-page="audio">
+                🔊 <span>Audio</span>
+            </button>
+
+            <button class="settingsTab" data-page="interface">
+                🖥 <span>Interface</span>
+            </button>
+
+            <button class="settingsTab" data-page="security">
+                🔒 <span>Security</span>
+            </button>
+
+            <button class="settingsTab" data-page="system">
+                💾 <span>System</span>
+            </button>
+
+            <button class="settingsTab" data-page="about">
+                ℹ <span>About</span>
+            </button>
+
+        </aside>
+        
+        <main id="settingsContent"> 
+            
+         </main>
+        
     </div>
-
+    
 </div>
-
          <!-- ==================================
             LOG DATABASE
 =================================== -->
@@ -652,6 +676,7 @@ Then choose a file.
 <div id="glitchLayer"></div>
     
     <link rel="stylesheet" href="style.css?v=1">
+    <link rel="stylesheet" href="settings.css">
 <script type="module" src="core.js?v=1"></script>
 
 </body>
