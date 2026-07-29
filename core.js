@@ -18,7 +18,7 @@ import { startClock } from "./clock.js";
 import { initPersonnel } from "./personnel.js";
 import { initResearch } from "./research.js";
 import { initSettings } from "./settings2.js";
-import { applySettings } from "./systemSettings.js";
+import { getSettings, updateSetting } from "./systemConfig.js";
 import { CONFIG } from "./config.js";
 import { trigger, on } from "./eventManager.js";
 import {initLanguage,changeLanguage} from "./languageManager.js";
