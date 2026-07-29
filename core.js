@@ -21,7 +21,7 @@ import { initSettings } from "./settings2.js";
 import { getSettings, updateSetting } from "./systemConfig.js";
 import { CONFIG } from "./config.js";
 import { trigger, on } from "./eventManager.js";
-import {initLanguage,changeLanguage} from "./languageManager.js";
+import {initLanguage,changeLanguage} from "./languageManager4.js";
 import {
     openWindow,
     closeWindow,
