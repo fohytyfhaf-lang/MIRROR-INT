@@ -1,1 +1,21 @@
+{
+    "login.title": "СИСТЕМА OMEGA",
+    "login.button": "УВІЙТИ",
+
+    "sidebar.research": "АРХІВ ДОСЛІДЖЕНЬ",
+    "sidebar.personnel": "ПЕРСОНАЛ",
+    "sidebar.settings": "НАЛАШТУВАННЯ",
+
+    "settings.title": "КОНФІГУРАЦІЯ СИСТЕМИ",
+    "settings.language": "Мова",
+    "settings.appearance": "Зовнішній вигляд",
+    "settings.audio": "Звук",
+    "settings.security": "Безпека",
+    "settings.system": "Система",
+
+    "buttons.apply": "Застосувати",
+    "buttons.close": "Закрити",
+
+    "status.online": "У МЕРЕЖІ"
+}
 
