@@ -17,7 +17,7 @@ import { Storage } from "./storage.js";
 import { startClock } from "./clock.js";
 import { initPersonnel } from "./personnel.js";
 import { initResearch } from "./research.js";
-import { initSettings } from "./settings.js";
+import { initSettings } from "./settings2.js";
 import { applySettings } from "./systemSettings.js";
 import { CONFIG } from "./config.js";
 import { trigger, on } from "./eventManager.js";
