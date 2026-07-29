@@ -13,11 +13,15 @@ import { initMrSmileChat } from "./mrsmileChat.js";
 import { initMrSmileEvents } from "./mrsmileEvents.js";
 import { forceEnableMrSmile, forceDisableMrSmile } from "./mrsmile.js";
 import { knowledgeInit } from "./knowledge.js";
-import { initSettings, applyLanguage } from "./settings.js";
 import { Storage } from "./storage.js";
 import { startClock } from "./clock.js";
 import { initPersonnel } from "./personnel.js";
 import { initResearch } from "./research.js";
+import { initSettings } from "./js/settings.js";
+import { applySettings } from "./systemSettings.js";
+import { CONFIG } from "./config.js";
+import { trigger, on } from "./eventManager.js";
+import {initLanguage,changeLanguage} from "./languageManager.js";
 import {
     openWindow,
     closeWindow,
@@ -43,9 +47,23 @@ window.minimizeWindow = minimizeWindow;
 window.maximizeWindow = maximizeWindow;
 window.restoreWindow = restoreWindow;
 window.mrSmileSay = mrSmileSay;
+window.closeWindow = closeWindow;
 window.whisper = whisper;
+
 window.testMrSmile = () => {
     forceEnableMrSmile();
+};
+
+window.glitch = function(){
+
+    document.body.classList.add("screenGlitch");
+
+    setTimeout(()=>{
+        document.body.classList.remove("screenGlitch");
+    },250);
+
+console.log("GLITCH LOADED", window.glitch);
+    
 };
 /* =========================
         WINDOWS
@@ -53,10 +71,19 @@ window.testMrSmile = () => {
 
 function openApp(name) {
     const win = document.getElementById(name + "Window");
+
     if (!win) return;
+    
+    if (name === "settings") {
+
+    initSettings();
+
+    }
 
     win.classList.remove("hidden");
+
     bringToFront(win);
+
     makeWindowDraggable(win);
 
     if (name === "files") openExplorer();
@@ -81,6 +108,7 @@ window.closeApp = closeApp;
 ========================= */
 
 function startBoot() {
+
     const boot = document.getElementById("bootScreen");
     const login = document.getElementById("loginScreen");
     const text = document.getElementById("bootText");
@@ -162,11 +190,12 @@ function initLogin() {
 
 function bootSystem() {
     initMrSmile();
+    trigger("system.boot");
         updateClock(); 
         initPersonnel();
-        minimizeWindow()
-maximizeWindow()
-closeApp()
+        //minimizeWindow()
+//maximizeWindow()
+//closeApp()
         initResearch();
     initMemory();
     loadTrust();
@@ -193,6 +222,8 @@ window.addEventListener("DOMContentLoaded", () => {
     initLogin();
     bootSystem();
 
+      
+
     setTimeout(() => {
         const user = Storage.get("currentUser");
 
@@ -203,12 +234,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
         if (!settings) return;
 
-        // сначала UI settings
-        initSettings();
-
         // потом язык
         if (settings.language) {
-            applyLanguage(settings.language);
+            changeLanguage(settings.language);
+        } else {
+            initLanguage();
         }
 
         // потом звук
