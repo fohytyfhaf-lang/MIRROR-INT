@@ -2,7 +2,7 @@ import { SettingsPages } from "./settingsPages.js";
 import {
     getSettings,
     updateSetting
-} from "systemConfig.js";
+} from "./systemConfig.js";
 
 export function initSettings() {
 
