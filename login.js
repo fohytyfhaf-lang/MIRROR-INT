@@ -1,6 +1,7 @@
 import { playMusic } from "./audio.js";
 import { setRole } from "./security.js";
 import { Storage } from "./storage.js";
+import { trigger } from "./eventManager.js";
 
 const accounts = {
   operator: "0404",
