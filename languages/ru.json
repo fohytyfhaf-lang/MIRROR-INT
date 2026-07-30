@@ -1,21 +1,64 @@
 {
-    "login.title": "СИСТЕМА OMEGA",
-    "login.button": "ВОЙТИ",
+  "login.title": "СИСТЕМА OMEGA",
+  "login.subtitle": "ТЕРМИНАЛ СЕКРЕТНОЙ ОРГАНИЗАЦИИ",
 
-    "sidebar.research": "АРХИВ ИССЛЕДОВАНИЙ",
-    "sidebar.personnel": "ПЕРСОНАЛ",
-    "sidebar.settings": "НАСТРОЙКИ",
+  "login.button": "ВОЙТИ",
+  "login.username": "ИМЯ ПОЛЬЗОВАТЕЛЯ",
+  "login.password": "ПАРОЛЬ",
 
-    "settings.title": "КОНФИГУРАЦИЯ СИСТЕМЫ",
-    "settings.language": "Язык",
-    "settings.appearance": "Внешний вид",
-    "settings.audio": "Звук",
-    "settings.security": "Безопасность",
-    "settings.system": "Система",
+  "topbar.title": "СИСТЕМА OMEGA",
+  "topbar.subtitle": "ТОЛЬКО ДЛЯ АВТОРИЗОВАННОГО ДОСТУПА",
 
-    "buttons.apply": "Применить",
-    "buttons.close": "Закрыть",
+  "sidebar.modules": "МОДУЛИ",
+  "sidebar.logs": "БАЗА ЖУРНАЛОВ",
+  "sidebar.files": "ПРОВОДНИК ФАЙЛОВ",
+  "sidebar.camera": "КАМЕРЫ",
+  "sidebar.console": "СИСТЕМНАЯ КОНСОЛЬ",
+  "sidebar.personnel": "ПЕРСОНАЛ",
+  "sidebar.research": "АРХИВ ИССЛЕДОВАНИЙ",
+  "sidebar.settings": "НАСТРОЙКИ",
 
-    "status.online": "В СЕТИ"
+  "status.label": "СТАТУС",
+  "status.online": "В СЕТИ",
+
+  "time.label": "ВРЕМЯ",
+
+  "settings.title": "КОНФИГУРАЦИЯ СИСТЕМЫ",
+
+  "settings.language": "Язык",
+  "settings.language.description": "Выберите язык системы.",
+
+  "settings.appearance": "Внешний вид",
+  "settings.appearance.description": "Настройка интерфейса.",
+
+  "settings.audio": "Звук",
+  "settings.audio.description": "Настройки звука.",
+
+  "settings.interface": "Интерфейс",
+  "settings.interface.description": "Настройки интерфейса.",
+
+  "settings.security": "Безопасность",
+  "settings.security.description": "Настройки безопасности.",
+
+  "settings.system": "Система",
+  "settings.about": "О программе",
+
+  "settings.masterVolume": "Общая громкость",
+  "settings.musicVolume": "Громкость музыки",
+  "settings.effectsVolume": "Громкость эффектов",
+
+  "settings.uiScale": "Масштаб интерфейса",
+  "settings.fontSize": "Размер шрифта",
+
+  "settings.animations": "Анимации",
+  "settings.crt": "Эффект CRT",
+  "settings.scanlines": "Линии развёртки",
+  "settings.glitchEffects": "Глитч-эффекты",
+
+  "settings.rememberUser": "Запомнить пользователя",
+  "settings.autoLogin": "Автоматический вход",
+
+  "buttons.apply": "Применить",
+  "buttons.close": "Закрыть",
+  "buttons.clearData": "Очистить локальные данные"
 }
-
