@@ -4,8 +4,6 @@
 
 const memory = {
 
-    // ---------- PLAYER ----------
-
     player: {
 
         firstSeen: null,
@@ -19,22 +17,15 @@ const memory = {
         favoriteWord: null,
 
         lastQuestion: null
-
     },
 
-    // ---------- CHAT ----------
-
     conversations: [],
-
-    // ---------- KNOWLEDGE ----------
 
     openedFiles: [],
     askedQuestions: [],
     commands: [],
     visitedPages: [],
     events: [],
-
-    // ---------- RELATIONSHIP ----------
 
     relationship: {
 
@@ -45,17 +36,13 @@ const memory = {
         nickname: null,
 
         greeted: false
-
     },
-
-    // ---------- STORY ----------
 
     flags: {
 
         met: false,
 
         knowsOmega: false,
-
         knowsSmile: false,
 
         receivedGame: false,
@@ -67,7 +54,15 @@ const memory = {
         enteredMirror: false,
 
         completedEnding: false
-
     }
 
 };
+
+
+// =======================================
+// EXPORT
+// =======================================
+
+export function getMemory() {
+    return memory;
+}
