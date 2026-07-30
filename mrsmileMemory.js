@@ -58,11 +58,35 @@ const memory = {
 
 };
 
+// =======================================
+// MEMORY INITIALIZATION
+// =======================================
+
+let initialized = false;
+
+
+export function initMemory() {
+
+    if (initialized) return;
+
+    initialized = true;
+
+
+    console.log("[MR.SMILE] Memory initialized");
+
+
+    memory.player.firstSeen ??= Date.now();
+
+}
+
+
 
 // =======================================
-// EXPORT
+// MEMORY ACCESS
 // =======================================
 
 export function getMemory() {
+
     return memory;
+
 }
