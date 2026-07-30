@@ -1,21 +1,51 @@
 {
-    "login.title": "OMEGA SYSTEM",
-    "login.button": "LOGIN",
+  "login.title": "OMEGA SYSTEM",
+  "login.button": "LOGIN",
+  "login.username": "USERNAME",
+  "login.password": "PASSWORD",
 
-    "sidebar.research": "RESEARCH ARCHIVE",
-    "sidebar.personnel": "PERSONNEL",
-    "sidebar.settings": "SETTINGS",
+  "sidebar.research": "RESEARCH ARCHIVE",
+  "sidebar.personnel": "PERSONNEL",
+  "sidebar.settings": "SETTINGS",
 
-    "settings.title": "SYSTEM CONFIGURATION",
-    "settings.language": "Language",
-    "settings.appearance": "Appearance",
-    "settings.audio": "Audio",
-    "settings.security": "Security",
-    "settings.system": "System",
+  "settings.title": "SYSTEM CONFIGURATION",
 
-    "buttons.apply": "Apply",
-    "buttons.close": "Close",
+  "settings.language": "Language",
+  "settings.language.description": "Select the system language.",
 
-    "status.online": "ONLINE"
+  "settings.appearance": "Appearance",
+  "settings.appearance.description": "Customize the interface.",
+
+  "settings.audio": "Audio",
+  "settings.audio.description": "Audio configuration.",
+
+  "settings.interface": "Interface",
+  "settings.interface.description": "Interface settings.",
+
+  "settings.security": "Security",
+  "settings.security.description": "Security settings.",
+
+  "settings.system": "System",
+  "settings.about": "About",
+
+  "settings.masterVolume": "Master Volume",
+  "settings.musicVolume": "Music Volume",
+  "settings.effectsVolume": "Effects Volume",
+
+  "settings.uiScale": "UI Scale",
+  "settings.fontSize": "Font Size",
+
+  "settings.animations": "Animations",
+  "settings.crt": "CRT Effect",
+  "settings.scanlines": "Scanlines",
+  "settings.glitchEffects": "Glitch Effects",
+
+  "settings.rememberUser": "Remember User",
+  "settings.autoLogin": "Auto Login",
+
+  "buttons.apply": "Apply",
+  "buttons.close": "Close",
+  "buttons.clearData": "Clear Local Data",
+
+  "status.online": "ONLINE"
 }
-
