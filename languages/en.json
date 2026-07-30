@@ -1,12 +1,27 @@
 {
   "login.title": "OMEGA SYSTEM",
+  "login.subtitle": "SECRET ORGANIZATION TERMINAL",
+
   "login.button": "LOGIN",
   "login.username": "USERNAME",
   "login.password": "PASSWORD",
 
-  "sidebar.research": "RESEARCH ARCHIVE",
+  "topbar.title": "OMEGA SYSTEM",
+  "topbar.subtitle": "AUTHORIZED ACCESS ONLY",
+
+  "sidebar.modules": "MODULES",
+  "sidebar.logs": "LOG DATABASE",
+  "sidebar.files": "FILE EXPLORER",
+  "sidebar.camera": "CAMERAS",
+  "sidebar.console": "SYSTEM CONSOLE",
   "sidebar.personnel": "PERSONNEL",
+  "sidebar.research": "RESEARCH ARCHIVE",
   "sidebar.settings": "SETTINGS",
+
+  "status.label": "STATUS",
+  "status.online": "ONLINE",
+
+  "time.label": "TIME",
 
   "settings.title": "SYSTEM CONFIGURATION",
 
@@ -45,7 +60,5 @@
 
   "buttons.apply": "Apply",
   "buttons.close": "Close",
-  "buttons.clearData": "Clear Local Data",
-
-  "status.online": "ONLINE"
+  "buttons.clearData": "Clear Local Data"
 }
