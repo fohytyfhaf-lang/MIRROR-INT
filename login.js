@@ -2,7 +2,7 @@ import { playMusic } from "./audio.js";
 import { setRole } from "./security.js";
 import { Storage } from "./storage.js";
 import { trigger } from "./eventManager.js";
-import { applySettings } from "./systemSettings.js";
+import { applySettings } from "./systemConfig.js";
 import { Accounts } from "./accounts.js";
 
 export function loginSystem() {
