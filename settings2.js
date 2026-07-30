@@ -1,5 +1,5 @@
 import { SettingsPages } from "./settingsPages.js";
-import { initLanguage, changeLanguage, translatePage } from "./languageManager.js";
+import { translatePage } from "./languageManager.js";
 import {
     getSettings,
     updateSetting
@@ -16,7 +16,7 @@ export function initSettings() {
     }
 
     function loadPage(page) {
-    translatePage();
+    
         content.innerHTML = SettingsPages[page] || `
         
             <div class="settingsCard">
@@ -24,8 +24,10 @@ export function initSettings() {
                 <p>Page "${page}" not found.</p>
             </div>
         `;
+        translatePage();
 
         initPage(page);
+        
     }
 
     function initPage(page) {
