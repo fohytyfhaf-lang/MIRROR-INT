@@ -1,51 +1,159 @@
+// =======================================
+// MR.SMILE EVENT SYSTEM
+// =======================================
+
+import { typeSystemMessage } from "./mrsmileChat.js";
+import { getTrust } from "./mrsmileTrust.js";
+import { getMemory } from "./mrsmileMemory.js";
+
+let running = false;
+
 export function initMrSmileEvents() {
 
-    console.log("[MR.SMILE EVENTS] initialized");
+    if (running) return;
+    running = true;
 
-    startNightEvents();
-    startGlitchEvents();
+    console.log("[MR.SMILE EVENTS] Started");
+
+    nightLoop();
+    glitchLoop();
+    idleLoop();
+    observationLoop();
 
 }
-function startNightEvents() {
 
-    setInterval(() => {
+// =======================================
+// NIGHT
+// =======================================
 
-        const h = new Date().getHours();
-        const isNight = h >= 22 || h <= 5;
+function nightLoop(){
 
-        const log = document.getElementById("chatLog");
-        if (!log) return;
+    setInterval(()=>{
 
-        if (isNight && Math.random() < 0.15) {
+        const hour=new Date().getHours();
 
-            log.innerText += "\n[SYSTEM] unauthorized presence detected";
+        if(hour>=22 || hour<=5){
+
+            if(Math.random()<0.20){
+
+                typeSystemMessage(pick([
+
+                    "Unusual activity detected.",
+                    "Someone is moving.",
+                    "Security cameras lost signal.",
+                    "An unknown process has awakened."
+
+                ]));
+
+            }
 
         }
 
-    }, 20000);
+    },30000);
 
 }
-function startGlitchEvents() {
 
-    setInterval(() => {
+// =======================================
+// GLITCH
+// =======================================
 
-        const log = document.getElementById("chatLog");
-        if (!log) return;
+function glitchLoop(){
 
-        if (Math.random() < 0.08) {
+    setInterval(()=>{
 
-            const glitches = [
-                "[SYSTEM] signal unstable",
-                "[OMEGA] interference detected",
-                "[MR.SMILE] ...",
+        if(Math.random()>0.08)
+            return;
+
+        document.body.classList.add("screenGlitch");
+
+        setTimeout(()=>{
+
+            document.body.classList.remove("screenGlitch");
+
+        },250);
+
+        typeSystemMessage(pick([
+
+            "Signal unstable.",
+            "Connection interrupted.",
+            "Data corruption detected.",
+            "Unknown interference."
+
+        ]));
+
+    },45000);
+
+}
+
+// =======================================
+// PLAYER OBSERVATION
+// =======================================
+
+function observationLoop(){
+
+    setInterval(()=>{
+
+        const memory=getMemory();
+
+        if(memory.openedFiles.length>5){
+
+            if(Math.random()<0.25){
+
+                typeSystemMessage(
+
+                    "MR.SMILE: You seem interested in our archives."
+
+                );
+
+            }
+
+        }
+
+    },60000);
+
+}
+
+// =======================================
+// IDLE
+// =======================================
+
+function idleLoop(){
+
+    setInterval(()=>{
+
+        if(Math.random()>0.12)
+            return;
+
+        const trust=getTrust();
+
+        if(trust>70){
+
+            typeSystemMessage(
+
+                "MR.SMILE: I was wondering when you would return."
+
+            );
+
+        }else{
+
+            typeSystemMessage(
+
                 "..."
-            ];
 
-            log.innerText += "\n" + glitches[Math.floor(Math.random() * glitches.length)];
+            );
 
         }
 
-    }, 30000);
+    },90000);
 
+}
+
+// =======================================
+
+function pick(arr){
+
+    return arr[Math.floor(Math.random()*arr.length)];
+
+}
 }
 
