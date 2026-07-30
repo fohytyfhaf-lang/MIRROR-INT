@@ -3,13 +3,7 @@ import { setRole } from "./security.js";
 import { Storage } from "./storage.js";
 import { trigger } from "./eventManager.js";
 import { applySettings } from "./systemSettings.js";
-
-const accounts = {
-    operator: "0404",
-    admin: "0000",
-    guest: "1234",
-    test: "1111"
-};
+import { Accounts } from "./accounts.js";
 
 export function loginSystem() {
 
@@ -33,14 +27,14 @@ export function loginSystem() {
 
     console.log("LOGIN TRY:", username);
 
-    if (!(username in accounts)) {
+    if (!(username in Accounts)) {
 
         if (status) status.textContent = "UNKNOWN USER";
         return;
 
     }
 
-    if (accounts[username] !== password) {
+   if (Accounts[username].password !== password) {
 
         if (status) status.textContent = "WRONG PASSWORD";
         return;
@@ -52,19 +46,8 @@ export function loginSystem() {
     }
 
     /* ---------- ROLE ---------- */
-
-    switch (username) {
-
-        case "admin":
-            setRole("admin");
-            break;
-
-        case "operator":
-            setRole("operator");
-            break;
-
-        default:
-            setRole("guest");
+    
+    setRole(Accounts[username].role);
 
     }
 
@@ -112,11 +95,8 @@ export function loginSystem() {
 
         trigger("user.login", {
             username,
-            role: username === "admin"
-                ? "admin"
-                : username === "operator"
-                    ? "operator"
-                    : "guest"
+            role: Accounts[username].role,
+            clearance: Accounts[username].clearance
         });
 
     }, 400);
