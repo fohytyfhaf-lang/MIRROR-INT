@@ -1,5 +1,5 @@
 import { SettingsPages } from "./settingsPages.js";
-import { translatePage } from "./languageManager.js";
+import { translatePage } from "./languageManager4.js";
 import {
     getSettings,
     updateSetting
