@@ -1,21 +1,64 @@
 {
-    "login.title": "СИСТЕМА OMEGA",
-    "login.button": "УВІЙТИ",
+  "login.title": "СИСТЕМА OMEGA",
+  "login.subtitle": "ТЕРМІНАЛ СЕКРЕТНОЇ ОРГАНІЗАЦІЇ",
 
-    "sidebar.research": "АРХІВ ДОСЛІДЖЕНЬ",
-    "sidebar.personnel": "ПЕРСОНАЛ",
-    "sidebar.settings": "НАЛАШТУВАННЯ",
+  "login.button": "УВІЙТИ",
+  "login.username": "ІМ'Я КОРИСТУВАЧА",
+  "login.password": "ПАРОЛЬ",
 
-    "settings.title": "КОНФІГУРАЦІЯ СИСТЕМИ",
-    "settings.language": "Мова",
-    "settings.appearance": "Зовнішній вигляд",
-    "settings.audio": "Звук",
-    "settings.security": "Безпека",
-    "settings.system": "Система",
+  "topbar.title": "СИСТЕМА OMEGA",
+  "topbar.subtitle": "ЛИШЕ ДЛЯ АВТОРИЗОВАНОГО ДОСТУПУ",
 
-    "buttons.apply": "Застосувати",
-    "buttons.close": "Закрити",
+  "sidebar.modules": "МОДУЛІ",
+  "sidebar.logs": "БАЗА ЖУРНАЛІВ",
+  "sidebar.files": "ПРОВІДНИК ФАЙЛІВ",
+  "sidebar.camera": "КАМЕРИ",
+  "sidebar.console": "СИСТЕМНА КОНСОЛЬ",
+  "sidebar.personnel": "ПЕРСОНАЛ",
+  "sidebar.research": "АРХІВ ДОСЛІДЖЕНЬ",
+  "sidebar.settings": "НАЛАШТУВАННЯ",
 
-    "status.online": "У МЕРЕЖІ"
+  "status.label": "СТАТУС",
+  "status.online": "У МЕРЕЖІ",
+
+  "time.label": "ЧАС",
+
+  "settings.title": "КОНФІГУРАЦІЯ СИСТЕМИ",
+
+  "settings.language": "Мова",
+  "settings.language.description": "Оберіть мову системи.",
+
+  "settings.appearance": "Зовнішній вигляд",
+  "settings.appearance.description": "Налаштування інтерфейсу.",
+
+  "settings.audio": "Звук",
+  "settings.audio.description": "Налаштування звуку.",
+
+  "settings.interface": "Інтерфейс",
+  "settings.interface.description": "Налаштування інтерфейсу.",
+
+  "settings.security": "Безпека",
+  "settings.security.description": "Налаштування безпеки.",
+
+  "settings.system": "Система",
+  "settings.about": "Про програму",
+
+  "settings.masterVolume": "Загальна гучність",
+  "settings.musicVolume": "Гучність музики",
+  "settings.effectsVolume": "Гучність ефектів",
+
+  "settings.uiScale": "Масштаб інтерфейсу",
+  "settings.fontSize": "Розмір шрифту",
+
+  "settings.animations": "Анімації",
+  "settings.crt": "Ефект CRT",
+  "settings.scanlines": "Лінії розгортки",
+  "settings.glitchEffects": "Глітч-ефекти",
+
+  "settings.rememberUser": "Запам'ятати користувача",
+  "settings.autoLogin": "Автоматичний вхід",
+
+  "buttons.apply": "Застосувати",
+  "buttons.close": "Закрити",
+  "buttons.clearData": "Очистити локальні дані"
 }
-
