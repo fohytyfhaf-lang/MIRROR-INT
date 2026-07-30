@@ -50,9 +50,9 @@
 
                 <img src="logo.png" alt="OMEGA Logo">
 
-                <h1>OMEGA</h1>
+                <h1 data-lang="login.title"></h1>
 
-                <p>SECRET ORGANIZATION TERMINAL</p>
+                <p data-lang="login.subtitle"></p>
 
             </div>
 
@@ -68,9 +68,7 @@
                     type="password"
                     placeholder="PASSWORD">
 
-                <button id="loginBtn">
-
-                    LOGIN
+              <button id="loginBtn" data-lang="login.button"></button>
 
                 </button>
 
@@ -110,9 +108,9 @@
 
             <div>
 
-                <h2>OMEGA SYSTEM</h2>
+                <h2 data-lang="topbar.title"></h2>
 
-                <span>AUTHORIZED ACCESS ONLY</span>
+                <span data-lang="topbar.subtitle"></span>
 
             </div>
 
@@ -168,13 +166,13 @@
 
         <button onclick="openApp('files')">
 
-            🗂 FILE EXPLORER
+            🗂  <span data-lang="sidebar.files"></span>
 
         </button>
 
         <button onclick="openApp('camera')">
 
-            📷 CAMERAS
+            📷  <span data-lang="sidebar.camera"></span>
 
         </button>
 
@@ -186,18 +184,19 @@
 
         <button onclick="openApp('personnel')">
 
-            👤 PERSONNEL
+            👤 <span data-lang="sidebar.personnel"></span>
 
         </button>
 
         <button onclick="openApp('research')">
 
-            🧪 RESEARCH
+            🧪 <span data-lang="sidebar.research"></span>
 
         </button>
 
         <button onclick="openApp('settings')">
-    ⚙ SETTINGS
+        <span data-lang="sidebar.settings"></span>
+            
 </button>
 
     </aside>
