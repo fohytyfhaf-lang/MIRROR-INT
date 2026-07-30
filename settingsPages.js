@@ -3,12 +3,13 @@ export const SettingsPages = {
 language: `
 <div class="settingsCard">
 
-<h2>🌐 Language</h2>
+<h2>🌐 <span data-lang="settings.language"></span></h2>
 
-<p>Select the system language.</p>
+<p data-lang="settings.language.description"></p>
 
 <div class="settingsRow">
-<label for="languageSelect">Language</label>
+
+<label for="languageSelect" data-lang="settings.language"></label>
 
 <select id="languageSelect">
 <option value="en">English</option>
@@ -18,9 +19,7 @@ language: `
 
 </div>
 
-<button id="saveLanguage">
-Apply
-</button>
+<button id="saveLanguage" data-lang="buttons.apply"></button>
 
 </div>
 `,
@@ -28,28 +27,28 @@ Apply
 appearance: `
 <div class="settingsCard">
 
-<h2>🎨 Appearance</h2>
+<h2>🎨 <span data-lang="settings.appearance"></span></h2>
 
-<p>Customize the interface.</p>
+<p data-lang="settings.appearance.description"></p>
 
 <div class="settingsRow">
-<label>Animations</label>
-<input id="animations" type="checkbox" checked>
+<label data-lang="settings.animations"></label>
+<input id="animations" type="checkbox">
 </div>
 
 <div class="settingsRow">
-<label>CRT Effect</label>
-<input id="crt" type="checkbox" checked>
+<label data-lang="settings.crt"></label>
+<input id="crt" type="checkbox">
 </div>
 
 <div class="settingsRow">
-<label>Scanlines</label>
-<input id="scanlines" type="checkbox" checked>
+<label data-lang="settings.scanlines"></label>
+<input id="scanlines" type="checkbox">
 </div>
 
 <div class="settingsRow">
-<label>Glitch Effects</label>
-<input id="glitchEffects" type="checkbox" checked>
+<label data-lang="settings.glitchEffects"></label>
+<input id="glitchEffects" type="checkbox">
 </div>
 
 </div>
@@ -58,22 +57,22 @@ appearance: `
 audio: `
 <div class="settingsCard">
 
-<h2>🔊 Audio</h2>
+<h2>🔊 <span data-lang="settings.audio"></span></h2>
 
-<p>Audio configuration.</p>
+<p data-lang="settings.audio.description"></p>
 
 <div class="settingsRow">
-<label>Master Volume</label>
+<label data-lang="settings.masterVolume"></label>
 <input id="masterVolume" type="range" min="0" max="100" value="70">
 </div>
 
 <div class="settingsRow">
-<label>Music Volume</label>
+<label data-lang="settings.musicVolume"></label>
 <input id="musicVolume" type="range" min="0" max="100" value="70">
 </div>
 
 <div class="settingsRow">
-<label>Effects Volume</label>
+<label data-lang="settings.effectsVolume"></label>
 <input id="effectsVolume" type="range" min="0" max="100" value="70">
 </div>
 
@@ -83,17 +82,17 @@ audio: `
 interface: `
 <div class="settingsCard">
 
-<h2>🖥 Interface</h2>
+<h2>🖥 <span data-lang="settings.interface"></span></h2>
 
-<p>Interface settings.</p>
+<p data-lang="settings.interface.description"></p>
 
 <div class="settingsRow">
-<label>UI Scale</label>
+<label data-lang="settings.uiScale"></label>
 <input id="uiScale" type="range" min="80" max="140" value="100">
 </div>
 
 <div class="settingsRow">
-<label>Font Size</label>
+<label data-lang="settings.fontSize"></label>
 <input id="fontSize" type="range" min="12" max="24" value="16">
 </div>
 
@@ -103,23 +102,21 @@ interface: `
 security: `
 <div class="settingsCard">
 
-<h2>🔒 Security</h2>
+<h2>🔒 <span data-lang="settings.security"></span></h2>
 
-<p>Security settings.</p>
+<p data-lang="settings.security.description"></p>
 
 <div class="settingsRow">
-<label>Remember User</label>
+<label data-lang="settings.rememberUser"></label>
 <input id="rememberUser" type="checkbox">
 </div>
 
 <div class="settingsRow">
-<label>Auto Login</label>
+<label data-lang="settings.autoLogin"></label>
 <input id="autoLogin" type="checkbox">
 </div>
 
-<button id="clearData">
-Clear Local Data
-</button>
+<button id="clearData" data-lang="buttons.clearData"></button>
 
 </div>
 `,
@@ -127,10 +124,10 @@ Clear Local Data
 system: `
 <div class="settingsCard">
 
-<h2>💾 System</h2>
+<h2>💾 <span data-lang="settings.system"></span></h2>
 
 <p><strong>Version:</strong> OMEGA DEV 0.2</p>
-<p><strong>Status:</strong> ONLINE</p>
+<p><strong>Status:</strong> <span data-lang="status.online"></span></p>
 <p><strong>Environment:</strong> Browser</p>
 <p><strong>Storage:</strong> Local Storage</p>
 
@@ -140,7 +137,7 @@ system: `
 about: `
 <div class="settingsCard">
 
-<h2>ℹ About</h2>
+<h2>ℹ <span data-lang="settings.about"></span></h2>
 
 <p><strong>OMEGA SYSTEM</strong></p>
 
