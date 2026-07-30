@@ -25,14 +25,9 @@ const DEFAULT_SETTINGS = {
 export function getSettings() {
 
     const currentUser = Storage.get("currentUser");
-
-    if (!currentUser) {
-        return { ...DEFAULT_SETTINGS };
-    }
-
     const users = Storage.get("users", {});
 
-    if (!users[currentUser]) {
+    if (!currentUser || !users[currentUser]) {
         return { ...DEFAULT_SETTINGS };
     }
 
@@ -46,12 +41,15 @@ export function getSettings() {
 export function saveSettings(settings) {
 
     const currentUser = Storage.get("currentUser");
-
     if (!currentUser) return;
 
     const users = Storage.get("users", {});
 
-    if (!users[currentUser]) return;
+    if (!users[currentUser]) {
+        users[currentUser] = {
+            settings: {}
+        };
+    }
 
     users[currentUser].settings = settings;
 
@@ -75,21 +73,15 @@ export function applySettings() {
 
     const settings = getSettings();
 
-    /* ---------- Language ---------- */
-
-    changeLanguage(settings.language);
-
-    /* ---------- Audio ---------- */
+    if (settings.language) {
+        changeLanguage(settings.language);
+    }
 
     const bgm = document.getElementById("bgm");
 
     if (bgm) {
-
         bgm.volume = settings.masterVolume / 100;
-
     }
-
-    /* ---------- Interface ---------- */
 
     document.documentElement.style.fontSize =
         settings.fontSize + "px";
@@ -99,26 +91,9 @@ export function applySettings() {
         settings.uiScale + "%"
     );
 
-    /* ---------- Effects ---------- */
-
-    document.body.classList.toggle(
-        "crt-disabled",
-        !settings.crt
-    );
-
-    document.body.classList.toggle(
-        "scanlines-disabled",
-        !settings.scanlines
-    );
-
-    document.body.classList.toggle(
-        "animations-disabled",
-        !settings.animations
-    );
-
-    document.body.classList.toggle(
-        "glitch-disabled",
-        !settings.glitchEffects
-    );
+    document.body.classList.toggle("crt-disabled", !settings.crt);
+    document.body.classList.toggle("scanlines-disabled", !settings.scanlines);
+    document.body.classList.toggle("animations-disabled", !settings.animations);
+    document.body.classList.toggle("glitch-disabled", !settings.glitchEffects);
 
 }
