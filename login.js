@@ -49,8 +49,6 @@ export function loginSystem() {
     
     setRole(Accounts[username].role);
 
-    }
-
     /* ---------- STORAGE ---------- */
 
     Storage.set("currentUser", username);
