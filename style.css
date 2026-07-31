@@ -109,18 +109,14 @@ body {
 /* =========================
         DESKTOP
 ========================= */
-
 #desktop{
-    position:fixed;
-    inset:0;
-
-    background:radial-gradient(circle at center,#0a1622,#05070c);
-
-    display:none;
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, #0a1622, #05070c);
 }
 
-#desktop.active{
-    display:block;
+.hidden{
+    display: none !important;
 }
 
 
