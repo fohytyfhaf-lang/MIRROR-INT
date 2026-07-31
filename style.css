@@ -689,6 +689,22 @@ body.redAlert{
 /* ==========================================
         PUBLIC WEBSITE (2013 STYLE)
 ========================================== */
+#publicSite{
+
+    position:fixed;
+    inset:0;
+
+    background:#edf2e8;
+
+    overflow:auto;
+
+    z-index:9000;
+
+}
+
+#publicSite.hidden{
+    display:none;
+}
 
 #publicHeader{
     background:linear-gradient(#5f8748,#4d6f3c);
