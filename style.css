@@ -1,5 +1,3 @@
-/* MIRROR-INT / OMEGA SYSTEM - cleaned version */
-
 /* =========================
         ROOT THEME
 ========================= */
@@ -51,6 +49,7 @@ body {
     margin: 0 auto;
 }
 
+
 #loginScreen {
     position: fixed;
     inset: 0;
@@ -79,6 +78,8 @@ body {
     inset: 0;
     background: radial-gradient(circle at center, #0a1622, #05070c);
 }
+
+
 
     #omegaLogo{   
     display:flex;
@@ -169,6 +170,7 @@ inset -1px 0 rgba(255,255,255,.05),
         WINDOWS CORE
 ========================= */
 
+
 #sidebar button{
 
 transition:
@@ -186,6 +188,7 @@ padding-left .2s;
 padding-left:18px;
 
 }
+
 
 @keyframes openWindow{
 
@@ -206,6 +209,8 @@ transform:scale(1);
 }
 
 }
+
+
 
 .window{
     position:absolute;
@@ -417,6 +422,7 @@ button {
     background: var(--accent);
 }
 
+
 #eyesLayer {
     position: fixed;
     inset: 0;
@@ -521,6 +527,8 @@ transform:translateY(0);
 }
 
 }
+
+
 
 /* =====================================================
    ATMOSPHERIC EFFECTS - MIRROR-INT / MR.SMILE
