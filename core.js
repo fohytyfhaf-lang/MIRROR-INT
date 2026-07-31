@@ -230,7 +230,7 @@ function bootSystem() {
         START
 ========================= */
 window.addEventListener("DOMContentLoaded", () => {
-
+    initFakeSite();
     startBoot();
     initLogin();
     bootSystem();
