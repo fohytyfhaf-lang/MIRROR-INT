@@ -14,149 +14,190 @@
 </head>
 
 <body>
-    
-<!-- BOOT SCREEN -->
-<div id="bootScreen">
 
-    <div id="bootLogo">
-        OMEGA SYSTEM
-    </div>
+    <!-- ==========================================
+                    BOOT SCREEN
+    =========================================== -->
 
-    <div id="bootText"></div>
+    <div id="bootScreen">
 
-    <div id="bootBar">
-        <div id="bootProgress"></div>
-    </div>
+        <div id="bootLogo">
+            OMEGA SYSTEM
+        </div>
 
-</div>
-    <!-- ==========================
-            GLOBAL AUDIO
-    =========================== -->
+        <div id="bootText"></div>
 
-    <audio id="bgm" loop></audio>
-    <audio id="sfx"></audio>
-
-    <!-- ===========================================
-        PUBLIC WEBSITE
-=========================================== -->
-
-<section id="publicSite">
-    
-    <div id="publicSite">
-        
-          <!-- HEADER -->
-        
-    <div id="headerLogo">
-
-        <img src="logo.png" alt="ABIC">
-
-        <div>
-
-            <h1>American Botanical Information Center</h1>
-            <p>Preserving North American Plant Knowledge Since 2007</p>
-
+        <div id="bootBar">
+            <div id="bootProgress"></div>
         </div>
 
     </div>
 
-  <!-- MENU -->
-<nav id="publicMenu">
-   
 
-    <a href="#">Home</a>
-    <a href="#">Plant Database</a>
-    <a href="#">Species Index</a>
-    <a href="#">Research Library</a>
-    <a href="#">Articles</a>
-    <a href="#">Downloads</a>
-    <a href="#">Contact</a>
 
-</nav>
-     <!-- MAIN -->
+    <!-- ==========================================
+                    AUDIO
+    =========================================== -->
 
-    <main id="publicMain">
-        
-        <!-- HERO -->
+    <audio id="bgm" loop></audio>
+    <audio id="sfx"></audio>
 
-       <div id="hero">
 
-    <div id="heroText">
 
-        <h2>North American Plant Encyclopedia</h2>
+    <!-- ==========================================
+                PUBLIC WEBSITE
+    =========================================== -->
 
-        <p>
-            Explore one of the largest online collections of North American flora.
-        </p>
+    <section id="publicSite">
 
-        <p>
-            Over <strong>45,000 documented species</strong> available for researchers, students and enthusiasts.
-        </p>
+        <!-- HEADER -->
 
-    </div>
+        <header id="publicHeader">
 
-    <div id="heroImage">
+            <div id="headerLogo">
 
-        <img src="forest.jpg" alt="Forest">
+                <img src="logo.png" alt="ABIC">
 
-    </div>
+                <div>
 
-</div>
-   <!-- SEARCH -->
+                    <h1>American Botanical Information Center</h1>
 
-    <div id="searchBox">
+                    <p>
+                        Preserving North American Plant Knowledge Since 2007
+                    </p>
 
-    <h3>Search Plant Database</h3>
+                </div>
 
-    <div id="searchRow">
+            </div>
 
-        <input
-            id="publicSearch"
-            type="text"
-            placeholder="Enter plant name...">
+        </header>
 
-        <button id="publicSearchButton">
-            Search
 
-        </button>
 
-    </div>
+        <!-- MENU -->
 
-</div>
-        <!-- FEATURED -->
-       
-       <section id="featuredPlants">
+        <nav id="publicMenu">
 
-    <h2>Featured Plants</h2>
+            <a href="#">Home</a>
 
-    <div id="plantGrid">
+            <a href="#">Plant Database</a>
 
-    </div>
+            <a href="#">Species Index</a>
 
-</section>
-         <!-- NEWS -->
-        
-        <section id="latestNews">
+            <a href="#">Research Library</a>
 
-    <h2>Latest News</h2>
+            <a href="#">Articles</a>
 
-    <ul>
+            <a href="#">Downloads</a>
 
-        <li>April 12, 2013 — Spring Survey Completed</li>
-        <li>March 30, 2013 — Herbarium Updated</li>
-        <li>March 18, 2013 — New Species Added</li>
-        <li>February 21, 2013 — Research Expedition Begins</li>
+            <a href="#">Contact</a>
 
-    </ul>
+        </nav>
 
-</section>
 
-    </main>
-    
-</div>
 
-    <!-- ==========================
-            LOGIN SCREEN
-    =========================== -->
+        <!-- MAIN -->
+
+        <main id="publicMain">
+
+            <!-- HERO -->
+
+            <section id="hero">
+
+                <div id="heroText">
+
+                    <h2>North American Plant Encyclopedia</h2>
+
+                    <p>
+                        Explore one of the largest online collections of North American flora.
+                    </p>
+
+                    <p>
+
+                        Over
+                        <strong>45,000 documented species</strong>
+                        available for researchers, students and enthusiasts.
+
+                    </p>
+
+                </div>
+
+                <div id="heroImage">
+
+                    <img src="forest.jpg" alt="Forest">
+
+                </div>
+
+            </section>
+
+
+
+            <!-- SEARCH -->
+
+            <section id="searchBox">
+
+                <h3>Search Plant Database</h3>
+
+                <div id="searchRow">
+
+                    <input
+                        id="publicSearch"
+                        type="text"
+                        placeholder="Enter plant name..."
+                    >
+
+                    <button id="publicSearchButton">
+
+                        Search
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- FEATURED -->
+
+            <section id="featuredPlants">
+
+                <h2>Featured Plants</h2>
+
+                <div id="plantGrid">
+
+                </div>
+
+            </section>
+
+
+
+            <!-- NEWS -->
+
+            <section id="latestNews">
+
+                <h2>Latest News</h2>
+
+                <ul>
+
+                    <li>April 12, 2013 — Spring Survey Completed</li>
+                    <li>March 30, 2013 — Herbarium Updated</li>
+                    <li>March 18, 2013 — New Species Added</li>
+                    <li>February 21, 2013 — Research Expedition Begins</li>
+
+                </ul>
+
+            </section>
+
+        </main>
+
+    </section>
+
+
+
+    <!-- ==========================================
+                LOGIN SCREEN
+    =========================================== -->
 
     <section id="loginScreen">
 
@@ -179,14 +220,16 @@
                 <input
                     id="user"
                     type="text"
-                    placeholder="USERNAME">
+                    placeholder="USERNAME"
+                >
 
                 <input
                     id="pass"
                     type="password"
-                    placeholder="PASSWORD">
+                    placeholder="PASSWORD"
+                >
 
-              <button id="loginBtn" data-lang="login.button"></button>
+                <button id="loginBtn" data-lang="login.button"></button>
 
                 <p id="status">
 
