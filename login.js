@@ -67,13 +67,16 @@ export function loginSystem() {
 
     setTimeout(() => {
 
-        loginScreen?.classList.add("hidden");
-        desktop?.classList.remove("hidden");
+           // скрываем публичный сайт
+           document.getElementById("publicSite")?.classList.add("hidden");
 
-        /* ---------- APPLY SETTINGS ---------- */
+           // скрываем логин
+           loginScreen?.classList.add("hidden");
 
-        applySettings();
+           // показываем рабочий стол
+           desktop?.classList.remove("hidden");
 
+           applySettings();
         /* ---------- START MUSIC ---------- */
 
         try {
