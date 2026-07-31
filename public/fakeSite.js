@@ -8,7 +8,7 @@ export function initFakeSite(){
 
 function loadPlants(){
 
-    const container = document.getElementById("featuredPlants");
+    const container = document.getElementById("plantGrid");
 
     if(!container) return;
 
