@@ -142,10 +142,22 @@ function startBoot() {
             clearInterval(t);
             clearInterval(b);
 
-            setTimeout(() => {
+           setTimeout(() => {
                 boot.style.display = "none";
-                login.classList.remove("hidden");
-            }, 500);
+
+                // Показываем фальшивый сайт
+                document.getElementById("publicSite").classList.remove("hidden");
+
+                // Прячем логин
+                login.classList.add("hidden");
+
+                // Прячем рабочий стол
+                document.getElementById("desktop").classList.add("hidden");
+
+                // Запускаем фальшивый сайт
+                initFakeSite();
+
+          }, 500);
         }
     }, 120);
 }
