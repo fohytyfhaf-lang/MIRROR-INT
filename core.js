@@ -234,14 +234,22 @@ window.addEventListener("DOMContentLoaded", () => {
     const login = document.getElementById("loginScreen");
     const desktop = document.getElementById("desktop");
 
-    publicSite?.classList.add("hidden");
+    // Показываем публичный сайт
+    publicSite?.classList.remove("hidden");
+
+    // Остальное скрываем
     login?.classList.add("hidden");
     desktop?.classList.add("hidden");
+
+    // Прячем экран загрузки
+    document.getElementById("bootScreen").style.display = "none";
+
+    // Загружаем содержимое сайта
     initFakeSite();
-    startBoot();
+
+    // Инициализируем систему
     initLogin();
     bootSystem();
-
       
 
     setTimeout(() => {
