@@ -1,28 +1,55 @@
 import { plants } from "./plantsData.js";
 
-export function showPlants() {
+export function showPlants(filteredPlants = plants) {
 
     const content = document.getElementById("publicContent");
 
-    if (!content) return;
-
     content.innerHTML = `
         <h2>Plant Database</h2>
-        <p>Showing ${plants.length} documented species.</p>
+
+        <p>
+            Showing <b>${filteredPlants.length}</b> documented species.
+        </p>
+
+        <div class="plantGrid">
+
+            ${filteredPlants.map(plant => `
+
+                <div class="plantCard">
+
+                    <img
+                        src="${plant.image}"
+                        alt="${plant.name}"
+                        class="plantImage"
+                        onerror="this.src='images/plants/placeholder.jpg'"
+                    >
+
+                    <h3>${plant.name}</h3>
+
+                    <i>${plant.latin}</i>
+
+                    <div class="plantInfo">
+
+                        <p><strong>Category:</strong> ${plant.category}</p>
+
+                        <p><strong>Region:</strong> ${plant.region}</p>
+
+                    </div>
+
+                    <p class="plantDescription">
+
+                        ${plant.description}
+
+                    </p>
+
+                    <button class="plantButton">
+                        View Details
+                    </button>
+
+                </div>
+
+            `).join("")}
+
+        </div>
     `;
-
-    plants.forEach(plant => {
-
-        content.innerHTML += `
-            <div class="plantCard">
-                <h3>${plant.name}</h3>
-                <i>${plant.latin}</i>
-                <p><b>Category:</b> ${plant.category}</p>
-                <p><b>Region:</b> ${plant.region}</p>
-                <p>${plant.description}</p>
-            </div>
-        `;
-
-    });
-
 }
