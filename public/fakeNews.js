@@ -1,78 +1,32 @@
-export const news = [
+import { news } from "./newsData.js";
 
-{
-    date: "April 12, 2013",
-    text: "Spring Survey Completed"
-},
+export function showNews() {
 
-{
-    date: "March 30, 2013",
-    text: "Herbarium Archive Updated"
-},
+    const content = document.getElementById("publicContent");
 
-{
-    date: "March 18, 2013",
-    text: "New Species Added to North American Database"
-},
+    if (!content) return;
 
-{
-    date: "February 21, 2013",
-    text: "Research Expedition Begins in Montana"
-},
+    content.innerHTML = `
+        <h2>Latest News</h2>
+        <p>${news.length} recent announcements.</p>
+    `;
 
-{
-    date: "January 14, 2013",
-    text: "Annual Seed Preservation Program Started"
-},
+    news.forEach(item => {
 
-{
-    date: "December 18, 2012",
-    text: "Winter Flora Observation Report Released"
-},
+        content.innerHTML += `
 
-{
-    date: "November 27, 2012",
-    text: "Rare Orchid Successfully Cultivated"
-},
+        <div class="newsCard">
 
-{
-    date: "October 15, 2012",
-    text: "New Digital Herbarium Collection Published"
-},
+            <h3>${item.title}</h3>
 
-{
-    date: "September 6, 2012",
-    text: "Forest Ecology Conference Announced"
-},
+            <small>${item.date}</small>
 
-{
-    date: "August 23, 2012",
-    text: "Expedition Returns from Yellowstone National Park"
-},
+            <p>${item.text}</p>
 
-{
-    date: "July 19, 2012",
-    text: "Medicinal Plant Research Expanded"
-},
+        </div>
 
-{
-    date: "June 11, 2012",
-    text: "Volunteer Program Open for Summer Season"
-},
+        `;
 
-{
-    date: "May 29, 2012",
-    text: "Database Reaches 45,000 Documented Species"
-},
+    });
 
-{
-    date: "April 17, 2012",
-    text: "Prairie Restoration Project Receives Funding"
-},
-
-{
-    date: "March 8, 2012",
-    text: "ABIC Releases Annual Botanical Review"
 }
-
-];
