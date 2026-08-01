@@ -1741,3 +1741,122 @@ body.night #eyesLayer{
         grid-template-columns:1fr;
     }
 }
+
+/* =========================
+        PLANT DATABASE
+========================= */
+
+.plantGrid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fill,minmax(280px,1fr));
+
+gap:24px;
+
+margin-top:25px;
+
+}
+
+.plantCard{
+
+background:#fff;
+
+border:1px solid #d9e3d6;
+
+border-radius:12px;
+
+overflow:hidden;
+
+box-shadow:0 6px 16px rgba(0,0,0,.08);
+
+transition:.25s;
+
+}
+
+.plantCard:hover{
+
+transform:translateY(-6px);
+
+box-shadow:0 10px 25px rgba(0,0,0,.15);
+
+}
+
+.plantImage{
+
+width:100%;
+
+height:190px;
+
+object-fit:cover;
+
+display:block;
+
+background:#e8efe5;
+
+}
+
+.plantCard h3{
+
+margin:15px;
+
+margin-bottom:5px;
+
+color:#205f33;
+
+}
+
+.plantCard i{
+
+display:block;
+
+margin:0 15px 15px;
+
+color:#666;
+
+}
+
+.plantInfo{
+
+margin:0 15px;
+
+font-size:14px;
+
+}
+
+.plantDescription{
+
+margin:15px;
+
+line-height:1.5;
+
+color:#444;
+
+}
+
+.plantButton{
+
+margin:15px;
+
+padding:10px 18px;
+
+border:none;
+
+background:#2e7d32;
+
+color:white;
+
+cursor:pointer;
+
+border-radius:6px;
+
+transition:.2s;
+
+}
+
+.plantButton:hover{
+
+background:#1b5e20;
+
+}
