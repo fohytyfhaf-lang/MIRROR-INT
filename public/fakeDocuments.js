@@ -1,96 +1,36 @@
-export const documents = [
+import { documents } from "./documentsData.js";
 
-{
-    name: "North American Flora Guide.pdf",
-    type: "PDF",
-    year: "2012",
-    description: "A complete guide to common plant species found throughout North America."
-},
+export function showDocuments() {
 
-{
-    name: "Species Catalogue 2013.pdf",
-    type: "PDF",
-    year: "2013",
-    description: "Updated catalogue containing documented plant species and classification data."
-},
+    const content = document.getElementById("publicContent");
 
-{
-    name: "Herbarium Instructions.pdf",
-    type: "PDF",
-    year: "2011",
-    description: "Guidelines for collecting, preserving and documenting plant samples."
-},
+    if (!content) return;
 
-{
-    name: "Database Update Report.pdf",
-    type: "PDF",
-    year: "2013",
-    description: "Summary of recent updates made to the ABIC plant database."
-},
+    content.innerHTML = `
+        <h2>Research Library</h2>
+        <p>${documents.length} archived documents.</p>
+    `;
 
-{
-    name: "Medicinal Plants Handbook.pdf",
-    type: "PDF",
-    year: "2010",
-    description: "Reference handbook covering medicinal plant species."
-},
+    documents.forEach(doc => {
 
-{
-    name: "Forest Ecology Survey.pdf",
-    type: "PDF",
-    year: "2012",
-    description: "Ecological survey of forest ecosystems across North America."
-},
+        content.innerHTML += `
 
-{
-    name: "Seed Preservation Manual.pdf",
-    type: "PDF",
-    year: "2011",
-    description: "Instructions for preserving rare and endangered plant seeds."
-},
+        <div class="documentCard">
 
-{
-    name: "Botanical Expedition Report.pdf",
-    type: "PDF",
-    year: "2013",
-    description: "Official report from the Rocky Mountains botanical expedition."
-},
+            <h3>${doc.name}</h3>
 
-{
-    name: "Wetland Plant Database.pdf",
-    type: "PDF",
-    year: "2012",
-    description: "Classification of wetland vegetation and habitats."
-},
+            <p><b>Type:</b> ${doc.type}</p>
 
-{
-    name: "Rare Species Register.pdf",
-    type: "PDF",
-    year: "2013",
-    description: "Protected and endangered plant species registry."
-},
+            <p><b>Year:</b> ${doc.year}</p>
 
-{
-    name: "Research Archive Index.pdf",
-    type: "PDF",
-    year: "2012",
-    description: "Index of archived scientific publications."
-},
+            <p><b>Size:</b> ${doc.size}</p>
 
-{
-    name: "Annual Botanical Review.pdf",
-    type: "PDF",
-    year: "2012",
-    description: "Annual review of botanical discoveries and research."
-},
+            <p>${doc.description}</p>
 
-// ---------- ARG ----------
+        </div>
 
-{
-    name: "Archive_Record_047.pdf",
-    type: "Restricted",
-    year: "Unknown",
-    description: "Document unavailable."
+        `;
+
+    });
+
 }
-
-];
