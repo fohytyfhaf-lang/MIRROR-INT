@@ -1,64 +1,96 @@
 export const documents = [
 
-    {
-        name: "North American Flora Guide.pdf",
+{
+    name: "North American Flora Guide.pdf",
+    type: "PDF",
+    year: "2012",
+    description: "A complete guide to common plant species found throughout North America."
+},
 
-        type: "PDF",
+{
+    name: "Species Catalogue 2013.pdf",
+    type: "PDF",
+    year: "2013",
+    description: "Updated catalogue containing documented plant species and classification data."
+},
 
-        year: "2012",
+{
+    name: "Herbarium Instructions.pdf",
+    type: "PDF",
+    year: "2011",
+    description: "Guidelines for collecting, preserving and documenting plant samples."
+},
 
-        description:
-        "A complete guide to common plant species found throughout North America."
-    },
+{
+    name: "Database Update Report.pdf",
+    type: "PDF",
+    year: "2013",
+    description: "Summary of recent updates made to the ABIC plant database."
+},
 
+{
+    name: "Medicinal Plants Handbook.pdf",
+    type: "PDF",
+    year: "2010",
+    description: "Reference handbook covering medicinal plant species."
+},
 
-    {
-        name: "Species Catalogue 2013.pdf",
+{
+    name: "Forest Ecology Survey.pdf",
+    type: "PDF",
+    year: "2012",
+    description: "Ecological survey of forest ecosystems across North America."
+},
 
-        type: "PDF",
+{
+    name: "Seed Preservation Manual.pdf",
+    type: "PDF",
+    year: "2011",
+    description: "Instructions for preserving rare and endangered plant seeds."
+},
 
-        year: "2013",
+{
+    name: "Botanical Expedition Report.pdf",
+    type: "PDF",
+    year: "2013",
+    description: "Official report from the Rocky Mountains botanical expedition."
+},
 
-        description:
-        "Updated catalogue containing documented plant species and classification data."
-    },
+{
+    name: "Wetland Plant Database.pdf",
+    type: "PDF",
+    year: "2012",
+    description: "Classification of wetland vegetation and habitats."
+},
 
+{
+    name: "Rare Species Register.pdf",
+    type: "PDF",
+    year: "2013",
+    description: "Protected and endangered plant species registry."
+},
 
-    {
-        name: "Herbarium Instructions.pdf",
+{
+    name: "Research Archive Index.pdf",
+    type: "PDF",
+    year: "2012",
+    description: "Index of archived scientific publications."
+},
 
-        type: "PDF",
+{
+    name: "Annual Botanical Review.pdf",
+    type: "PDF",
+    year: "2012",
+    description: "Annual review of botanical discoveries and research."
+},
 
-        year: "2011",
+// ---------- ARG ----------
 
-        description:
-        "Guidelines for collecting, preserving and documenting plant samples."
-    },
-
-
-    {
-        name: "Database Update Report.pdf",
-
-        type: "PDF",
-
-        year: "2013",
-
-        description:
-        "Summary of recent updates made to the ABIC plant database."
-    },
-
-
-    // скрытая запись для ARG
-
-    {
-        name: "Archive_Record_047.pdf",
-
-        type: "Restricted",
-
-        year: "Unknown",
-
-        description:
-        "Document unavailable."
-    }
+{
+    name: "Archive_Record_047.pdf",
+    type: "Restricted",
+    year: "Unknown",
+    description: "Document unavailable."
+}
 
 ];
