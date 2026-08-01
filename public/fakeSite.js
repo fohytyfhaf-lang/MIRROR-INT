@@ -1,8 +1,10 @@
 import { plants } from "./fakePlants.js";
+import { news } from "./fakeNews.js";
 
 export function initFakeSite(){
 
     loadPlants();
+    loadNews();
 
 }
 
@@ -33,3 +35,35 @@ function loadPlants(){
     });
 
 }
+
+function loadNews(){
+
+    const list =
+    document.querySelector("#latestNews ul");
+
+
+    if(!list) return;
+
+
+    list.innerHTML="";
+
+
+    news.forEach(item=>{
+
+
+        list.innerHTML += `
+
+        <li>
+        ${item.date}
+        —
+        ${item.text}
+        </li>
+
+        `;
+
+
+    });
+
+}
+
+
