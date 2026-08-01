@@ -230,6 +230,13 @@ function bootSystem() {
         START
 ========================= */
 window.addEventListener("DOMContentLoaded", () => {
+    const publicSite = document.getElementById("publicSite");
+    const login = document.getElementById("loginScreen");
+    const desktop = document.getElementById("desktop");
+
+    publicSite?.classList.add("hidden");
+    login?.classList.add("hidden");
+    desktop?.classList.add("hidden");
     initFakeSite();
     startBoot();
     initLogin();
