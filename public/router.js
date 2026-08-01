@@ -1,6 +1,7 @@
 import { showPlants } from "./fakePlants.js";
 import { showArticles } from "./fakeArticles.js";
 import { showDocuments } from "./fakeDocuments.js";
+import { initSearch } from "./search.js";
 import { showNews } from "./fakeNews.js";
 
 export function initRouter() {
@@ -104,6 +105,8 @@ Search
 `;
 
     showNews();
+    showPlants();
+    initSearch();
 
 }
 
