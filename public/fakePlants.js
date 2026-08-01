@@ -1,4 +1,4 @@
-
+import { plants } from "./plantsData.js";
 export function showPlants() {
     const content = document.getElementById("publicContent");
 
