@@ -1,12 +1,14 @@
 import { plants } from "./fakePlants.js";
 import { news } from "./fakeNews.js";
 import { articles } from "./fakeArticles.js";
+import { documents } from "./fakeDocuments.js";
 
 export function initFakeSite(){
 
     loadPlants();
     loadNews();
     loadArticles();
+    loadDocuments();
 }
 
 function loadPlants(){
@@ -98,6 +100,56 @@ function loadArticles(){
 
             <p>
                 ${article.text}
+            </p>
+
+
+        </div>
+
+        `;
+
+
+    });
+
+}
+
+function loadDocuments(){
+
+    const container =
+    document.getElementById("documentList");
+
+
+    if(!container) return;
+
+
+    container.innerHTML = "";
+
+
+    documents.forEach(doc => {
+
+
+        container.innerHTML += `
+
+        <div class="documentCard">
+
+            <h3>
+                ${doc.name}
+            </h3>
+
+
+            <p>
+                Type:
+                ${doc.type}
+            </p>
+
+
+            <p>
+                Year:
+                ${doc.year}
+            </p>
+
+
+            <p>
+                ${doc.description}
             </p>
 
 
