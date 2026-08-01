@@ -1,3 +1,27 @@
+
+import { plants } from "./plantsData.js";
+
+export function showPlants() {
+    const content = document.getElementById("publicContent");
+
+    content.innerHTML = `
+        <h2>Plant Database</h2>
+        <p>Showing ${plants.length} documented species.</p>
+    `;
+
+    plants.forEach(plant => {
+        content.innerHTML += `
+            <div class="plantCard">
+                <h3>${plant.name}</h3>
+                <i>${plant.latin}</i>
+                <p>${plant.description}</p>
+            </div>
+        `;
+    });
+}
+
+
+
 export const plants = [
 
 {
