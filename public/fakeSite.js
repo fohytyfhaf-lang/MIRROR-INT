@@ -1,165 +1,56 @@
-import { plants } from "./fakePlants.js";
-import { news } from "./fakeNews.js";
-import { articles } from "./fakeArticles.js";
-import { documents } from "./fakeDocuments.js";
+import { showHome } from "./fakeHome.js";
+import { showPlants } from "./fakePlants.js";
+import { showResearch } from "./fakeResearch.js";
+import { showArticles } from "./fakeArticles.js";
+import { showDownloads } from "./fakeDocuments.js";
+import { showContact } from "./fakeContact.js";
 
 export function initFakeSite(){
 
-    loadPlants();
-    loadNews();
-    loadArticles();
-    loadDocuments();
-}
+    openPage("home");
 
-function loadPlants(){
+    document.querySelectorAll("#publicMenu a").forEach(link=>{
 
-    const container = document.getElementById("plantGrid");
+        link.addEventListener("click",e=>{
 
-    if(!container) return;
+            e.preventDefault();
 
-    container.innerHTML="";
+            openPage(link.dataset.page);
 
-    plants.forEach(plant=>{
-
-        container.innerHTML+=`
-
-        <div class="plantCard">
-
-            <h3>${plant.name}</h3>
-
-            <i>${plant.latin}</i>
-
-            <p>${plant.description}</p>
-
-        </div>
-
-        `;
+        });
 
     });
 
 }
 
-function loadNews(){
+function openPage(page){
 
-    const list =
-    document.querySelector("#latestNews ul");
+    switch(page){
 
+        case "home":
+            showHome();
+            break;
 
-    if(!list) return;
+        case "plants":
+            showPlants();
+            break;
 
+        case "research":
+            showResearch();
+            break;
 
-    list.innerHTML="";
+        case "articles":
+            showArticles();
+            break;
 
+        case "downloads":
+            showDownloads();
+            break;
 
-    news.forEach(item=>{
+        case "contact":
+            showContact();
+            break;
 
-
-        list.innerHTML += `
-
-        <li>
-        ${item.date}
-        —
-        ${item.text}
-        </li>
-
-        `;
-
-
-    });
-
-}
-
-function loadArticles(){
-
-    const container =
-    document.getElementById("articleList");
-
-
-    if(!container) return;
-
-
-    container.innerHTML = "";
-
-
-    articles.forEach(article => {
-
-
-        container.innerHTML += `
-
-        <div class="articleCard">
-
-            <h3>
-                ${article.title}
-            </h3>
-
-
-            <small>
-                ${article.date}
-            </small>
-
-
-            <p>
-                ${article.text}
-            </p>
-
-
-        </div>
-
-        `;
-
-
-    });
+    }
 
 }
-
-function loadDocuments(){
-
-    const container =
-    document.getElementById("documentList");
-
-
-    if(!container) return;
-
-
-    container.innerHTML = "";
-
-
-    documents.forEach(doc => {
-
-
-        container.innerHTML += `
-
-        <div class="documentCard">
-
-            <h3>
-                ${doc.name}
-            </h3>
-
-
-            <p>
-                Type:
-                ${doc.type}
-            </p>
-
-
-            <p>
-                Year:
-                ${doc.year}
-            </p>
-
-
-            <p>
-                ${doc.description}
-            </p>
-
-
-        </div>
-
-        `;
-
-
-    });
-
-}
-
-
