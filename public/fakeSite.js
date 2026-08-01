@@ -5,60 +5,169 @@ import { showNews } from "./fakeNews.js";
 
 export function initFakeSite() {
 
-    document.querySelectorAll("#publicMenu a").forEach(link => {
+    setupMenu();
+    showHome();
 
-        link.addEventListener("click", e => {
+}
+
+function setupMenu() {
+
+    const links = document.querySelectorAll("#publicMenu a");
+
+    links.forEach(link => {
+
+        link.addEventListener("click", (e) => {
 
             e.preventDefault();
 
-            openPage(link.dataset.page);
+            const page = link.textContent.trim();
+
+            switch(page){
+
+                case "Home":
+                    showHome();
+                    break;
+
+                case "Plant Database":
+                    showPlants();
+                    break;
+
+                case "Species Index":
+                    showPlants();
+                    break;
+
+                case "Research Library":
+                    showDocuments();
+                    break;
+
+                case "Articles":
+                    showArticles();
+                    break;
+
+                case "Downloads":
+                    showDownloads();
+                    break;
+
+                case "Contact":
+                    showContact();
+                    break;
+
+            }
 
         });
 
     });
 
-    openPage("home");
-
 }
 
-function openPage(page) {
-
-    switch (page) {
-
-        case "home":
-            showHome();
-            break;
-
-        case "plants":
-            showPlants();
-            break;
-
-        case "articles":
-            showArticles();
-            break;
-
-        case "downloads":
-            showDocuments();
-            break;
-
-        case "news":
-            showNews();
-            break;
-
-    }
-
-}
-
-function showHome() {
+function showHome(){
 
     const content = document.getElementById("publicContent");
 
+    if(!content) return;
+
     content.innerHTML = `
-        <h2>Welcome to ABIC</h2>
+
+    <section id="hero">
+
+        <div id="heroText">
+
+            <h2>North American Plant Encyclopedia</h2>
+
+            <p>
+                Welcome to the American Botanical Information Center.
+            </p>
+
+            <p>
+                Our archive contains more than
+                <strong>45,000 documented species</strong>,
+                research articles,
+                herbarium records
+                and educational publications.
+            </p>
+
+        </div>
+
+    </section>
+
+    `;
+
+}
+
+function showDownloads(){
+
+    const content = document.getElementById("publicContent");
+
+    if(!content) return;
+
+    content.innerHTML = `
+
+        <h2>Downloads</h2>
+
         <p>
-            The American Botanical Information Center maintains one of the
-            largest botanical databases in North America.
+
+            Public documents available for download.
+
         </p>
+
+        <ul>
+
+            <li>North American Flora Guide.pdf</li>
+
+            <li>Species Catalogue 2013.pdf</li>
+
+            <li>Herbarium Instructions.pdf</li>
+
+            <li>Plant Classification Manual.pdf</li>
+
+        </ul>
+
+    `;
+
+}
+
+function showContact(){
+
+    const content = document.getElementById("publicContent");
+
+    if(!content) return;
+
+    content.innerHTML = `
+
+        <h2>Contact</h2>
+
+        <p>
+
+            American Botanical Information Center
+
+        </p>
+
+        <p>
+
+            315 Green Valley Road
+
+        </p>
+
+        <p>
+
+            Portland, Oregon
+
+        </p>
+
+        <p>
+
+            Phone:
+            +1 (503) 555-2481
+
+        </p>
+
+        <p>
+
+            Email:
+            contact@abic.org
+
+        </p>
+
     `;
 
 }
