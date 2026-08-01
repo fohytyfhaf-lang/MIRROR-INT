@@ -1,17 +1,13 @@
-import { showHome } from "./fakeHome.js";
 import { showPlants } from "./fakePlants.js";
-import { showResearch } from "./fakeResearch.js";
 import { showArticles } from "./fakeArticles.js";
-import { showDownloads } from "./fakeDocuments.js";
-import { showContact } from "./fakeContact.js";
+import { showDocuments } from "./fakeDocuments.js";
+import { showNews } from "./fakeNews.js";
 
-export function initFakeSite(){
+export function initFakeSite() {
 
-    openPage("home");
+    document.querySelectorAll("#publicMenu a").forEach(link => {
 
-    document.querySelectorAll("#publicMenu a").forEach(link=>{
-
-        link.addEventListener("click",e=>{
+        link.addEventListener("click", e => {
 
             e.preventDefault();
 
@@ -21,11 +17,13 @@ export function initFakeSite(){
 
     });
 
+    openPage("home");
+
 }
 
-function openPage(page){
+function openPage(page) {
 
-    switch(page){
+    switch (page) {
 
         case "home":
             showHome();
@@ -35,22 +33,32 @@ function openPage(page){
             showPlants();
             break;
 
-        case "research":
-            showResearch();
-            break;
-
         case "articles":
             showArticles();
             break;
 
         case "downloads":
-            showDownloads();
+            showDocuments();
             break;
 
-        case "contact":
-            showContact();
+        case "news":
+            showNews();
             break;
 
     }
+
+}
+
+function showHome() {
+
+    const content = document.getElementById("publicContent");
+
+    content.innerHTML = `
+        <h2>Welcome to ABIC</h2>
+        <p>
+            The American Botanical Information Center maintains one of the
+            largest botanical databases in North America.
+        </p>
+    `;
 
 }
