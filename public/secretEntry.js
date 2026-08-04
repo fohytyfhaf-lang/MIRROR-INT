@@ -23,3 +23,17 @@ export function initSecretEntry(){
     });
 
 }
+
+function enterOmega(){
+
+    const publicSite =
+    document.getElementById("publicSite");
+
+    const login =
+    document.getElementById("loginScreen");
+
+    publicSite.classList.add("hidden");
+
+    login.classList.remove("hidden");
+
+}
