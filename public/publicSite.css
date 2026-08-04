@@ -1,0 +1,56 @@
+/* ==========================================================
+   PUBLIC WEBSITE (ABIC)
+   American Botanical Information Center
+========================================================== */
+
+/* ==========================================
+   MAIN
+========================================== */
+
+#publicSite{
+
+    position:fixed;
+    inset:0;
+
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    background:#e8eedf;
+
+    color:#2f2f2f;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    z-index:9000;
+
+}
+
+/* ==========================================
+   CONTENT
+========================================== */
+
+#publicMain{
+
+    width:min(1300px,96vw);
+
+    margin:35px auto;
+
+}
+
+#publicContent{
+
+    background:white;
+
+    border:1px solid #d8d8d8;
+
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.08);
+
+    padding:35px;
+
+    min-height:700px;
+
+}
