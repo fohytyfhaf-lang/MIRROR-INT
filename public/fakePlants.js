@@ -11,7 +11,7 @@ export function showPlants(filteredPlants = plants) {
             Showing <b>${filteredPlants.length}</b> documented species.
         </p>
 
-        <div class="plantGrid">
+        <div id="plantGrid" class="plantGrid">
 
             ${filteredPlants.map(plant => `
 
