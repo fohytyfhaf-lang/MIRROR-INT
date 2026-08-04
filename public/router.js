@@ -3,6 +3,7 @@ import { showArticles } from "./fakeArticles.js";
 import { showDocuments } from "./fakeDocuments.js";
 import { initSearch } from "./search.js";
 import { showNews } from "./fakeNews.js";
+import { initSecretEntry } from "./secretEntry.js";
 
 export function initRouter() {
 
@@ -43,7 +44,7 @@ export function initRouter() {
     });
 
     showHome();
-
+    initSecretEntry();
 }
 
 function showHome(){
