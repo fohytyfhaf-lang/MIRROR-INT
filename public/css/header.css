@@ -1,0 +1,197 @@
+/* ==========================================================
+   HEADER
+========================================================== */
+
+#publicHeader{
+
+    background:
+        linear-gradient(
+            #6f9656,
+            #54763d
+        );
+
+    border-bottom:5px solid #3e5b2d;
+
+    color:white;
+
+    box-shadow:
+        0 4px 12px rgba(0,0,0,.15);
+
+}
+
+/* ========================================== */
+
+#headerLogo{
+
+    width:min(1300px,96vw);
+
+    margin:auto;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:25px;
+
+    padding:25px 0;
+
+}
+
+/* ========================================== */
+
+#headerLogo img{
+
+    width:90px;
+
+    height:90px;
+
+    object-fit:contain;
+
+    background:white;
+
+    padding:8px;
+
+    border-radius:50%;
+
+    box-shadow:
+        0 3px 10px rgba(0,0,0,.25);
+
+}
+
+/* ========================================== */
+
+#headerLogo h1{
+
+    color:white;
+
+    font-size:34px;
+
+    font-weight:bold;
+
+    margin-bottom:8px;
+
+}
+
+/* ========================================== */
+
+#headerLogo p{
+
+    color:#edf7e7;
+
+    font-size:16px;
+
+    margin:0;
+
+}
+
+/* ========================================== */
+
+#headerLogo div{
+
+    flex:1;
+
+}
+
+/* ==========================================
+   HEADER INFO
+========================================================== */
+
+.headerInfo{
+
+    display:flex;
+
+    gap:30px;
+
+    margin-top:14px;
+
+    color:#eef7e8;
+
+    font-size:14px;
+
+}
+
+.headerInfo span{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+}
+
+/* ==========================================
+   TOP STRIP
+========================================================== */
+
+#headerTop{
+
+    background:#385128;
+
+    color:#dcebd4;
+
+    font-size:13px;
+
+}
+
+#headerTopContent{
+
+    width:min(1300px,96vw);
+
+    margin:auto;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:8px 0;
+
+}
+
+#headerTop a{
+
+    color:#dcebd4;
+
+    text-decoration:none;
+
+    margin-left:15px;
+
+}
+
+#headerTop a:hover{
+
+    text-decoration:underline;
+
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width:900px){
+
+    #headerLogo{
+
+        flex-direction:column;
+
+        text-align:center;
+
+    }
+
+    .headerInfo{
+
+        justify-content:center;
+
+        flex-wrap:wrap;
+
+    }
+
+    #headerLogo h1{
+
+        font-size:28px;
+
+    }
+
+}
