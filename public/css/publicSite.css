@@ -1,36 +1,131 @@
 /* ==========================================================
-   PUBLIC WEBSITE (ABIC)
-   American Botanical Information Center
+   AMERICAN BOTANICAL INFORMATION CENTER
+   PUBLIC WEBSITE
 ========================================================== */
 
-/* ==========================================
-   MAIN
-========================================== */
+/* =========================
+   ROOT
+========================= */
 
-#publicSite{
+:root{
 
-    position:fixed;
-    inset:0;
+    --bg:#edf3e6;
 
-    overflow-y:auto;
-    overflow-x:hidden;
+    --panel:#ffffff;
 
-    background:#e8eedf;
+    --panel2:#f6faf3;
 
-    color:#2f2f2f;
+    --border:#cfdac8;
 
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
+    --header:#5d7f43;
 
-    z-index:9000;
+    --headerDark:#456332;
+
+    --menu:#dfe9d7;
+
+    --menuHover:#64894d;
+
+    --text:#2d2d2d;
+
+    --textLight:#666;
+
+    --accent:#2e7d32;
+
+    --shadow:0 6px 18px rgba(0,0,0,.08);
 
 }
 
-/* ==========================================
-   CONTENT
-========================================== */
+/* =========================
+   RESET
+========================= */
+
+*{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+}
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+body{
+
+    background:var(--bg);
+
+    color:var(--text);
+
+    font-family:
+
+        Arial,
+
+        Helvetica,
+
+        sans-serif;
+
+    line-height:1.6;
+
+}
+
+/* =========================
+   LINKS
+========================= */
+
+a{
+
+    color:var(--accent);
+
+    text-decoration:none;
+
+}
+
+a:hover{
+
+    text-decoration:underline;
+
+}
+
+/* =========================
+   IMAGES
+========================= */
+
+img{
+
+    display:block;
+
+    max-width:100%;
+
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+button{
+
+    font-family:inherit;
+
+    cursor:pointer;
+
+}
+
+/* =========================
+   MAIN LAYOUT
+========================= */
+
+#publicSite{
+
+    min-height:100vh;
+
+    background:var(--bg);
+
+}
 
 #publicMain{
 
@@ -42,15 +137,60 @@
 
 #publicContent{
 
-    background:white;
+    background:var(--panel);
 
-    border:1px solid #d8d8d8;
+    border:1px solid var(--border);
 
-    box-shadow:
-        0 5px 18px rgba(0,0,0,.08);
+    box-shadow:var(--shadow);
 
     padding:35px;
 
+    border-radius:6px;
+
     min-height:700px;
+
+}
+
+/* =========================
+   TITLES
+========================= */
+
+h1{
+
+    font-size:36px;
+
+}
+
+h2{
+
+    font-size:30px;
+
+    color:#315d24;
+
+    margin-bottom:20px;
+
+}
+
+h3{
+
+    font-size:22px;
+
+    color:#39692a;
+
+}
+
+p{
+
+    margin-bottom:15px;
+
+}
+
+/* =========================
+   SECTIONS
+========================= */
+
+section{
+
+    margin-bottom:45px;
 
 }
