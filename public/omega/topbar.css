@@ -1,0 +1,243 @@
+/* ==========================================================
+   OMEGA TOP BAR
+========================================================== */
+
+#topBar{
+
+    position:absolute;
+
+    top:0;
+
+    left:0;
+
+    right:0;
+
+    height:64px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:0 22px;
+
+    background:
+        linear-gradient(
+            #111b28,
+            #0a121d
+        );
+
+    border-bottom:1px solid #203447;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.35);
+
+    z-index:200;
+
+}
+
+/* ========================================================== */
+
+#omegaLogo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+}
+
+#omegaLogo img{
+
+    width:42px;
+
+    height:42px;
+
+    object-fit:contain;
+
+}
+
+#omegaLogo h2{
+
+    font-size:20px;
+
+    color:#e5f5ff;
+
+    letter-spacing:1px;
+
+    margin-bottom:3px;
+
+}
+
+#omegaLogo span{
+
+    display:block;
+
+    font-size:12px;
+
+    color:#7ca5c6;
+
+    letter-spacing:2px;
+
+    text-transform:uppercase;
+
+}
+
+/* ========================================================== */
+
+#systemInfo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+/* ========================================================== */
+
+.systemItem{
+
+    min-width:120px;
+
+    padding:8px 12px;
+
+    background:#111b26;
+
+    border:1px solid #23394d;
+
+    border-radius:6px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:4px;
+
+}
+
+.systemItem:first-child{
+
+    min-width:150px;
+
+}
+
+.systemItem{
+
+    font-size:11px;
+
+    color:#7ba0bc;
+
+    letter-spacing:1px;
+
+    text-transform:uppercase;
+
+}
+
+.systemItem span{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    color:#d7f1ff;
+
+    font-size:14px;
+
+    letter-spacing:.5px;
+
+}
+
+/* ========================================================== */
+
+#statusLight{
+
+    width:10px;
+
+    height:10px;
+
+    border-radius:50%;
+
+    background:#00ff99;
+
+    box-shadow:
+        0 0 10px #00ff99,
+        0 0 20px rgba(0,255,153,.4);
+
+    animation:statusPulse 2s infinite;
+
+}
+
+@keyframes statusPulse{
+
+    0%,100%{
+
+        opacity:1;
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        opacity:.6;
+
+        transform:scale(.8);
+
+    }
+
+}
+
+/* ========================================================== */
+
+#clock{
+
+    font-family:Consolas,monospace;
+
+    font-size:17px;
+
+    color:#e9f8ff;
+
+}
+
+/* ========================================================== */
+
+.systemItem:hover{
+
+    border-color:#4fd8ff;
+
+    box-shadow:
+        0 0 12px rgba(79,216,255,.15);
+
+}
+
+/* ========================================================== */
+
+@media(max-width:900px){
+
+    #topBar{
+
+        flex-direction:column;
+
+        height:auto;
+
+        padding:10px;
+
+        gap:12px;
+
+    }
+
+    #systemInfo{
+
+        flex-wrap:wrap;
+
+        justify-content:center;
+
+    }
+
+}
