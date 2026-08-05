@@ -1,5 +1,5 @@
 /* ==========================================================
-   OMEGA TOP BAR
+   TOP BAR
 ========================================================== */
 
 #topBar{
@@ -7,9 +7,7 @@
     position:absolute;
 
     top:0;
-
     left:0;
-
     right:0;
 
     height:64px;
@@ -24,16 +22,16 @@
 
     background:
         linear-gradient(
-            #111b28,
-            #0a121d
+            #121d2a,
+            #0b141e
         );
 
-    border-bottom:1px solid #203447;
+    border-bottom:1px solid #253d52;
 
     box-shadow:
-        0 3px 12px rgba(0,0,0,.35);
+        0 3px 15px rgba(0,0,0,.35);
 
-    z-index:200;
+    z-index:500;
 
 }
 
@@ -63,11 +61,9 @@
 
     font-size:20px;
 
-    color:#e5f5ff;
+    color:#dff5ff;
 
     letter-spacing:1px;
-
-    margin-bottom:3px;
 
 }
 
@@ -75,13 +71,13 @@
 
     display:block;
 
+    margin-top:3px;
+
+    color:#7fb5d6;
+
     font-size:12px;
 
-    color:#7ca5c6;
-
-    letter-spacing:2px;
-
-    text-transform:uppercase;
+    letter-spacing:1px;
 
 }
 
@@ -93,7 +89,7 @@
 
     align-items:center;
 
-    gap:18px;
+    gap:30px;
 
 }
 
@@ -101,39 +97,19 @@
 
 .systemItem{
 
-    min-width:120px;
-
-    padding:8px 12px;
-
-    background:#111b26;
-
-    border:1px solid #23394d;
-
-    border-radius:6px;
-
     display:flex;
 
     flex-direction:column;
 
     gap:4px;
 
-}
-
-.systemItem:first-child{
-
-    min-width:150px;
-
-}
-
-.systemItem{
-
     font-size:11px;
 
-    color:#7ba0bc;
-
-    letter-spacing:1px;
+    color:#7fa8c2;
 
     text-transform:uppercase;
+
+    letter-spacing:1px;
 
 }
 
@@ -145,11 +121,9 @@
 
     gap:8px;
 
-    color:#d7f1ff;
-
     font-size:14px;
 
-    letter-spacing:.5px;
+    color:#d9f3ff;
 
 }
 
@@ -163,11 +137,11 @@
 
     border-radius:50%;
 
-    background:#00ff99;
+    background:#00ff88;
 
     box-shadow:
-        0 0 10px #00ff99,
-        0 0 20px rgba(0,255,153,.4);
+        0 0 8px #00ff88,
+        0 0 16px #00ff88;
 
     animation:statusPulse 2s infinite;
 
@@ -185,9 +159,9 @@
 
     50%{
 
-        opacity:.6;
+        opacity:.5;
 
-        transform:scale(.8);
+        transform:scale(.85);
 
     }
 
@@ -197,22 +171,27 @@
 
 #clock{
 
-    font-family:Consolas,monospace;
+    font-family:Consolas, monospace;
 
-    font-size:17px;
+    font-size:18px;
 
-    color:#e9f8ff;
+    color:#dff5ff;
+
+    letter-spacing:1px;
 
 }
 
 /* ========================================================== */
 
-.systemItem:hover{
+.systemItem.warning span{
 
-    border-color:#4fd8ff;
+    color:#ffd36a;
 
-    box-shadow:
-        0 0 12px rgba(79,216,255,.15);
+}
+
+.systemItem.error span{
+
+    color:#ff6666;
 
 }
 
@@ -222,21 +201,19 @@
 
     #topBar{
 
-        flex-direction:column;
+        padding:0 12px;
 
-        height:auto;
+    }
 
-        padding:10px;
+    #omegaLogo span{
 
-        gap:12px;
+        display:none;
 
     }
 
     #systemInfo{
 
-        flex-wrap:wrap;
-
-        justify-content:center;
+        gap:15px;
 
     }
 
