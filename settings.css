@@ -1307,3 +1307,435 @@
     }
 
 }
+
+/* =========================================================
+   OMEGA SETTINGS v2
+   PART 5
+   ADVANCED VISUALS
+========================================================= */
+
+/* ==========================================
+   WINDOW GLOW
+========================================== */
+
+#settingsLayout{
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+/* ========================================== */
+
+#settingsLayout::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+    background:
+
+        radial-gradient(
+            circle at top right,
+            rgba(79,216,255,.06),
+            transparent 35%
+        ),
+
+        radial-gradient(
+            circle at bottom left,
+            rgba(0,180,255,.04),
+            transparent 40%
+        );
+
+}
+
+/* ==========================================
+   GRID
+========================================== */
+
+#settingsLayout::after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+    opacity:.04;
+
+    background-image:
+
+        linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
+
+        linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
+
+    background-size:40px 40px;
+
+}
+
+/* ==========================================
+   SETTINGS CARD
+========================================== */
+
+.settingsCard{
+
+    position:relative;
+
+}
+
+.settingsCard::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    left:0;
+
+    right:0;
+
+    height:2px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            #4fd8ff,
+            transparent
+        );
+
+    opacity:.6;
+
+}
+
+/* ==========================================
+   INFO CARD
+========================================== */
+
+.infoCard{
+
+    position:relative;
+
+}
+
+.infoCard::after{
+
+    content:"";
+
+    position:absolute;
+
+    top:15px;
+
+    right:15px;
+
+    width:8px;
+
+    height:8px;
+
+    border-radius:50%;
+
+    background:#00ff99;
+
+    box-shadow:
+
+        0 0 10px #00ff99;
+
+    animation:omegaBlink 2s infinite;
+
+}
+
+@keyframes omegaBlink{
+
+    0%,100%{
+
+        opacity:1;
+
+    }
+
+    50%{
+
+        opacity:.25;
+
+    }
+
+}
+
+/* ==========================================
+   PANEL TITLE
+========================================== */
+
+.settingsCard h2{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+}
+
+.settingsCard h2::after{
+
+    content:"ONLINE";
+
+    font-size:11px;
+
+    color:#63ffb0;
+
+    letter-spacing:2px;
+
+}
+
+/* ==========================================
+   BUTTONS
+========================================== */
+
+.settingButton{
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.settingButton::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    left:-120%;
+
+    width:100%;
+
+    height:100%;
+
+    background:
+
+        linear-gradient(
+
+            90deg,
+
+            transparent,
+
+            rgba(255,255,255,.25),
+
+            transparent
+
+        );
+
+    transition:.45s;
+
+}
+
+.settingButton:hover::before{
+
+    left:120%;
+
+}
+
+/* ==========================================
+   SWITCH
+========================================== */
+
+.switch.active{
+
+    animation:omegaSwitch 2s infinite;
+
+}
+
+@keyframes omegaSwitch{
+
+    50%{
+
+        box-shadow:
+
+            0 0 18px rgba(79,216,255,.55);
+
+    }
+
+}
+
+/* ==========================================
+   PROGRESS
+========================================== */
+
+.progressFill{
+
+    animation:progressGlow 2s infinite;
+
+}
+
+@keyframes progressGlow{
+
+    50%{
+
+        filter:brightness(1.3);
+
+    }
+
+}
+
+/* ==========================================
+   SCAN LINE
+========================================== */
+
+.settingsScanner{
+
+    position:absolute;
+
+    left:0;
+
+    right:0;
+
+    height:2px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(79,216,255,.9),
+            transparent
+        );
+
+    animation:scannerMove 10s linear infinite;
+
+    pointer-events:none;
+
+}
+
+@keyframes scannerMove{
+
+    from{
+
+        top:-10px;
+
+    }
+
+    to{
+
+        top:100%;
+
+    }
+
+}
+
+/* ==========================================
+   FADE
+========================================== */
+
+.settingsFade{
+
+    animation:settingsFade .35s ease;
+
+}
+
+@keyframes settingsFade{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(12px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:none;
+
+    }
+
+}
+
+/* ==========================================
+   HOVER
+========================================== */
+
+.settingsRow{
+
+    transition:.2s;
+
+}
+
+.settingsRow:hover{
+
+    background:rgba(79,216,255,.04);
+
+    padding-left:12px;
+
+}
+
+/* ==========================================
+   FOOTER
+========================================== */
+
+.settingsFooter{
+
+    margin-top:40px;
+
+    padding-top:20px;
+
+    border-top:1px solid rgba(255,255,255,.06);
+
+    display:flex;
+
+    justify-content:space-between;
+
+    color:#6d93aa;
+
+    font-size:12px;
+
+    letter-spacing:1px;
+
+}
+
+/* ==========================================
+   VERSION
+========================================== */
+
+.settingsVersion{
+
+    color:#4fd8ff;
+
+}
+
+/* ==========================================
+   BUILD
+========================================== */
+
+.settingsBuild{
+
+    color:#8baec5;
+
+}
+
+/* ==========================================
+   CLEARANCE
+========================================== */
+
+.clearance{
+
+    color:#63ffb0;
+
+    font-weight:bold;
+
+    text-shadow:
+
+        0 0 8px rgba(0,255,153,.4);
+
+}
