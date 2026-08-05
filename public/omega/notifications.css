@@ -719,3 +719,271 @@
     }
 
 }
+
+
+/* =========================================================
+   OMEGA NOTIFICATIONS
+   PART 4
+========================================================= */
+
+/* ==========================================
+   GLITCH MODE
+========================================== */
+
+.notification.glitch{
+
+    animation:
+        notificationGlitch .45s infinite;
+
+}
+
+@keyframes notificationGlitch{
+
+    0%,100%{
+
+        transform:none;
+        filter:none;
+
+    }
+
+    20%{
+
+        transform:translate(-2px,1px);
+
+        filter:hue-rotate(8deg);
+
+    }
+
+    40%{
+
+        transform:translate(3px,-1px);
+
+        filter:brightness(1.1);
+
+    }
+
+    60%{
+
+        transform:translate(-3px,2px);
+
+        filter:contrast(1.2);
+
+    }
+
+    80%{
+
+        transform:translate(2px,-2px);
+
+    }
+
+}
+
+/* ==========================================
+   CORRUPTED TEXT
+========================================== */
+
+.notification.corrupted{
+
+    font-family:monospace;
+
+    letter-spacing:1px;
+
+    text-shadow:
+
+        2px 0 red,
+
+       -2px 0 cyan;
+
+}
+
+/* ==========================================
+   MR.SMILE OVERRIDE
+========================================== */
+
+.notification.mrsmile.override{
+
+    border-left-color:#00ff88;
+
+    box-shadow:
+
+        0 0 30px rgba(0,255,136,.25),
+
+        inset 0 0 30px rgba(0,255,136,.08);
+
+}
+
+.notification.mrsmile.override .notificationText{
+
+    color:#baffd6;
+
+}
+
+.notification.mrsmile.override .notificationTitle{
+
+    animation:
+
+        mrSmileText 1s infinite;
+
+}
+
+@keyframes mrSmileText{
+
+    0%,100%{
+
+        opacity:1;
+
+    }
+
+    50%{
+
+        opacity:.55;
+
+    }
+
+}
+
+/* ==========================================
+   DESTROY
+========================================== */
+
+.notification.destroy{
+
+    animation:
+
+        notificationDestroy .6s forwards;
+
+}
+
+@keyframes notificationDestroy{
+
+    0%{
+
+        opacity:1;
+
+        transform:none;
+
+    }
+
+    30%{
+
+        transform:
+
+            skewX(-8deg);
+
+    }
+
+    55%{
+
+        transform:
+
+            translateX(8px);
+
+        filter:brightness(1.4);
+
+    }
+
+    100%{
+
+        opacity:0;
+
+        transform:
+
+            scale(.85)
+
+            translateY(-10px);
+
+        filter:blur(4px);
+
+    }
+
+}
+
+/* ==========================================
+   SYSTEM LOCK
+========================================== */
+
+.notification.locked{
+
+    border-left-color:#ff4444;
+
+    pointer-events:none;
+
+    opacity:.8;
+
+}
+
+/* ==========================================
+   HOVER
+========================================== */
+
+.notification:hover{
+
+    transform:
+
+        translateX(-8px)
+
+        scale(1.01);
+
+}
+
+/* ==========================================
+   SHADOW PULSE
+========================================== */
+
+.notification.mrsmile{
+
+    overflow:visible;
+
+}
+
+.notification.mrsmile::before{
+
+    animation:
+
+        shadowPulse 3s infinite;
+
+}
+
+@keyframes shadowPulse{
+
+    0%,100%{
+
+        opacity:.2;
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        opacity:.45;
+
+        transform:scale(1.02);
+
+    }
+
+}
+
+/* ==========================================
+   RANDOM STATIC
+========================================== */
+
+.notification.static{
+
+    background-image:
+
+        repeating-linear-gradient(
+
+            0deg,
+
+            transparent 0,
+
+            transparent 3px,
+
+            rgba(255,255,255,.02) 4px,
+
+            transparent 5px
+
+        );
+
+}
