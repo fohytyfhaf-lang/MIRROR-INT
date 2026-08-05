@@ -1,0 +1,198 @@
+/* ==========================================================
+   MR.SMILE
+   ENTITY
+========================================================== */
+
+/* ==========================================
+   MAIN ENTITY
+========================================== */
+
+#mrSmile{
+
+    position:fixed;
+
+    right:35px;
+
+    bottom:30px;
+
+    width:170px;
+
+    pointer-events:none;
+
+    user-select:none;
+
+    opacity:0;
+
+    z-index:9996;
+
+    transition:
+        opacity .8s,
+        transform .8s,
+        filter .5s;
+
+    transform:
+        translateY(40px)
+        scale(.92);
+
+}
+
+/* ========================================== */
+
+#mrSmile img{
+
+    width:100%;
+
+    display:block;
+
+    filter:
+        drop-shadow(0 0 12px rgba(0,255,170,.35));
+
+}
+
+/* ==========================================
+   STATES
+========================================== */
+
+#mrSmile.visible{
+
+    opacity:.42;
+
+    transform:
+        translateY(0)
+        scale(1);
+
+}
+
+/* ========================================== */
+
+#mrSmile.hidden{
+
+    opacity:0;
+
+    transform:
+        translateY(40px)
+        scale(.9);
+
+}
+
+/* ==========================================
+   HOVER GLOW
+========================================== */
+
+#mrSmile.glow img{
+
+    animation:
+        smileGlow 3s infinite ease-in-out;
+
+}
+
+@keyframes smileGlow{
+
+    0%{
+
+        filter:
+            drop-shadow(0 0 8px rgba(0,255,180,.2));
+
+    }
+
+    50%{
+
+        filter:
+            drop-shadow(0 0 28px rgba(0,255,180,.65));
+
+    }
+
+    100%{
+
+        filter:
+            drop-shadow(0 0 8px rgba(0,255,180,.2));
+
+    }
+
+}
+
+/* ==========================================
+   FLOATING
+========================================== */
+
+#mrSmile.float{
+
+    animation:
+        smileFloat 7s ease-in-out infinite;
+
+}
+
+@keyframes smileFloat{
+
+    0%{
+
+        transform:
+            translateY(0);
+
+    }
+
+    25%{
+
+        transform:
+            translateY(-5px);
+
+    }
+
+    50%{
+
+        transform:
+            translateY(3px);
+
+    }
+
+    75%{
+
+        transform:
+            translateY(-2px);
+
+    }
+
+    100%{
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+/* ==========================================
+   BREATHING
+========================================== */
+
+#mrSmile.breath{
+
+    animation:
+        smileBreath 5s infinite ease-in-out;
+
+}
+
+@keyframes smileBreath{
+
+    0%{
+
+        transform:
+            scale(1);
+
+    }
+
+    50%{
+
+        transform:
+            scale(1.03);
+
+    }
+
+    100%{
+
+        transform:
+            scale(1);
+
+    }
+
+}
