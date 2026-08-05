@@ -1,358 +1,1309 @@
-/* ===================================
-        OMEGA CONFIGURATION
-=================================== */
+/* =========================================================
+   OMEGA SETTINGS v2
+   PART 1
+========================================================= */
+
+/* ==========================================
+   LAYOUT
+========================================== */
 
 #settingsLayout{
+
     display:flex;
+
     height:100%;
-    background:#061018;
+
+    background:
+        linear-gradient(
+            135deg,
+            #07111a,
+            #091823,
+            #07111a
+        );
+
 }
 
-/* ===================================
-        LEFT PANEL
-=================================== */
+/* ==========================================
+   SIDEBAR
+========================================== */
 
 #settingsSidebar{
 
-    width:240px;
-
-    background:linear-gradient(
-        180deg,
-        #08121b,
-        #050a11
-    );
-
-    border-right:1px solid #20445b;
+    width:270px;
 
     display:flex;
 
     flex-direction:column;
 
-    padding:12px;
+    flex-shrink:0;
+
+    background:
+        linear-gradient(
+            180deg,
+            #08121b,
+            #050910
+        );
+
+    border-right:1px solid #23445b;
 
     box-shadow:
-    inset -1px 0 rgba(255,255,255,.05),
-    0 0 20px rgba(0,180,255,.08);
+        inset -1px 0 rgba(255,255,255,.05),
+        0 0 30px rgba(0,180,255,.08);
+
+    overflow-y:auto;
 
 }
+
+/* ==========================================
+   SIDEBAR HEADER
+========================================== */
 
 #settingsSidebar::before{
 
-content:"OMEGA CONFIG";
+    content:
+"OMEGA SYSTEM\AConfiguration Center";
 
-font-size:11px;
+    white-space:pre;
 
-letter-spacing:3px;
+    display:block;
 
-color:#56d9ff;
+    padding:25px;
 
-margin-bottom:15px;
+    font-size:11px;
 
-opacity:.7;
+    line-height:1.8;
+
+    letter-spacing:3px;
+
+    color:#5ddcff;
+
+    border-bottom:1px solid #1d3f56;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(79,216,255,.08),
+            transparent
+        );
 
 }
 
-/* ===================================
-        MENU
-=================================== */
+/* ==========================================
+   MENU
+========================================== */
 
 .settingsTab{
 
-background:none;
+    position:relative;
 
-border:none;
+    background:none;
 
-padding:12px 14px;
+    border:none;
 
-margin-bottom:6px;
+    color:#9dbed2;
 
-text-align:left;
+    text-align:left;
 
-color:#9fc5db;
+    padding:15px 22px;
 
-font-size:13px;
+    margin:4px 10px;
 
-letter-spacing:1px;
+    border-radius:8px;
 
-cursor:pointer;
+    font-size:14px;
 
-border-left:3px solid transparent;
+    letter-spacing:.8px;
 
-transition:.18s;
+    transition:.22s;
 
 }
+
+/* ========================================== */
+
+.settingsTab::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    top:10px;
+
+    bottom:10px;
+
+    width:3px;
+
+    background:transparent;
+
+    transition:.22s;
+
+}
+
+/* ========================================== */
 
 .settingsTab:hover{
 
-background:#102030;
+    background:#102536;
 
-border-left:3px solid #4fd8ff;
+    color:white;
 
-padding-left:20px;
-
-color:white;
+    transform:translateX(4px);
 
 }
+
+/* ========================================== */
+
+.settingsTab:hover::before{
+
+    background:#4fd8ff;
+
+}
+
+/* ========================================== */
 
 .settingsTab.active{
 
-background:#133247;
+    background:
 
-border-left:3px solid #4fd8ff;
+        linear-gradient(
 
-color:white;
+            90deg,
 
-box-shadow:
-0 0 12px rgba(0,220,255,.15);
+            rgba(79,216,255,.18),
+
+            rgba(79,216,255,.05)
+
+        );
+
+    color:white;
+
+    box-shadow:
+
+        0 0 18px rgba(79,216,255,.15);
 
 }
 
-/* ===================================
-        CONTENT
-=================================== */
+.settingsTab.active::before{
+
+    background:#4fd8ff;
+
+}
+
+/* ==========================================
+   CONTENT
+========================================== */
 
 #settingsContent{
 
-flex:1;
+    flex:1;
 
-display:flex;
+    overflow:auto;
 
-flex-direction:column;
+    padding:35px;
 
-padding:30px;
+    background:
 
-overflow:auto;
+        linear-gradient(
 
-background:
-linear-gradient(
-180deg,
-#07131d,
-#050b11
-);
+            180deg,
 
-}
+            #08131d,
 
-/* ===================================
-        HEADER
-=================================== */
+            #050a10
 
-.settingsWelcome h2{
-
-font-size:28px;
-
-letter-spacing:4px;
-
-font-weight:600;
-
-margin-bottom:8px;
-
-color:#dff6ff;
+        );
 
 }
 
-.settingsWelcome p{
-
-color:#87a9be;
-
-margin-bottom:30px;
-
-max-width:700px;
-
-line-height:1.6;
-
-}
-
-/* ===================================
-        STATUS CARDS
-=================================== */
-
-.settingsInfo{
-
-display:grid;
-
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-
-gap:18px;
-
-}
-
-.infoCard{
-
-background:rgba(12,22,34,.92);
-
-backdrop-filter:blur(12px);
-
-border:1px solid #274860;
-
-box-shadow:
-0 10px 30px rgba(0,0,0,.35);
-
-border:1px solid #214056;
-
-padding:18px;
-
-transition:.2s;
-
-}
-
-.infoCard:hover{
-
-border-color:#4fd8ff;
-
-box-shadow:0 0 18px rgba(0,180,255,.12);
-
-}
-
-.infoCard strong{
-
-display:block;
-
-margin-bottom:8px;
-
-font-size:12px;
-
-letter-spacing:2px;
-
-color:#5ecfff;
-
-}
-
-.infoCard span{
-
-font-size:18px;
-
-color:white;
-
-}
-
-/* ===================================
-        ONLINE
-=================================== */
-
-.online{
-
-color:#00ff99;
-
-text-shadow:0 0 8px #00ff99;
-
-}
-
-/* ===================================
-        SETTINGS BLOCKS
-=================================== */
-
-.settingsCard{
-
-margin-top:20px;
-
-padding:18px;
-
-background:#0b1825;
-
-border:1px solid #1f3f55;
-
-}
-
-.settingsCard h2{
-
-margin-bottom:15px;
-
-letter-spacing:2px;
-
-font-size:16px;
-
-color:#7edfff;
-
-}
-
-.settingsRow{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-padding:14px 0;
-
-border-bottom:1px solid rgba(255,255,255,.05);
-
-}
-
-.settingsRow:last-child{
-
-border-bottom:none;
-
-}
-
-/* ===================================
-        SWITCH
-=================================== */
-
-.switch{
-
-width:52px;
-
-height:26px;
-
-border-radius:20px;
-
-background:#1b2c38;
-
-position:relative;
-
-cursor:pointer;
-
-transition:.2s;
-
-}
-
-.switch::after{
-
-content:"";
-
-position:absolute;
-
-width:20px;
-
-height:20px;
-
-left:3px;
-
-top:3px;
-
-border-radius:50%;
-
-background:white;
-
-transition:.2s;
-
-}
-
-.switch.active{
-
-background:#00d7ff;
-
-}
-
-.switch.active::after{
-
-left:29px;
-
-}
-
-/* ===================================
-        SCROLLBAR
-=================================== */
+/* ==========================================
+   SCROLLBAR
+========================================== */
 
 #settingsContent::-webkit-scrollbar{
 
-width:8px;
+    width:8px;
+
+}
+
+#settingsContent::-webkit-scrollbar-track{
+
+    background:#08131d;
 
 }
 
 #settingsContent::-webkit-scrollbar-thumb{
 
-background:#2d6e92;
+    background:#2d6788;
+
+    border-radius:20px;
+
+}
+
+#settingsContent::-webkit-scrollbar-thumb:hover{
+
+    background:#4fd8ff;
+
+}
+
+/* =========================================================
+   OMEGA SETTINGS v2
+   PART 2
+   HEADER + SYSTEM CARDS
+========================================================= */
+
+/* ==========================================
+   PAGE HEADER
+========================================== */
+
+.settingsWelcome{
+
+    margin-bottom:35px;
+
+}
+
+.settingsWelcome h2{
+
+    font-size:34px;
+
+    font-weight:600;
+
+    letter-spacing:5px;
+
+    color:#e8f8ff;
+
+    margin-bottom:12px;
+
+    text-shadow:
+        0 0 12px rgba(79,216,255,.15);
+
+}
+
+.settingsWelcome p{
+
+    max-width:760px;
+
+    line-height:1.8;
+
+    color:#89abc0;
+
+    font-size:15px;
+
+}
+
+/* ==========================================
+   SYSTEM INFO GRID
+========================================== */
+
+.settingsInfo{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(230px,1fr));
+
+    gap:20px;
+
+    margin-bottom:35px;
+
+}
+
+/* ==========================================
+   INFO CARD
+========================================== */
+
+.infoCard{
+
+    position:relative;
+
+    overflow:hidden;
+
+    padding:22px;
+
+    border-radius:12px;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(14,28,40,.95),
+
+            rgba(8,18,28,.95)
+
+        );
+
+    border:1px solid #21445d;
+
+    backdrop-filter:blur(10px);
+
+    transition:.25s;
+
+    box-shadow:
+
+        0 8px 25px rgba(0,0,0,.35);
+
+}
+
+/* ========================================== */
+
+.infoCard::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    top:0;
+
+    width:100%;
+
+    height:3px;
+
+    background:
+
+        linear-gradient(
+
+            90deg,
+
+            #4fd8ff,
+
+            transparent
+
+        );
+
+}
+
+/* ========================================== */
+
+.infoCard:hover{
+
+    transform:translateY(-5px);
+
+    border-color:#4fd8ff;
+
+    box-shadow:
+
+        0 0 22px rgba(79,216,255,.18);
+
+}
+
+/* ========================================== */
+
+.infoCard strong{
+
+    display:block;
+
+    margin-bottom:12px;
+
+    color:#67dbff;
+
+    font-size:11px;
+
+    letter-spacing:3px;
+
+    text-transform:uppercase;
+
+}
+
+/* ========================================== */
+
+.infoCard span{
+
+    display:block;
+
+    font-size:22px;
+
+    font-weight:600;
+
+    color:white;
+
+}
+
+/* ==========================================
+   STATUS COLORS
+========================================== */
+
+.online{
+
+    color:#63ffb0;
+
+    text-shadow:
+
+        0 0 10px rgba(0,255,153,.45);
+
+}
+
+.warning{
+
+    color:#ffd966;
+
+}
+
+.error{
+
+    color:#ff7272;
+
+}
+
+/* ==========================================
+   SYSTEM PANELS
+========================================== */
+
+.settingsCard{
+
+    margin-top:28px;
+
+    padding:24px;
+
+    border-radius:12px;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(12,25,36,.96),
+
+            rgba(8,18,28,.96)
+
+        );
+
+    border:1px solid #21435b;
+
+    backdrop-filter:blur(12px);
+
+    transition:.25s;
+
+    box-shadow:
+
+        0 8px 25px rgba(0,0,0,.25);
+
+}
+
+/* ========================================== */
+
+.settingsCard:hover{
+
+    border-color:#4fd8ff;
+
+    box-shadow:
+
+        0 0 24px rgba(79,216,255,.12);
+
+}
+
+/* ========================================== */
+
+.settingsCard h2{
+
+    font-size:18px;
+
+    color:#7edfff;
+
+    letter-spacing:2px;
+
+    margin-bottom:22px;
+
+    text-transform:uppercase;
+
+}
+
+/* ==========================================
+   SECTION DIVIDER
+========================================== */
+
+.settingsDivider{
+
+    height:1px;
+
+    margin:25px 0;
+
+    background:
+
+        linear-gradient(
+
+            90deg,
+
+            transparent,
+
+            #2a536c,
+
+            transparent
+
+        );
+
+}
+
+/* =========================================================
+   OMEGA SETTINGS v2
+   PART 3
+   CONTROLS
+========================================================= */
+
+/* ==========================================
+   SETTINGS ROW
+========================================== */
+
+.settingsRow{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:30px;
+
+    padding:20px 0;
+
+    border-bottom:1px solid rgba(255,255,255,.06);
+
+}
+
+.settingsRow:last-child{
+
+    border-bottom:none;
+
+}
+
+/* ==========================================
+   LABELS
+========================================== */
+
+.settingInfo{
+
+    flex:1;
+
+}
+
+.settingTitle{
+
+    color:#ffffff;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    margin-bottom:6px;
+
+}
+
+.settingDescription{
+
+    color:#8eaec2;
+
+    font-size:13px;
+
+    line-height:1.7;
+
+}
+
+/* ==========================================
+   SWITCH
+========================================== */
+
+.switch{
+
+    position:relative;
+
+    width:62px;
+
+    height:30px;
+
+    border-radius:30px;
+
+    background:#1b2c38;
+
+    border:1px solid #28465c;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.switch::after{
+
+    content:"";
+
+    position:absolute;
+
+    top:3px;
+
+    left:3px;
+
+    width:22px;
+
+    height:22px;
+
+    border-radius:50%;
+
+    background:white;
+
+    transition:.25s;
+
+    box-shadow:
+
+        0 3px 8px rgba(0,0,0,.35);
+
+}
+
+.switch:hover{
+
+    box-shadow:
+
+        0 0 15px rgba(79,216,255,.18);
+
+}
+
+.switch.active{
+
+    background:
+
+        linear-gradient(
+
+            90deg,
+
+            #18b7ff,
+
+            #5ee6ff
+
+        );
+
+    border-color:#59dfff;
+
+}
+
+.switch.active::after{
+
+    left:35px;
+
+}
+
+/* ==========================================
+   RANGE
+========================================== */
+
+.settingSlider{
+
+    width:260px;
+
+}
+
+.settingSlider input[type="range"]{
+
+    appearance:none;
+
+    width:100%;
+
+    height:6px;
+
+    border-radius:10px;
+
+    background:#173042;
+
+    outline:none;
+
+}
+
+/* Track */
+
+.settingSlider input[type="range"]::-webkit-slider-runnable-track{
+
+    height:6px;
+
+    border-radius:10px;
+
+    background:#20445b;
+
+}
+
+/* Thumb */
+
+.settingSlider input[type="range"]::-webkit-slider-thumb{
+
+    appearance:none;
+
+    margin-top:-7px;
+
+    width:20px;
+
+    height:20px;
+
+    border-radius:50%;
+
+    background:#4fd8ff;
+
+    cursor:pointer;
+
+    box-shadow:
+
+        0 0 12px rgba(79,216,255,.45);
+
+}
+
+/* ==========================================
+   SELECT
+========================================== */
+
+.settingSelect{
+
+    width:240px;
+
+}
+
+.settingSelect select{
+
+    width:100%;
+
+    padding:11px 14px;
+
+    background:#08131d;
+
+    color:white;
+
+    border:1px solid #2b536d;
+
+    border-radius:8px;
+
+    transition:.2s;
+
+}
+
+.settingSelect select:hover{
+
+    border-color:#4fd8ff;
+
+}
+
+.settingSelect select:focus{
+
+    outline:none;
+
+    border-color:#4fd8ff;
+
+    box-shadow:
+
+        0 0 12px rgba(79,216,255,.18);
+
+}
+
+/* ==========================================
+   BUTTONS
+========================================== */
+
+.settingButtons{
+
+    display:flex;
+
+    gap:12px;
+
+    margin-top:25px;
+
+}
+
+/* Primary */
+
+.settingButton{
+
+    padding:12px 22px;
+
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    letter-spacing:.5px;
+
+    transition:.22s;
+
+}
+
+/* Save */
+
+.settingButton.primary{
+
+    background:
+
+        linear-gradient(
+
+            90deg,
+
+            #1498dd,
+
+            #3dd7ff
+
+        );
+
+    color:white;
+
+}
+
+.settingButton.primary:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+
+        0 0 18px rgba(79,216,255,.35);
+
+}
+
+/* Secondary */
+
+.settingButton.secondary{
+
+    background:#163047;
+
+    color:white;
+
+}
+
+.settingButton.secondary:hover{
+
+    background:#22435e;
+
+}
+
+/* Danger */
+
+.settingButton.danger{
+
+    background:#7b1b1b;
+
+    color:white;
+
+}
+
+.settingButton.danger:hover{
+
+    background:#b52c2c;
+
+    box-shadow:
+
+        0 0 15px rgba(255,0,0,.25);
+
+}
+
+/* ==========================================
+   STATUS TEXT
+========================================== */
+
+.settingState{
+
+    color:#59e3ff;
+
+    font-size:13px;
+
+    letter-spacing:1px;
+
+}
+
+/* ==========================================
+   VALUE LABEL
+========================================== */
+
+.sliderValue{
+
+    margin-top:10px;
+
+    color:#9cc8df;
+
+    font-size:13px;
+
+}
+
+/* =========================================================
+   OMEGA SETTINGS v2
+   PART 4
+   SYSTEM MONITOR
+========================================================= */
+
+/* ==========================================
+   DASHBOARD
+========================================== */
+
+.systemDashboard{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+
+    gap:22px;
+
+    margin-top:30px;
+
+}
+
+/* ==========================================
+   PANEL
+========================================== */
+
+.dashboardPanel{
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(12,22,34,.96),
+            rgba(8,16,25,.96)
+        );
+
+    border:1px solid #24465d;
+
+    border-radius:12px;
+
+    padding:20px;
+
+    transition:.25s;
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.dashboardPanel:hover{
+
+    transform:translateY(-4px);
+
+    border-color:#4fd8ff;
+
+    box-shadow:
+        0 0 20px rgba(79,216,255,.15);
+
+}
+
+/* ==========================================
+   PANEL TITLE
+========================================== */
+
+.dashboardTitle{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:18px;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    color:#dff8ff;
+
+    letter-spacing:1px;
+
+}
+
+.dashboardValue{
+
+    color:#59dfff;
+
+    font-size:14px;
+
+}
+
+/* ==========================================
+   PROGRESS BAR
+========================================== */
+
+.progressBar{
+
+    width:100%;
+
+    height:10px;
+
+    background:#132634;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    margin-top:10px;
+
+}
+
+.progressFill{
+
+    height:100%;
+
+    width:70%;
+
+    border-radius:20px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #29b8ff,
+            #6ef7ff
+        );
+
+    box-shadow:
+        0 0 10px rgba(79,216,255,.35);
+
+    transition:width .4s;
+
+}
+
+/* ==========================================
+   STATUS
+========================================== */
+
+.statusGrid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:14px;
+
+    margin-top:18px;
+
+}
+
+.statusItem{
+
+    background:#09141d;
+
+    border:1px solid #204259;
+
+    border-radius:8px;
+
+    padding:14px;
+
+}
+
+.statusLabel{
+
+    color:#88aac0;
+
+    font-size:12px;
+
+    margin-bottom:6px;
+
+}
+
+.statusValue{
+
+    color:white;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+}
+
+/* ==========================================
+   STORAGE
+========================================== */
+
+.storageBar{
+
+    margin-top:15px;
+
+}
+
+.storageLegend{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    color:#8baac0;
+
+    font-size:12px;
+
+    margin-bottom:8px;
+
+}
+
+/* ==========================================
+   HEALTH BAR
+========================================== */
+
+.healthBar{
+
+    width:100%;
+
+    height:12px;
+
+    background:#142535;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+.healthFill{
+
+    width:100%;
+
+    height:100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #00ff99,
+            #63ffd0
+        );
+
+    box-shadow:
+        0 0 15px rgba(0,255,153,.35);
+
+}
+
+/* ==========================================
+   NETWORK
+========================================== */
+
+.networkInfo{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-top:18px;
+
+}
+
+.networkItem{
+
+    text-align:center;
+
+    flex:1;
+
+}
+
+.networkNumber{
+
+    color:#59dfff;
+
+    font-size:24px;
+
+    font-weight:bold;
+
+}
+
+.networkLabel{
+
+    color:#7d9fb4;
+
+    font-size:12px;
+
+    margin-top:4px;
+
+}
+
+/* ==========================================
+   LIVE DOT
+========================================== */
+
+.liveDot{
+
+    width:10px;
+
+    height:10px;
+
+    border-radius:50%;
+
+    background:#00ff99;
+
+    display:inline-block;
+
+    margin-right:6px;
+
+    animation:pulseLive 1.5s infinite;
+
+}
+
+@keyframes pulseLive{
+
+    0%{
+
+        opacity:1;
+
+        box-shadow:0 0 0 rgba(0,255,153,.6);
+
+    }
+
+    70%{
+
+        opacity:.4;
+
+        box-shadow:0 0 12px rgba(0,255,153,.2);
+
+    }
+
+    100%{
+
+        opacity:1;
+
+        box-shadow:0 0 0 rgba(0,255,153,0);
+
+    }
+
+}
+
+/* ==========================================
+   MINI CHART
+========================================== */
+
+.chart{
+
+    display:flex;
+
+    align-items:flex-end;
+
+    gap:4px;
+
+    height:90px;
+
+    margin-top:18px;
+
+}
+
+.chartBar{
+
+    flex:1;
+
+    border-radius:4px 4px 0 0;
+
+    background:
+        linear-gradient(
+            180deg,
+            #5be7ff,
+            #1f8dcf
+        );
+
+    animation:chartPulse 3s infinite ease-in-out;
+
+}
+
+.chartBar:nth-child(1){height:35%;}
+.chartBar:nth-child(2){height:65%;}
+.chartBar:nth-child(3){height:48%;}
+.chartBar:nth-child(4){height:90%;}
+.chartBar:nth-child(5){height:72%;}
+.chartBar:nth-child(6){height:56%;}
+.chartBar:nth-child(7){height:82%;}
+.chartBar:nth-child(8){height:44%;}
+
+@keyframes chartPulse{
+
+    50%{
+
+        filter:brightness(1.2);
+
+    }
 
 }
