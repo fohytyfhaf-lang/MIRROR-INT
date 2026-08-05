@@ -1,0 +1,163 @@
+/* ==========================================================
+   NAVIGATION MENU
+========================================================== */
+
+#publicMenu{
+
+    background:
+        linear-gradient(
+            #f4f7f1,
+            #dde8d7
+        );
+
+    border-top:1px solid #ffffff;
+
+    border-bottom:1px solid #bfcdb8;
+
+    box-shadow:
+        inset 0 1px rgba(255,255,255,.8);
+
+}
+
+#publicMenu{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+}
+
+/* ========================================== */
+
+#publicMenu a{
+
+    position:relative;
+
+    display:block;
+
+    padding:16px 28px;
+
+    color:#355426;
+
+    text-decoration:none;
+
+    font-size:15px;
+
+    font-weight:bold;
+
+    transition:
+        background .2s,
+        color .2s;
+
+    border-left:1px solid #d4ded0;
+
+}
+
+#publicMenu a:first-child{
+
+    border-left:none;
+
+}
+
+/* ========================================== */
+
+#publicMenu a:hover{
+
+    background:
+
+        linear-gradient(
+            #6b9250,
+            #54773d
+        );
+
+    color:white;
+
+}
+
+/* ========================================== */
+
+#publicMenu a.active{
+
+    background:
+
+        linear-gradient(
+            #4e7038,
+            #3f5d2d
+        );
+
+    color:white;
+
+}
+
+/* ========================================== */
+
+#publicMenu a.active::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+    right:0;
+    bottom:0;
+
+    height:4px;
+
+    background:#ffd24d;
+
+}
+
+/* ========================================== */
+
+#publicMenu a::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:1px;
+
+    height:100%;
+
+    background:white;
+
+    opacity:.5;
+
+}
+
+#publicMenu a:first-child::before{
+
+    display:none;
+
+}
+
+/* ========================================== */
+
+@media(max-width:900px){
+
+    #publicMenu{
+
+        flex-direction:column;
+
+        align-items:stretch;
+
+    }
+
+    #publicMenu a{
+
+        border-left:none;
+
+        border-bottom:1px solid #ccd6c7;
+
+        text-align:center;
+
+    }
+
+}
