@@ -1,0 +1,110 @@
+/* ==========================================================
+   OMEGA DESKTOP
+========================================================== */
+
+#desktop{
+
+    position:fixed;
+
+    inset:0;
+
+    background:#060b11;
+
+    overflow:hidden;
+
+    z-index:5000;
+
+}
+
+/* ========================================== */
+
+#desktopBackground{
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+        radial-gradient(circle at top,#15263a,#060b11 70%);
+
+}
+
+/* ========================================== */
+
+#workspace{
+
+    position:absolute;
+
+    top:70px;
+
+    left:240px;
+
+    right:20px;
+
+    bottom:20px;
+
+    overflow:hidden;
+
+}
+
+/* ========================================== */
+
+#icons{
+
+    position:absolute;
+
+    top:25px;
+
+    left:25px;
+
+    display:grid;
+
+    gap:18px;
+
+}
+
+/* ========================================== */
+
+.desktopIcon{
+
+    width:90px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:8px;
+
+    color:#cfe9ff;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+.desktopIcon:hover{
+
+    transform:translateY(-3px);
+
+}
+
+.desktopIcon img{
+
+    width:52px;
+
+    height:52px;
+
+    object-fit:contain;
+
+}
+
+.desktopIcon span{
+
+    font-size:13px;
+
+}
