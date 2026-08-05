@@ -178,7 +178,14 @@ gap:18px;
 
 .infoCard{
 
-background:#0a1622;
+background:rgba(12,22,34,.92);
+
+backdrop-filter:blur(12px);
+
+border:1px solid #274860;
+
+box-shadow:
+0 10px 30px rgba(0,0,0,.35);
 
 border:1px solid #214056;
 
