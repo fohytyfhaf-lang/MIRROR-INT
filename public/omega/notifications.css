@@ -395,3 +395,327 @@
 
 }
 
+/* =========================================================
+   OMEGA NOTIFICATIONS
+   PART 3
+========================================================= */
+
+/* ==========================================
+   ICON
+========================================== */
+
+.notificationHeader{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.notificationIcon{
+
+    width:34px;
+
+    height:34px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    flex-shrink:0;
+
+    background:#173247;
+
+    color:#4fd8ff;
+
+    box-shadow:
+        0 0 10px rgba(79,216,255,.18);
+
+}
+
+/* ==========================================
+   ICON COLORS
+========================================== */
+
+.notification.info .notificationIcon{
+
+    color:#4fd8ff;
+    background:#123247;
+
+}
+
+.notification.success .notificationIcon{
+
+    color:#00ff99;
+    background:#103a2c;
+
+}
+
+.notification.warning .notificationIcon{
+
+    color:#ffd54f;
+    background:#433915;
+
+}
+
+.notification.error .notificationIcon{
+
+    color:#ff6666;
+    background:#471919;
+
+}
+
+.notification.omega .notificationIcon{
+
+    color:#a58dff;
+    background:#261d46;
+
+}
+
+.notification.mrsmile .notificationIcon{
+
+    color:#66ff99;
+    background:#123522;
+
+    animation:mrSmilePulse 2s infinite;
+
+}
+
+/* ==========================================
+   BORDER GLOW
+========================================== */
+
+.notification::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+    border-radius:8px;
+
+    box-shadow:
+        inset 0 0 15px rgba(79,216,255,.05);
+
+}
+
+.notification.success::before{
+
+    box-shadow:
+        inset 0 0 18px rgba(0,255,153,.08);
+
+}
+
+.notification.warning::before{
+
+    box-shadow:
+        inset 0 0 18px rgba(255,213,79,.08);
+
+}
+
+.notification.error::before{
+
+    box-shadow:
+        inset 0 0 18px rgba(255,70,70,.08);
+
+}
+
+.notification.omega::before{
+
+    box-shadow:
+        inset 0 0 18px rgba(165,141,255,.10);
+
+}
+
+.notification.mrsmile::before{
+
+    box-shadow:
+        inset 0 0 24px rgba(102,255,153,.15);
+
+}
+
+/* ==========================================
+   SCAN LINE
+========================================== */
+
+.notification::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:-100%;
+
+    top:0;
+
+    width:45%;
+
+    height:100%;
+
+    pointer-events:none;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.08),
+            transparent
+        );
+
+    animation:notificationScan 5s linear infinite;
+
+}
+
+@keyframes notificationScan{
+
+    from{
+
+        left:-50%;
+
+    }
+
+    to{
+
+        left:150%;
+
+    }
+
+}
+
+/* ==========================================
+   ERROR SHAKE
+========================================== */
+
+.notification.error{
+
+    animation:
+
+        notificationIn .35s ease,
+
+        errorPulse 2s infinite;
+
+}
+
+@keyframes errorPulse{
+
+    0%,100%{
+
+        border-left-width:4px;
+
+    }
+
+    50%{
+
+        border-left-width:7px;
+
+    }
+
+}
+
+/* ==========================================
+   WARNING BLINK
+========================================== */
+
+.notification.warning{
+
+    animation:
+
+        notificationIn .35s ease,
+
+        warningBlink 3s infinite;
+
+}
+
+@keyframes warningBlink{
+
+    0%,90%,100%{
+
+        filter:none;
+
+    }
+
+    95%{
+
+        filter:brightness(1.15);
+
+    }
+
+}
+
+/* ==========================================
+   MR.SMILE
+========================================== */
+
+.notification.mrsmile{
+
+    animation:
+
+        mrSmileAppear .55s ease;
+
+}
+
+@keyframes mrSmileAppear{
+
+    0%{
+
+        opacity:0;
+
+        transform:
+
+            translateX(80px)
+            skewX(-8deg);
+
+    }
+
+    50%{
+
+        transform:
+
+            translateX(-6px)
+            skewX(3deg);
+
+    }
+
+    100%{
+
+        opacity:1;
+
+        transform:none;
+
+    }
+
+}
+
+@keyframes mrSmilePulse{
+
+    0%,100%{
+
+        box-shadow:
+
+            0 0 8px rgba(102,255,153,.2);
+
+    }
+
+    50%{
+
+        box-shadow:
+
+            0 0 22px rgba(102,255,153,.5);
+
+    }
+
+}
