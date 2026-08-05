@@ -138,3 +138,21 @@ function showContact(){
 `;
 
 }
+
+function setActivePage(page){
+
+    document
+        .querySelectorAll("#publicMenu a")
+        .forEach(link=>{
+
+            link.classList.remove("active");
+
+            if(link.dataset.page===page){
+
+                link.classList.add("active");
+
+            }
+
+        });
+
+}
