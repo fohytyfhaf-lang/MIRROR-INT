@@ -1,0 +1,287 @@
+/* ==========================================================
+   CAMERA SYSTEM
+========================================================== */
+
+#cameraWindow{
+
+    display:flex;
+
+    flex-direction:column;
+
+    height:100%;
+
+    overflow:hidden;
+
+}
+
+/* ========================================================== */
+
+#cameraToolbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px 18px;
+
+    background:#101a25;
+
+    border-bottom:1px solid #22364a;
+
+}
+
+#cameraToolbar h2{
+
+    color:#7fdfff;
+
+    font-size:18px;
+
+    letter-spacing:1px;
+
+}
+
+/* ========================================================== */
+
+.cameraControls{
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+.cameraControls button{
+
+    padding:8px 14px;
+
+    background:#173149;
+
+    border:1px solid #29506d;
+
+    color:#dff6ff;
+
+    border-radius:4px;
+
+    transition:.2s;
+
+}
+
+.cameraControls button:hover{
+
+    background:#255178;
+
+}
+
+/* ========================================================== */
+
+#cameraGrid{
+
+    flex:1;
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(420px,1fr));
+
+    gap:18px;
+
+    padding:18px;
+
+    overflow:auto;
+
+}
+
+/* ========================================================== */
+
+.cameraFeed{
+
+    position:relative;
+
+    background:#040608;
+
+    border:1px solid #22364a;
+
+    border-radius:8px;
+
+    overflow:hidden;
+
+    aspect-ratio:16/9;
+
+    box-shadow:0 0 15px rgba(0,0,0,.35);
+
+}
+
+/* ========================================================== */
+
+.cameraFeed img,
+.cameraFeed video{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+
+/* ========================================================== */
+
+.cameraOverlay{
+
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+    background:
+
+        linear-gradient(
+            rgba(255,255,255,.02),
+            transparent
+        );
+
+}
+
+/* ========================================================== */
+
+.cameraOverlay::before{
+
+    content:"REC";
+
+    position:absolute;
+
+    top:12px;
+
+    left:12px;
+
+    padding:3px 8px;
+
+    border-radius:4px;
+
+    background:#8b1010;
+
+    color:white;
+
+    font-size:11px;
+
+    font-weight:bold;
+
+}
+
+/* ========================================================== */
+
+.cameraOverlay::after{
+
+    content:"● LIVE";
+
+    position:absolute;
+
+    top:12px;
+
+    right:12px;
+
+    color:#66ff99;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+}
+
+/* ========================================================== */
+
+.cameraName{
+
+    position:absolute;
+
+    left:12px;
+
+    bottom:12px;
+
+    color:white;
+
+    font-size:13px;
+
+    background:rgba(0,0,0,.5);
+
+    padding:4px 8px;
+
+    border-radius:4px;
+
+}
+
+/* ========================================================== */
+
+.cameraTime{
+
+    position:absolute;
+
+    right:12px;
+
+    bottom:12px;
+
+    color:#9ddfff;
+
+    font-family:Consolas,monospace;
+
+    font-size:12px;
+
+}
+
+/* ========================================================== */
+
+.cameraOffline{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    width:100%;
+
+    height:100%;
+
+    background:#05080a;
+
+    color:#ff6666;
+
+    font-size:20px;
+
+    letter-spacing:2px;
+
+}
+
+/* ========================================================== */
+
+.cameraFeed:hover{
+
+    border-color:#4fd8ff;
+
+    box-shadow:0 0 18px rgba(79,216,255,.25);
+
+}
+
+/* ========================================================== */
+
+#cameraGrid::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+#cameraGrid::-webkit-scrollbar-thumb{
+
+    background:#315774;
+
+    border-radius:20px;
+
+}
+
+#cameraGrid::-webkit-scrollbar-thumb:hover{
+
+    background:#4fd8ff;
+
+}
