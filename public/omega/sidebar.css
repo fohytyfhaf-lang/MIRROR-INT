@@ -1,0 +1,238 @@
+/* ==========================================================
+   OMEGA SIDEBAR
+========================================================== */
+
+#sidebar{
+
+    position:absolute;
+
+    top:64px;
+
+    left:0;
+
+    bottom:0;
+
+    width:220px;
+
+    background:
+        linear-gradient(
+            #0d1723,
+            #09111a
+        );
+
+    border-right:1px solid #1d3245;
+
+    display:flex;
+
+    flex-direction:column;
+
+    overflow:hidden;
+
+}
+
+/* ========================================================== */
+
+.menuTitle{
+
+    padding:22px 20px;
+
+    color:#7fdfff;
+
+    font-size:13px;
+
+    font-weight:bold;
+
+    letter-spacing:2px;
+
+    text-transform:uppercase;
+
+    border-bottom:1px solid #1f3447;
+
+}
+
+/* ========================================================== */
+
+#sidebar button{
+
+    width:100%;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:14px 18px;
+
+    background:transparent;
+
+    border:none;
+
+    border-left:4px solid transparent;
+
+    color:#cfe9ff;
+
+    font-size:15px;
+
+    text-align:left;
+
+    transition:
+        background .2s,
+        border-color .2s,
+        color .2s;
+
+}
+
+/* ========================================================== */
+
+#sidebar button:hover{
+
+    background:#132131;
+
+    border-left-color:#4fd8ff;
+
+    color:white;
+
+}
+
+/* ========================================================== */
+
+#sidebar button.active{
+
+    background:#183149;
+
+    border-left-color:#00ff99;
+
+    color:white;
+
+}
+
+/* ========================================================== */
+
+#sidebar button span{
+
+    flex:1;
+
+}
+
+/* ========================================================== */
+
+#sidebar button::after{
+
+    content:"›";
+
+    color:#6b8ba6;
+
+    font-size:18px;
+
+    opacity:0;
+
+    transition:.2s;
+
+}
+
+#sidebar button:hover::after{
+
+    opacity:1;
+
+}
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.sidebarFooter{
+
+    margin-top:auto;
+
+    padding:18px;
+
+    border-top:1px solid #1f3447;
+
+    font-size:12px;
+
+    color:#7da1bc;
+
+    line-height:1.6;
+
+}
+
+.sidebarFooter strong{
+
+    color:#d9f4ff;
+
+}
+
+.sidebarFooter .online{
+
+    color:#00ff99;
+
+}
+
+/* ==========================================================
+   SCROLLBAR
+========================================================== */
+
+#sidebar::-webkit-scrollbar{
+
+    width:6px;
+
+}
+
+#sidebar::-webkit-scrollbar-thumb{
+
+    background:#2b4861;
+
+}
+
+#sidebar::-webkit-scrollbar-thumb:hover{
+
+    background:#4fd8ff;
+
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width:900px){
+
+    #sidebar{
+
+        width:70px;
+
+    }
+
+    .menuTitle{
+
+        display:none;
+
+    }
+
+    #sidebar button{
+
+        justify-content:center;
+
+        padding:16px 0;
+
+    }
+
+    #sidebar button span{
+
+        display:none;
+
+    }
+
+    #sidebar button::after{
+
+        display:none;
+
+    }
+
+    .sidebarFooter{
+
+        display:none;
+
+    }
+
+}
