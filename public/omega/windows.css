@@ -1,0 +1,335 @@
+/* ==========================================================
+   OMEGA WINDOWS
+========================================================== */
+
+.window{
+
+    position:absolute;
+
+    display:flex;
+
+    flex-direction:column;
+
+    overflow:hidden;
+
+    min-width:620px;
+    min-height:420px;
+
+    width:950px;
+    height:650px;
+
+    background:
+        linear-gradient(
+            #0f1825,
+            #0b121c
+        );
+
+    border:1px solid #29435b;
+
+    border-radius:10px;
+
+    box-shadow:
+        0 18px 45px rgba(0,0,0,.55),
+        0 0 25px rgba(79,216,255,.05);
+
+    animation:windowAppear .18s ease;
+
+    backdrop-filter:blur(10px);
+
+}
+
+/* ========================================================== */
+
+.window.active{
+
+    border-color:#4fd8ff;
+
+    box-shadow:
+        0 20px 55px rgba(0,0,0,.6),
+        0 0 20px rgba(79,216,255,.25);
+
+}
+
+/* ========================================================== */
+
+.window.minimized{
+
+    display:none;
+
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.windowHeader{
+
+    height:46px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 14px;
+
+    background:
+
+        linear-gradient(
+            #172535,
+            #111c29
+        );
+
+    border-bottom:1px solid #243d54;
+
+    user-select:none;
+
+    cursor:move;
+
+}
+
+/* ========================================================== */
+
+.windowTitle{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    letter-spacing:.5px;
+
+    color:#e2f4ff;
+
+}
+
+.windowIcon{
+
+    font-size:18px;
+
+}
+
+/* ==========================================================
+   CONTROLS
+========================================================== */
+
+.windowControls{
+
+    display:flex;
+
+    gap:6px;
+
+}
+
+.windowControls button{
+
+    width:32px;
+
+    height:28px;
+
+    padding:0;
+
+    border:none;
+
+    border-radius:6px;
+
+    background:#162738;
+
+    color:#b8dfff;
+
+    transition:.2s;
+
+}
+
+.windowControls button:hover{
+
+    background:#24445f;
+
+    color:white;
+
+}
+
+.windowControls button:last-child:hover{
+
+    background:#a72b2b;
+
+}
+
+/* ==========================================================
+   CONTENT
+========================================================== */
+
+.windowContent{
+
+    flex:1;
+
+    overflow:auto;
+
+    padding:20px;
+
+    background:
+
+        linear-gradient(
+            #0d1622,
+            #09111a
+        );
+
+}
+
+/* ==========================================================
+   STATUS BAR
+========================================================== */
+
+.windowStatus{
+
+    height:30px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 14px;
+
+    background:#0b141d;
+
+    border-top:1px solid #203547;
+
+    color:#79a8c6;
+
+    font-size:12px;
+
+}
+
+/* ==========================================================
+   SCROLLBAR
+========================================================== */
+
+.windowContent::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+.windowContent::-webkit-scrollbar-track{
+
+    background:#0c141d;
+
+}
+
+.windowContent::-webkit-scrollbar-thumb{
+
+    background:#32526b;
+
+    border-radius:20px;
+
+}
+
+.windowContent::-webkit-scrollbar-thumb:hover{
+
+    background:#4fd8ff;
+
+}
+
+/* ==========================================================
+   ANIMATIONS
+========================================================== */
+
+@keyframes windowAppear{
+
+    from{
+
+        opacity:0;
+
+        transform:
+            translateY(18px)
+            scale(.96);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+}
+
+/* ==========================================================
+   FOCUS
+========================================================== */
+
+.window:not(.active){
+
+    opacity:.92;
+
+}
+
+.window.active{
+
+    opacity:1;
+
+}
+
+/* ==========================================================
+   RESIZE HANDLE
+========================================================== */
+
+.window::after{
+
+    content:"";
+
+    position:absolute;
+
+    right:0;
+
+    bottom:0;
+
+    width:18px;
+
+    height:18px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            transparent 40%,
+            #34597a 40%,
+            #34597a 55%,
+            transparent 55%
+        );
+
+    cursor:nwse-resize;
+
+}
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media(max-width:900px){
+
+    .window{
+
+        width:95vw;
+
+        height:90vh;
+
+        min-width:0;
+
+        min-height:0;
+
+    }
+
+}
