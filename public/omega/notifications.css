@@ -1,0 +1,174 @@
+/* =========================================================
+   OMEGA NOTIFICATIONS
+   PART 1
+========================================================= */
+
+/* ==========================================
+   CONTAINER
+========================================== */
+
+#notificationArea{
+
+    position:fixed;
+
+    right:22px;
+
+    bottom:22px;
+
+    width:360px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:14px;
+
+    z-index:12000;
+
+    pointer-events:none;
+
+}
+
+/* ==========================================
+   NOTIFICATION
+========================================== */
+
+.notification{
+
+    position:relative;
+
+    overflow:hidden;
+
+    pointer-events:auto;
+
+    background:rgba(8,16,26,.96);
+
+    border:1px solid #27465d;
+
+    border-left:4px solid #4fd8ff;
+
+    border-radius:8px;
+
+    padding:16px 18px;
+
+    color:#d7efff;
+
+    backdrop-filter:blur(14px);
+
+    box-shadow:
+
+        0 12px 35px rgba(0,0,0,.45),
+
+        inset 0 1px rgba(255,255,255,.04);
+
+    animation:
+
+        notificationIn .35s ease;
+
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.notificationHeader{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:10px;
+
+}
+
+.notificationTitle{
+
+    font-size:14px;
+
+    font-weight:600;
+
+    letter-spacing:1px;
+
+    color:#4fd8ff;
+
+    text-transform:uppercase;
+
+}
+
+.notificationTime{
+
+    font-size:11px;
+
+    color:#7ea7be;
+
+}
+
+/* ==========================================
+   BODY
+========================================== */
+
+.notificationText{
+
+    font-size:14px;
+
+    line-height:1.6;
+
+    color:#d9ecf8;
+
+}
+
+/* ==========================================
+   CLOSE
+========================================== */
+
+.notificationClose{
+
+    position:absolute;
+
+    top:10px;
+
+    right:10px;
+
+    width:24px;
+
+    height:24px;
+
+    border:none;
+
+    background:transparent;
+
+    color:#7fa6bc;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+.notificationClose:hover{
+
+    color:white;
+
+    transform:rotate(90deg);
+
+}
+
+/* ==========================================
+   HOVER
+========================================== */
+
+.notification:hover{
+
+    border-color:#4fd8ff;
+
+    transform:translateX(-6px);
+
+    box-shadow:
+
+        0 0 25px rgba(79,216,255,.2),
+
+        0 12px 40px rgba(0,0,0,.55);
+
+}
