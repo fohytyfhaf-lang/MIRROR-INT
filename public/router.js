@@ -18,22 +18,27 @@ export function initRouter() {
             switch(page){
 
                 case "home":
+                    setActivePage(page);
                     showHome();
                     break;
 
                 case "plants":
+                    setActivePage(page);
                     showPlants();
                     break;
 
                 case "articles":
+                    setActivePage(page);
                     showArticles();
                     break;
 
                 case "downloads":
+                    setActivePage(page);
                     showDownloads();
                     break;
 
                 case "contact":
+                    setActivePage(page);
                     showContact();
                     break;
 
