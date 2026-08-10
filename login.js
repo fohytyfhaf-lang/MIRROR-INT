@@ -72,8 +72,8 @@ export function loginSystem() {
        GET CREDENTIALS
     ----------------------------------------------------- */
 
-    const username = userEl.value.trim();
-    const password = passEl.value.trim();
+     const username = userEl.value.trim();
+     const password = passEl.value;
 
 
     /* -----------------------------------------------------
