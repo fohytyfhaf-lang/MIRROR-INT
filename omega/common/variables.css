@@ -1,0 +1,257 @@
+/* =========================================================
+   COMMON VARIABLES
+   ABIC + OMEGA
+========================================================= */
+
+:root {
+
+    /* =====================================================
+       GLOBAL COLORS
+    ===================================================== */
+
+    --color-black: #02070b;
+    --color-dark: #050b11;
+    --color-dark-2: #07131d;
+    --color-dark-3: #0a1823;
+
+    --color-white: #ffffff;
+    --color-text: #d9f3ff;
+    --color-text-soft: #9fc5db;
+    --color-text-muted: #658596;
+
+
+    /* =====================================================
+       OMEGA
+    ===================================================== */
+
+    --omega-bg: #061018;
+    --omega-bg-dark: #050a11;
+    --omega-panel: #0a1622;
+    --omega-panel-light: #0d1d2a;
+
+    --omega-border: #20445b;
+    --omega-border-light: #2d6078;
+
+    --omega-cyan: #4fd8ff;
+    --omega-cyan-light: #7edfff;
+    --omega-cyan-dark: #08748b;
+
+    --omega-green: #00ff99;
+    --omega-red: #ff4f5e;
+    --omega-yellow: #ffd45a;
+
+    --omega-glow:
+        0 0 15px rgba(0, 200, 255, .12);
+
+    --omega-glow-strong:
+        0 0 25px rgba(0, 200, 255, .2);
+
+
+    /* =====================================================
+       ABIC
+    ===================================================== */
+
+    --abic-bg: #f1f3ee;
+    --abic-panel: #ffffff;
+
+    --abic-text: #26332a;
+    --abic-text-soft: #607064;
+    --abic-text-muted: #89958b;
+
+    --abic-green: #356b45;
+    --abic-green-light: #6f9b78;
+    --abic-green-dark: #244b30;
+
+    --abic-border: #c9d2c9;
+
+    --abic-accent: #789b69;
+
+    --abic-shadow:
+        0 4px 15px rgba(30, 50, 35, .08);
+
+
+    /* =====================================================
+       STATUS
+    ===================================================== */
+
+    --status-online: #00ff99;
+    --status-warning: #ffd45a;
+    --status-error: #ff4f5e;
+    --status-offline: #65727a;
+
+
+    /* =====================================================
+       BORDERS
+    ===================================================== */
+
+    --border-thin: 1px;
+    --border-radius-small: 3px;
+    --border-radius-medium: 6px;
+    --border-radius-large: 10px;
+
+
+    /* =====================================================
+       SPACING
+    ===================================================== */
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 32px;
+    --space-8: 40px;
+
+
+    /* =====================================================
+       FONT SIZES
+    ===================================================== */
+
+    --font-xs: 9px;
+    --font-small: 10px;
+    --font-normal: 12px;
+    --font-medium: 14px;
+    --font-large: 18px;
+    --font-xl: 24px;
+    --font-xxl: 30px;
+
+
+    /* =====================================================
+       LETTER SPACING
+    ===================================================== */
+
+    --letter-tight: .5px;
+    --letter-normal: 1px;
+    --letter-wide: 2px;
+    --letter-extra-wide: 3px;
+    --letter-terminal: 4px;
+
+
+    /* =====================================================
+       TRANSITIONS
+    ===================================================== */
+
+    --transition-fast: .15s ease;
+    --transition-normal: .2s ease;
+    --transition-slow: .35s ease;
+
+
+    /* =====================================================
+       Z-INDEX
+    ===================================================== */
+
+    /*
+       ABIC находится в обычном слое.
+
+       OMEGA Desktop выше ABIC.
+
+       OMEGA Login ещё выше.
+
+       MR.SMILE / специальные события
+       смогут использовать отдельный слой.
+    */
+
+    --z-abic: 1;
+
+    --z-desktop: 1000;
+
+    --z-login: 2000;
+
+    --z-notification: 3000;
+
+    --z-mrsmile: 4000;
+
+    --z-glitch: 5000;
+
+    --z-modal: 6000;
+
+
+    /* =====================================================
+       OMEGA WINDOW
+    ===================================================== */
+
+    --window-header-height: 38px;
+
+    --window-min-width: 300px;
+
+    --window-min-height: 180px;
+
+    --window-border:
+        1px solid var(--omega-border);
+
+    --window-shadow:
+        0 10px 35px rgba(0, 0, 0, .45);
+
+
+    /* =====================================================
+       SCROLLBAR
+    ===================================================== */
+
+    --scrollbar-width: 7px;
+
+    --scrollbar-track: #050b10;
+
+    --scrollbar-thumb: #25566d;
+
+    --scrollbar-thumb-hover: #3a7d98;
+
+
+    /* =====================================================
+       MONOSPACE / SYSTEM
+    ===================================================== */
+
+    --font-system:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    --font-mono:
+        "Consolas",
+        "Courier New",
+        monospace;
+
+
+    /* =====================================================
+       CRT / GLITCH
+    ===================================================== */
+
+    --scanline-opacity: .035;
+
+    --glitch-opacity: .08;
+
+    --crt-line-size: 2px;
+
+
+    /* =====================================================
+       DISABLED
+    ===================================================== */
+
+    --disabled-opacity: .45;
+
+
+    /* =====================================================
+       COMMON SHADOWS
+    ===================================================== */
+
+    --shadow-small:
+        0 2px 8px rgba(0, 0, 0, .2);
+
+    --shadow-medium:
+        0 6px 18px rgba(0, 0, 0, .3);
+
+    --shadow-large:
+        0 12px 40px rgba(0, 0, 0, .45);
+
+
+    /* =====================================================
+       COMMON ANIMATION SPEED
+    ===================================================== */
+
+    --animation-fast: .15s;
+
+    --animation-normal: .3s;
+
+    --animation-slow: .6s;
+
+}
