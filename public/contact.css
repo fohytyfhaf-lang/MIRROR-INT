@@ -1,0 +1,153 @@
+/* ==========================================
+   CONTACT
+========================================== */
+
+.contact-section {
+    width: 100%;
+    padding: 40px 0;
+}
+
+.contact-header {
+    margin-bottom: 30px;
+}
+
+.contact-header h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+    letter-spacing: 2px;
+}
+
+.contact-header p {
+    margin: 0;
+    opacity: 0.65;
+    font-size: 14px;
+}
+
+/* Форма */
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    max-width: 700px;
+}
+
+/* Группа */
+
+.contact-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.contact-field label {
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    opacity: 0.65;
+}
+
+/* Поля */
+
+.contact-field input,
+.contact-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 13px 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    outline: none;
+
+    background: rgba(255, 255, 255, 0.025);
+    color: inherit;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.contact-field input:focus,
+.contact-field textarea:focus {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.contact-field textarea {
+    min-height: 160px;
+    resize: vertical;
+}
+
+/* Кнопка отправки */
+
+.contact-submit {
+    align-self: flex-start;
+
+    padding: 11px 24px;
+
+    border: 1px solid currentColor;
+    background: transparent;
+
+    color: inherit;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.contact-submit:hover {
+    background: currentColor;
+    color: #000;
+}
+
+/* Статус */
+
+.contact-status {
+    min-height: 18px;
+
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+.contact-status.success {
+    opacity: 1;
+}
+
+.contact-status.error {
+    opacity: 1;
+}
+
+/* Контактные данные */
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    margin-top: 30px;
+
+    font-size: 13px;
+}
+
+.contact-info a {
+    color: inherit;
+    text-decoration: none;
+    opacity: 0.65;
+
+    transition: opacity 0.2s ease;
+}
+
+.contact-info a:hover {
+    opacity: 1;
+}
