@@ -66,43 +66,7 @@ window.glitch = function(){
 console.log("GLITCH LOADED", window.glitch);
     
 };
-/* =========================
-        WINDOWS
-========================= */
 
-function openApp(name) {
-    const win = document.getElementById(name + "Window");
-
-    if (!win) return;
-    
-    if (name === "settings") {
-
-    initSettings();
-
-    }
-
-    win.classList.remove("hidden");
-
-    bringToFront(win);
-
-    makeWindowDraggable(win);
-
-    if (name === "files") openExplorer();
-
-    setSoundState(name === "console" ? "console"
-        : name === "camera" ? "camera"
-        : "desktop");
-}
-
-function closeApp(name) {
-    const win = document.getElementById(name + "Window");
-    if (win) win.classList.add("hidden");
-
-    setSoundState("desktop");
-}
-
-window.openApp = openApp;
-window.closeApp = closeApp;
 
 /* =========================
         BOOT
