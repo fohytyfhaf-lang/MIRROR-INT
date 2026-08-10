@@ -1,0 +1,574 @@
+/* =========================================================
+   ABIC — PUBLIC WEBSITE
+   American Botanical Information Center
+========================================================= */
+
+
+/* =========================================================
+   PUBLIC SITE
+========================================================= */
+
+#publicSite {
+    position: relative;
+
+    width: 100%;
+    min-height: 100vh;
+
+    background:
+        linear-gradient(
+            180deg,
+            #f7f8f4 0%,
+            #eef1eb 100%
+        );
+
+    color: #26332a;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    overflow-x: hidden;
+
+    z-index: var(--z-abic);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+#publicHeader {
+    width: 100%;
+
+    padding: 22px 40px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff,
+            #f2f4ef
+        );
+
+    border-bottom: 1px solid #cbd3ca;
+
+    box-shadow:
+        0 2px 12px rgba(30, 50, 35, .08);
+}
+
+
+/* =========================================================
+   HEADER LOGO
+========================================================= */
+
+#headerLogo {
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    max-width: 1200px;
+
+    margin: 0 auto;
+}
+
+#headerLogo img {
+    width: 72px;
+    height: 72px;
+
+    object-fit: contain;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   HEADER TITLE
+========================================================= */
+
+#headerLogo h1 {
+    margin: 0;
+
+    color: #304636;
+
+    font-size: 25px;
+
+    font-weight: 600;
+
+    letter-spacing: .5px;
+}
+
+#headerLogo p {
+    margin: 6px 0 0;
+
+    color: #718075;
+
+    font-size: 13px;
+
+    letter-spacing: .4px;
+}
+
+
+/* =========================================================
+   PUBLIC MENU
+========================================================= */
+
+#publicMenu {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 4px;
+
+    min-height: 48px;
+
+    padding: 0 20px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #d1d8d1;
+}
+
+
+/* =========================================================
+   MENU LINKS
+========================================================= */
+
+#publicMenu a {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 48px;
+
+    padding: 0 20px;
+
+    color: #536257;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    letter-spacing: .5px;
+
+    transition:
+        color .2s ease,
+        background .2s ease;
+}
+
+
+#publicMenu a:hover {
+    color: #294c34;
+
+    background: #f0f4ef;
+}
+
+
+/* =========================================================
+   MENU ACTIVE
+========================================================= */
+
+#publicMenu a.active {
+    color: #315f3d;
+
+    background: #edf3ec;
+}
+
+#publicMenu a.active::after {
+    content: "";
+
+    position: absolute;
+
+    left: 15px;
+    right: 15px;
+
+    bottom: 0;
+
+    height: 2px;
+
+    background: #5c8865;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+#publicMain {
+    width: 100%;
+
+    min-height:
+        calc(100vh - 143px);
+
+    padding: 35px 30px;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+#publicContent {
+    width: 100%;
+
+    max-width: 1200px;
+
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   GENERIC PUBLIC PANEL
+========================================================= */
+
+.publicPanel {
+    background: #ffffff;
+
+    border: 1px solid #d3dbd2;
+
+    box-shadow:
+        0 4px 15px rgba(30, 50, 35, .06);
+}
+
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.publicPageHeader {
+    margin-bottom: 28px;
+
+    padding-bottom: 16px;
+
+    border-bottom:
+        1px solid #d3dbd2;
+}
+
+.publicPageHeader h2 {
+    margin: 0 0 7px;
+
+    color: #304636;
+
+    font-size: 24px;
+
+    font-weight: 500;
+
+    letter-spacing: 1px;
+}
+
+.publicPageHeader p {
+    margin: 0;
+
+    color: #718075;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.publicCard {
+    padding: 20px;
+
+    background: #ffffff;
+
+    border:
+        1px solid #d5ddd5;
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.publicCard:hover {
+    transform: translateY(-2px);
+
+    border-color: #aebfaf;
+
+    box-shadow:
+        0 7px 20px rgba(30, 50, 35, .08);
+}
+
+.publicCard h3 {
+    margin: 0 0 8px;
+
+    color: #38543e;
+
+    font-size: 16px;
+
+    font-weight: 600;
+}
+
+.publicCard p {
+    margin: 0;
+
+    color: #657268;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.publicButton {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 9px 16px;
+
+    border:
+        1px solid #91a995;
+
+    background: #edf3ec;
+
+    color: #34513b;
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease;
+}
+
+.publicButton:hover {
+    background: #dfe9df;
+
+    border-color: #718f77;
+
+    color: #263e2d;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.publicSearch {
+    display: flex;
+
+    width: 100%;
+
+    max-width: 600px;
+
+    margin-bottom: 25px;
+}
+
+.publicSearch input {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 11px 14px;
+
+    border:
+        1px solid #cbd5cb;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #304036;
+
+    font-size: 13px;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.publicSearch input:focus {
+    border-color: #789778;
+
+    box-shadow:
+        0 0 0 2px rgba(120, 151, 120, .12);
+}
+
+.publicSearch button {
+    padding: 0 18px;
+
+    border:
+        1px solid #789778;
+
+    background: #edf3ec;
+
+    color: #36513c;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   INFORMATION
+========================================================= */
+
+.publicInfo {
+    padding: 18px;
+
+    background: #f5f7f3;
+
+    border-left:
+        3px solid #789b69;
+
+    color: #5d6d61;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   WARNING
+========================================================= */
+
+.publicWarning {
+    padding: 18px;
+
+    background: #faf7ed;
+
+    border-left:
+        3px solid #b39a54;
+
+    color: #70633e;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+#publicSite footer {
+    margin-top: 50px;
+
+    padding: 25px;
+
+    background: #e8ece6;
+
+    border-top:
+        1px solid #cbd4cb;
+
+    color: #718075;
+
+    text-align: center;
+
+    font-size: 11px;
+
+    letter-spacing: .5px;
+}
+
+
+/* =========================================================
+   LINKS
+========================================================= */
+
+#publicSite a {
+    color: #416c4b;
+}
+
+#publicSite a:hover {
+    color: #294e34;
+}
+
+
+/* =========================================================
+   SELECTION
+========================================================= */
+
+#publicSite ::selection {
+    background: #b9cdbb;
+
+    color: #24352a;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+#publicSite::-webkit-scrollbar {
+    width: 8px;
+}
+
+#publicSite::-webkit-scrollbar-track {
+    background: #e7ebe6;
+}
+
+#publicSite::-webkit-scrollbar-thumb {
+    background: #a8b9aa;
+}
+
+#publicSite::-webkit-scrollbar-thumb:hover {
+    background: #819985;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    #publicHeader {
+        padding: 18px 20px;
+    }
+
+    #headerLogo {
+        gap: 12px;
+    }
+
+    #headerLogo img {
+        width: 55px;
+        height: 55px;
+    }
+
+    #headerLogo h1 {
+        font-size: 18px;
+    }
+
+    #headerLogo p {
+        font-size: 11px;
+    }
+
+    #publicMenu {
+        overflow-x: auto;
+
+        justify-content: flex-start;
+    }
+
+    #publicMenu a {
+        padding: 0 14px;
+
+        white-space: nowrap;
+    }
+
+    #publicMain {
+        padding: 25px 15px;
+    }
+
+}
