@@ -1,0 +1,469 @@
+/* =========================================================
+   OMEGA LOGIN SCREEN
+========================================================= */
+
+/* ---------------------------------------------------------
+   LOGIN SCREEN
+--------------------------------------------------------- */
+
+#loginScreen {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(12, 48, 67, 0.35),
+            rgba(2, 7, 12, 0.96) 65%
+        );
+
+    color: #dff6ff;
+
+    z-index: 9000;
+}
+
+/* Когда скрыт */
+
+#loginScreen.hidden {
+    display: none !important;
+}
+
+
+/* ---------------------------------------------------------
+   BACKGROUND
+--------------------------------------------------------- */
+
+#loginBackground {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            rgba(0, 20, 30, 0.35) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(0, 20, 30, 0.35) 1px,
+            transparent 1px
+        );
+
+    background-size: 40px 40px;
+
+    opacity: 0.35;
+
+    pointer-events: none;
+}
+
+
+/* Затемнение по краям */
+
+#loginBackground::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 20%,
+            rgba(0, 0, 0, 0.75) 100%
+        );
+}
+
+
+/* ---------------------------------------------------------
+   SCANLINES
+--------------------------------------------------------- */
+
+#loginScreen::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.025) 0px,
+            rgba(255,255,255,0.025) 1px,
+            transparent 1px,
+            transparent 4px
+        );
+
+    opacity: 0.35;
+
+    z-index: 2;
+}
+
+
+/* ---------------------------------------------------------
+   LOGIN BOX
+--------------------------------------------------------- */
+
+#loginBox {
+    position: relative;
+
+    width: min(440px, calc(100vw - 40px));
+
+    padding: 42px 40px 36px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(9, 24, 35, 0.97),
+            rgba(4, 12, 19, 0.98)
+        );
+
+    border: 1px solid #24536b;
+
+    box-shadow:
+        0 0 0 1px rgba(0, 180, 255, 0.04),
+        0 0 30px rgba(0, 180, 255, 0.12),
+        inset 0 0 30px rgba(0, 130, 180, 0.04);
+
+    z-index: 3;
+
+    animation: omegaLoginAppear 0.6s ease-out;
+}
+
+
+/* Верхняя линия */
+
+#loginBox::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 25px;
+    right: 25px;
+
+    height: 1px;
+
+    background: #4fd8ff;
+
+    box-shadow:
+        0 0 8px rgba(79, 216, 255, 0.8);
+
+    opacity: 0.8;
+}
+
+
+/* Угловые элементы */
+
+#loginBox::after {
+    content: "";
+
+    position: absolute;
+
+    left: 12px;
+    bottom: 12px;
+
+    width: 20px;
+    height: 20px;
+
+    border-left: 1px solid #31718e;
+    border-bottom: 1px solid #31718e;
+
+    opacity: 0.7;
+}
+
+
+/* ---------------------------------------------------------
+   LOGO
+--------------------------------------------------------- */
+
+.loginLogo {
+    text-align: center;
+
+    margin-bottom: 32px;
+}
+
+.loginLogo img {
+    display: block;
+
+    width: 110px;
+    height: 110px;
+
+    object-fit: contain;
+
+    margin: 0 auto 18px;
+
+    filter:
+        drop-shadow(
+            0 0 12px rgba(0, 210, 255, 0.35)
+        );
+}
+
+.loginLogo h1 {
+    margin: 0;
+
+    color: #e5f8ff;
+
+    font-size: 25px;
+    font-weight: 600;
+
+    letter-spacing: 5px;
+
+    text-transform: uppercase;
+
+    text-shadow:
+        0 0 12px rgba(80, 210, 255, 0.2);
+}
+
+.loginLogo p {
+    margin: 10px 0 0;
+
+    color: #6f9aae;
+
+    font-size: 11px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+}
+
+
+/* ---------------------------------------------------------
+   INPUT AREA
+--------------------------------------------------------- */
+
+.loginFields {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+
+/* ---------------------------------------------------------
+   INPUTS
+--------------------------------------------------------- */
+
+.loginFields input {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 13px 14px;
+
+    background: #07131d;
+
+    border: 1px solid #21465b;
+
+    outline: none;
+
+    color: #dff8ff;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    letter-spacing: 1px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.loginFields input::placeholder {
+    color: #527488;
+
+    letter-spacing: 2px;
+}
+
+.loginFields input:hover {
+    border-color: #32677f;
+}
+
+.loginFields input:focus {
+    background: #091a26;
+
+    border-color: #4fd8ff;
+
+    box-shadow:
+        0 0 0 1px rgba(79, 216, 255, 0.08),
+        0 0 14px rgba(0, 180, 255, 0.1);
+}
+
+
+/* ---------------------------------------------------------
+   LOGIN BUTTON
+--------------------------------------------------------- */
+
+#loginBtn {
+    position: relative;
+
+    width: 100%;
+
+    margin-top: 8px;
+
+    padding: 13px 16px;
+
+    background: #0d2838;
+
+    border: 1px solid #32738e;
+
+    color: #bdeeff;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    letter-spacing: 3px;
+
+    cursor: pointer;
+
+    text-transform: uppercase;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        color 0.2s ease;
+}
+
+#loginBtn:hover {
+    background: #12394d;
+
+    border-color: #4fd8ff;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 0 16px rgba(0, 200, 255, 0.14);
+}
+
+#loginBtn:active {
+    background: #0a202e;
+
+    transform: translateY(1px);
+}
+
+
+/* ---------------------------------------------------------
+   STATUS
+--------------------------------------------------------- */
+
+#status {
+    min-height: 18px;
+
+    margin: 8px 0 0;
+
+    color: #64899b;
+
+    font-size: 10px;
+
+    letter-spacing: 1.5px;
+
+    text-align: center;
+
+    text-transform: uppercase;
+
+    transition:
+        color 0.2s ease,
+        text-shadow 0.2s ease;
+}
+
+
+/* Если JS добавляет классы */
+
+#status.success {
+    color: #4dffb0;
+
+    text-shadow:
+        0 0 8px rgba(77, 255, 176, 0.35);
+}
+
+#status.error {
+    color: #ff667a;
+
+    text-shadow:
+        0 0 8px rgba(255, 70, 100, 0.3);
+}
+
+#status.warning {
+    color: #ffd166;
+
+    text-shadow:
+        0 0 8px rgba(255, 209, 102, 0.3);
+}
+
+
+/* ---------------------------------------------------------
+   DECORATIVE SYSTEM TEXT
+--------------------------------------------------------- */
+
+#loginBox .loginFields::after {
+    content: "OMEGA SECURE AUTHENTICATION";
+
+    display: block;
+
+    margin-top: 12px;
+
+    color: #35596b;
+
+    font-size: 8px;
+
+    letter-spacing: 2px;
+
+    text-align: center;
+}
+
+
+/* ---------------------------------------------------------
+   ANIMATION
+--------------------------------------------------------- */
+
+@keyframes omegaLoginAppear {
+
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+        filter: blur(3px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+--------------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    #loginBox {
+        padding: 32px 24px 28px;
+    }
+
+    .loginLogo img {
+        width: 85px;
+        height: 85px;
+    }
+
+    .loginLogo h1 {
+        font-size: 20px;
+        letter-spacing: 3px;
+    }
+
+}
