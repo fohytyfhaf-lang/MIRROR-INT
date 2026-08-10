@@ -98,13 +98,20 @@ export function loginSystem() {
     ----------------------------------------------------- */
 
     if (!(username in Accounts)) {
-
-        if (status) {
-            status.textContent = "UNKNOWN USER";
-        }
-
-        return;
-    }
+        console.warn(
+             "OMEGA LOGIN: unknown user:",
+              username
+           );
+           console.log(
+                "Available accounts:",
+                 Object.keys(Accounts)
+          );
+          if (status) {
+              status.textContent = "UNKNOWN USER";
+          }
+          return;
+       }
+        
 
 
     /* -----------------------------------------------------
