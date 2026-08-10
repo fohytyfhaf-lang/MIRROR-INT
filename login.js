@@ -31,6 +31,11 @@ export function openOmegaLogin() {
     if (status) {
         status.textContent = "AWAITING AUTHORIZATION...";
     }
+    const loginBtn = document.getElementById("loginBtn");
+    if (loginBtn && !loginBtn.dataset.bound) {
+       loginBtn.addEventListener("click", loginSystem);
+       loginBtn.dataset.bound = "true";
+   }
 
     setTimeout(() => {
         userEl?.focus();
