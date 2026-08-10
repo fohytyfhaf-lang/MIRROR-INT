@@ -1,0 +1,578 @@
+/* =========================================================
+   COMMON ANIMATIONS
+   ABIC + OMEGA
+========================================================= */
+
+
+/* =========================================================
+   FADE IN
+========================================================= */
+
+@keyframes fadeIn {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+}
+
+.fadeIn {
+    animation: fadeIn .3s ease forwards;
+}
+
+
+/* =========================================================
+   FADE OUT
+========================================================= */
+
+@keyframes fadeOut {
+
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+
+}
+
+.fadeOut {
+    animation: fadeOut .3s ease forwards;
+}
+
+
+/* =========================================================
+   SLIDE UP
+========================================================= */
+
+@keyframes slideUp {
+
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+.slideUp {
+    animation: slideUp .3s ease forwards;
+}
+
+
+/* =========================================================
+   SLIDE DOWN
+========================================================= */
+
+@keyframes slideDown {
+
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+.slideDown {
+    animation: slideDown .3s ease forwards;
+}
+
+
+/* =========================================================
+   SLIDE LEFT
+========================================================= */
+
+@keyframes slideLeft {
+
+    from {
+        opacity: 0;
+        transform: translateX(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+}
+
+.slideLeft {
+    animation: slideLeft .3s ease forwards;
+}
+
+
+/* =========================================================
+   SLIDE RIGHT
+========================================================= */
+
+@keyframes slideRight {
+
+    from {
+        opacity: 0;
+        transform: translateX(-15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+}
+
+.slideRight {
+    animation: slideRight .3s ease forwards;
+}
+
+
+/* =========================================================
+   SCALE IN
+========================================================= */
+
+@keyframes scaleIn {
+
+    from {
+        opacity: 0;
+        transform: scale(.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+}
+
+.scaleIn {
+    animation: scaleIn .25s ease forwards;
+}
+
+
+/* =========================================================
+   SOFT PULSE
+========================================================= */
+
+@keyframes softPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .55;
+    }
+
+}
+
+.softPulse {
+    animation:
+        softPulse 2s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   OMEGA ONLINE LIGHT
+========================================================= */
+
+@keyframes onlinePulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        box-shadow:
+            0 0 4px var(--omega-green);
+    }
+
+    50% {
+        opacity: .55;
+        box-shadow:
+            0 0 12px var(--omega-green);
+    }
+
+}
+
+.onlinePulse {
+    animation:
+        onlinePulse 2s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   CYAN GLOW
+========================================================= */
+
+@keyframes cyanGlow {
+
+    0%,
+    100% {
+        text-shadow:
+            0 0 4px rgba(79, 216, 255, .25);
+    }
+
+    50% {
+        text-shadow:
+            0 0 12px rgba(79, 216, 255, .65);
+    }
+
+}
+
+.cyanGlow {
+    animation:
+        cyanGlow 2s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   OMEGA BOOT TEXT
+========================================================= */
+
+@keyframes bootText {
+
+    from {
+        opacity: 0;
+        transform: translateX(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+}
+
+.bootTextLine {
+    animation:
+        bootText .25s ease forwards;
+}
+
+
+/* =========================================================
+   LOADING BAR
+========================================================= */
+
+@keyframes loadingGlow {
+
+    0% {
+        box-shadow:
+            0 0 4px rgba(79, 216, 255, .2);
+    }
+
+    50% {
+        box-shadow:
+            0 0 14px rgba(79, 216, 255, .7);
+    }
+
+    100% {
+        box-shadow:
+            0 0 4px rgba(79, 216, 255, .2);
+    }
+
+}
+
+.loadingGlow {
+    animation:
+        loadingGlow 1.2s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   WINDOW OPEN
+========================================================= */
+
+@keyframes windowOpen {
+
+    from {
+        opacity: 0;
+        transform:
+            scale(.97)
+            translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            scale(1)
+            translateY(0);
+    }
+
+}
+
+.windowOpen {
+    animation:
+        windowOpen .2s ease-out forwards;
+}
+
+
+/* =========================================================
+   WINDOW CLOSE
+========================================================= */
+
+@keyframes windowClose {
+
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(.97);
+    }
+
+}
+
+.windowClose {
+    animation:
+        windowClose .18s ease-in forwards;
+}
+
+
+/* =========================================================
+   GLITCH
+========================================================= */
+
+@keyframes glitch {
+
+    0% {
+        transform: translate(0);
+    }
+
+    20% {
+        transform: translate(-1px, 1px);
+    }
+
+    40% {
+        transform: translate(1px, -1px);
+    }
+
+    60% {
+        transform: translate(-1px, 0);
+    }
+
+    80% {
+        transform: translate(1px, 1px);
+    }
+
+    100% {
+        transform: translate(0);
+    }
+
+}
+
+.glitch {
+    animation:
+        glitch .15s linear infinite;
+}
+
+
+/* =========================================================
+   MR.SMILE GLITCH
+========================================================= */
+
+@keyframes mrSmileGlitch {
+
+    0%,
+    100% {
+        transform: translate(0);
+        filter: none;
+    }
+
+    15% {
+        transform: translate(-2px, 0);
+    }
+
+    30% {
+        transform: translate(2px, -1px);
+    }
+
+    45% {
+        transform: translate(-1px, 1px);
+    }
+
+    60% {
+        transform: translate(1px, 0);
+    }
+
+    75% {
+        transform: translate(0, -1px);
+    }
+
+}
+
+.mrSmileGlitch {
+    animation:
+        mrSmileGlitch .18s steps(2) infinite;
+}
+
+
+/* =========================================================
+   CRT FLICKER
+========================================================= */
+
+@keyframes crtFlicker {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    48% {
+        opacity: .98;
+    }
+
+    50% {
+        opacity: .93;
+    }
+
+    52% {
+        opacity: .99;
+    }
+
+}
+
+.crtFlicker {
+    animation:
+        crtFlicker .12s infinite;
+}
+
+
+/* =========================================================
+   TEXT FLICKER
+========================================================= */
+
+@keyframes textFlicker {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    45% {
+        opacity: .9;
+    }
+
+    48% {
+        opacity: .4;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    52% {
+        opacity: .7;
+    }
+
+}
+
+.textFlicker {
+    animation:
+        textFlicker 3s infinite;
+}
+
+
+/* =========================================================
+   WARNING
+========================================================= */
+
+@keyframes warningPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        box-shadow:
+            0 0 4px rgba(255, 212, 90, .2);
+    }
+
+    50% {
+        opacity: .55;
+        box-shadow:
+            0 0 14px rgba(255, 212, 90, .6);
+    }
+
+}
+
+.warningPulse {
+    animation:
+        warningPulse 1s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+@keyframes errorPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .5;
+    }
+
+}
+
+.errorPulse {
+    animation:
+        errorPulse .8s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   RED ALERT
+========================================================= */
+
+@keyframes alertPulse {
+
+    0%,
+    100% {
+        box-shadow:
+            0 0 4px rgba(255, 79, 94, .2);
+    }
+
+    50% {
+        box-shadow:
+            0 0 18px rgba(255, 79, 94, .65);
+    }
+
+}
+
+.alertPulse {
+    animation:
+        alertPulse 1s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   Accessibility
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+
+}
