@@ -1,0 +1,136 @@
+/* ==========================================
+   DOWNLOADS
+========================================== */
+
+.downloads-section {
+    width: 100%;
+    padding: 40px 0;
+}
+
+.downloads-header {
+    margin-bottom: 30px;
+}
+
+.downloads-header h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+    letter-spacing: 2px;
+}
+
+.downloads-header p {
+    margin: 0;
+    opacity: 0.65;
+    font-size: 14px;
+}
+
+/* Контейнер файлов */
+
+.downloads-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* Карточка */
+
+.download-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 18px 20px;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.025);
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.download-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateX(4px);
+}
+
+/* Информация о файле */
+
+.download-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.download-name {
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.download-description {
+    font-size: 12px;
+    opacity: 0.55;
+}
+
+.download-meta {
+    display: flex;
+    gap: 15px;
+    font-size: 11px;
+    opacity: 0.45;
+}
+
+/* Кнопка */
+
+.download-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 9px 16px;
+
+    border: 1px solid currentColor;
+    background: transparent;
+
+    color: inherit;
+    text-decoration: none;
+
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.download-button:hover {
+    background: currentColor;
+    color: #000;
+}
+
+/* Недоступный файл */
+
+.download-item.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.download-item.disabled .download-button {
+    cursor: not-allowed;
+}
+
+/* Мобильная версия */
+
+@media (max-width: 600px) {
+    .download-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .download-button {
+        width: 100%;
+    }
+}
