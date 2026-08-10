@@ -1,4 +1,9 @@
-import { loginSystem } from "./login.js";
+import {
+    loginSystem,
+    openOmegaLogin,
+    closeOmegaLogin,
+    logoutOmega
+} from "./login.js";
 import { playMusic } from "./audio.js";
 import { runCommand } from "./console.js";
 import { setSoundState } from "./soundManager.js";
@@ -47,6 +52,9 @@ window.closeApp = closeWindow;
 window.minimizeWindow = minimizeWindow;
 window.maximizeWindow = maximizeWindow;
 window.restoreWindow = restoreWindow;
+window.openOmegaLogin = openOmegaLogin;
+window.closeOmegaLogin = closeOmegaLogin;
+window.logoutOmega = logoutOmega;
 window.mrSmileSay = mrSmileSay;
 window.closeWindow = closeWindow;
 window.whisper = whisper;
