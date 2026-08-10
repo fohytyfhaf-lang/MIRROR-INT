@@ -1,0 +1,668 @@
+/* =========================================================
+   OMEGA SETTINGS
+========================================================= */
+
+/* ---------------------------------------------------------
+   SETTINGS WINDOW CONTENT
+--------------------------------------------------------- */
+
+#settingsWindow .windowContent {
+    padding: 0;
+    overflow: hidden;
+    background: #061018;
+}
+
+
+/* ---------------------------------------------------------
+   MAIN LAYOUT
+--------------------------------------------------------- */
+
+#settingsLayout {
+    display: flex;
+
+    width: 100%;
+    height: 100%;
+
+    min-height: 420px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #07131d,
+            #050b11
+        );
+
+    color: #dff6ff;
+}
+
+
+/* ---------------------------------------------------------
+   LEFT SIDEBAR
+--------------------------------------------------------- */
+
+#settingsSidebar {
+    width: 230px;
+    min-width: 230px;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 14px;
+
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            180deg,
+            #08131d,
+            #050a10
+        );
+
+    border-right: 1px solid #20445b;
+
+    box-shadow:
+        inset -1px 0 rgba(255,255,255,.035),
+        8px 0 25px rgba(0,0,0,.18);
+
+    overflow-y: auto;
+}
+
+
+/* ---------------------------------------------------------
+   SIDEBAR TITLE
+--------------------------------------------------------- */
+
+#settingsSidebar::before {
+    content: "OMEGA CONFIGURATION";
+
+    display: block;
+
+    margin: 2px 5px 16px;
+
+    color: #56d9ff;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    letter-spacing: 2.5px;
+
+    opacity: .65;
+}
+
+
+/* ---------------------------------------------------------
+   SETTINGS TABS
+--------------------------------------------------------- */
+
+.settingsTab {
+    position: relative;
+
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 5px;
+
+    padding: 12px 13px;
+
+    box-sizing: border-box;
+
+    border: 1px solid transparent;
+    border-left: 3px solid transparent;
+
+    background: transparent;
+
+    color: #8eafc0;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    letter-spacing: 1px;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        color .18s ease,
+        padding-left .18s ease,
+        box-shadow .18s ease;
+}
+
+
+.settingsTab span {
+    pointer-events: none;
+}
+
+
+/* Hover */
+
+.settingsTab:hover {
+    padding-left: 18px;
+
+    background: #0c1d2a;
+
+    border-left-color: #3cbfe8;
+
+    color: #dff8ff;
+
+    box-shadow:
+        inset 0 0 15px rgba(0,180,255,.035);
+}
+
+
+/* Active */
+
+.settingsTab.active {
+    background:
+        linear-gradient(
+            90deg,
+            #123247,
+            #0c2534
+        );
+
+    border-color: rgba(55,150,190,.18);
+
+    border-left-color: #4fd8ff;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 0 14px rgba(0,200,255,.08),
+        inset 0 0 15px rgba(0,200,255,.04);
+}
+
+
+/* Active indicator */
+
+.settingsTab.active::after {
+    content: "";
+
+    position: absolute;
+
+    right: 10px;
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background: #4fd8ff;
+
+    box-shadow:
+        0 0 7px #4fd8ff;
+}
+
+
+/* ---------------------------------------------------------
+   SETTINGS CONTENT
+--------------------------------------------------------- */
+
+#settingsContent {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 30px;
+
+    box-sizing: border-box;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    background:
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(0,150,200,.035),
+            transparent 35%
+        ),
+        linear-gradient(
+            180deg,
+            #07131d,
+            #050b11
+        );
+}
+
+
+/* ---------------------------------------------------------
+   WELCOME HEADER
+--------------------------------------------------------- */
+
+.settingsWelcome {
+    margin-bottom: 28px;
+}
+
+.settingsWelcome h2 {
+    margin: 0 0 8px;
+
+    color: #e4f8ff;
+
+    font-size: 26px;
+
+    font-weight: 600;
+
+    letter-spacing: 3px;
+
+    text-transform: uppercase;
+}
+
+.settingsWelcome p {
+    max-width: 720px;
+
+    margin: 0;
+
+    color: #7696a8;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+
+/* ---------------------------------------------------------
+   INFO GRID
+--------------------------------------------------------- */
+
+.settingsInfo {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(190px, 1fr)
+        );
+
+    gap: 14px;
+
+    margin-bottom: 20px;
+}
+
+
+/* ---------------------------------------------------------
+   INFO CARD
+--------------------------------------------------------- */
+
+.infoCard {
+    position: relative;
+
+    padding: 17px;
+
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            145deg,
+            #0a1823,
+            #08131d
+        );
+
+    border: 1px solid #1c394b;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
+
+.infoCard:hover {
+    transform: translateY(-1px);
+
+    border-color: #39738d;
+
+    box-shadow:
+        0 7px 20px rgba(0,0,0,.18),
+        0 0 15px rgba(0,180,255,.06);
+}
+
+
+.infoCard strong {
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: #55cbed;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+}
+
+
+.infoCard span {
+    color: #e5f6fc;
+
+    font-size: 17px;
+
+    letter-spacing: .5px;
+}
+
+
+/* ---------------------------------------------------------
+   ONLINE STATUS
+--------------------------------------------------------- */
+
+.online {
+    color: #00ff99 !important;
+
+    text-shadow:
+        0 0 8px rgba(0,255,153,.55);
+}
+
+
+/* ---------------------------------------------------------
+   SETTINGS CARDS
+--------------------------------------------------------- */
+
+.settingsCard {
+    margin-top: 16px;
+
+    padding: 18px;
+
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            145deg,
+            #0b1825,
+            #08131d
+        );
+
+    border: 1px solid #1e3c50;
+}
+
+
+.settingsCard h2 {
+    margin: 0 0 12px;
+
+    color: #7edfff;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+}
+
+
+/* ---------------------------------------------------------
+   SETTINGS ROW
+--------------------------------------------------------- */
+
+.settingsRow {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid rgba(255,255,255,.045);
+}
+
+.settingsRow:last-child {
+    border-bottom: none;
+}
+
+
+.settingsRow > div:first-child {
+    min-width: 0;
+}
+
+
+.settingsRow strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #cce8f2;
+
+    font-size: 12px;
+}
+
+
+.settingsRow small {
+    color: #658596;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+}
+
+
+/* ---------------------------------------------------------
+   SWITCH
+--------------------------------------------------------- */
+
+.switch {
+    position: relative;
+
+    flex-shrink: 0;
+
+    width: 50px;
+    height: 25px;
+
+    border: 1px solid #294655;
+
+    border-radius: 20px;
+
+    background: #14232d;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.switch::after {
+    content: "";
+
+    position: absolute;
+
+    top: 3px;
+    left: 3px;
+
+    width: 17px;
+    height: 17px;
+
+    border-radius: 50%;
+
+    background: #b8cbd2;
+
+    box-shadow:
+        0 2px 5px rgba(0,0,0,.35);
+
+    transition:
+        left .2s ease,
+        background .2s ease;
+}
+
+
+.switch:hover {
+    border-color: #39738d;
+}
+
+
+.switch.active {
+    background: #08748b;
+
+    border-color: #39d9ff;
+
+    box-shadow:
+        0 0 12px rgba(0,210,255,.18);
+}
+
+
+.switch.active::after {
+    left: 28px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 8px rgba(255,255,255,.4);
+}
+
+
+/* ---------------------------------------------------------
+   SELECT / INPUTS INSIDE SETTINGS
+--------------------------------------------------------- */
+
+#settingsContent select,
+#settingsContent input[type="text"],
+#settingsContent input[type="number"] {
+    box-sizing: border-box;
+
+    padding: 9px 11px;
+
+    background: #07131d;
+
+    border: 1px solid #234456;
+
+    outline: none;
+
+    color: #d9f4ff;
+
+    font-family: inherit;
+
+    font-size: 11px;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+
+#settingsContent select:focus,
+#settingsContent input:focus {
+    border-color: #43c9ed;
+
+    box-shadow:
+        0 0 10px rgba(0,190,240,.08);
+}
+
+
+/* ---------------------------------------------------------
+   BUTTONS
+--------------------------------------------------------- */
+
+#settingsContent .settingsButton {
+    padding: 9px 14px;
+
+    background: #0c2635;
+
+    border: 1px solid #2a596f;
+
+    color: #bceeff;
+
+    font-family: inherit;
+
+    font-size: 10px;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+
+#settingsContent .settingsButton:hover {
+    background: #12384b;
+
+    border-color: #4fd8ff;
+
+    box-shadow:
+        0 0 12px rgba(0,200,255,.1);
+}
+
+
+/* ---------------------------------------------------------
+   SCROLLBAR
+--------------------------------------------------------- */
+
+#settingsSidebar::-webkit-scrollbar,
+#settingsContent::-webkit-scrollbar {
+    width: 7px;
+}
+
+
+#settingsSidebar::-webkit-scrollbar-track,
+#settingsContent::-webkit-scrollbar-track {
+    background: #050b10;
+}
+
+
+#settingsSidebar::-webkit-scrollbar-thumb,
+#settingsContent::-webkit-scrollbar-thumb {
+    background: #25566d;
+
+    border: 1px solid #0b1821;
+}
+
+
+#settingsSidebar::-webkit-scrollbar-thumb:hover,
+#settingsContent::-webkit-scrollbar-thumb:hover {
+    background: #3a7d98;
+}
+
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+--------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+    #settingsLayout {
+        flex-direction: column;
+    }
+
+    #settingsSidebar {
+        width: 100%;
+        min-width: 0;
+
+        max-height: 150px;
+
+        flex-direction: row;
+
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    #settingsSidebar::before {
+        display: none;
+    }
+
+    .settingsTab {
+        min-width: 125px;
+    }
+
+    #settingsContent {
+        padding: 20px;
+    }
+
+    .settingsRow {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+}
