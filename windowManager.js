@@ -144,3 +144,22 @@ export function maximizeWindow(name) {
 
     bringToFront(win);
 }
+
+/* =========================
+   INITIALIZE WINDOWS
+========================= */
+
+export function initializeWindows() {
+
+    const windows = document.querySelectorAll(
+        "#workspace > .window"
+    );
+
+    windows.forEach(win => {
+
+        win.classList.add("hidden");
+        win.style.display = "none";
+
+    });
+
+}
