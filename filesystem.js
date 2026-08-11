@@ -1,5 +1,6 @@
 import { canAccess } from "./security.js";
 
+
 /* =========================================================
    OMEGA VIRTUAL FILESYSTEM
 ========================================================= */
@@ -12,66 +13,55 @@ const filesystem = {
 
         content: {
 
-            files: {
+            "files": {
 
                 type: "dir",
 
                 content: {
 
-                    /* =====================================
-                       PUBLIC FILE
-                    ===================================== */
-
                     "readme.txt": {
 
                         type: "file",
-
-                        data:
-                            "OMEGA SYSTEM\n" +
-                            "PUBLIC INFORMATION\n\n" +
-                            "Access level: 0",
-
+                        data: "OMEGA SYSTEM\nPUBLIC INFORMATION\n\nWelcome.",
                         level: 0
 
                     },
 
-
-                    /* =====================================
-                       OPERATOR FILE
-                    ===================================== */
-
                     "memo.txt": {
 
                         type: "file",
-
                         data:
-                            "OPERATOR MEMORANDUM\n\n" +
-                            "System instability detected.\n" +
-                            "Further investigation required.",
+`OMEGA INTERNAL MEMO
+
+Operator notes:
+System instability detected.
+
+Several archived records have become inaccessible.
+
+Further investigation required.`,
 
                         level: 1
 
                     },
-
-
-                    /* =====================================
-                       MR.SMILE
-                    ===================================== */
 
                     "entity_mrsmile.txt": {
 
                         type: "file",
 
                         data:
-                            "OMEGA ENTITY RECORD\n\n" +
-                            "DESIGNATION: MR.SMILE\n" +
-                            "STATUS: UNKNOWN\n\n" +
-                            "DO NOT ENGAGE.",
+`ENTITY: MR.SMILE
+
+WARNING
+
+DO NOT ENGAGE.
+
+DO NOT RESPOND TO DIRECT COMMUNICATION.
+
+DO NOT ATTEMPT TO IDENTIFY THE ENTITY.`,
 
                         level: 2
 
                     },
-
 
                     /* =====================================
                        REAL PDF
@@ -81,8 +71,7 @@ const filesystem = {
 
                         type: "external",
 
-                        path:
-                            "files/experiment_Ten.pdf",
+                        path: "files/experiment_Ten.pdf",
 
                         level: 5
 
@@ -115,8 +104,7 @@ export function listFiles(path = "/") {
         return [];
     }
 
-    return Object.keys(node.content);
-
+    return Object.keys(node.content || {});
 }
 
 
@@ -141,12 +129,11 @@ export function readFile(path) {
     }
 
     return node.data;
-
 }
 
 
 /* =========================================================
-   GET FILE / DIRECTORY
+   GET FILE
 ========================================================= */
 
 export function getFile(path) {
@@ -159,27 +146,26 @@ export function getFile(path) {
 
 
     /* -----------------------------------------
-       SECURITY CHECK
+       SECURITY
     ----------------------------------------- */
 
     if (
         (
             node.type === "file" ||
             node.type === "external"
-        ) &&
+        )
+        &&
         !canAccess(node.level || 0)
     ) {
 
         return {
-            type: "denied",
-            level: node.level || 0
+            type: "denied"
         };
 
     }
 
 
     return node;
-
 }
 
 
@@ -198,19 +184,17 @@ function getNode(path) {
             .split("/")
             .filter(Boolean);
 
-    let current =
-        filesystem["/"];
+    let current = filesystem["/"];
 
 
     for (const part of parts) {
 
-        if (
-            !current.content ||
-            !current.content[part]
-        ) {
-
+        if (!current.content) {
             return null;
+        }
 
+        if (!current.content[part]) {
+            return null;
         }
 
         current =
@@ -220,16 +204,4 @@ function getNode(path) {
 
 
     return current;
-
-}
-
-
-/* =========================================================
-   OPTIONAL DEBUG
-========================================================= */
-
-export function getFilesystem() {
-
-    return filesystem;
-
 }
