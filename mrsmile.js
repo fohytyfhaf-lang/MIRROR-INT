@@ -120,7 +120,7 @@ function spawnEyes() {
 
     eyes = [];
 
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 7; i++) {
 
         const eye = document.createElement("div");
         eye.className = "eye";
