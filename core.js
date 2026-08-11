@@ -10,6 +10,7 @@ import { setSoundState } from "./soundManager.js";
 import { nextCam } from "./camera.js";
 import { openExplorer } from "./explorer.js";
 import { initMrSmile,whisper } from "./mrsmile.js";
+import { initMrSmileEyes } from "./mrsmileEyes.js";
 import { initMemory } from "./mrsmileMemory.js";
 import { loadTrust } from "./mrsmileTrust.js";
 import { updatePersonality } from "./personality.js";
@@ -175,6 +176,7 @@ function initLogin() {
 
 function bootSystem() {
     initMrSmile();
+    initMrSmileEyes();
     trigger("system.boot");
         updateClock(); 
         initPersonnel();
