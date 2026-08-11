@@ -466,3 +466,28 @@ export function openExplorer() {
     renderExplorer("/files");
 
 }
+
+// =========================================================
+// GET FILE / NODE
+// =========================================================
+
+export function getFile(path) {
+
+    const node = getNode(path);
+
+    if (!node) {
+        return null;
+    }
+
+    // Проверяем доступ
+    if (
+        node.type === "file" &&
+        !canAccess(node.level || 0)
+    ) {
+        return {
+            type: "denied"
+        };
+    }
+
+    return node;
+}
