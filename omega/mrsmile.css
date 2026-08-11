@@ -197,205 +197,162 @@
 
 }
 
-import { playMusic } from "./audio.js";
-let eyesActive = false;
-let active = false;
-let interval = null;
-let audio = null;
+/* ==========================================================
+   MR.SMILE — EYES
+========================================================== */
 
-/* =========================
-   INIT SYSTEM
-========================= */
-export function initMrSmile() {
-  checkTime();
+#eyesLayer {
+    position: fixed;
+    inset: 0;
 
-  setInterval(checkTime, 60000); // проверка раз в минуту
+    pointer-events: none;
+
+    z-index: 9995;
+
+    overflow: hidden;
+
+    display: none;
 }
 
-/* =========================
-   TIME CHECK
-========================= */
-function checkTime() {
-  const h = new Date().getHours();
-  const isNight = h >= 22 || h <= 5;
 
-  if (isNight && !active) {
-    enable();
-  }
+/* ==========================================================
+   EYE
+========================================================== */
 
-  if (!isNight && active) {
-    disable();
-  }
+.eye {
+    position: absolute;
+
+    width: 36px;
+    height: 24px;
+
+    border-radius: 50%;
+
+    background: rgba(235, 255, 250, 0.92);
+
+    border: 1px solid rgba(255,255,255,.35);
+
+    box-shadow:
+        0 0 8px rgba(0,255,180,.25),
+        0 0 20px rgba(0,255,180,.12);
+
+    overflow: hidden;
+
+    opacity: .72;
+
+    transform-origin: center;
+
+    animation:
+        eyeFloat 5s ease-in-out infinite,
+        eyeBlink 7s infinite;
+
+    transition:
+        opacity .4s,
+        filter .4s;
 }
 
-/* =========================
-   ENABLE MR.SMILE
-========================= */
-function enable() {
-  active = true;
 
-  const log = document.getElementById("chatLog");
-  if (log) log.innerText += "\n[SYSTEM] UNKNOWN PROCESS: MR.SMILE";
+/* ==========================================================
+   IRIS
+========================================================== */
 
-  if (!eyesActive) {
-    spawnEyes();
-    eyesActive = true;
-  }
+.eye::before {
 
-  startAudio();
+    content: "";
 
-  interval = setInterval(() => {
-    whisper();
-  }, 20000);
+    position: absolute;
+
+    width: 15px;
+    height: 15px;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #000 0 25%,
+            #27d9a8 27% 48%,
+            #06382c 52% 68%,
+            #000 72%
+        );
+
+    box-shadow:
+        0 0 7px rgba(0,255,180,.65);
 }
 
-/* =========================
-   DISABLE MR.SMILE
-========================= */
-function disable() {
-  active = false;
 
-  if (interval) {
-    clearInterval(interval);
-    interval = null;
-  }
+/* ==========================================================
+   PUPIL
+========================================================== */
 
-  stopAudio();
-  removeEyes();
+.pupil {
 
-  eyesActive = false;
+    position: absolute;
+
+    width: 5px;
+    height: 5px;
+
+    left: 50%;
+    top: 50%;
+
+    margin-left: -2.5px;
+    margin-top: -2.5px;
+
+    border-radius: 50%;
+
+    background: #000;
+
+    z-index: 2;
 }
 
-/* =========================
-   AUDIO CONTROL
-========================= */
 
-function startAudio() {
-  stopAudio(); // защита от дубля
+/* ==========================================================
+   EYE MOVEMENT
+========================================================== */
 
-  audio = new Audio("audio/mrsmile.mp3");
-  audio.volume = 0.25;
-  audio.loop = true;
+@keyframes eyeFloat {
 
-  audio.play().catch(() => {});
-}
+    0% {
+        margin-top: 0;
+    }
 
-function stopAudio() {
-  if (audio) {
-    audio.pause();
-    audio = null;
-  }
-}
+    50% {
+        margin-top: -3px;
+    }
 
-/* =========================
-   WHISPERS
-========================= */
-export function whisper() {
-  const log = document.getElementById("chatLog");
-  if (!log) return;
-
-  const msgs = [
-    "you shouldn't be here",
-    "they are watching you",
-    "stop opening files",
-    "I helped you... for now",
-    "do not trust SYSTEM"
-  ];
-
-  const msg = msgs[Math.floor(Math.random() * msgs.length)];
-
-  log.innerText += "\nMR.SMILE: " + msg;
-}
-/* ===== 👁 EYES SYSTEM ===== */
-let eyes = [];
-
-function spawnEyes() {
-
-    const layer = document.getElementById("eyesLayer");
-    if (!layer) return;
-
-    layer.innerHTML = "";
-    layer.style.display = "block";
-
-    eyes = [];
-
-    for (let i = 0; i < 12; i++) {
-
-        const eye = document.createElement("div");
-        eye.className = "eye";
-
-        const pupil = document.createElement("div");
-        pupil.className = "pupil";
-
-        pupil.style.transition =
-            `transform ${0.03 + Math.random() * 0.12}s linear`;
-
-        eye.appendChild(pupil);
-
-eye.style.left = (10 + Math.random() * 80) + "vw";
-eye.style.top = (10 + Math.random() * 80) + "vh";
-        eye.style.transform = `scale(${0.5 + Math.random()})`;
-
-        layer.appendChild(eye);
-
-        eyes.push({
-            eye,
-            pupil
-        });
-
+    100% {
+        margin-top: 0;
     }
 
 }
 
-function removeEyes() {
 
-    const layer = document.getElementById("eyesLayer");
+/* ==========================================================
+   BLINK
+========================================================== */
 
-    if (!layer) return;
+@keyframes eyeBlink {
 
-    layer.style.display = "none";
-    layer.innerHTML = "";
+    0%,
+    42%,
+    46%,
+    100% {
 
-    eyes = [];
+        clip-path:
+            inset(0 0 0 0);
+
+    }
+
+    44% {
+
+        clip-path:
+            inset(48% 0 48% 0);
+
+    }
 
 }
-document.addEventListener("mousemove", (e) => {
-    if (!active) return;
-
-    eyes.forEach(({ eye, pupil }) => {
-
-        const rect = eye.getBoundingClientRect();
-
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-
-        let dx = e.clientX - cx;
-        let dy = e.clientY - cy;
-
-        const len = Math.sqrt(dx * dx + dy * dy);
-        const max = 6;
-
-        if (len > max) {
-            dx = dx / len * max;
-            dy = dy / len * max;
-        }
-
-pupil.style.transform = `translate(${dx}px, ${dy}px)`;
-    });
-
-});
-
-document.addEventListener("click", () => {
-    if (!active) return;
-    whisper();
-});
-
-
-export function forceEnableMrSmile() {
-    enable();
-}
-
-export function forceDisableMrSmile() {
-    disable();
-}
-
