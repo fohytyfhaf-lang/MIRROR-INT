@@ -8,7 +8,7 @@ let currentExplorerPath = "/files";
 
 
 /* =========================================================
-   INTERNAL RENDER
+   RENDER EXPLORER
 ========================================================= */
 
 function renderExplorer(path) {
@@ -26,7 +26,7 @@ function renderExplorer(path) {
 
     const items = listFiles(path);
 
-    if (!items.length) {
+    if (!items || items.length === 0) {
 
         view.innerHTML = `
             <div class="emptyFolder">
@@ -39,15 +39,22 @@ function renderExplorer(path) {
 
     view.innerHTML = items.map(item => {
 
-        const fullPath = path + "/" + item;
+        const fullPath =
+            path === "/"
+                ? "/" + item
+                : path + "/" + item;
 
         const node = getFile(fullPath);
 
         let icon = "📄";
 
+        /* ---------- DIRECTORY ---------- */
+
         if (node?.type === "dir") {
             icon = "📁";
         }
+
+        /* ---------- EXTERNAL FILE ---------- */
 
         if (node?.type === "external") {
 
@@ -58,7 +65,7 @@ function renderExplorer(path) {
                 icon = "📕";
             }
 
-            if (
+            else if (
                 extension === "mp4" ||
                 extension === "webm" ||
                 extension === "ogg"
@@ -66,7 +73,7 @@ function renderExplorer(path) {
                 icon = "📹";
             }
 
-            if (
+            else if (
                 extension === "png" ||
                 extension === "jpg" ||
                 extension === "jpeg" ||
@@ -74,27 +81,47 @@ function renderExplorer(path) {
             ) {
                 icon = "🖼";
             }
+        }
 
+        /* ---------- DENIED ---------- */
+
+        if (node?.type === "denied") {
+            icon = "🔒";
         }
 
         return `
             <div
                 class="explorerItem"
-                onclick="openExplorerItem('${fullPath}')">
+                data-path="${escapeAttribute(fullPath)}">
 
                 <span class="explorerIcon">
                     ${icon}
                 </span>
 
                 <span class="explorerName">
-                    ${item}
+                    ${escapeHtml(item)}
                 </span>
-
             </div>
         `;
 
     }).join("");
 
+    /* =====================================================
+       CLICK EVENTS
+    ===================================================== */
+
+    view.querySelectorAll(".explorerItem").forEach(item => {
+
+        item.addEventListener("click", () => {
+
+            const path =
+                item.dataset.path;
+
+            openExplorerItem(path);
+
+        });
+
+    });
 }
 
 
@@ -102,7 +129,7 @@ function renderExplorer(path) {
    OPEN FILE / DIRECTORY
 ========================================================= */
 
-window.openExplorerItem = function(path) {
+function openExplorerItem(path) {
 
     const node = getFile(path);
 
@@ -117,13 +144,15 @@ window.openExplorerItem = function(path) {
     }
 
 
-    /* =========================================
+    /* =====================================================
        ACCESS DENIED
-    ========================================= */
+    ===================================================== */
 
     if (node.type === "denied") {
 
-        openDocumentWindow();
+        openDocumentWindow(
+            path.split("/").pop()
+        );
 
         const content =
             document.getElementById("documentContent");
@@ -149,16 +178,15 @@ window.openExplorerItem = function(path) {
 
                 </div>
             `;
-
         }
 
         return;
     }
 
 
-    /* =========================================
+    /* =====================================================
        DIRECTORY
-    ========================================= */
+    ===================================================== */
 
     if (node.type === "dir") {
 
@@ -168,9 +196,9 @@ window.openExplorerItem = function(path) {
     }
 
 
-    /* =========================================
-       REAL EXTERNAL FILE
-    ========================================= */
+    /* =====================================================
+       EXTERNAL FILE
+    ===================================================== */
 
     if (node.type === "external") {
 
@@ -183,13 +211,15 @@ window.openExplorerItem = function(path) {
     }
 
 
-    /* =========================================
-       OLD INTERNAL TEXT FILE
-    ========================================= */
+    /* =====================================================
+       INTERNAL TEXT FILE
+    ===================================================== */
 
     if (node.type === "file") {
 
-        openDocumentWindow();
+        openDocumentWindow(
+            path.split("/").pop()
+        );
 
         const content =
             document.getElementById("documentContent");
@@ -200,18 +230,16 @@ window.openExplorerItem = function(path) {
             readFile(path);
 
         content.innerHTML = `
-            <pre class="textDocument">
-${escapeHtml(data)}
-            </pre>
+            <pre class="textDocument">${escapeHtml(data)}</pre>
         `;
 
+        return;
     }
-
-};
+}
 
 
 /* =========================================================
-   REAL FILE HANDLER
+   EXTERNAL FILE HANDLER
 ========================================================= */
 
 function openExternalFile(filePath, omegaPath) {
@@ -223,47 +251,36 @@ function openExternalFile(filePath, omegaPath) {
             .toLowerCase();
 
 
-    /* =========================================
+    /* =====================================================
        PDF
-    ========================================= */
+    ===================================================== */
 
     if (extension === "pdf") {
 
-        openDocumentWindow();
-
-        const title =
-            document.getElementById("viewerTitle");
+        openDocumentWindow(
+            omegaPath.split("/").pop()
+        );
 
         const content =
             document.getElementById("documentContent");
 
-        if (title) {
+        if (!content) return;
 
-            title.textContent =
-                omegaPath.split("/").pop();
-
-        }
-
-        if (content) {
-
-            content.innerHTML = `
-
-                <iframe
-                    class="omegaPdfViewer"
-                    src="${filePath}">
-                </iframe>
-
-            `;
-
-        }
+        content.innerHTML = `
+            <iframe
+                class="omegaPdfViewer"
+                src="${escapeAttribute(filePath)}"
+                title="OMEGA PDF">
+            </iframe>
+        `;
 
         return;
     }
 
 
-    /* =========================================
+    /* =====================================================
        VIDEO
-    ========================================= */
+    ===================================================== */
 
     if (
         extension === "mp4" ||
@@ -277,9 +294,9 @@ function openExternalFile(filePath, omegaPath) {
     }
 
 
-    /* =========================================
+    /* =====================================================
        IMAGE
-    ========================================= */
+    ===================================================== */
 
     if (
         extension === "png" ||
@@ -288,58 +305,53 @@ function openExternalFile(filePath, omegaPath) {
         extension === "webp"
     ) {
 
-        openDocumentWindow();
+        openDocumentWindow(
+            omegaPath.split("/").pop()
+        );
 
         const content =
             document.getElementById("documentContent");
 
-        if (content) {
+        if (!content) return;
 
-            content.innerHTML = `
+        content.innerHTML = `
+            <div class="omegaImageViewer">
 
-                <div class="omegaImageViewer">
+                <img
+                    src="${escapeAttribute(filePath)}"
+                    alt="OMEGA FILE">
 
-                    <img
-                        src="${filePath}"
-                        alt="OMEGA FILE">
-
-                </div>
-
-            `;
-
-        }
+            </div>
+        `;
 
         return;
     }
 
 
-    /* =========================================
+    /* =====================================================
        UNKNOWN
-    ========================================= */
+    ===================================================== */
 
-    openDocumentWindow();
+    openDocumentWindow(
+        omegaPath.split("/").pop()
+    );
 
     const content =
         document.getElementById("documentContent");
 
-    if (content) {
+    if (!content) return;
 
-        content.innerHTML = `
+    content.innerHTML = `
+        <div class="documentUnknown">
 
-            <div class="documentUnknown">
+            <h2>UNKNOWN FILE TYPE</h2>
 
-                <h2>UNKNOWN FILE TYPE</h2>
+            <p>
+                ${escapeHtml(filePath)}
+            </p>
 
-                <p>
-                    ${filePath}
-                </p>
-
-            </div>
-
-        `;
-
-    }
-
+        </div>
+    `;
 }
 
 
@@ -347,7 +359,7 @@ function openExternalFile(filePath, omegaPath) {
    DOCUMENT WINDOW
 ========================================================= */
 
-function openDocumentWindow() {
+function openDocumentWindow(titleText = "DOCUMENT") {
 
     const win =
         document.getElementById("documentWindow");
@@ -361,15 +373,20 @@ function openDocumentWindow() {
         return;
     }
 
+    const title =
+        document.getElementById("viewerTitle");
+
+    if (title) {
+        title.textContent = titleText;
+    }
+
     win.classList.remove("hidden");
+
     win.style.display = "flex";
 
     if (window.bringToFront) {
-
         window.bringToFront(win);
-
     }
-
 }
 
 
@@ -396,6 +413,8 @@ function openVideoWindow(filePath) {
 
     if (video) {
 
+        video.pause();
+
         video.src = filePath;
 
         video.load();
@@ -403,14 +422,12 @@ function openVideoWindow(filePath) {
     }
 
     win.classList.remove("hidden");
+
     win.style.display = "flex";
 
     if (window.bringToFront) {
-
         window.bringToFront(win);
-
     }
-
 }
 
 
@@ -418,7 +435,7 @@ function openVideoWindow(filePath) {
    BACK
 ========================================================= */
 
-window.goBack = function() {
+function goBack() {
 
     if (currentExplorerPath === "/files") {
         return;
@@ -437,8 +454,18 @@ window.goBack = function() {
     renderExplorer(
         newPath || "/files"
     );
+}
 
-};
+
+/* =========================================================
+   GLOBAL FUNCTIONS
+========================================================= */
+
+window.openExplorerItem =
+    openExplorerItem;
+
+window.goBack =
+    goBack;
 
 
 /* =========================================================
@@ -453,7 +480,16 @@ function escapeHtml(text) {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+}
 
+
+function escapeAttribute(text) {
+
+    return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
 }
 
 
@@ -465,29 +501,4 @@ export function openExplorer() {
 
     renderExplorer("/files");
 
-}
-
-// =========================================================
-// GET FILE / NODE
-// =========================================================
-
-export function getFile(path) {
-
-    const node = getNode(path);
-
-    if (!node) {
-        return null;
-    }
-
-    // Проверяем доступ
-    if (
-        node.type === "file" &&
-        !canAccess(node.level || 0)
-    ) {
-        return {
-            type: "denied"
-        };
-    }
-
-    return node;
 }
