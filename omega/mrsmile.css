@@ -196,3 +196,210 @@
     }
 
 }
+
+/* ==========================================================
+   MR.SMILE — EYES
+========================================================== */
+
+.mrEyes {
+
+    position: absolute;
+
+    left: 50%;
+    top: 34%;
+
+    transform: translate(-50%, -50%);
+
+    display: flex;
+
+    gap: 25px;
+
+    pointer-events: none;
+
+    opacity: .9;
+
+}
+
+
+/* ==========================================================
+   EYE
+========================================================== */
+
+.mrEye {
+
+    position: relative;
+
+    width: 38px;
+    height: 25px;
+
+    overflow: hidden;
+
+    border-radius: 55% 45% 55% 45%;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(220,230,225,.95) 0%,
+            rgba(145,155,150,.9) 55%,
+            rgba(35,40,38,.95) 100%
+        );
+
+    box-shadow:
+        inset 0 0 8px rgba(0,0,0,.9),
+        0 0 4px rgba(0,255,180,.12);
+
+}
+
+
+/* ==========================================================
+   IRIS
+========================================================== */
+
+.mrIris {
+
+    position: absolute;
+
+    width: 18px;
+    height: 18px;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #020403 0%,
+            #020403 28%,
+            #17221d 30%,
+            #07100c 58%,
+            #000 100%
+        );
+
+    box-shadow:
+        0 0 5px rgba(0,255,170,.18);
+
+}
+
+
+/* ==========================================================
+   PUPIL
+========================================================== */
+
+.mrPupil {
+
+    position: absolute;
+
+    width: 7px;
+    height: 11px;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background: #000;
+
+}
+
+
+/* ==========================================================
+   LIGHT REFLECTION
+========================================================== */
+
+.mrHighlight {
+
+    position: absolute;
+
+    width: 4px;
+    height: 4px;
+
+    left: 56%;
+    top: 32%;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.8);
+
+    filter: blur(.4px);
+
+}
+
+
+/* ==========================================================
+   SUBTLE BLOOD VESSELS
+========================================================== */
+
+.mrEye::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    opacity: .22;
+
+    background:
+        linear-gradient(
+            25deg,
+            transparent 42%,
+            rgba(120,20,20,.45) 43%,
+            transparent 45%
+        ),
+        linear-gradient(
+            -20deg,
+            transparent 55%,
+            rgba(120,20,20,.35) 56%,
+            transparent 58%
+        );
+
+}
+
+
+/* ==========================================================
+   BLINK
+========================================================== */
+
+.mrEye {
+
+    animation:
+        mrEyeBlink 8s infinite;
+}
+
+.mrEye:nth-child(2) {
+
+    animation-delay: .12s;
+
+}
+
+
+@keyframes mrEyeBlink {
+
+    0%,
+    44%,
+    47%,
+    100% {
+
+        transform:
+            scaleY(1);
+
+    }
+
+    45%,
+    46% {
+
+        transform:
+            scaleY(.08);
+
+    }
+
+}
+
