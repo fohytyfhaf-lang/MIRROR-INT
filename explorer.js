@@ -1,4 +1,8 @@
-import { listFiles, readFile } from "./filesystem.js";
+import {
+    listFiles,
+    readFile,
+    getFile
+} from "./filesystem.js";
 
 let currentExplorerPath = "/files";
 
