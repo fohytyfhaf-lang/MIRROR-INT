@@ -197,209 +197,205 @@
 
 }
 
-/* ==========================================================
-   MR.SMILE — EYES
-========================================================== */
+import { playMusic } from "./audio.js";
+let eyesActive = false;
+let active = false;
+let interval = null;
+let audio = null;
 
-.mrEyes {
+/* =========================
+   INIT SYSTEM
+========================= */
+export function initMrSmile() {
+  checkTime();
 
-    position: absolute;
-
-    left: 50%;
-    top: 34%;
-
-    transform: translate(-50%, -50%);
-
-    display: flex;
-
-    gap: 25px;
-
-    pointer-events: none;
-
-    opacity: .9;
-
+  setInterval(checkTime, 60000); // проверка раз в минуту
 }
 
+/* =========================
+   TIME CHECK
+========================= */
+function checkTime() {
+  const h = new Date().getHours();
+  const isNight = h >= 22 || h <= 5;
 
-/* ==========================================================
-   EYE
-========================================================== */
+  if (isNight && !active) {
+    enable();
+  }
 
-.mrEye {
-
-    position: relative;
-
-    width: 38px;
-    height: 25px;
-
-    overflow: hidden;
-
-    border-radius: 55% 45% 55% 45%;
-
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(220,230,225,.95) 0%,
-            rgba(145,155,150,.9) 55%,
-            rgba(35,40,38,.95) 100%
-        );
-
-    box-shadow:
-        inset 0 0 8px rgba(0,0,0,.9),
-        0 0 4px rgba(0,255,180,.12);
-
+  if (!isNight && active) {
+    disable();
+  }
 }
 
+/* =========================
+   ENABLE MR.SMILE
+========================= */
+function enable() {
+  active = true;
 
-/* ==========================================================
-   IRIS
-========================================================== */
+  const log = document.getElementById("chatLog");
+  if (log) log.innerText += "\n[SYSTEM] UNKNOWN PROCESS: MR.SMILE";
 
-.mrIris {
+  if (!eyesActive) {
+    spawnEyes();
+    eyesActive = true;
+  }
 
-    position: absolute;
+  startAudio();
 
-    width: 18px;
-    height: 18px;
-
-    left: 50%;
-    top: 50%;
-
-    transform:
-        translate(-50%, -50%);
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            circle,
-            #020403 0%,
-            #020403 28%,
-            #17221d 30%,
-            #07100c 58%,
-            #000 100%
-        );
-
-    box-shadow:
-        0 0 5px rgba(0,255,170,.18);
-
+  interval = setInterval(() => {
+    whisper();
+  }, 20000);
 }
 
+/* =========================
+   DISABLE MR.SMILE
+========================= */
+function disable() {
+  active = false;
 
-/* ==========================================================
-   PUPIL
-========================================================== */
+  if (interval) {
+    clearInterval(interval);
+    interval = null;
+  }
 
-.mrPupil {
+  stopAudio();
+  removeEyes();
 
-    position: absolute;
-
-    width: 7px;
-    height: 11px;
-
-    left: 50%;
-    top: 50%;
-
-    transform:
-        translate(-50%, -50%);
-
-    border-radius: 50%;
-
-    background: #000;
-
+  eyesActive = false;
 }
 
+/* =========================
+   AUDIO CONTROL
+========================= */
 
-/* ==========================================================
-   LIGHT REFLECTION
-========================================================== */
+function startAudio() {
+  stopAudio(); // защита от дубля
 
-.mrHighlight {
+  audio = new Audio("audio/mrsmile.mp3");
+  audio.volume = 0.25;
+  audio.loop = true;
 
-    position: absolute;
-
-    width: 4px;
-    height: 4px;
-
-    left: 56%;
-    top: 32%;
-
-    border-radius: 50%;
-
-    background: rgba(255,255,255,.8);
-
-    filter: blur(.4px);
-
+  audio.play().catch(() => {});
 }
 
-
-/* ==========================================================
-   SUBTLE BLOOD VESSELS
-========================================================== */
-
-.mrEye::before {
-
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    opacity: .22;
-
-    background:
-        linear-gradient(
-            25deg,
-            transparent 42%,
-            rgba(120,20,20,.45) 43%,
-            transparent 45%
-        ),
-        linear-gradient(
-            -20deg,
-            transparent 55%,
-            rgba(120,20,20,.35) 56%,
-            transparent 58%
-        );
-
+function stopAudio() {
+  if (audio) {
+    audio.pause();
+    audio = null;
+  }
 }
 
+/* =========================
+   WHISPERS
+========================= */
+export function whisper() {
+  const log = document.getElementById("chatLog");
+  if (!log) return;
 
-/* ==========================================================
-   BLINK
-========================================================== */
+  const msgs = [
+    "you shouldn't be here",
+    "they are watching you",
+    "stop opening files",
+    "I helped you... for now",
+    "do not trust SYSTEM"
+  ];
 
-.mrEye {
+  const msg = msgs[Math.floor(Math.random() * msgs.length)];
 
-    animation:
-        mrEyeBlink 8s infinite;
+  log.innerText += "\nMR.SMILE: " + msg;
 }
+/* ===== 👁 EYES SYSTEM ===== */
+let eyes = [];
 
-.mrEye:nth-child(2) {
+function spawnEyes() {
 
-    animation-delay: .12s;
+    const layer = document.getElementById("eyesLayer");
+    if (!layer) return;
 
-}
+    layer.innerHTML = "";
+    layer.style.display = "block";
 
+    eyes = [];
 
-@keyframes mrEyeBlink {
+    for (let i = 0; i < 12; i++) {
 
-    0%,
-    44%,
-    47%,
-    100% {
+        const eye = document.createElement("div");
+        eye.className = "eye";
 
-        transform:
-            scaleY(1);
+        const pupil = document.createElement("div");
+        pupil.className = "pupil";
+
+        pupil.style.transition =
+            `transform ${0.03 + Math.random() * 0.12}s linear`;
+
+        eye.appendChild(pupil);
+
+eye.style.left = (10 + Math.random() * 80) + "vw";
+eye.style.top = (10 + Math.random() * 80) + "vh";
+        eye.style.transform = `scale(${0.5 + Math.random()})`;
+
+        layer.appendChild(eye);
+
+        eyes.push({
+            eye,
+            pupil
+        });
 
     }
 
-    45%,
-    46% {
+}
 
-        transform:
-            scaleY(.08);
+function removeEyes() {
 
-    }
+    const layer = document.getElementById("eyesLayer");
 
+    if (!layer) return;
+
+    layer.style.display = "none";
+    layer.innerHTML = "";
+
+    eyes = [];
+
+}
+document.addEventListener("mousemove", (e) => {
+    if (!active) return;
+
+    eyes.forEach(({ eye, pupil }) => {
+
+        const rect = eye.getBoundingClientRect();
+
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+
+        let dx = e.clientX - cx;
+        let dy = e.clientY - cy;
+
+        const len = Math.sqrt(dx * dx + dy * dy);
+        const max = 6;
+
+        if (len > max) {
+            dx = dx / len * max;
+            dy = dy / len * max;
+        }
+
+pupil.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+
+});
+
+document.addEventListener("click", () => {
+    if (!active) return;
+    whisper();
+});
+
+
+export function forceEnableMrSmile() {
+    enable();
+}
+
+export function forceDisableMrSmile() {
+    disable();
 }
 
