@@ -1,116 +1,209 @@
-import { canAccess } from "./security.js";
+import {
+    listFiles,
+    readFile,
+    getFile
+} from "./filesystem.js";
+
+let currentExplorerPath = "/files";
+
 
 /* =========================================================
-   OMEGA REAL FILESYSTEM
+   INTERNAL RENDER
 ========================================================= */
 
-const filesystem = {
+function renderExplorer(path) {
 
-    "/": {
-        type: "dir",
+    const view = document.getElementById("filesList");
+    const pathBar = document.getElementById("pathBar");
 
-        content: {
+    if (!view) return;
 
-            files: {
-                type: "dir",
+    currentExplorerPath = path;
 
-                content: {
+    if (pathBar) {
+        pathBar.textContent = path;
+    }
 
-                    /* =========================
-                       OLD TEXT FILES
-                    ========================= */
+    const items = listFiles(path);
 
-                    "readme.txt": {
-                        type: "file",
-                        data: "PUBLIC INFO",
-                        level: 0
-                    },
+    if (!items.length) {
 
-                    "memo.txt": {
-                        type: "file",
-                        data: "Operator notes: system unstable",
-                        level: 1
-                    },
+        view.innerHTML = `
+            <div class="emptyFolder">
+                EMPTY FOLDER
+            </div>
+        `;
 
-                    "entity_mrsmile.txt": {
-                        type: "file",
-                        data: "DO NOT ENGAGE",
-                        level: 2
-                    },
+        return;
+    }
 
-                    /* =========================
-                       RESEARCH
-                    ========================= */
+    view.innerHTML = items.map(item => {
 
-                    research: {
+        const fullPath = path + "/" + item;
 
-                        type: "dir",
+        const node = getFile(fullPath);
 
-                        content: {
+        let icon = "📄";
 
-                            "experiment_Ten.pdf": {
-                                type: "external",
-                                path: "files/research/experiment_Ten.pdf",
-                                level: 1
-                            }
+        if (node?.type === "dir") {
+            icon = "📁";
+        }
 
-                        }
+        if (node?.type === "external") {
 
-                    },
+            const extension =
+                item.split(".").pop().toLowerCase();
 
-                    /* =========================
-                       PERSONNEL
-                    ========================= */
+            if (extension === "pdf") {
+                icon = "📕";
+            }
 
-                    personnel: {
+            if (
+                extension === "mp4" ||
+                extension === "webm" ||
+                extension === "ogg"
+            ) {
+                icon = "📹";
+            }
 
-                        type: "dir",
-
-                        content: {
-
-                            /* сюда потом добавим PDF */
-
-                        }
-
-                    },
-
-                    /* =========================
-                       CLASSIFIED
-                    ========================= */
-
-                    classified: {
-
-                        type: "dir",
-
-                        content: {
-
-                            /* секретные документы */
-
-                        }
-
-                    },
-
-                    /* =========================
-                       VIDEOS
-                    ========================= */
-
-                    videos: {
-
-                        type: "dir",
-
-                        content: {
-
-                            /* сюда потом добавим видео */
-
-                        }
-
-                    }
-
-                }
-
+            if (
+                extension === "png" ||
+                extension === "jpg" ||
+                extension === "jpeg" ||
+                extension === "webp"
+            ) {
+                icon = "🖼";
             }
 
         }
+
+        return `
+            <div
+                class="explorerItem"
+                onclick="openExplorerItem('${fullPath}')">
+
+                <span class="explorerIcon">
+                    ${icon}
+                </span>
+
+                <span class="explorerName">
+                    ${item}
+                </span>
+
+            </div>
+        `;
+
+    }).join("");
+
+}
+
+
+/* =========================================================
+   OPEN FILE / DIRECTORY
+========================================================= */
+
+window.openExplorerItem = function(path) {
+
+    const node = getFile(path);
+
+    if (!node) {
+
+        console.warn(
+            "OMEGA FILE NOT FOUND:",
+            path
+        );
+
+        return;
+    }
+
+
+    /* =========================================
+       ACCESS DENIED
+    ========================================= */
+
+    if (node.type === "denied") {
+
+        openDocumentWindow();
+
+        const content =
+            document.getElementById("documentContent");
+
+        if (content) {
+
+            content.innerHTML = `
+                <div class="documentDenied">
+
+                    <div class="deniedIcon">
+                        🔒
+                    </div>
+
+                    <h2>ACCESS DENIED</h2>
+
+                    <p>
+                        Insufficient clearance level.
+                    </p>
+
+                    <p>
+                        OMEGA SECURITY SYSTEM
+                    </p>
+
+                </div>
+            `;
+
+        }
+
+        return;
+    }
+
+
+    /* =========================================
+       DIRECTORY
+    ========================================= */
+
+    if (node.type === "dir") {
+
+        renderExplorer(path);
+
+        return;
+    }
+
+
+    /* =========================================
+       REAL EXTERNAL FILE
+    ========================================= */
+
+    if (node.type === "external") {
+
+        openExternalFile(
+            node.path,
+            path
+        );
+
+        return;
+    }
+
+
+    /* =========================================
+       OLD INTERNAL TEXT FILE
+    ========================================= */
+
+    if (node.type === "file") {
+
+        openDocumentWindow();
+
+        const content =
+            document.getElementById("documentContent");
+
+        if (!content) return;
+
+        const data =
+            readFile(path);
+
+        content.innerHTML = `
+            <pre class="textDocument">
+${escapeHtml(data)}
+            </pre>
+        `;
 
     }
 
@@ -118,88 +211,258 @@ const filesystem = {
 
 
 /* =========================================================
-   LIST FILES
+   REAL FILE HANDLER
 ========================================================= */
 
-export function listFiles(path = "/") {
+function openExternalFile(filePath, omegaPath) {
 
-    const node = getNode(path);
-
-    if (!node || node.type !== "dir") {
-        return [];
-    }
-
-    return Object.keys(node.content);
-
-}
+    const extension =
+        filePath
+            .split(".")
+            .pop()
+            .toLowerCase();
 
 
-/* =========================================================
-   READ FILE
-========================================================= */
+    /* =========================================
+       PDF
+    ========================================= */
 
-export function readFile(path) {
+    if (extension === "pdf") {
 
-    const node = getNode(path);
+        openDocumentWindow();
 
-    if (!node || node.type !== "file") {
-        return null;
-    }
+        const title =
+            document.getElementById("viewerTitle");
 
-    if (!canAccess(node.level || 0)) {
-        return "ACCESS DENIED";
-    }
+        const content =
+            document.getElementById("documentContent");
 
-    return node.data;
+        if (title) {
 
-}
+            title.textContent =
+                omegaPath.split("/").pop();
 
-
-/* =========================================================
-   GET FILE INFORMATION
-========================================================= */
-
-export function getFile(path) {
-
-    const node = getNode(path);
-
-    if (!node) {
-        return null;
-    }
-
-    if (!canAccess(node.level || 0)) {
-        return {
-            type: "denied"
-        };
-    }
-
-    return node;
-
-}
-
-
-/* =========================================================
-   NODE SEARCH
-========================================================= */
-
-function getNode(path) {
-
-    const parts = path
-        .split("/")
-        .filter(Boolean);
-
-    let current = filesystem["/"];
-
-    for (const part of parts) {
-
-        if (!current.content[part]) {
-            return null;
         }
 
-        current = current.content[part];
+        if (content) {
+
+            content.innerHTML = `
+
+                <iframe
+                    class="omegaPdfViewer"
+                    src="${filePath}">
+                </iframe>
+
+            `;
+
+        }
+
+        return;
+    }
+
+
+    /* =========================================
+       VIDEO
+    ========================================= */
+
+    if (
+        extension === "mp4" ||
+        extension === "webm" ||
+        extension === "ogg"
+    ) {
+
+        openVideoWindow(filePath);
+
+        return;
+    }
+
+
+    /* =========================================
+       IMAGE
+    ========================================= */
+
+    if (
+        extension === "png" ||
+        extension === "jpg" ||
+        extension === "jpeg" ||
+        extension === "webp"
+    ) {
+
+        openDocumentWindow();
+
+        const content =
+            document.getElementById("documentContent");
+
+        if (content) {
+
+            content.innerHTML = `
+
+                <div class="omegaImageViewer">
+
+                    <img
+                        src="${filePath}"
+                        alt="OMEGA FILE">
+
+                </div>
+
+            `;
+
+        }
+
+        return;
+    }
+
+
+    /* =========================================
+       UNKNOWN
+    ========================================= */
+
+    openDocumentWindow();
+
+    const content =
+        document.getElementById("documentContent");
+
+    if (content) {
+
+        content.innerHTML = `
+
+            <div class="documentUnknown">
+
+                <h2>UNKNOWN FILE TYPE</h2>
+
+                <p>
+                    ${filePath}
+                </p>
+
+            </div>
+
+        `;
 
     }
 
-    return current;
+}
+
+
+/* =========================================================
+   DOCUMENT WINDOW
+========================================================= */
+
+function openDocumentWindow() {
+
+    const win =
+        document.getElementById("documentWindow");
+
+    if (!win) {
+
+        console.warn(
+            "OMEGA: documentWindow not found"
+        );
+
+        return;
+    }
+
+    win.classList.remove("hidden");
+    win.style.display = "flex";
+
+    if (window.bringToFront) {
+
+        window.bringToFront(win);
+
+    }
+
+}
+
+
+/* =========================================================
+   VIDEO WINDOW
+========================================================= */
+
+function openVideoWindow(filePath) {
+
+    const win =
+        document.getElementById("videoWindow");
+
+    if (!win) {
+
+        console.warn(
+            "OMEGA: videoWindow not found"
+        );
+
+        return;
+    }
+
+    const video =
+        document.getElementById("omegaVideo");
+
+    if (video) {
+
+        video.src = filePath;
+
+        video.load();
+
+    }
+
+    win.classList.remove("hidden");
+    win.style.display = "flex";
+
+    if (window.bringToFront) {
+
+        window.bringToFront(win);
+
+    }
+
+}
+
+
+/* =========================================================
+   BACK
+========================================================= */
+
+window.goBack = function() {
+
+    if (currentExplorerPath === "/files") {
+        return;
+    }
+
+    const parts =
+        currentExplorerPath
+            .split("/")
+            .filter(Boolean);
+
+    parts.pop();
+
+    const newPath =
+        "/" + parts.join("/");
+
+    renderExplorer(
+        newPath || "/files"
+    );
+
+};
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(text) {
+
+    return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+/* =========================================================
+   ENTRY POINT
+========================================================= */
+
+export function openExplorer() {
+
+    renderExplorer("/files");
 
 }
