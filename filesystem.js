@@ -48,9 +48,9 @@ const filesystem = {
 
                         content: {
 
-                            "experiment_001.pdf": {
+                            "experiment_Ten.pdf": {
                                 type: "external",
-                                path: "files/research/experiment_001.pdf",
+                                path: "files/research/experiment_Ten.pdf",
                                 level: 1
                             }
 
