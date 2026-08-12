@@ -178,6 +178,7 @@ function bootSystem() {
     trigger("system.boot");
         updateClock(); 
         initPersonnel();
+        openExplorer();
         //minimizeWindow()
 //maximizeWindow()
 //closeApp()
