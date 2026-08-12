@@ -18,6 +18,9 @@ function renderExplorer(path) {
   if (pathBar) pathBar.textContent = path;
 
   const items = listFiles(path);
+    
+  console.log("[OMEGA EXPLORER] PATH:", path);
+  console.log("[OMEGA EXPLORER] FILES:", items);
 
   view.innerHTML = items.length
     ? items.map(item => {
