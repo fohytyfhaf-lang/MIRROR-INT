@@ -75,7 +75,14 @@ DO NOT ATTEMPT TO IDENTIFY THE ENTITY.`,
 
                         level: 5
 
-                    }
+                    },
+                    "experiment_Alexey.pdf": {
+
+                        type: "external",
+
+                        path: "files/experiment_Alexey.pdf",
+
+                        level: 4
 
                 }
 
