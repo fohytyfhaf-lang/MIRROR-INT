@@ -23,7 +23,11 @@ import { startClock } from "./clock.js";
 import { initPersonnel } from "./personnel.js";
 import { initResearch } from "./research.js";
 import { initSettings } from "./settings2.js";
-import { getSettings, updateSetting } from "./systemConfig.js";
+import {
+    getSettings,
+    updateSetting,
+    applySettings
+} from "./systemConfig.js";
 import { CONFIG } from "./config.js";
 import { trigger, on } from "./eventManager.js";
 import { initFakeSite } from "./public/fakeSite.js";
@@ -239,14 +243,9 @@ window.addEventListener("DOMContentLoaded", () => {
         if (settings.language) {
             changeLanguage(settings.language);
         } else {
+            applySettings();
             initLanguage();
         }
-
-        // потом звук
-        if (settings.volume !== undefined) {
-            const audio = document.getElementById("bgm");
-            if (audio) audio.volume = settings.volume;
-        }
-
+       
     }, 0);
 });
