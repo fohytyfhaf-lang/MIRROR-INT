@@ -207,45 +207,97 @@ function bootSystem() {
         START
 ========================= */
 window.addEventListener("DOMContentLoaded", () => {
-    const publicSite = document.getElementById("publicSite");
-    const login = document.getElementById("loginScreen");
-    const desktop = document.getElementById("desktop");
 
-    // Показываем публичный сайт
+    const publicSite =
+        document.getElementById("publicSite");
+
+    const login =
+        document.getElementById("loginScreen");
+
+    const desktop =
+        document.getElementById("desktop");
+
+
+    /* =========================
+       INITIAL UI
+    ========================= */
+
     publicSite?.classList.remove("hidden");
 
-    // Остальное скрываем
     login?.classList.add("hidden");
+
     desktop?.classList.add("hidden");
 
-    // Прячем экран загрузки
-    document.getElementById("bootScreen").style.display = "none";
 
-    // Загружаем содержимое сайта
+    /* =========================
+       HIDE BOOT SCREEN
+    ========================= */
+
+    const bootScreen =
+        document.getElementById("bootScreen");
+
+    if (bootScreen) {
+        bootScreen.style.display = "none";
+    }
+
+
+    /* =========================
+       FAKE SITE
+    ========================= */
+
     initFakeSite();
 
-    // Инициализируем систему
+
+    /* =========================
+       SYSTEM INIT
+    ========================= */
+
     initLogin();
+
     bootSystem();
-      
+
+
+    /* =========================
+       LOAD USER SETTINGS
+    ========================= */
 
     setTimeout(() => {
-        const user = Storage.get("currentUser");
 
-        if (!user) return;
+        const user =
+            Storage.get("currentUser");
 
-        const users = Storage.get("users", {});
-        const settings = users[user]?.settings;
+        if (!user) {
 
-        if (!settings) return;
+            console.log(
+                "[SETTINGS] No current user"
+            );
 
-        // потом язык
-        if (settings.language) {
-            changeLanguage(settings.language);
-        } else {
-            applySettings();
-            initLanguage();
+            return;
         }
-       
+
+
+        console.log(
+            "[SETTINGS] Loading settings for:",
+            user
+        );
+
+
+        /*
+         * applySettings() сама:
+         *
+         * - загрузит язык
+         * - установит громкость
+         * - применит CRT
+         * - применит scanlines
+         * - применит animations
+         * - применит glitch
+         * - применит UI scale
+         * - применит font size
+         */
+
+        applySettings();
+
+
     }, 0);
+
 });
