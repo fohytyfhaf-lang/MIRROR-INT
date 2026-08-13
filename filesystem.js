@@ -22,14 +22,22 @@ const filesystem = {
                     "readme.txt": {
 
                         type: "file",
-                        data: "OMEGA SYSTEM\nPUBLIC INFORMATION\n\nWelcome.",
+
+                        data:
+`OMEGA SYSTEM
+PUBLIC INFORMATION
+
+Welcome.`,
+
                         level: 0
 
                     },
 
+
                     "memo.txt": {
 
                         type: "file",
+
                         data:
 `OMEGA INTERNAL MEMO
 
@@ -43,6 +51,7 @@ Further investigation required.`,
                         level: 1
 
                     },
+
 
                     "entity_mrsmile.txt": {
 
@@ -63,8 +72,9 @@ DO NOT ATTEMPT TO IDENTIFY THE ENTITY.`,
 
                     },
 
+
                     /* =====================================
-                       REAL PDF
+                       REAL PDF FILES
                     ===================================== */
 
                     "experiment_Ten.pdf": {
@@ -76,6 +86,8 @@ DO NOT ATTEMPT TO IDENTIFY THE ENTITY.`,
                         level: 5
 
                     },
+
+
                     "experiment_Alexey.pdf": {
 
                         type: "external",
@@ -83,6 +95,8 @@ DO NOT ATTEMPT TO IDENTIFY THE ENTITY.`,
                         path: "files/experiment_Alexey.pdf",
 
                         level: 4
+
+                    }
 
                 }
 
@@ -112,6 +126,7 @@ export function listFiles(path = "/") {
     }
 
     return Object.keys(node.content || {});
+
 }
 
 
@@ -136,6 +151,7 @@ export function readFile(path) {
     }
 
     return node.data;
+
 }
 
 
@@ -173,6 +189,7 @@ export function getFile(path) {
 
 
     return node;
+
 }
 
 
@@ -211,4 +228,5 @@ function getNode(path) {
 
 
     return current;
+
 }
