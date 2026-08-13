@@ -180,6 +180,7 @@ function initLogin() {
 function bootSystem() {
     initMrSmile();
     trigger("system.boot");
+    initSettings();
         updateClock(); 
         initPersonnel();
         openExplorer();
