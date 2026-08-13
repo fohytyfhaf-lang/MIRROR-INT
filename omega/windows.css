@@ -331,5 +331,106 @@
         min-height:0;
 
     }
+   /* ==========================================================
+   DOCUMENT VIEWER
+========================================================== */
+
+#documentWindow {
+    width: 1100px;
+    height: 750px;
+}
+
+
+/* ==========================================================
+   DOCUMENT CONTENT
+========================================================== */
+
+#documentWindow #documentContent {
+
+    flex: 1;
+
+    width: 100%;
+    height: 100%;
+
+    min-height: 0;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+
+}
+
+
+/* ==========================================================
+   PDF VIEWER
+========================================================== */
+
+#documentWindow .omegaPdfViewer {
+
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    border: none;
+
+    background: #111;
+
+}
+
+
+/* ==========================================================
+   TEXT DOCUMENT
+========================================================== */
+
+#documentWindow .textDocument {
+
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+
+    padding: 25px;
+
+    box-sizing: border-box;
+
+    overflow: auto;
+
+    white-space: pre-wrap;
+
+}
+
+
+/* ==========================================================
+   IMAGE VIEWER
+========================================================== */
+
+#documentWindow .omegaImageViewer {
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    overflow: auto;
+
+    box-sizing: border-box;
+
+}
+
+
+#documentWindow .omegaImageViewer img {
+
+    max-width: 100%;
+    max-height: 100%;
+
+    object-fit: contain;
+
+}
 
 }
