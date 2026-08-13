@@ -332,13 +332,24 @@
 
     }
 
-   /* ==========================================================
-   OMEGA PDF VIEWER
+}
+/* ==========================================================
+   OMEGA DOCUMENT WINDOW
 ========================================================== */
 
-.omegaPdfViewer {
+#documentWindow {
 
-    display: block;
+    width: 950px;
+    height: 700px;
+
+    min-width: 700px;
+    min-height: 500px;
+
+}
+
+#documentWindow .windowBody {
+
+    flex: 1;
 
     width: 100%;
     height: 100%;
@@ -346,48 +357,14 @@
     min-width: 0;
     min-height: 0;
 
-    border: none;
-
-    background: #080f16;
-}
-
-
-/* ==========================================================
-   DOCUMENT WINDOW CONTENT
-========================================================== */
-
-#documentWindow .windowContent {
-
     padding: 0;
 
     overflow: hidden;
 
     display: flex;
-
     flex-direction: column;
 
 }
-
-
-/* ==========================================================
-   PDF FRAME
-========================================================== */
-
-#documentWindow .omegaPdfViewer {
-
-    flex: 1;
-
-    width: 100%;
-    height: 100%;
-
-    border: none;
-
-}
-
-
-/* ==========================================================
-   DOCUMENT CONTENT
-========================================================== */
 
 #documentWindow #documentContent {
 
@@ -405,18 +382,18 @@
 
 }
 
+#documentWindow .omegaPdfViewer {
 
-/* ==========================================================
-   DOCUMENT WINDOW SIZE
-========================================================== */
+    display: block;
 
-#documentWindow {
+    width: 100%;
+    height: 100%;
 
-    width: 950px;
-    height: 700px;
+    min-width: 0;
+    min-height: 0;
 
-    min-width: 700px;
-    min-height: 500px;
+    border: none;
+
+    background: #080f16;
 
 }
-  
