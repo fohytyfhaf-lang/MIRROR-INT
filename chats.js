@@ -2,6 +2,7 @@
    OMEGA INTERNAL CHATS
 ========================================================= */
 import { canAccess } from "./security.js";
+import { generatePersonnelResponse } from "./personnelAI.js";
 
 const chats = {
 
