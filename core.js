@@ -6,6 +6,7 @@ import {
 } from "./login.js";
 import { playMusic } from "./audio.js";
 import { runCommand } from "./console.js";
+import { initConsole } from "./console.js";
 import { setSoundState } from "./soundManager.js";
 import { nextCam } from "./camera.js";
 import { openExplorer } from "./explorer.js";
