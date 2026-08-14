@@ -2,115 +2,397 @@
    OMEGA PERSONNEL AI
 ========================================================= */
 
-const personnelAI = {
-
-    "SECURITY_01": {
-        personality: "calm",
-        department: "security",
-
-        knowledge: [
-            "security",
-            "sectors",
-            "incidents"
-        ]
-    },
-
-    "SECURITY_02": {
-        personality: "serious",
-        department: "security",
-
-        knowledge: [
-            "security",
-            "incidents",
-            "restricted"
-        ]
-    },
-
-    "SECURITY_03": {
-        personality: "suspicious",
-        department: "security",
-
-        knowledge: [
-            "security",
-            "surveillance",
-            "restricted"
-        ]
-    },
-
+const personnel = {
 
     "DR. KLINE": {
-        personality: "cold_scientist",
-        department: "research",
+
+        department: "RESEARCH",
+
+        personality: [
+            "calm",
+            "confident",
+            "technical"
+        ],
+
+        status:
+            "Working on experimental research.",
 
         knowledge: [
-            "research",
-            "experiments",
-            "TEN"
-        ]
+            "TEN",
+            "EXPERIMENT",
+            "PHASE 3",
+            "RESEARCH",
+            "SECTOR C"
+        ],
+
+        trust: 0,
+
+        responses: {
+
+            greeting: [
+                "Hello.",
+                "Good morning.",
+                "I'm working. What do you need?"
+            ],
+
+            work: [
+                "I'm currently working on the TEN documentation.",
+                "The experiment is taking longer than expected.",
+                "I'm reviewing the latest research data."
+            ],
+
+            suspicious: [
+                "Why are you asking?",
+                "That's not information you need.",
+                "Where did you hear that?"
+            ]
+
+        }
+
     },
 
+
     "DR. MILLER": {
-        personality: "nervous_scientist",
-        department: "research",
+
+        department: "RESEARCH",
+
+        personality: [
+            "nervous",
+            "cautious",
+            "intelligent"
+        ],
+
+        status:
+            "Reviewing research documentation.",
 
         knowledge: [
-            "research",
-            "experiments",
-            "TEN"
-        ]
+            "TEN",
+            "MEDICAL",
+            "PHASE 3",
+            "SECTOR C"
+        ],
+
+        trust: 0,
+
+        responses: {
+
+            greeting: [
+                "Oh. Hello.",
+                "Hi.",
+                "Yes?"
+            ],
+
+            work: [
+                "I'm still working on the report.",
+                "There's more data than I expected.",
+                "I haven't finished the documentation yet."
+            ],
+
+            suspicious: [
+                "I don't think I should talk about that.",
+                "Who told you about this?",
+                "Let's talk about something else."
+            ]
+
+        }
+
+    },
+
+
+    "SECURITY_01": {
+
+        department: "SECURITY",
+
+        personality: [
+            "professional",
+            "direct",
+            "strict"
+        ],
+
+        status:
+            "Monitoring security checkpoints.",
+
+        knowledge: [
+            "SECURITY",
+            "ARCHIVE",
+            "SECTOR C",
+            "ACCESS"
+        ],
+
+        trust: 0,
+
+        responses: {
+
+            greeting: [
+                "Morning.",
+                "Hello.",
+                "Security department."
+            ],
+
+            work: [
+                "I'm monitoring checkpoint three.",
+                "Everything is under control.",
+                "We're checking the restricted sectors."
+            ],
+
+            suspicious: [
+                "That's restricted information.",
+                "You don't have clearance for that.",
+                "Stop asking about restricted areas."
+            ]
+
+        }
+
+    },
+
+
+    "SECURITY_03": {
+
+        department: "SECURITY",
+
+        personality: [
+            "alert",
+            "suspicious",
+            "observant"
+        ],
+
+        status:
+            "Investigating unauthorized access attempts.",
+
+        knowledge: [
+            "SECURITY",
+            "UNAUTHORIZED ACCESS",
+            "ARCHIVE",
+            "SECTOR C"
+        ],
+
+        trust: 0,
+
+        responses: {
+
+            greeting: [
+                "Hey.",
+                "Hello.",
+                "What do you need?"
+            ],
+
+            work: [
+                "We've had some strange access attempts today.",
+                "I'm checking the archive terminals.",
+                "Something is wrong with sector C."
+            ],
+
+            suspicious: [
+                "Why are you interested in that?",
+                "I wouldn't ask about that if I were you.",
+                "Someone is already watching that area."
+            ]
+
+        }
+
     },
 
 
     "MEDICAL_02": {
-        personality: "professional",
-        department: "medical",
+
+        department: "MEDICAL",
+
+        personality: [
+            "calm",
+            "professional",
+            "empathetic"
+        ],
+
+        status:
+            "Working in the medical sector.",
 
         knowledge: [
-            "medical",
-            "patients"
-        ]
-    },
+            "MEDICAL",
+            "PATIENTS",
+            "INJURIES"
+        ],
 
-    "MEDICAL_05": {
-        personality: "worried",
-        department: "medical",
+        trust: 0,
 
-        knowledge: [
-            "medical",
-            "patients",
-            "incidents"
-        ]
+        responses: {
+
+            greeting: [
+                "Hello.",
+                "Good morning.",
+                "How can I help?"
+            ],
+
+            work: [
+                "The medical sector is unusually busy today.",
+                "I'm reviewing patient records.",
+                "Everything is stable for now."
+            ],
+
+            suspicious: [
+                "Patient information is confidential.",
+                "I can't discuss that.",
+                "You should speak to administration."
+            ]
+
+        }
+
     },
 
 
     "ADMIN": {
-        personality: "formal",
-        department: "administration",
+
+        department: "ADMINISTRATION",
+
+        personality: [
+            "formal",
+            "controlled",
+            "authoritative"
+        ],
+
+        status:
+            "Handling administrative operations.",
 
         knowledge: [
-            "administration",
-            "security",
-            "research",
-            "restricted"
-        ]
+            "ADMINISTRATION",
+            "SECURITY",
+            "RESEARCH",
+            "OMEGA"
+        ],
+
+        trust: 0,
+
+        responses: {
+
+            greeting: [
+                "Good day.",
+                "Hello.",
+                "How may I assist you?"
+            ],
+
+            work: [
+                "I'm reviewing administrative reports.",
+                "There are several documents awaiting approval.",
+                "I'm handling internal requests."
+            ],
+
+            suspicious: [
+                "That information is classified.",
+                "Your clearance does not permit access to that information.",
+                "I suggest you contact your department supervisor."
+            ]
+
+        }
+
     }
 
 };
 
 
 /* =========================================================
+   MEMORY
+========================================================= */
+
+const memory = {};
+
+
+/* =========================================================
    GET PERSONNEL
 ========================================================= */
 
-export function getPersonnelAI(name) {
+export function getPersonnel(name) {
 
-    return personnelAI[name] || {
+    return personnel[name] || null;
 
-        personality: "normal",
-        department: "unknown",
-        knowledge: []
+}
 
-    };
+
+/* =========================================================
+   INITIALIZE MEMORY
+========================================================= */
+
+function initMemory(name) {
+
+    if (!memory[name]) {
+
+        memory[name] = {
+
+            messages: [],
+
+            topics: [],
+
+            trust: 0
+
+        };
+
+    }
+
+    return memory[name];
+
+}
+
+
+/* =========================================================
+   REMEMBER MESSAGE
+========================================================= */
+
+export function rememberMessage(
+    name,
+    message
+) {
+
+    const mem =
+        initMemory(name);
+
+    mem.messages.push(message);
+
+    if (mem.messages.length > 20) {
+
+        mem.messages.shift();
+
+    }
+
+}
+
+
+/* =========================================================
+   CHANGE TRUST
+========================================================= */
+
+export function changeTrust(
+    name,
+    amount
+) {
+
+    const person =
+        personnel[name];
+
+    if (!person) return;
+
+    person.trust += amount;
+
+    if (person.trust > 10)
+        person.trust = 10;
+
+    if (person.trust < -10)
+        person.trust = -10;
+
+}
+
+
+/* =========================================================
+   RANDOM RESPONSE
+========================================================= */
+
+function random(array) {
+
+    if (!array || !array.length)
+        return "";
+
+    return array[
+        Math.floor(
+            Math.random() * array.length
+        )
+    ];
 
 }
 
@@ -119,159 +401,156 @@ export function getPersonnelAI(name) {
    GENERATE RESPONSE
 ========================================================= */
 
-export function generatePersonnelResponse(name, text) {
+export function generatePersonnelResponse(
+    name,
+    text
+) {
 
     const person =
-        getPersonnelAI(name);
+        personnel[name];
+
+    if (!person)
+        return null;
+
+    const mem =
+        initMemory(name);
 
     const message =
         text.toLowerCase();
 
-
-    /* =========================================
-       SECURITY
-    ========================================= */
-
-    if (person.department === "security") {
-
-        if (
-            message.includes("incident") ||
-            message.includes("инцидент")
-        ) {
-
-            return "The incident has been documented. Further details are restricted.";
-
+    rememberMessage(
+        name,
+        {
+            from: "YOU",
+            text
         }
+    );
 
-        if (
-            message.includes("security") ||
-            message.includes("безопасность")
-        ) {
 
-            return "Security systems are operational.";
+    /* =========================
+       GREETING
+    ========================= */
 
-        }
+    if (
+        message.includes("hello") ||
+        message.includes("hi") ||
+        message.includes("привет") ||
+        message.includes("добрый")
+    ) {
 
-        if (
-            message.includes("ten") ||
-            message.includes("тен")
-        ) {
+        return random(
+            person.responses.greeting
+        );
 
-            return "I don't have authorization to discuss that.";
-
-        }
-
-        if (
-            message.includes("who") ||
-            message.includes("кто")
-        ) {
-
-            return "Security personnel. That's all you need to know.";
-
-        }
-
-        return "Understood. I'll keep an eye on it.";
     }
 
 
-    /* =========================================
-       RESEARCH
-    ========================================= */
+    /* =========================
+       WORK
+    ========================= */
 
-    if (person.department === "research") {
+    if (
+        message.includes("work") ||
+        message.includes("working") ||
+        message.includes("работ") ||
+        message.includes("делаешь") ||
+        message.includes("делал") ||
+        message.includes("дела")
+    ) {
+
+        return random(
+            person.responses.work
+        );
+
+    }
+
+
+    /* =========================
+       WHO
+    ========================= */
+
+    if (
+        message.includes("who are you") ||
+        message.includes("кто ты")
+    ) {
+
+        return `${name}. ${person.department} department.`;
+
+    }
+
+
+    /* =========================
+       TEN
+    ========================= */
+
+    if (
+        message.includes("ten") ||
+        message.includes("тен")
+    ) {
 
         if (
-            message.includes("ten") ||
-            message.includes("тен")
+            person.knowledge.includes("TEN")
         ) {
 
-            if (person.personality === "nervous_scientist") {
+            if (person.trust >= 5) {
 
-                return "We shouldn't be discussing TEN here.";
+                return (
+                    "TEN is an experimental subject. " +
+                    "There are details I can discuss later."
+                );
 
             }
 
-            return "TEN is an experimental subject.";
+            return (
+                "TEN is classified research."
+            );
+
         }
 
+        return (
+            "I don't know anything about TEN."
+        );
 
-        if (
-            message.includes("experiment") ||
-            message.includes("эксперимент")
-        ) {
-
-            return "The experiment is still under observation.";
-        }
-
-
-        if (
-            message.includes("why") ||
-            message.includes("почему")
-        ) {
-
-            return "Because the previous results were inconclusive.";
-        }
-
-
-        return "I'll need more specific information.";
     }
 
 
-    /* =========================================
-       MEDICAL
-    ========================================= */
+    /* =========================
+       SUSPICIOUS QUESTIONS
+    ========================= */
 
-    if (person.department === "medical") {
+    if (
+        message.includes("secret") ||
+        message.includes("секрет") ||
+        message.includes("classified") ||
+        message.includes("секретный") ||
+        message.includes("restricted") ||
+        message.includes("запрещ")
+    ) {
 
-        if (
-            message.includes("patient") ||
-            message.includes("пациент")
-        ) {
+        return random(
+            person.responses.suspicious
+        );
 
-            return "Patient information is confidential.";
-        }
-
-
-        if (
-            message.includes("injury") ||
-            message.includes("травм")
-        ) {
-
-            return "The medical sector is handling the situation.";
-        }
-
-
-        return "Medical records are not available through this channel.";
     }
 
 
-    /* =========================================
-       ADMINISTRATION
-    ========================================= */
+    /* =========================
+       DEFAULT
+    ========================= */
 
-    if (person.department === "administration") {
+    if (mem.messages.length > 3) {
 
-        if (
-            message.includes("access") ||
-            message.includes("доступ")
-        ) {
+        return random([
+            "What exactly are you trying to find out?",
+            "You've been asking a lot of questions.",
+            "Is there something specific you need?",
+            "I have work to finish."
+        ]);
 
-            return "Access is determined by your clearance level.";
-        }
-
-
-        if (
-            message.includes("document") ||
-            message.includes("документ")
-        ) {
-
-            return "Internal documents must not be redistributed.";
-        }
-
-
-        return "Please submit an official request.";
     }
 
+    return random(
+        person.responses.work
+    );
 
-    return "Understood.";
 }
