@@ -12,6 +12,7 @@ const chats = {
         status: "INTERNAL CHANNEL",
 
         clearance: 0,
+        unread: 0,
 
         messages: [
 
@@ -45,7 +46,7 @@ const chats = {
         status: "SECURITY DEPARTMENT",
 
         clearance: 2,
-
+        unread: 3,
         messages: [
 
             {
@@ -78,6 +79,7 @@ const chats = {
         status: "RESEARCH DEPARTMENT",
 
         clearance: 2,
+        unread: 1,
 
         messages: [
 
@@ -117,6 +119,7 @@ const chats = {
         status: "MEDICAL DEPARTMENT",
 
         clearance: 3,
+        unread: 2,
 
         messages: [
 
@@ -144,6 +147,7 @@ const chats = {
         status: "INCIDENT REPORTING",
 
         clearance: 3,
+        unread: 1,
 
         messages: [
 
@@ -177,6 +181,7 @@ const chats = {
         status: "ADMINISTRATIVE CHANNEL",
 
         clearance: 5,
+        unread: 0,
 
         messages: [
 
@@ -204,6 +209,7 @@ const chats = {
         status: "CONNECTION UNSTABLE",
 
         clearance: 2,
+        unread: 7,
 
         special: true,
 
@@ -268,7 +274,6 @@ let activeChat = "general";
 /* =========================================================
    RENDER CHAT LIST
 ========================================================= */
-
 function renderChatList() {
 
     const list =
@@ -281,6 +286,48 @@ function renderChatList() {
     Object.entries(chats).forEach(
         ([id, chat]) => {
 
+            /* =========================================
+               ACCESS CHECK
+            ========================================= */
+
+            if (!canAccess(chat.clearance)) {
+
+                const item =
+                    document.createElement("div");
+
+                item.className =
+                    "chatListItem chatLocked";
+
+                item.innerHTML = `
+
+                    <div class="chatAvatar">
+                        🔒
+                    </div>
+
+                    <div class="chatListInfo">
+
+                        <div class="chatListName">
+                            RESTRICTED CHANNEL
+                        </div>
+
+                        <div class="chatListStatus">
+                            CLEARANCE ${chat.clearance} REQUIRED
+                        </div>
+
+                    </div>
+
+                `;
+
+                list.appendChild(item);
+
+                return;
+            }
+
+
+            /* =========================================
+               NORMAL CHAT
+            ========================================= */
+
             const item =
                 document.createElement("div");
 
@@ -290,6 +337,11 @@ function renderChatList() {
             if (id === activeChat) {
                 item.classList.add("active");
             }
+
+
+            const unread =
+                chat.unread || 0;
+
 
             item.innerHTML = `
 
@@ -309,7 +361,20 @@ function renderChatList() {
 
                 </div>
 
+                ${
+                    unread > 0
+                    ?
+                    `
+                    <div class="chatUnread">
+                        ${unread > 99 ? "99+" : unread}
+                    </div>
+                    `
+                    :
+                    ""
+                }
+
             `;
+
 
             item.addEventListener(
                 "click",
@@ -317,11 +382,16 @@ function renderChatList() {
 
                     activeChat = id;
 
+                    /* Сбрасываем непрочитанные */
+
+                    chats[id].unread = 0;
+
                     renderChatList();
                     renderActiveChat();
 
                 }
             );
+
 
             list.appendChild(item);
 
