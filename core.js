@@ -42,6 +42,10 @@ import {
     makeWindowDraggable,
     bringToFront
 } from "./windowManager.js";
+
+import {
+    initChatEvents
+} from "./chatEvents.js";
 /* =========================
         GLOBAL
 ========================= */
@@ -195,6 +199,7 @@ function bootSystem() {
     updatePersonality();
     initMrSmileChat();
     initMrSmileEvents();
+    initChatEvents();
 
     if (knowledgeInit) knowledgeInit();
 
