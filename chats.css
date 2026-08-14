@@ -1,0 +1,436 @@
+/* =========================================================
+   OMEGA INTERNAL CHATS
+========================================================= */
+
+.chatSystem {
+    display: flex;
+    height: 100%;
+    min-height: 0;
+}
+
+
+/* =========================================================
+   CHAT SIDEBAR
+========================================================= */
+
+.chatSidebar {
+    width: 280px;
+    min-width: 280px;
+
+    background: #0a121b;
+
+    border-right: 1px solid #263d52;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.chatSidebarHeader {
+
+    padding: 15px;
+
+    border-bottom: 1px solid #263d52;
+
+    color: #8dbbd5;
+
+    font-size: 12px;
+
+    letter-spacing: 1px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+}
+
+
+.chatOnline {
+
+    color: #61d39a;
+
+    font-size: 10px;
+
+}
+
+
+/* =========================================================
+   CHAT LIST
+========================================================= */
+
+.chatList {
+
+    flex: 1;
+
+    overflow-y: auto;
+
+}
+
+
+.chatListItem {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 13px;
+
+    cursor: pointer;
+
+    border-bottom: 1px solid rgba(255,255,255,.025);
+
+    transition: .15s;
+
+}
+
+
+.chatListItem:hover {
+
+    background: #142333;
+
+}
+
+
+.chatListItem.active {
+
+    background: #183044;
+
+    border-left: 3px solid #4fd8ff;
+
+}
+
+
+.chatAvatar {
+
+    width: 36px;
+
+    height: 36px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #172a3a;
+
+    color: #70c9ed;
+
+}
+
+
+.chatListInfo {
+
+    min-width: 0;
+
+}
+
+
+.chatListName {
+
+    color: #d9efff;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+
+.chatListStatus {
+
+    margin-top: 4px;
+
+    color: #63859c;
+
+    font-size: 10px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+/* =========================================================
+   MAIN CHAT
+========================================================= */
+
+.chatMain {
+
+    flex: 1;
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    background: #09111a;
+
+}
+
+
+.chatHeader {
+
+    min-height: 60px;
+
+    padding: 12px 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    background: #101c28;
+
+    border-bottom: 1px solid #263d52;
+
+}
+
+
+#activeChatName {
+
+    color: #e1f5ff;
+
+    font-weight: 600;
+
+    letter-spacing: .5px;
+
+}
+
+
+#activeChatStatus {
+
+    margin-top: 4px;
+
+    color: #668ba5;
+
+    font-size: 11px;
+
+}
+
+
+#activeChatClearance {
+
+    color: #5e9fc0;
+
+    font-size: 10px;
+
+}
+
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.chatMessages {
+
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 20px;
+
+}
+
+
+.chatMessage {
+
+    max-width: 80%;
+
+    margin-bottom: 18px;
+
+}
+
+
+.messageMeta {
+
+    display: flex;
+
+    gap: 10px;
+
+    align-items: center;
+
+    margin-bottom: 5px;
+
+}
+
+
+.messageUser {
+
+    color: #68c7ed;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+}
+
+
+.messageTime {
+
+    color: #506a7c;
+
+    font-size: 10px;
+
+}
+
+
+.messageText {
+
+    padding: 10px 13px;
+
+    background: #111e2a;
+
+    border: 1px solid #22384b;
+
+    border-radius: 5px;
+
+    color: #c8dce8;
+
+    line-height: 1.5;
+
+}
+
+
+/* =========================================================
+   SYSTEM
+========================================================= */
+
+.systemMessage .messageUser {
+
+    color: #9a9a9a;
+
+}
+
+
+.systemMessage .messageText {
+
+    color: #7f909b;
+
+    background: #0c141c;
+
+    border-style: dashed;
+
+}
+
+
+/* =========================================================
+   MR.SMILE
+========================================================= */
+
+.mrSmileMessage .messageUser {
+
+    color: #d66cff;
+
+}
+
+
+.mrSmileMessage .messageText {
+
+    color: #e6caff;
+
+    border-color: #693b7d;
+
+    background: #170f1d;
+
+    box-shadow:
+        0 0 12px rgba(190,70,255,.08);
+
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.chatInputArea {
+
+    display: flex;
+
+    gap: 8px;
+
+    padding: 12px;
+
+    background: #0d1823;
+
+    border-top: 1px solid #263d52;
+
+}
+
+
+#chatInput {
+
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 11px;
+
+    background: #081019;
+
+    border: 1px solid #294359;
+
+    border-radius: 5px;
+
+    color: #dff5ff;
+
+    outline: none;
+
+}
+
+
+#chatInput:focus {
+
+    border-color: #4fd8ff;
+
+}
+
+
+#sendBtn {
+
+    padding: 0 20px;
+
+    background: #17354a;
+
+    border: 1px solid #315a73;
+
+    color: #9bdcff;
+
+    border-radius: 5px;
+
+    cursor: pointer;
+
+}
+
+
+#sendBtn:hover {
+
+    background: #214a63;
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .chatSidebar {
+
+        width: 190px;
+
+        min-width: 190px;
+
+    }
+
+}
