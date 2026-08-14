@@ -338,71 +338,95 @@
     
    </div>
 </div>
-        <!-- ==================================
-        MR.SMILE CHAT
+       
+<!-- ==================================
+        INTERNAL CHATS
 =================================== -->
 
-<div id="logsWindow"
-     class="window hidden">
+<div id="logsWindow" class="window hidden">
 
     <div class="windowHeader">
 
         <div class="windowTitle">
-
-            💬 MR.SMILE CHAT
-
+            💬 INTERNAL CHATS
         </div>
 
         <div class="windowControls">
-
             <button onclick="minimizeWindow('logs')">─</button>
-
             <button onclick="maximizeWindow('logs')">□</button>
-
             <button onclick="closeApp('logs')">✕</button>
-
         </div>
 
     </div>
 
+    <div class="chatSystem">
 
-    <div class="windowBody">
+        <!-- =========================
+             CHAT LIST
+        ========================== -->
 
-        <div class="chatStatus">
+        <aside class="chatSidebar">
 
-            <span class="statusDot"></span>
-
-            <span>CONNECTION: UNKNOWN</span>
-
-        </div>
-
-
-        <div id="chatLog" class="chat">
-
-            <div class="systemMessage">
-                [SYSTEM] Communication channel initialized.
+            <div class="chatSidebarHeader">
+                <span>COMMUNICATIONS</span>
+                <span class="chatOnline">● ONLINE</span>
             </div>
 
-        </div>
+            <div id="chatList" class="chatList"></div>
 
-    </div>
+        </aside>
 
 
-    <div class="windowFooter">
+        <!-- =========================
+             ACTIVE CHAT
+        ========================== -->
 
-        <input
-            id="chatInput"
-            type="text"
-            placeholder="Message MR.SMILE...">
+        <section class="chatMain">
 
-        <button id="sendBtn">
-            SEND
-        </button>
+            <div class="chatHeader">
+
+                <div>
+                    <div id="activeChatName">
+                        GENERAL
+                    </div>
+
+                    <div id="activeChatStatus">
+                        INTERNAL CHANNEL
+                    </div>
+                </div>
+
+                <div id="activeChatClearance">
+                    CLEARANCE: —
+                </div>
+
+            </div>
+
+
+            <div
+                id="chatMessages"
+                class="chatMessages">
+            </div>
+
+
+            <div class="chatInputArea">
+
+                <input
+                    id="chatInput"
+                    type="text"
+                    placeholder="Enter message..."
+                    autocomplete="off">
+
+                <button id="sendBtn">
+                    SEND
+                </button>
+
+            </div>
+
+        </section>
 
     </div>
 
 </div>
-
          <!-- ==================================
             FILE EXPLORER
 =================================== -->
