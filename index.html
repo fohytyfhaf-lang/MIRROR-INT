@@ -338,8 +338,8 @@
     
    </div>
 </div>
-         <!-- ==================================
-            LOG DATABASE
+        <!-- ==================================
+        MR.SMILE CHAT
 =================================== -->
 
 <div id="logsWindow"
@@ -349,7 +349,7 @@
 
         <div class="windowTitle">
 
-            📄 LOG DATABASE
+            💬 MR.SMILE CHAT
 
         </div>
 
@@ -365,23 +365,38 @@
 
     </div>
 
+
     <div class="windowBody">
 
-        <div id="chatLog" class="chat"></div>
+        <div class="chatStatus">
+
+            <span class="statusDot"></span>
+
+            <span>CONNECTION: UNKNOWN</span>
+
+        </div>
+
+
+        <div id="chatLog" class="chat">
+
+            <div class="systemMessage">
+                [SYSTEM] Communication channel initialized.
+            </div>
+
+        </div>
 
     </div>
+
 
     <div class="windowFooter">
 
         <input
             id="chatInput"
             type="text"
-            placeholder="Enter message...">
+            placeholder="Message MR.SMILE...">
 
         <button id="sendBtn">
-
             SEND
-
         </button>
 
     </div>
