@@ -22,6 +22,7 @@ import { Storage } from "./storage.js";
 import { startClock } from "./clock.js";
 import { initPersonnel } from "./personnel.js";
 import { initResearch } from "./research.js";
+import { initChats } from "./chats.js";
 import { initSettings } from "./settings2.js";
 import {
     getSettings,
@@ -188,6 +189,7 @@ function bootSystem() {
 //maximizeWindow()
 //closeApp()
         initResearch();
+        initChats();
     initMemory();
     loadTrust();
     updatePersonality();
