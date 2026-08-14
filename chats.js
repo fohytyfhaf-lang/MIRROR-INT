@@ -701,7 +701,55 @@ function generateMrSmileResponse(text) {
 
 }
 
+/* =========================================================
+   EXTERNAL CHAT MESSAGE
+========================================================= */
 
+window.addChatMessage = function(
+    chatId,
+    message
+) {
+
+    if (!chats[chatId])
+        return;
+
+    chats[chatId].messages.push(
+        message
+    );
+
+    /*
+        Если пользователь сейчас
+        НЕ находится в этом чате —
+        увеличиваем unread.
+    */
+
+    if (
+        activeChat !== chatId
+    ) {
+
+        if (
+            chats[chatId].unread === undefined
+        ) {
+
+            chats[chatId].unread = 0;
+
+        }
+
+        chats[chatId].unread++;
+
+    }
+
+    renderChatList();
+
+    if (
+        activeChat === chatId
+    ) {
+
+        renderActiveChat();
+
+    }
+
+};
 /* =========================================================
    INITIALIZATION
 ========================================================= */
