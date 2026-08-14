@@ -498,7 +498,6 @@ function renderActiveChat() {
 /* =========================================================
    SEND MESSAGE
 ========================================================= */
-
 function sendMessage() {
 
     const input =
@@ -517,40 +516,47 @@ function sendMessage() {
 
     const time =
         String(now.getHours()).padStart(2, "0")
-        + ":" +
+        + ":"
+        +
         String(now.getMinutes()).padStart(2, "0");
 
+
+    /* =========================================
+       PLAYER MESSAGE
+    ========================================= */
 
     chats[activeChat].messages.push({
 
         user: "YOU",
-
         time: time,
-
         text: text
 
     });
-
 
     input.value = "";
 
     renderActiveChat();
 
 
-    /* MR.SMILE special response */
+    /* =========================================
+       MR.SMILE
+    ========================================= */
 
     if (activeChat === "mrsmile") {
 
         setTimeout(() => {
 
+            const response =
+                generateMrSmileResponse(text);
+
             chats.mrsmile.messages.push({
 
                 user: "MR.SMILE",
 
-                time: time,
+                time:
+                    getCurrentTime(),
 
-                text:
-                    generateMrSmileResponse(text)
+                text: response
 
             });
 
@@ -558,7 +564,63 @@ function sendMessage() {
 
         }, 700);
 
+        return;
     }
+
+
+    /* =========================================
+       NORMAL PERSONNEL
+    ========================================= */
+
+    const chat =
+        chats[activeChat];
+
+    if (!chat) return;
+
+
+    /*
+       Берём последнего реального
+       сотрудника из сообщений.
+    */
+
+    const personnel =
+        [...chat.messages]
+            .reverse()
+            .find(message =>
+
+                message.user !== "YOU" &&
+                message.user !== "SYSTEM"
+
+            );
+
+
+    if (!personnel) return;
+
+
+    setTimeout(() => {
+
+        const response =
+            generatePersonnelResponse(
+                personnel.user,
+                text
+            );
+
+
+        chats[activeChat].messages.push({
+
+            user: personnel.user,
+
+            time:
+                getCurrentTime(),
+
+            text: response
+
+        });
+
+
+        renderActiveChat();
+
+    }, 700);
 
 }
 
