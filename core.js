@@ -190,6 +190,7 @@ function bootSystem() {
         updateClock(); 
         initPersonnel();
         openExplorer();
+        initConsole();
         //minimizeWindow()
 //maximizeWindow()
 //closeApp()
