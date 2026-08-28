@@ -1060,145 +1060,204 @@ function triggerNullEvent() {
 
 
     /* =========================================
-       DELAY
+       STAGE 1 — SILENCE
     ========================================= */
 
     setTimeout(() => {
 
-        const nullMessage =
-            document.createElement("div");
-
-        nullMessage.className =
-            "chatMessage systemMessage";
-
-        nullMessage.innerHTML = `
-
-            <div class="messageMeta">
-
-                <span class="messageUser">
-                    SYSTEM
-                </span>
-
-                <span class="messageTime">
-                    ${getCurrentTime()}
-                </span>
-
-            </div>
-
-            <div class="messageText">
-                NULL
-            </div>
-
-        `;
-
-        messages.appendChild(nullMessage);
-
-        messages.scrollTop =
-            messages.scrollHeight;
+        addNullMessage(
+            "SYSTEM",
+            "NULL"
+        );
 
     }, 2500);
 
 
     /* =========================================
-       SECOND NULL
+       STAGE 2 — FIRST ERROR
     ========================================= */
 
     setTimeout(() => {
 
-        const nullMessage =
-            document.createElement("div");
+        addNullMessage(
+            "SYSTEM",
+            "SCRIPT EXECUTION FAILURE"
+        );
 
-        nullMessage.className =
-            "chatMessage systemMessage";
-
-        nullMessage.innerHTML = `
-
-            <div class="messageMeta">
-
-                <span class="messageUser">
-                    NULL
-                </span>
-
-                <span class="messageTime">
-                    --:--
-                </span>
-
-            </div>
-
-            <div class="messageText">
-                NULL
-            </div>
-
-        `;
-
-        messages.appendChild(nullMessage);
-
-        messages.scrollTop =
-            messages.scrollHeight;
-
-    }, 4000);
+    }, 4200);
 
 
     /* =========================================
-       BROKEN SCRIPT
+       STAGE 3 — ERRORS
     ========================================= */
 
     setTimeout(() => {
 
-        const error =
-            document.createElement("div");
+        addNullMessage(
+            "SYSTEM",
+            "NULL REFERENCE"
+        );
 
-        error.className =
-            "chatMessage systemMessage";
+    }, 5000);
 
-        error.innerHTML = `
 
-            <div class="messageMeta">
+    setTimeout(() => {
 
-                <span class="messageUser">
-                    SYSTEM
-                </span>
+        addNullMessage(
+            "SYSTEM",
+            "MEMORY ACCESS ERROR"
+        );
 
-                <span class="messageTime">
-                    ERROR
-                </span>
+    }, 5800);
 
-            </div>
 
-            <div class="messageText">
-                SCRIPT EXECUTION FAILURE
-            </div>
+    setTimeout(() => {
 
-        `;
+        addNullMessage(
+            "SYSTEM",
+            "PROCESS OMEGA_CHAT FAILED"
+        );
 
-        messages.appendChild(error);
-
-        messages.scrollTop =
-            messages.scrollHeight;
-
-    }, 5200);
+    }, 6600);
 
 
     /* =========================================
-       GLITCH
+       STAGE 4 — GLITCH
     ========================================= */
 
     setTimeout(() => {
 
-        messages.classList.add("nullAnomaly");
+        messages.classList.add(
+            "nullAnomaly"
+        );
 
-    }, 6000);
+    }, 7000);
 
 
     /* =========================================
-       RECOVERY
+       STAGE 5 — NULL CORRUPTION
     ========================================= */
 
     setTimeout(() => {
 
-        messages.classList.remove("nullAnomaly");
+        addNullMessage(
+            "NULL",
+            "NULL"
+        );
+
+    }, 7800);
+
+
+    setTimeout(() => {
+
+        addNullMessage(
+            "NULL",
+            "0x00000000"
+        );
+
+    }, 8500);
+
+
+    /* =========================================
+       STAGE 6 — MR.SMILE
+    ========================================= */
+
+    setTimeout(() => {
+
+        addNullMessage(
+            "MR.SMILE",
+            "Want to know what happened to them?... Well... it wasn't their fault... they did nothing wrong... I made them like this, because I wanted to... They didn't even have time to react... and that's the beauty of it all... they were just like YOU... so naive..."
+        );
 
     }, 10000);
+
+
+    /* =========================================
+       STAGE 7 — FINAL ERROR
+    ========================================= */
+
+    setTimeout(() => {
+
+        addNullMessage(
+            "SYSTEM",
+            "CONNECTION LOST"
+        );
+
+    }, 15000);
+
+
+    /* =========================================
+       PERMANENT GLITCH
+    ========================================= */
+
+    setTimeout(() => {
+
+        messages.classList.add(
+            "nullPermanent"
+        );
+
+    }, 15500);
+
+}
+
+
+/* =========================================================
+   NULL MESSAGE
+========================================================= */
+
+function addNullMessage(user, text) {
+
+    const messages =
+        document.getElementById("chatMessages");
+
+    if (!messages) return;
+
+
+    const element =
+        document.createElement("div");
+
+    element.className =
+        "chatMessage systemMessage";
+
+
+    if (user === "MR.SMILE") {
+
+        element.classList.add(
+            "mrSmileMessage"
+        );
+
+    }
+
+
+    element.innerHTML = `
+
+        <div class="messageMeta">
+
+            <span class="messageUser">
+                ${user}
+            </span>
+
+            <span class="messageTime">
+                ${
+                    user === "NULL"
+                    ? "--:--"
+                    : getCurrentTime()
+                }
+            </span>
+
+        </div>
+
+        <div class="messageText">
+            ${text}
+        </div>
+
+    `;
+
+
+    messages.appendChild(element);
+
+    messages.scrollTop =
+        messages.scrollHeight;
 
 }
 /* =========================================================
