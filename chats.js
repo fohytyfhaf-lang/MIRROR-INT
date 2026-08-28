@@ -919,6 +919,14 @@ function generateMrSmileResponse(text) {
     const message =
         text.toLowerCase();
 
+       if (message === "null") {
+
+        triggerNullEvent();
+
+        return null;
+
+    }
+
 
     if (
         message.includes("hello") ||
@@ -1036,6 +1044,161 @@ function getContextualResponse(chatId, text) {
 
 
     return null;
+
+}
+
+/* =========================================================
+   NULL EVENT
+========================================================= */
+
+function triggerNullEvent() {
+
+    const messages =
+        document.getElementById("chatMessages");
+
+    if (!messages) return;
+
+
+    /* =========================================
+       DELAY
+    ========================================= */
+
+    setTimeout(() => {
+
+        const nullMessage =
+            document.createElement("div");
+
+        nullMessage.className =
+            "chatMessage systemMessage";
+
+        nullMessage.innerHTML = `
+
+            <div class="messageMeta">
+
+                <span class="messageUser">
+                    SYSTEM
+                </span>
+
+                <span class="messageTime">
+                    ${getCurrentTime()}
+                </span>
+
+            </div>
+
+            <div class="messageText">
+                NULL
+            </div>
+
+        `;
+
+        messages.appendChild(nullMessage);
+
+        messages.scrollTop =
+            messages.scrollHeight;
+
+    }, 2500);
+
+
+    /* =========================================
+       SECOND NULL
+    ========================================= */
+
+    setTimeout(() => {
+
+        const nullMessage =
+            document.createElement("div");
+
+        nullMessage.className =
+            "chatMessage systemMessage";
+
+        nullMessage.innerHTML = `
+
+            <div class="messageMeta">
+
+                <span class="messageUser">
+                    NULL
+                </span>
+
+                <span class="messageTime">
+                    --:--
+                </span>
+
+            </div>
+
+            <div class="messageText">
+                NULL
+            </div>
+
+        `;
+
+        messages.appendChild(nullMessage);
+
+        messages.scrollTop =
+            messages.scrollHeight;
+
+    }, 4000);
+
+
+    /* =========================================
+       BROKEN SCRIPT
+    ========================================= */
+
+    setTimeout(() => {
+
+        const error =
+            document.createElement("div");
+
+        error.className =
+            "chatMessage systemMessage";
+
+        error.innerHTML = `
+
+            <div class="messageMeta">
+
+                <span class="messageUser">
+                    SYSTEM
+                </span>
+
+                <span class="messageTime">
+                    ERROR
+                </span>
+
+            </div>
+
+            <div class="messageText">
+                SCRIPT EXECUTION FAILURE
+            </div>
+
+        `;
+
+        messages.appendChild(error);
+
+        messages.scrollTop =
+            messages.scrollHeight;
+
+    }, 5200);
+
+
+    /* =========================================
+       GLITCH
+    ========================================= */
+
+    setTimeout(() => {
+
+        messages.classList.add("nullAnomaly");
+
+    }, 6000);
+
+
+    /* =========================================
+       RECOVERY
+    ========================================= */
+
+    setTimeout(() => {
+
+        messages.classList.remove("nullAnomaly");
+
+    }, 10000);
 
 }
 /* =========================================================
