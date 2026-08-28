@@ -787,6 +787,8 @@ function sendMessage() {
 
     });
 
+   updateChatContext(activeChat, text);
+
     input.value = "";
 
     renderActiveChat();
