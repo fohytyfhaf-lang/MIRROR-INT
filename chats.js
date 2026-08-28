@@ -266,6 +266,22 @@ const chats = {
 
 };
 
+/* =========================================================
+   CHAT CONTEXT
+========================================================= */
+
+Object.values(chats).forEach(chat => {
+
+    chat.context = {
+
+        topic: null,
+        entity: null,
+        state: null,
+        lastQuestion: null
+
+    };
+
+});
 
 /* =========================================================
    STATE
@@ -539,6 +555,37 @@ function sendMessage() {
 
     renderActiveChat();
 
+   /* =========================================
+   EMPLOYEE RESPONSE
+========================================= */
+
+if (activeChat !== "mrsmile") {
+
+    setTimeout(() => {
+
+        const response =
+            generateEmployeeResponse(
+                activeChat,
+                text
+            );
+
+        chats[activeChat].messages.push({
+
+            user: chats[activeChat].name,
+
+            time:
+                getCurrentTime(),
+
+            text: response
+
+        });
+
+        renderActiveChat();
+
+    }, 700 + Math.random() * 1200);
+
+}
+
 
     /* =========================================
        MR.SMILE
@@ -630,7 +677,7 @@ function sendMessage() {
    CURRENT TIME
 ========================================================= */
 
-function getCurrentTime() {
+() {
 
     const now =
         new Date();
