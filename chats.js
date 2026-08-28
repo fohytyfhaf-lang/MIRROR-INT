@@ -793,36 +793,6 @@ function sendMessage() {
 
     renderActiveChat();
 
-   /* =========================================
-   EMPLOYEE RESPONSE
-========================================= */
-
-if (activeChat !== "mrsmile") {
-
-    setTimeout(() => {
-
-        const response =
-            generateEmployeeResponse(
-                activeChat,
-                text
-            );
-
-        chats[activeChat].messages.push({
-
-            user: chats[activeChat].name,
-
-            time:
-                getCurrentTime(),
-
-            text: response
-
-        });
-
-        renderActiveChat();
-
-    }, 700 + Math.random() * 1200);
-
-}
 
 
     /* =========================================
@@ -886,11 +856,21 @@ if (activeChat !== "mrsmile") {
 
     setTimeout(() => {
 
-        const response =
-            generatePersonnelResponse(
-                personnel.user,
-                text
-            );
+      let response =
+    getContextualResponse(
+        activeChat,
+        text
+    );
+
+    if (!response) {
+
+      response =
+        generateEmployeeResponse(
+            activeChat,
+            text
+        );
+
+     }
 
 
         chats[activeChat].messages.push({
