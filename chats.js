@@ -289,7 +289,243 @@ Object.values(chats).forEach(chat => {
 
 let activeChat = "general";
 
+/* =========================================================
+   UPDATE CHAT CONTEXT
+========================================================= */
 
+function updateChatContext(chatId, text) {
+
+    const chat = chats[chatId];
+
+    if (!chat || !chat.context) return;
+
+    const message = text
+        .toLowerCase()
+        .trim();
+
+    const context = chat.context;
+
+
+    /* =========================================
+       SHORT QUESTIONS
+    ========================================= */
+
+    if (
+        message === "почему" ||
+        message === "почему?" ||
+        message === "why"
+    ) {
+
+        context.lastQuestion = "why";
+        return;
+
+    }
+
+
+    if (
+        message === "кто" ||
+        message === "кто?" ||
+        message === "who"
+    ) {
+
+        context.lastQuestion = "who";
+        return;
+
+    }
+
+
+    if (
+        message === "где" ||
+        message === "где?" ||
+        message === "where"
+    ) {
+
+        context.lastQuestion = "where";
+        return;
+
+    }
+
+
+    if (
+        message === "когда" ||
+        message === "когда?" ||
+        message === "when"
+    ) {
+
+        context.lastQuestion = "when";
+        return;
+
+    }
+
+
+    if (
+        message === "а потом" ||
+        message === "а потом?" ||
+        message === "what happened next"
+    ) {
+
+        context.lastQuestion = "after";
+        return;
+
+    }
+
+
+    /* =========================================
+       SECURITY
+    ========================================= */
+
+    if (chatId === "security") {
+
+        if (
+            message.includes("камера 04") ||
+            message.includes("камера04") ||
+            message.includes("camera 04") ||
+            message.includes("camera04")
+        ) {
+
+            context.topic = "camera";
+            context.entity = "camera_04";
+            context.state = "camera_04_discussion";
+
+        }
+        else if (message.includes("камера")) {
+
+            context.topic = "camera";
+            context.entity = "camera";
+
+        }
+
+
+        if (
+            message.includes("сектор c") ||
+            message.includes("sector c")
+        ) {
+
+            context.topic = "sector_c";
+            context.entity = "sector_c";
+
+        }
+
+
+        if (
+            message.includes("доступ") ||
+            message.includes("проник") ||
+            message.includes("заходил")
+        ) {
+
+            context.topic = "unauthorized_access";
+
+        }
+
+    }
+
+
+    /* =========================================
+       RESEARCH
+    ========================================= */
+
+    if (chatId === "research") {
+
+        if (
+            message.includes("ten") ||
+            message.includes("эксперимент")
+        ) {
+
+            context.topic = "TEN";
+            context.entity = "TEN";
+            context.state = "TEN_discussion";
+
+        }
+
+
+        if (
+            message.includes("фаза 3") ||
+            message.includes("третья фаза")
+        ) {
+
+            context.topic = "TEN";
+            context.entity = "TEN_phase_3";
+            context.state = "phase_3_discussion";
+
+        }
+
+
+        if (
+            message.includes("создал") ||
+            message.includes("создатель")
+        ) {
+
+            context.topic = "TEN";
+            context.state = "TEN_creator";
+
+        }
+
+    }
+
+
+    /* =========================================
+       MEDICAL
+    ========================================= */
+
+    if (chatId === "medical") {
+
+        if (
+            message.includes("пациент") ||
+            message.includes("пациента")
+        ) {
+
+            context.topic = "patient";
+            context.entity = "unidentified_patient";
+            context.state = "patient_discussion";
+
+        }
+
+    }
+
+
+    /* =========================================
+       INCIDENTS
+    ========================================= */
+
+    if (chatId === "incidents") {
+
+        if (
+            message.includes("движение") ||
+            message.includes("перемещение")
+        ) {
+
+            context.topic = "unknown_movement";
+            context.entity = "unknown_movement";
+            context.state = "incident_discussion";
+
+        }
+
+
+        if (
+            message.includes("закрыт") ||
+            message.includes("restricted")
+        ) {
+
+            context.topic = "restricted_sector";
+
+        }
+
+    }
+
+
+    /* =========================================
+       LAST QUESTION
+    ========================================= */
+
+    if (
+        message.endsWith("?")
+    ) {
+
+        context.lastQuestion = message;
+
+    }
+
+}
 /* =========================================================
    RENDER CHAT LIST
 ========================================================= */
