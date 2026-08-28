@@ -1052,6 +1052,10 @@ function getContextualResponse(chatId, text) {
 ========================================================= */
 
 function triggerNullEvent() {
+   
+     if (window.nullEventActive) return;
+
+    window.nullEventActive = true;
 
     const messages =
         document.getElementById("chatMessages");
@@ -1189,16 +1193,17 @@ function triggerNullEvent() {
     /* =========================================
        PERMANENT GLITCH
     ========================================= */
+  setTimeout(() => {
 
-    setTimeout(() => {
+       messages.classList.add(
+        "nullPermanent"
+      );
 
-        messages.classList.add(
-            "nullPermanent"
-        );
+       document.body.classList.add(
+         "nullSiteCorrupted"
+      );
 
-    }, 15500);
-
-}
+   }, 15500);
 
 
 /* =========================================================
