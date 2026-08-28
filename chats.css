@@ -635,3 +635,202 @@
     }
 
 }
+
+
+/* =========================================================
+   NULL PERMANENT CORRUPTION
+========================================================= */
+
+.nullPermanent {
+
+    animation:
+        nullPermanentShake 0.13s infinite,
+        nullPermanentFlicker 0.21s infinite;
+
+}
+
+
+/* =========================================
+   PERMANENT SHAKE
+========================================= */
+
+@keyframes nullPermanentShake {
+
+    0% {
+        transform: translate(0, 0);
+    }
+
+    20% {
+        transform: translate(-1px, 0);
+    }
+
+    40% {
+        transform: translate(2px, -1px);
+    }
+
+    60% {
+        transform: translate(-2px, 1px);
+    }
+
+    80% {
+        transform: translate(1px, -1px);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+
+}
+
+
+/* =========================================
+   PERMANENT FLICKER
+========================================= */
+
+@keyframes nullPermanentFlicker {
+
+    0% {
+        opacity: 1;
+    }
+
+    30% {
+        opacity: 1;
+    }
+
+    31% {
+        opacity: .65;
+    }
+
+    33% {
+        opacity: 1;
+    }
+
+    70% {
+        opacity: .9;
+    }
+
+    72% {
+        opacity: .45;
+    }
+
+    74% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 1;
+    }
+
+}
+
+
+/* =========================================
+   WHOLE SITE CORRUPTION
+========================================= */
+
+.nullSiteCorrupted {
+
+    animation:
+        siteCorruption 0.18s infinite;
+
+}
+
+
+/* =========================================
+   SITE GLITCH
+========================================= */
+
+@keyframes siteCorruption {
+
+    0% {
+        transform: translate(0, 0);
+    }
+
+    10% {
+        transform: translate(-1px, 0);
+    }
+
+    20% {
+        transform: translate(1px, 0);
+    }
+
+    30% {
+        transform: translate(0, 1px);
+    }
+
+    40% {
+        transform: translate(-2px, 0);
+    }
+
+    50% {
+        transform: translate(2px, 0);
+    }
+
+    60% {
+        transform: translate(0, -1px);
+    }
+
+    70% {
+        transform: translate(-1px, 1px);
+    }
+
+    80% {
+        transform: translate(1px, -1px);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+
+}
+
+
+/* =========================================
+   DISABLE CHAT
+========================================= */
+
+.nullSiteCorrupted #chatInput,
+.nullSiteCorrupted #sendBtn {
+
+    pointer-events: none;
+
+    opacity: .35;
+
+}
+
+
+/* =========================================
+   CORRUPTED CHAT
+========================================= */
+
+.nullSiteCorrupted .chatMessage {
+
+    animation:
+        corruptedMessage 0.25s infinite;
+
+}
+
+
+@keyframes corruptedMessage {
+
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-2px);
+    }
+
+    50% {
+        transform: translateX(2px);
+    }
+
+    75% {
+        transform: translateX(-1px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+
+}
