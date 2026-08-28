@@ -895,7 +895,7 @@ function sendMessage() {
    CURRENT TIME
 ========================================================= */
 
-() {
+function getCurrentTime(){
 
     const now =
         new Date();
