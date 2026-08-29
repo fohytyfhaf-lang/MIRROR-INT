@@ -262,9 +262,47 @@ const chats = {
 
         ]
 
+    },
+
+           ]
+
+    },
+
+
+    nullEntity: {
+
+        name: "NULL",
+
+        status: "UNKNOWN CONNECTION",
+
+        clearance: 0,
+
+        unread: 0,
+
+        special: true,
+
+        hidden: true,
+
+        messages: [
+
+            {
+                user: "SYSTEM",
+                time: "--:--",
+                text: "UNKNOWN USER PROFILE."
+            },
+
+            {
+                user: "NULL",
+                time: "--:--",
+                text: "..."
+            }
+
+        ]
+
     }
 
 };
+
 
 /* =========================================================
    CHAT CONTEXT
@@ -540,6 +578,8 @@ function renderChatList() {
 
     Object.entries(chats).forEach(
         ([id, chat]) => {
+
+           if (chat.hidden) return;
 
             /* =========================================
                ACCESS CHECK
