@@ -834,3 +834,299 @@
     }
 
 }
+
+
+/* =========================================================
+   NULL — BACKGROUND CORRUPTION
+========================================================= */
+
+.nullSiteCorrupted {
+    overflow: hidden;
+}
+
+
+/* Огромные NULL на фоне */
+
+.nullSiteCorrupted .chatMain::before {
+
+    content:
+        "NULL     NULL     NULL\A"
+        "     NULL     NULL\A"
+        "NULL          NULL\A"
+        "   NULL  NULL  NULL";
+
+    white-space: pre;
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 50;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    font-family: monospace;
+
+    font-size: clamp(35px, 7vw, 110px);
+
+    font-weight: 900;
+
+    line-height: 1.5;
+
+    letter-spacing: 12px;
+
+    color: rgba(255,255,255,.035);
+
+    text-shadow:
+        3px 0 rgba(255,0,0,.08),
+        -3px 0 rgba(0,255,255,.06);
+
+    animation:
+        nullBackground 1.3s infinite steps(1);
+
+}
+
+
+@keyframes nullBackground {
+
+    0% {
+        opacity: .03;
+        transform: translate(0,0);
+    }
+
+    8% {
+        opacity: .15;
+        transform: translate(-8px,2px);
+    }
+
+    9% {
+        opacity: .02;
+        transform: translate(12px,-3px);
+    }
+
+    35% {
+        opacity: .04;
+    }
+
+    36% {
+        opacity: .22;
+        transform: translate(5px,0);
+    }
+
+    37% {
+        opacity: .01;
+    }
+
+    68% {
+        opacity: .03;
+    }
+
+    69% {
+        opacity: .18;
+        transform: translate(-12px,1px);
+    }
+
+    70% {
+        opacity: .02;
+    }
+
+    100% {
+        opacity: .03;
+        transform: translate(0,0);
+    }
+}
+
+
+/* =========================================================
+   HARD GLITCH FLASH
+========================================================= */
+
+.nullSiteCorrupted .chatMain {
+
+    animation:
+        hardGlitch 2.4s infinite steps(1);
+
+}
+
+
+@keyframes hardGlitch {
+
+    0%, 72%, 100% {
+        transform: translate(0);
+        filter: none;
+    }
+
+    73% {
+        transform:
+            translate(-12px, 2px)
+            skewX(3deg);
+
+        filter:
+            contrast(2)
+            brightness(1.4);
+    }
+
+    74% {
+        transform:
+            translate(15px, -2px)
+            skewX(-5deg);
+
+        filter:
+            contrast(1.5);
+    }
+
+    75% {
+        transform:
+            translate(-5px, 0);
+
+        filter:
+            contrast(2.5)
+            brightness(.6);
+    }
+
+    76% {
+        transform: translate(0);
+        filter: none;
+    }
+}
+
+
+/* =========================================================
+   GLITCH STRIPES
+========================================================= */
+
+.nullSiteCorrupted .chatMessages::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    top: 0;
+    bottom: 0;
+
+    pointer-events: none;
+
+    z-index: 100;
+
+    background:
+        linear-gradient(
+            transparent 0%,
+            transparent 43%,
+            rgba(255,255,255,.12) 44%,
+            rgba(255,255,255,.12) 45%,
+            transparent 46%,
+            transparent 67%,
+            rgba(255,255,255,.08) 68%,
+            transparent 69%
+        );
+
+    opacity: 0;
+
+    animation:
+        glitchStripes 3.1s infinite steps(1);
+
+}
+
+
+@keyframes glitchStripes {
+
+    0%, 82%, 100% {
+        opacity: 0;
+    }
+
+    83% {
+        opacity: 1;
+        transform: translateX(-20px);
+    }
+
+    84% {
+        opacity: .3;
+        transform: translateX(25px);
+    }
+
+    85% {
+        opacity: 1;
+        transform: translateX(-8px);
+    }
+
+    86% {
+        opacity: 0;
+    }
+}
+
+
+/* =========================================================
+   FULL SCREEN NULL FLASH
+========================================================= */
+
+.nullSiteCorrupted .chatSystem::after {
+
+    content: "NULL";
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 200000;
+
+    pointer-events: none;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-family: monospace;
+
+    font-size: 18vw;
+
+    font-weight: 900;
+
+    letter-spacing: 20px;
+
+    color: rgba(255,255,255,.9);
+
+    background: rgba(0,0,0,.88);
+
+    opacity: 0;
+
+    animation:
+        nullFlash 4.7s infinite steps(1);
+
+}
+
+
+@keyframes nullFlash {
+
+    0%, 91%, 100% {
+        opacity: 0;
+    }
+
+    92% {
+        opacity: .95;
+    }
+
+    92.3% {
+        opacity: 0;
+    }
+
+    93% {
+        opacity: .8;
+    }
+
+    93.2% {
+        opacity: 0;
+    }
+}
