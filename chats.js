@@ -260,11 +260,7 @@ const chats = {
                 text: "I know."
             }
 
-        ]
-
-    },
-
-           ]
+         ]
 
     },
 
