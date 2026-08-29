@@ -1329,3 +1329,269 @@
 }
 ```
 
+/* =========================================================
+   NULL GLITCH
+========================================================= */
+
+.nullGlitch {
+
+    animation:
+        nullShake 0.12s infinite,
+        nullFlicker 0.18s infinite;
+
+}
+
+
+.nullGlitchHeavy {
+
+    animation:
+        nullShakeHeavy 0.07s infinite,
+        nullFlickerHeavy 0.09s infinite;
+
+}
+
+
+.nullGlitchMaximum {
+
+    animation:
+        nullShakeMaximum 0.035s infinite,
+        nullFlickerMaximum 0.05s infinite;
+
+    filter:
+        contrast(1.8)
+        saturate(1.5);
+
+}
+
+
+/* =========================================================
+   SHAKE
+========================================================= */
+
+@keyframes nullShake {
+
+    0% {
+        transform: translate(0, 0);
+    }
+
+    20% {
+        transform: translate(-3px, 2px);
+    }
+
+    40% {
+        transform: translate(3px, -2px);
+    }
+
+    60% {
+        transform: translate(-2px, -3px);
+    }
+
+    80% {
+        transform: translate(3px, 2px);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+
+}
+
+
+@keyframes nullShakeHeavy {
+
+    0% {
+        transform: translate(0, 0) skew(0deg);
+    }
+
+    20% {
+        transform: translate(-8px, 4px) skew(1deg);
+    }
+
+    40% {
+        transform: translate(7px, -5px) skew(-2deg);
+    }
+
+    60% {
+        transform: translate(-5px, -7px) skew(2deg);
+    }
+
+    80% {
+        transform: translate(8px, 5px) skew(-1deg);
+    }
+
+    100% {
+        transform: translate(0, 0) skew(0deg);
+    }
+
+}
+
+
+@keyframes nullShakeMaximum {
+
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    15% {
+        transform: translate(-15px, 8px) scale(1.01);
+    }
+
+    30% {
+        transform: translate(12px, -10px) scale(.99);
+    }
+
+    45% {
+        transform: translate(-10px, -7px) scale(1.02);
+    }
+
+    60% {
+        transform: translate(14px, 11px) scale(.98);
+    }
+
+    75% {
+        transform: translate(-8px, 5px) scale(1.01);
+    }
+
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   FLICKER
+========================================================= */
+
+@keyframes nullFlicker {
+
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .75;
+    }
+
+}
+
+
+@keyframes nullFlickerHeavy {
+
+    0%, 100% {
+        opacity: 1;
+    }
+
+    25% {
+        opacity: .35;
+    }
+
+    27% {
+        opacity: 1;
+    }
+
+    52% {
+        opacity: .5;
+    }
+
+    54% {
+        opacity: .15;
+    }
+
+    56% {
+        opacity: 1;
+    }
+
+}
+
+
+@keyframes nullFlickerMaximum {
+
+    0% {
+        opacity: 1;
+    }
+
+    10% {
+        opacity: .2;
+    }
+
+    12% {
+        opacity: 1;
+    }
+
+    25% {
+        opacity: .1;
+    }
+
+    27% {
+        opacity: 1;
+    }
+
+    40% {
+        opacity: .4;
+    }
+
+    42% {
+        opacity: .05;
+    }
+
+    44% {
+        opacity: 1;
+    }
+
+    65% {
+        opacity: .15;
+    }
+
+    67% {
+        opacity: 1;
+    }
+
+}
+
+
+/* =========================================================
+   FINAL FLASH
+========================================================= */
+
+.nullFinalFlash {
+
+    animation:
+        nullFinalFlash .6s steps(2, end);
+
+}
+
+
+@keyframes nullFinalFlash {
+
+    0% {
+        opacity: 1;
+        filter: invert(0);
+    }
+
+    20% {
+        opacity: .2;
+        filter: invert(1);
+    }
+
+    40% {
+        opacity: 1;
+        filter: invert(0);
+    }
+
+    60% {
+        opacity: .1;
+        filter: invert(1);
+    }
+
+    80% {
+        opacity: 1;
+        filter: invert(0);
+    }
+
+    100% {
+        opacity: 1;
+        filter: invert(0);
+    }
+
+}
