@@ -1087,13 +1087,14 @@ function getContextualResponse(chatId, text) {
 
 }
 
+
 /* =========================================================
-   NULL EVENT
+   NULL FIRST CONTACT
 ========================================================= */
 
 function triggerNullEvent() {
-   
-     if (window.nullEventActive) return;
+
+    if (window.nullEventActive) return;
 
     window.nullEventActive = true;
 
@@ -1118,7 +1119,7 @@ function triggerNullEvent() {
 
 
     /* =========================================
-       STAGE 2 — FIRST ERROR
+       STAGE 2 — ERRORS
     ========================================= */
 
     setTimeout(() => {
@@ -1128,12 +1129,8 @@ function triggerNullEvent() {
             "SCRIPT EXECUTION FAILURE"
         );
 
-    }, 4200);
+    }, 4000);
 
-
-    /* =========================================
-       STAGE 3 — ERRORS
-    ========================================= */
 
     setTimeout(() => {
 
@@ -1142,7 +1139,7 @@ function triggerNullEvent() {
             "NULL REFERENCE"
         );
 
-    }, 5000);
+    }, 4700);
 
 
     setTimeout(() => {
@@ -1152,44 +1149,47 @@ function triggerNullEvent() {
             "MEMORY ACCESS ERROR"
         );
 
-    }, 5800);
-
-
-    setTimeout(() => {
-
-        addNullMessage(
-            "SYSTEM",
-            "PROCESS OMEGA_CHAT FAILED"
-        );
-
-    }, 6600);
+    }, 5400);
 
 
     /* =========================================
-       STAGE 4 — GLITCH
+       STAGE 3 — GLITCH START
     ========================================= */
 
     setTimeout(() => {
 
-        messages.classList.add(
-            "nullAnomaly"
+        document.body.classList.add(
+            "nullGlitch"
         );
 
-    }, 7000);
+    }, 6000);
 
 
     /* =========================================
-       STAGE 5 — NULL CORRUPTION
+       STAGE 4 — STRONGER GLITCH
+    ========================================= */
+
+    setTimeout(() => {
+
+        document.body.classList.add(
+            "nullGlitchHeavy"
+        );
+
+    }, 7500);
+
+
+    /* =========================================
+       STAGE 5 — NULL TAKES OVER
     ========================================= */
 
     setTimeout(() => {
 
         addNullMessage(
             "NULL",
-            "NULL"
+            "..."
         );
 
-    }, 7800);
+    }, 8200);
 
 
     setTimeout(() => {
@@ -1199,54 +1199,70 @@ function triggerNullEvent() {
             "0x00000000"
         );
 
-    }, 8500);
+    }, 8700);
 
 
     /* =========================================
-       STAGE 6 — MR.SMILE
+       STAGE 6 — MAXIMUM GLITCH
+    ========================================= */
+
+    setTimeout(() => {
+
+        document.body.classList.add(
+            "nullGlitchMaximum"
+        );
+
+    }, 9000);
+
+
+    /* =========================================
+       STAGE 7 — FINAL MESSAGE
     ========================================= */
 
     setTimeout(() => {
 
         addNullMessage(
-            "MR.SMILE",
+            "NULL",
             "Want to know what happened to them?... Well... it wasn't their fault... they did nothing wrong... I made them like this, because I wanted to... They didn't even have time to react... and that's the beauty of it all... they were just like YOU... so naive..."
         );
 
-    }, 10000);
+    }, 9800);
 
 
     /* =========================================
-       STAGE 7 — FINAL ERROR
+       STAGE 8 — HARD CUT
     ========================================= */
 
     setTimeout(() => {
 
-        addNullMessage(
-            "SYSTEM",
-            "CONNECTION LOST"
+        document.body.classList.add(
+            "nullFinalFlash"
         );
 
-    }, 15000);
+    }, 14500);
 
 
     /* =========================================
-       PERMANENT GLITCH
+       STAGE 9 — REMOVE GLITCH INSTANTLY
+       AND REVEAL NULL
     ========================================= */
-  setTimeout(() => {
 
-       messages.classList.add(
-        "nullPermanent"
-      );
+    setTimeout(() => {
 
-       document.body.classList.add(
-         "nullSiteCorrupted"
-      );
+        document.body.classList.remove(
+            "nullGlitch",
+            "nullGlitchHeavy",
+            "nullGlitchMaximum",
+            "nullFinalFlash"
+        );
 
-   }, 15500);
 
-   }
+        revealNullChat();
 
+
+    }, 15100);
+
+}
 
 /* =========================================================
    NULL MESSAGE
