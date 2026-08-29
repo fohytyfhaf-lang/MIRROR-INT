@@ -1265,6 +1265,62 @@ function triggerNullEvent() {
 }
 
 /* =========================================================
+   REVEAL NULL CHAT
+========================================================= */
+
+function revealNullChat() {
+
+    if (!chats.nullEntity) return;
+
+
+    /* NULL больше не скрыт */
+
+    chats.nullEntity.hidden = false;
+
+
+    /* Первое сообщение */
+
+    chats.nullEntity.messages.push({
+
+        user: "NULL",
+
+        time: getCurrentTime(),
+
+        text: "You shouldn't have done that."
+
+    });
+
+
+    /* Уведомление */
+
+    chats.nullEntity.unread = 1;
+
+
+    /* Обновляем список */
+
+    renderChatList();
+
+
+    /*
+       Через небольшую задержку
+       открываем NULL автоматически
+    */
+
+    setTimeout(() => {
+
+        activeChat = "nullEntity";
+
+        chats.nullEntity.unread = 0;
+
+        renderChatList();
+
+        renderActiveChat();
+
+    }, 900);
+
+}
+
+/* =========================================================
    NULL MESSAGE
 ========================================================= */
 
