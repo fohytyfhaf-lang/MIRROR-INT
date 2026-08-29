@@ -50,6 +50,12 @@ const chats = {
 
         clearance: 2,
         unread: 3,
+       
+        context: {
+           topic: null,
+           lastSubject: null
+     },
+       
         messages: [
 
             {
@@ -1009,6 +1015,7 @@ function generateMrSmileResponse(text) {
 
 
 }
+
 /* =========================================================
    CONTEXTUAL RESPONSE
 ========================================================= */
@@ -1017,32 +1024,194 @@ function getContextualResponse(chatId, text) {
 
     const chat = chats[chatId];
 
-    if (!chat || !chat.context) {
-        return null;
+    if (!chat) return null;
+
+    if (!chat.context) {
+
+        chat.context = {
+            topic: null,
+            lastSubject: null
+        };
+
     }
 
     const context = chat.context;
 
-    const message = text
-        .toLowerCase()
-        .trim();
+    const message =
+        text.toLowerCase().trim();
 
 
-    /* =========================================
-       SECURITY — CAMERA 04
-    ========================================= */
+    /* =====================================================
+       SECURITY
+    ===================================================== */
 
-    if (
-        chatId === "security" &&
-        context.entity === "camera_04"
-    ) {
+    if (chatId === "security") {
+
+
+        /* -----------------------------------------
+           CAMERA 04
+        ----------------------------------------- */
+
+        if (
+            message.includes("камера 04") ||
+            message.includes("camera 04")
+        ) {
+
+            context.topic = "camera_04";
+            context.lastSubject = "camera_04";
+
+            return "Камера 04 периодически теряет сигнал. Мы пока не нашли причину.";
+
+        }
+
+
+        /* -----------------------------------------
+           CAMERA TOPIC
+        ----------------------------------------- */
+
+        if (context.topic === "camera_04") {
+
+
+            if (
+                message === "почему" ||
+                message === "почему?"
+            ) {
+
+                context.lastSubject =
+                    "camera_04_problem";
+
+                return "Пока неизвестно. Сигнал пропадает примерно на 3–5 секунд. Технический отдел уже занимается этим.";
+
+            }
+
+
+            if (
+                message === "кто" ||
+                message === "кто?"
+            ) {
+
+                return "Если ты про то, кто был рядом с камерой — в журнале доступа никто не зарегистрирован.";
+
+            }
+
+
+            if (
+                message === "где" ||
+                message === "где?"
+            ) {
+
+                return "Камера 04 находится в закрытом секторе C.";
+
+            }
+
+
+            if (
+                message.includes("проверял") ||
+                message.includes("проверяли") ||
+                message.includes("кто проверял")
+            ) {
+
+                return "Да. Я проверял её лично вместе с техническим сотрудником.";
+
+            }
+
+
+            if (
+                message.includes("нашли") ||
+                message.includes("нашли причину") ||
+                message.includes("причина")
+            ) {
+
+                return "Нет. Пока только установили, что проблема возникает примерно через одинаковые промежутки времени.";
+
+            }
+
+
+            if (
+                message.includes("опасно") ||
+                message.includes("это опасно")
+            ) {
+
+                return "Пока нет подтверждения. Но камера находится в закрытой зоне, поэтому мы относимся к этому серьёзно.";
+
+            }
+
+
+            if (
+                message === "а потом" ||
+                message === "а потом?" ||
+                message.includes("что потом") ||
+                message.includes("что было дальше")
+            ) {
+
+                return "После очередного сбоя мы просмотрели запись. На несколько секунд там действительно что-то двигалось.";
+
+            }
+
+        }
+
+
+        /* -----------------------------------------
+           GENERAL SECURITY TOPICS
+        ----------------------------------------- */
+
+        if (
+            message.includes("день") ||
+            message.includes("смена")
+        ) {
+
+            context.topic = "shift";
+
+            return "Смена была относительно спокойной. Только камера 04 снова начала терять сигнал.";
+
+        }
+
+
+        if (
+            message.includes("сигнал")
+        ) {
+
+            context.topic = "camera_04";
+
+            return "Если ты про камеру 04 — сигнал действительно нестабильный.";
+
+        }
+
+
+        if (
+            message.includes("движение") ||
+            message.includes("кто-то двигался")
+        ) {
+
+            context.topic = "movement";
+
+            return "Да. Движение было зафиксировано в закрытом секторе. Но камеры не дали нормального изображения.";
+
+        }
+
+
+        if (
+            message.includes("доступ") ||
+            message.includes("журнал")
+        ) {
+
+            context.topic = "access_log";
+
+            return "Журнал доступа чист. Никто официально не входил в этот сектор.";
+
+        }
+
+
+        /* -----------------------------------------
+           SHORT QUESTIONS WITHOUT CONTEXT
+        ----------------------------------------- */
 
         if (
             message === "почему" ||
             message === "почему?"
         ) {
 
-            return "Пока неизвестно. Камера 04 периодически теряет сигнал примерно на несколько секунд. Технический отдел уже занимается этим.";
+            return "Почему именно? Уточни, о чём ты спрашиваешь.";
 
         }
 
@@ -1052,7 +1221,7 @@ function getContextualResponse(chatId, text) {
             message === "кто?"
         ) {
 
-            return "Если вы спрашиваете о камере 04 — в журнале доступа рядом с ней никто не зарегистрирован.";
+            return "Кто именно? Мне нужен контекст.";
 
         }
 
@@ -1062,7 +1231,7 @@ function getContextualResponse(chatId, text) {
             message === "где?"
         ) {
 
-            return "Камера 04 находится в закрытом секторе. Точный сектор я не могу назвать без соответствующего допуска.";
+            return "Где именно? Уточни объект.";
 
         }
 
@@ -1072,7 +1241,7 @@ function getContextualResponse(chatId, text) {
             message === "а потом?"
         ) {
 
-            return "После потери сигнала мы проверили записи. Движение было зафиксировано ещё раз.";
+            return "После чего именно?";
 
         }
 
@@ -1082,7 +1251,6 @@ function getContextualResponse(chatId, text) {
     return null;
 
 }
-
 
 /* =========================================================
    NULL FIRST CONTACT
