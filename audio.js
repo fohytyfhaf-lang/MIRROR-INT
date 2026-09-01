@@ -1,7 +1,25 @@
+
 const bgm = document.getElementById("bgm");
 
 let currentTrack = null;
 let fadeTimer = null;
+
+
+/* =========================================================
+   CLAMP VOLUME
+========================================================= */
+
+function clampVolume(value) {
+
+    return Math.max(
+        0,
+        Math.min(
+            1,
+            Number(value) || 0
+        )
+    );
+
+}
 
 
 /* =========================================================
@@ -16,12 +34,11 @@ function getAudioVolume(settings, baseVolume) {
     const music =
         Number(settings?.musicVolume ?? 70) / 100;
 
-    return Math.max(
-        0,
-        Math.min(
-            1,
-            baseVolume * master * music
-        )
+
+    return clampVolume(
+        baseVolume *
+        master *
+        music
     );
 
 }
@@ -31,7 +48,11 @@ function getAudioVolume(settings, baseVolume) {
    PLAY MUSIC
 ========================================================= */
 
-export function playMusic(file, volume = 0.4, settings = null) {
+export function playMusic(
+    file,
+    volume = 0.4,
+    settings = null
+) {
 
     if (!bgm) return;
 
@@ -47,19 +68,27 @@ export function playMusic(file, volume = 0.4, settings = null) {
         `./audio/${file}`;
 
 
+    /* -----------------------------------------
+       SAME TRACK
+    ----------------------------------------- */
+
     if (currentTrack === path) {
 
-        bgm.volume = finalVolume;
+        bgm.volume =
+            finalVolume;
 
         return;
 
     }
 
 
-    currentTrack = path;
+    currentTrack =
+        path;
 
 
-    clearInterval(fadeTimer);
+    clearInterval(
+        fadeTimer
+    );
 
 
     /* =========================================
@@ -68,12 +97,24 @@ export function playMusic(file, volume = 0.4, settings = null) {
 
     fadeTimer = setInterval(() => {
 
-        bgm.volume -= 0.05;
+        const nextVolume =
+            clampVolume(
+                bgm.volume - 0.05
+            );
 
 
-        if (bgm.volume <= 0.01) {
+        bgm.volume =
+            nextVolume;
 
-            clearInterval(fadeTimer);
+
+        if (nextVolume <= 0.01) {
+
+            clearInterval(
+                fadeTimer
+            );
+
+
+            bgm.volume = 0;
 
 
             bgm.pause();
@@ -84,32 +125,69 @@ export function playMusic(file, volume = 0.4, settings = null) {
                NEW TRACK
             ========================================= */
 
-            bgm.src = path;
-            bgm.loop = true;
-            bgm.volume = 0;
+            bgm.src =
+                path;
+
+            bgm.loop =
+                true;
+
+            bgm.volume =
+                0;
 
 
-            bgm.play().catch(() => {});
+            const playPromise =
+                bgm.play();
+
+
+            if (playPromise) {
+
+                playPromise.catch(
+                    (error) => {
+
+                        console.warn(
+                            "[AUDIO] Playback blocked:",
+                            error
+                        );
+
+                    }
+                );
+
+            }
 
 
             /* =========================================
                FADE IN
             ========================================= */
 
-            fadeTimer = setInterval(() => {
+            fadeTimer =
+                setInterval(() => {
 
-                bgm.volume += 0.03;
+                    const next =
+                        clampVolume(
+                            bgm.volume + 0.03
+                        );
 
 
-                if (bgm.volume >= finalVolume) {
+                    bgm.volume =
+                        next;
 
-                    bgm.volume = finalVolume;
 
-                    clearInterval(fadeTimer);
+                    if (
+                        next >=
+                        finalVolume
+                    ) {
 
-                }
+                        bgm.volume =
+                            finalVolume;
 
-            }, 50);
+
+                        clearInterval(
+                            fadeTimer
+                        );
+
+                    }
+
+                }, 50);
 
         }
 
@@ -127,27 +205,49 @@ export function stopMusic() {
     if (!bgm) return;
 
 
-    clearInterval(fadeTimer);
+    clearInterval(
+        fadeTimer
+    );
 
 
-    fadeTimer = setInterval(() => {
+    fadeTimer =
+        setInterval(() => {
 
-        bgm.volume -= 0.05;
+            const nextVolume =
+                clampVolume(
+                    bgm.volume - 0.05
+                );
 
 
-        if (bgm.volume <= 0.01) {
+            bgm.volume =
+                nextVolume;
 
-            clearInterval(fadeTimer);
+
+            if (
+                nextVolume <= 0.01
+            ) {
+
+                clearInterval(
+                    fadeTimer
+                );
 
 
-            bgm.pause();
-            bgm.currentTime = 0;
+                bgm.volume =
+                    0;
 
-            currentTrack = null;
 
-        }
+                bgm.pause();
 
-    }, 50);
+                bgm.currentTime =
+                    0;
+
+
+                currentTrack =
+                    null;
+
+            }
+
+        }, 50);
 
 }
 
@@ -156,46 +256,22 @@ export function stopMusic() {
    UPDATE AUDIO SETTINGS
 ========================================================= */
 
-export function updateAudioSettings(settings) {
+export function updateAudioSettings(
+    settings
+) {
 
     if (!bgm) return;
 
 
-    /*
-       Если музыка сейчас играет,
-       сохраняем её текущую базовую громкость
-       через отношение текущей громкости к настройкам.
-    */
-
-    const master =
-        Number(settings?.masterVolume ?? 70) / 100;
-
-    const music =
-        Number(settings?.musicVolume ?? 70) / 100;
-
-
-    /*
-       Основной базовый уровень.
-       Для уже играющей музыки используем 0.4,
-       как стандартный уровень системы.
-    */
-
-    const baseVolume = 0.4;
-
-
     const finalVolume =
-        baseVolume *
-        master *
-        music;
+        getAudioVolume(
+            settings,
+            0.4
+        );
 
 
     bgm.volume =
-        Math.max(
-            0,
-            Math.min(
-                1,
-                finalVolume
-            )
-        );
+        finalVolume;
 
 }
+```
