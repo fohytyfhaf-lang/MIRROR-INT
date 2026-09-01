@@ -67,7 +67,7 @@
 
   "buttons.apply": "Применить",
   "buttons.close": "Закрыть",
-  "buttons.clearData": "Очистить локальные данные"
+  "buttons.clearData": "Очистить локальные данные",
 
    "database.entities": "СУЩНОСТИ",
   "database.projects": "ПРОЕКТЫ",
