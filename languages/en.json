@@ -1,14 +1,17 @@
+```json
 {
   "login.title": "OMEGA SYSTEM",
   "login.subtitle": "SECRET ORGANIZATION TERMINAL",
 
-  
+  "login.button": "LOGIN",
+  "login.username": "USERNAME",
+  "login.password": "PASSWORD",
+
   "login.awaiting": "AWAITING AUTHORIZATION...",
   "login.enterCredentials": "ENTER CREDENTIALS",
   "login.unknownUser": "UNKNOWN USER",
   "login.wrongPassword": "WRONG PASSWORD",
-  "login.welcome": "WELCOME {username}"
-
+  "login.welcome": "WELCOME {username}",
 
   "topbar.title": "OMEGA SYSTEM",
   "topbar.subtitle": "AUTHORIZED ACCESS ONLY",
@@ -66,3 +69,4 @@
   "buttons.close": "Close",
   "buttons.clearData": "Clear Local Data"
 }
+```
