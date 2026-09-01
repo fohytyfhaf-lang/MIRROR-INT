@@ -4,6 +4,7 @@ import { setRole } from "./security.js";
 import { Storage } from "./storage.js";
 import { trigger } from "./eventManager.js";
 import { applySettings } from "./systemConfig.js";
+import { t } from "./languageManager4.js";
 import { Accounts } from "./accounts.js";
 
 
