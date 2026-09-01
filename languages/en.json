@@ -2,13 +2,13 @@
   "login.title": "OMEGA SYSTEM",
   "login.subtitle": "SECRET ORGANIZATION TERMINAL",
 
-  {
+  
   "login.awaiting": "AWAITING AUTHORIZATION...",
   "login.enterCredentials": "ENTER CREDENTIALS",
   "login.unknownUser": "UNKNOWN USER",
   "login.wrongPassword": "WRONG PASSWORD",
   "login.welcome": "WELCOME {username}"
-}
+
 
   "topbar.title": "OMEGA SYSTEM",
   "topbar.subtitle": "AUTHORIZED ACCESS ONLY",
