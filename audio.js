@@ -105,3 +105,24 @@ export function stopMusic() {
     }, 50);
 
 }
+
+export function updateAudioSettings() {
+
+    if (!bgm) return;
+
+    const settings = getSettings();
+
+    const master =
+        Number(settings.masterVolume ?? 70) / 100;
+
+    const music =
+        Number(settings.musicVolume ?? 70) / 100;
+
+    const baseVolume = 0.4;
+
+    bgm.volume =
+        baseVolume *
+        master *
+        music;
+
+}
