@@ -1,3 +1,4 @@
+
 import { playMusic } from "./audio.js";
 import { setRole } from "./security.js";
 import { Storage } from "./storage.js";
@@ -12,34 +13,78 @@ import { Accounts } from "./accounts.js";
 
 export function openOmegaLogin() {
 
-    const loginScreen = document.getElementById("loginScreen");
+    const loginScreen =
+        document.getElementById("loginScreen");
 
     if (!loginScreen) {
-        console.warn("OMEGA LOGIN: loginScreen not found");
+
+        console.warn(
+            "OMEGA LOGIN: loginScreen not found"
+        );
+
         return;
     }
 
-    loginScreen.classList.remove("hidden");
 
-    const userEl = document.getElementById("user");
-    const passEl = document.getElementById("pass");
-    const status = document.getElementById("status");
+    loginScreen.classList.remove(
+        "hidden"
+    );
 
-    if (userEl) userEl.value = "";
-    if (passEl) passEl.value = "";
+
+    const userEl =
+        document.getElementById("user");
+
+    const passEl =
+        document.getElementById("pass");
+
+    const status =
+        document.getElementById("status");
+
+
+    if (userEl) {
+        userEl.value = "";
+    }
+
+
+    if (passEl) {
+        passEl.value = "";
+    }
+
 
     if (status) {
-        status.textContent = "AWAITING AUTHORIZATION...";
+
+        status.textContent =
+            "AWAITING AUTHORIZATION...";
+
     }
-    const loginBtn = document.getElementById("loginBtn");
-    if (loginBtn && !loginBtn.dataset.bound) {
-       loginBtn.addEventListener("click", loginSystem);
-       loginBtn.dataset.bound = "true";
-   }
+
+
+    const loginBtn =
+        document.getElementById("loginBtn");
+
+
+    if (
+        loginBtn &&
+        !loginBtn.dataset.bound
+    ) {
+
+        loginBtn.addEventListener(
+            "click",
+            loginSystem
+        );
+
+        loginBtn.dataset.bound =
+            "true";
+
+    }
+
 
     setTimeout(() => {
+
         userEl?.focus();
+
     }, 100);
+
 }
 
 
@@ -49,11 +94,17 @@ export function openOmegaLogin() {
 
 export function closeOmegaLogin() {
 
-    const loginScreen = document.getElementById("loginScreen");
+    const loginScreen =
+        document.getElementById("loginScreen");
+
 
     if (!loginScreen) return;
 
-    loginScreen.classList.add("hidden");
+
+    loginScreen.classList.add(
+        "hidden"
+    );
+
 }
 
 
@@ -63,12 +114,21 @@ export function closeOmegaLogin() {
 
 export function loginSystem() {
 
-    const userEl = document.getElementById("user");
-    const passEl = document.getElementById("pass");
-    const status = document.getElementById("status");
+    const userEl =
+        document.getElementById("user");
 
-    const loginScreen = document.getElementById("loginScreen");
-    const desktop = document.getElementById("desktop");
+    const passEl =
+        document.getElementById("pass");
+
+    const status =
+        document.getElementById("status");
+
+    const loginScreen =
+        document.getElementById("loginScreen");
+
+    const desktop =
+        document.getElementById("desktop");
+
 
     if (!userEl || !passEl) return;
 
@@ -77,25 +137,37 @@ export function loginSystem() {
        GET CREDENTIALS
     ----------------------------------------------------- */
 
-     const username = userEl.value.trim();
-     const password = passEl.value;
+    const username =
+        userEl.value.trim();
+
+    const password =
+        passEl.value;
 
 
     /* -----------------------------------------------------
        EMPTY
     ----------------------------------------------------- */
 
-    if (!username || !password) {
+    if (
+        !username ||
+        !password
+    ) {
 
         if (status) {
-            status.textContent = "ENTER CREDENTIALS";
+
+            status.textContent =
+                "ENTER CREDENTIALS";
+
         }
 
         return;
     }
 
 
-    console.log("OMEGA LOGIN TRY:", username);
+    console.log(
+        "OMEGA LOGIN TRY:",
+        username
+    );
 
 
     /* -----------------------------------------------------
@@ -103,30 +175,44 @@ export function loginSystem() {
     ----------------------------------------------------- */
 
     if (!(username in Accounts)) {
+
         console.warn(
-             "OMEGA LOGIN: unknown user:",
-              username
-           );
-           console.log(
-                "Available accounts:",
-                 Object.keys(Accounts)
-          );
-          if (status) {
-              status.textContent = "UNKNOWN USER";
-          }
-          return;
-       }
-        
+            "OMEGA LOGIN: unknown user:",
+            username
+        );
+
+
+        console.log(
+            "Available accounts:",
+            Object.keys(Accounts)
+        );
+
+
+        if (status) {
+
+            status.textContent =
+                "UNKNOWN USER";
+
+        }
+
+        return;
+    }
 
 
     /* -----------------------------------------------------
        PASSWORD
     ----------------------------------------------------- */
 
-    if (Accounts[username].password !== password) {
+    if (
+        Accounts[username].password !==
+        password
+    ) {
 
         if (status) {
-            status.textContent = "WRONG PASSWORD";
+
+            status.textContent =
+                "WRONG PASSWORD";
+
         }
 
         return;
@@ -141,6 +227,7 @@ export function loginSystem() {
 
         status.textContent =
             `WELCOME ${username}`;
+
     }
 
 
@@ -164,19 +251,64 @@ export function loginSystem() {
 
 
     const users =
-        Storage.get("users", {});
+        Storage.get(
+            "users",
+            {}
+        );
 
 
     if (!users[username]) {
 
         users[username] = {
+
             settings: {}
+
         };
+
 
         Storage.set(
             "users",
             users
         );
+
+    }
+
+
+    /* =====================================================
+       MUSIC
+       IMPORTANT FOR MOBILE BROWSERS
+    ===================================================== */
+
+    try {
+
+        const settings =
+            Storage
+                .get("users", {})[username]
+                ?.settings || {};
+
+
+        /*
+         * Запускаем музыку непосредственно
+         * во время действия пользователя.
+         *
+         * Это важно для мобильных браузеров,
+         * которые могут блокировать autoplay.
+         */
+
+        playMusic(
+            "background.mp3",
+            0.3,
+            settings
+        );
+
+
+    } catch (e) {
+
+        console.warn(
+            "OMEGA MUSIC ERROR:",
+            e
+        );
+
     }
 
 
@@ -216,36 +348,6 @@ export function loginSystem() {
 
 
         /* -------------------------------------------------
-           MUSIC
-        ------------------------------------------------- */
-
-        try {
-
-            const volume =
-                (
-                    Storage
-                        .get("users", {})[username]
-                        ?.settings
-                        ?.masterVolume
-                    ?? 70
-                ) / 100;
-
-
-            playMusic(
-                "background.mp3",
-                volume
-            );
-
-        } catch (e) {
-
-            console.warn(
-                "OMEGA MUSIC ERROR:",
-                e
-            );
-        }
-
-
-        /* -------------------------------------------------
            EVENT
         ------------------------------------------------- */
 
@@ -259,11 +361,13 @@ export function loginSystem() {
 
                 clearance:
                     Accounts[username].clearance
+
             }
         );
 
 
     }, 400);
+
 }
 
 
@@ -276,8 +380,13 @@ export function logoutOmega() {
     const desktop =
         document.getElementById("desktop");
 
+
     if (desktop) {
-        desktop.classList.add("hidden");
+
+        desktop.classList.add(
+            "hidden"
+        );
+
     }
 
 
@@ -296,4 +405,6 @@ export function logoutOmega() {
     console.log(
         "OMEGA LOGOUT"
     );
+
 }
+
