@@ -67,7 +67,7 @@
 
   "buttons.apply": "Apply",
   "buttons.close": "Close",
-  "buttons.clearData": "Clear Local Data"
+  "buttons.clearData": "Clear Local Data",
 
   "database.entities": "ENTITIES",
   "database.projects": "PROJECTS",
