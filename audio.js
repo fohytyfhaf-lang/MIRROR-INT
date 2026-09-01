@@ -1,27 +1,94 @@
 const bgm = document.getElementById("bgm");
 
 let currentTrack = null;
+let fadeTimer = null;
 
 export function playMusic(file, volume = 0.4) {
-  if (!bgm) return;
 
-  const path = `./audio/${file}`;
+    if (!bgm) return;
 
-  if (currentTrack === path) return;
+    const path = `./audio/${file}`;
 
-  currentTrack = path;
+    if (currentTrack === path) return;
 
-  bgm.src = path;
-  bgm.loop = true;
-  bgm.volume = volume;
+    currentTrack = path;
 
-  bgm.play().catch(() => {});
+    clearInterval(fadeTimer);
+
+    const oldVolume = bgm.volume;
+
+    /* =========================================
+       FADE OUT
+    ========================================= */
+
+    fadeTimer = setInterval(() => {
+
+        bgm.volume -= 0.05;
+
+        if (bgm.volume <= 0.01) {
+
+            clearInterval(fadeTimer);
+
+            bgm.pause();
+            bgm.currentTime = 0;
+
+            /* =========================================
+               NEW TRACK
+            ========================================= */
+
+            bgm.src = path;
+            bgm.loop = true;
+            bgm.volume = 0;
+
+            bgm.play().catch(() => {});
+
+
+            /* =========================================
+               FADE IN
+            ========================================= */
+
+            fadeTimer = setInterval(() => {
+
+                bgm.volume += 0.03;
+
+                if (bgm.volume >= volume) {
+
+                    bgm.volume = volume;
+
+                    clearInterval(fadeTimer);
+
+                }
+
+            }, 50);
+
+        }
+
+    }, 50);
+
 }
 
-export function stopMusic() {
-  if (!bgm) return;
 
-  bgm.pause();
-  bgm.currentTime = 0;
-  currentTrack = null;
+export function stopMusic() {
+
+    if (!bgm) return;
+
+    clearInterval(fadeTimer);
+
+    fadeTimer = setInterval(() => {
+
+        bgm.volume -= 0.05;
+
+        if (bgm.volume <= 0.01) {
+
+            clearInterval(fadeTimer);
+
+            bgm.pause();
+            bgm.currentTime = 0;
+
+            currentTrack = null;
+
+        }
+
+    }, 50);
+
 }
