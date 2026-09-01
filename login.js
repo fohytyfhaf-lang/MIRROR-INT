@@ -54,8 +54,8 @@ export function openOmegaLogin() {
 
     if (status) {
 
-        status.textContent =
-            "AWAITING AUTHORIZATION...";
+        status.textContent = t("login.awaiting");
+            
 
     }
 
@@ -156,8 +156,7 @@ export function loginSystem() {
 
         if (status) {
 
-            status.textContent =
-                "ENTER CREDENTIALS";
+          status.textContent = t("login.enterCredentials");
 
         }
 
