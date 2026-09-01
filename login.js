@@ -190,8 +190,7 @@ export function loginSystem() {
 
         if (status) {
 
-            status.textContent =
-                "UNKNOWN USER";
+            status.textContent = t("login.unknownUser");
 
         }
 
@@ -210,8 +209,7 @@ export function loginSystem() {
 
         if (status) {
 
-            status.textContent =
-                "WRONG PASSWORD";
+            status.textContent = t("login.wrongPassword");
 
         }
 
@@ -226,9 +224,10 @@ export function loginSystem() {
     if (status) {
 
         status.textContent =
-            `WELCOME ${username}`;
-
-    }
+    t("login.welcome", {
+        username
+    });
+    
 
 
     /* -----------------------------------------------------
