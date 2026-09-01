@@ -17,6 +17,7 @@ export function openOmegaLogin() {
     const loginScreen =
         document.getElementById("loginScreen");
 
+
     if (!loginScreen) {
 
         console.warn(
@@ -43,19 +44,23 @@ export function openOmegaLogin() {
 
 
     if (userEl) {
+
         userEl.value = "";
+
     }
 
 
     if (passEl) {
+
         passEl.value = "";
+
     }
 
 
     if (status) {
 
-        status.textContent = t("login.awaiting");
-            
+        status.textContent =
+            t("login.awaiting");
 
     }
 
@@ -156,7 +161,8 @@ export function loginSystem() {
 
         if (status) {
 
-          status.textContent = t("login.enterCredentials");
+            status.textContent =
+                t("login.enterCredentials");
 
         }
 
@@ -190,7 +196,8 @@ export function loginSystem() {
 
         if (status) {
 
-            status.textContent = t("login.unknownUser");
+            status.textContent =
+                t("login.unknownUser");
 
         }
 
@@ -209,7 +216,8 @@ export function loginSystem() {
 
         if (status) {
 
-            status.textContent = t("login.wrongPassword");
+            status.textContent =
+                t("login.wrongPassword");
 
         }
 
@@ -224,10 +232,14 @@ export function loginSystem() {
     if (status) {
 
         status.textContent =
-    t("login.welcome", {
-        username
-    });
-    
+            t(
+                "login.welcome",
+                {
+                    username
+                }
+            );
+
+    }
 
 
     /* -----------------------------------------------------
@@ -282,17 +294,12 @@ export function loginSystem() {
 
         const settings =
             Storage
-                .get("users", {})[username]
+                .get(
+                    "users",
+                    {}
+                )[username]
                 ?.settings || {};
 
-
-        /*
-         * Запускаем музыку непосредственно
-         * во время действия пользователя.
-         *
-         * Это важно для мобильных браузеров,
-         * которые могут блокировать autoplay.
-         */
 
         playMusic(
             "background.mp3",
@@ -406,4 +413,3 @@ export function logoutOmega() {
     );
 
 }
-
