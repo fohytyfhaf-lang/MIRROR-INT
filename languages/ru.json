@@ -68,5 +68,17 @@
   "buttons.apply": "Применить",
   "buttons.close": "Закрыть",
   "buttons.clearData": "Очистить локальные данные"
+
+   "database.entities": "СУЩНОСТИ",
+  "database.projects": "ПРОЕКТЫ",
+  "database.incidents": "ИНЦИДЕНТЫ",
+  "database.personnel": "ЛИЧНЫЕ ДЕЛА",
+  "database.recovered": "ВОССТАНОВЛЕННЫЕ ФАЙЛЫ",
+
+  "database.files": "ФАЙЛЫ",
+  "database.selectCategory": "Выберите категорию...",
+  "database.title": "БАЗА ДАННЫХ OMEGA",
+  "database.clearance": "УРОВЕНЬ ДОПУСКА II",
+
 }
 
