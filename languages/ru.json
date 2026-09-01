@@ -1,10 +1,10 @@
 {
-  "login.title": "СИСТЕМА OMEGA",
-  "login.subtitle": "ТЕРМИНАЛ СЕКРЕТНОЙ ОРГАНИЗАЦИИ",
-
-  "login.button": "ВОЙТИ",
-  "login.username": "ИМЯ ПОЛЬЗОВАТЕЛЯ",
-  "login.password": "ПАРОЛЬ",
+  
+  "login.awaiting": "ОЖИДАНИЕ АВТОРИЗАЦИИ...",
+  "login.enterCredentials": "ВВЕДИТЕ УЧЁТНЫЕ ДАННЫЕ",
+  "login.unknownUser": "НЕИЗВЕСТНЫЙ ПОЛЬЗОВАТЕЛЬ",
+  "login.wrongPassword": "НЕВЕРНЫЙ ПАРОЛЬ",
+  "login.welcome": "ДОБРО ПОЖАЛОВАТЬ, {username}"
 
   "topbar.title": "СИСТЕМА OMEGA",
   "topbar.subtitle": "ТОЛЬКО ДЛЯ АВТОРИЗОВАННОГО ДОСТУПА",
