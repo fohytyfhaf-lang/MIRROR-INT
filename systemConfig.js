@@ -1,5 +1,6 @@
 import { Storage } from "./storage.js";
 import { changeLanguage } from "./languageManager4.js";
+import { updateAudioSettings } from "./audio.js";
 
 
 /* =========================================================
@@ -157,6 +158,21 @@ export function updateSetting(key, value) {
 
 
     applySettings();
+
+
+    /* =========================================
+       AUDIO SETTINGS
+    ========================================= */
+
+    if (
+        key === "masterVolume" ||
+        key === "musicVolume" ||
+        key === "effectsVolume"
+    ) {
+
+        updateAudioSettings();
+
+    }
 
 
     console.log(
