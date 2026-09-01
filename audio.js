@@ -11,14 +11,20 @@ let fadeTimer = null;
 
 function clampVolume(value) {
 
+    const number =
+        Number(value);
+
+    if (!Number.isFinite(number)) {
+        return 0;
+    }
+
     return Math.max(
         0,
         Math.min(
             1,
-            Number(value) || 0
+            number
         )
     );
-
 }
 
 
@@ -26,21 +32,26 @@ function clampVolume(value) {
    GET AUDIO VOLUME
 ========================================================= */
 
-function getAudioVolume(settings, baseVolume) {
+function getAudioVolume(
+    settings,
+    baseVolume
+) {
 
     const master =
-        Number(settings?.masterVolume ?? 70) / 100;
+        Number(
+            settings?.masterVolume ?? 70
+        ) / 100;
 
     const music =
-        Number(settings?.musicVolume ?? 70) / 100;
-
+        Number(
+            settings?.musicVolume ?? 70
+        ) / 100;
 
     return clampVolume(
         baseVolume *
         master *
         music
     );
-
 }
 
 
@@ -54,7 +65,13 @@ export function playMusic(
     settings = null
 ) {
 
-    if (!bgm) return;
+    if (!bgm) {
+        console.warn(
+            "[AUDIO] #bgm not found"
+        );
+
+        return;
+    }
 
 
     const finalVolume =
@@ -78,7 +95,6 @@ export function playMusic(
             finalVolume;
 
         return;
-
     }
 
 
@@ -92,88 +108,56 @@ export function playMusic(
 
 
     /* =========================================
-       FADE OUT
+       FIRST TRACK
     ========================================= */
 
-    fadeTimer = setInterval(() => {
+    if (!bgm.src) {
 
-        const nextVolume =
-            clampVolume(
-                bgm.volume - 0.05
-            );
+        bgm.src =
+            path;
 
+        bgm.loop =
+            true;
 
         bgm.volume =
-            nextVolume;
+            0;
 
 
-        if (nextVolume <= 0.01) {
+        const playPromise =
+            bgm.play();
 
-            clearInterval(
-                fadeTimer
+
+        if (playPromise) {
+
+            playPromise.catch(
+                (error) => {
+
+                    console.warn(
+                        "[AUDIO] Playback blocked:",
+                        error
+                    );
+
+                }
             );
+        }
 
 
-            bgm.volume = 0;
+        fadeTimer =
+            setInterval(
+                () => {
 
-
-            bgm.pause();
-            bgm.currentTime = 0;
-
-
-            /* =========================================
-               NEW TRACK
-            ========================================= */
-
-            bgm.src =
-                path;
-
-            bgm.loop =
-                true;
-
-            bgm.volume =
-                0;
-
-
-            const playPromise =
-                bgm.play();
-
-
-            if (playPromise) {
-
-                playPromise.catch(
-                    (error) => {
-
-                        console.warn(
-                            "[AUDIO] Playback blocked:",
-                            error
-                        );
-
-                    }
-                );
-
-            }
-
-
-            /* =========================================
-               FADE IN
-            ========================================= */
-
-            fadeTimer =
-                setInterval(() => {
-
-                    const next =
+                    const nextVolume =
                         clampVolume(
                             bgm.volume + 0.03
                         );
 
 
                     bgm.volume =
-                        next;
+                        nextVolume;
 
 
                     if (
-                        next >=
+                        nextVolume >=
                         finalVolume
                     ) {
 
@@ -184,15 +168,127 @@ export function playMusic(
                         clearInterval(
                             fadeTimer
                         );
-
                     }
 
-                }, 50);
+                },
+                50
+            );
 
-        }
 
-    }, 50);
+        return;
+    }
 
+
+    /* =========================================
+       FADE OUT OLD TRACK
+    ========================================= */
+
+    fadeTimer =
+        setInterval(
+            () => {
+
+                const nextVolume =
+                    clampVolume(
+                        bgm.volume - 0.05
+                    );
+
+
+                bgm.volume =
+                    nextVolume;
+
+
+                if (
+                    nextVolume <= 0.01
+                ) {
+
+                    clearInterval(
+                        fadeTimer
+                    );
+
+
+                    bgm.volume =
+                        0;
+
+
+                    bgm.pause();
+
+                    bgm.currentTime =
+                        0;
+
+
+                    /* =====================================
+                       NEW TRACK
+                    ===================================== */
+
+                    bgm.src =
+                        path;
+
+                    bgm.loop =
+                        true;
+
+                    bgm.volume =
+                        0;
+
+
+                    const playPromise =
+                        bgm.play();
+
+
+                    if (playPromise) {
+
+                        playPromise.catch(
+                            (error) => {
+
+                                console.warn(
+                                    "[AUDIO] Playback blocked:",
+                                    error
+                                );
+
+                            }
+                        );
+                    }
+
+
+                    /* =====================================
+                       FADE IN
+                    ===================================== */
+
+                    fadeTimer =
+                        setInterval(
+                            () => {
+
+                                const next =
+                                    clampVolume(
+                                        bgm.volume + 0.03
+                                    );
+
+
+                                bgm.volume =
+                                    next;
+
+
+                                if (
+                                    next >=
+                                    finalVolume
+                                ) {
+
+                                    bgm.volume =
+                                        finalVolume;
+
+
+                                    clearInterval(
+                                        fadeTimer
+                                    );
+                                }
+
+                            },
+                            50
+                        );
+                }
+
+            },
+            50
+        );
 }
 
 
@@ -202,7 +298,9 @@ export function playMusic(
 
 export function stopMusic() {
 
-    if (!bgm) return;
+    if (!bgm) {
+        return;
+    }
 
 
     clearInterval(
@@ -211,44 +309,45 @@ export function stopMusic() {
 
 
     fadeTimer =
-        setInterval(() => {
+        setInterval(
+            () => {
 
-            const nextVolume =
-                clampVolume(
-                    bgm.volume - 0.05
-                );
-
-
-            bgm.volume =
-                nextVolume;
-
-
-            if (
-                nextVolume <= 0.01
-            ) {
-
-                clearInterval(
-                    fadeTimer
-                );
+                const nextVolume =
+                    clampVolume(
+                        bgm.volume - 0.05
+                    );
 
 
                 bgm.volume =
-                    0;
+                    nextVolume;
 
 
-                bgm.pause();
+                if (
+                    nextVolume <= 0.01
+                ) {
 
-                bgm.currentTime =
-                    0;
+                    clearInterval(
+                        fadeTimer
+                    );
 
 
-                currentTrack =
-                    null;
+                    bgm.volume =
+                        0;
 
-            }
 
-        }, 50);
+                    bgm.pause();
 
+                    bgm.currentTime =
+                        0;
+
+
+                    currentTrack =
+                        null;
+                }
+
+            },
+            50
+        );
 }
 
 
@@ -260,7 +359,9 @@ export function updateAudioSettings(
     settings
 ) {
 
-    if (!bgm) return;
+    if (!bgm) {
+        return;
+    }
 
 
     const finalVolume =
@@ -272,6 +373,4 @@ export function updateAudioSettings(
 
     bgm.volume =
         finalVolume;
-
 }
-```
