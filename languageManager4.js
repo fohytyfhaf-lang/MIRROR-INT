@@ -1,76 +1,409 @@
+
 let dictionary = {};
+let englishDictionary = {};
 let currentLanguage = "en";
+
+
+/* =========================================================
+   LOAD LANGUAGE
+========================================================= */
 
 export async function loadLanguage(lang) {
 
-    currentLanguage = lang;
+    try {
 
-    const response = await fetch(`languages/${lang}.json`);
-    dictionary = await response.json();
+        /*
+         * Загружаем английский словарь как fallback.
+         * Это гарантирует, что отсутствующий перевод
+         * не превратится просто в название ключа.
+         */
 
-    translatePage();
-    const select = document.getElementById("languageSelect");
-    if (select) {
-        select.value = lang;
+        if (
+            lang !== "en" &&
+            Object.keys(englishDictionary).length === 0
+        ) {
+
+            const englishResponse =
+                await fetch(
+                    "languages/en.json"
+                );
+
+            englishDictionary =
+                await englishResponse.json();
+
+        }
+
+
+        const response =
+            await fetch(
+                `languages/${lang}.json`
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Language file not found: ${lang}`
+            );
+
+        }
+
+
+        dictionary =
+            await response.json();
+
+
+        currentLanguage =
+            lang;
+
+
+        translatePage();
+
+
+        const select =
+            document.getElementById(
+                "languageSelect"
+            );
+
+
+        if (select) {
+
+            select.value =
+                lang;
+
+        }
+
+
+        localStorage.setItem(
+            "omega-language",
+            lang
+        );
+
+
+        console.log(
+            "[LANGUAGE] Loaded:",
+            lang
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "[LANGUAGE] Failed to load:",
+            lang,
+            error
+        );
+
+
+        /*
+         * Если язык не загрузился,
+         * используем английский.
+         */
+
+        if (
+            Object.keys(englishDictionary).length === 0
+        ) {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "languages/en.json"
+                    );
+
+
+                englishDictionary =
+                    await response.json();
+
+            } catch (fallbackError) {
+
+                console.error(
+                    "[LANGUAGE] English fallback failed:",
+                    fallbackError
+                );
+
+            }
+
+        }
+
+
+        dictionary =
+            englishDictionary;
+
+
+        currentLanguage =
+            "en";
+
+
+        translatePage();
+
     }
 
-    localStorage.setItem("omega-language", lang);
 }
+
+
+/* =========================================================
+   INIT LANGUAGE
+========================================================= */
 
 export async function initLanguage() {
 
-    const saved = localStorage.getItem("omega-language") || "en";
+    const saved =
+        localStorage.getItem(
+            "omega-language"
+        ) || "en";
 
-    await loadLanguage(saved);
+
+    await loadLanguage(
+        saved
+    );
+
 }
+
+
+/* =========================================================
+   CHANGE LANGUAGE
+========================================================= */
 
 export async function changeLanguage(lang) {
 
-    await loadLanguage(lang);
-}
-
-function getText(key){
-
-    return dictionary[key] || key;
+    await loadLanguage(
+        lang
+    );
 
 }
 
-export function translatePage(){
 
-    // обычный текст
-    document.querySelectorAll("[data-lang]").forEach(el=>{
+/* =========================================================
+   GET TRANSLATION
+========================================================= */
 
-        const key=el.dataset.lang;
+export function t(
+    key,
+    variables = {}
+) {
 
-        el.textContent=getText(key);
+    let text =
+        dictionary[key];
 
-    });
 
-    // placeholder
-    document.querySelectorAll("[data-placeholder]").forEach(el=>{
+    /*
+     * Fallback → English
+     */
 
-        const key=el.dataset.placeholder;
+    if (
+        text === undefined &&
+        englishDictionary[key] !== undefined
+    ) {
 
-        el.placeholder=getText(key);
+        text =
+            englishDictionary[key];
 
-    });
+    }
 
-    // title
-    document.querySelectorAll("[data-title]").forEach(el=>{
 
-        const key=el.dataset.title;
+    /*
+     * Если ключ вообще отсутствует,
+     * возвращаем сам ключ.
+     */
 
-        el.title=getText(key);
+    if (
+        text === undefined
+    ) {
 
-    });
+        console.warn(
+            "[LANGUAGE] Missing translation:",
+            key
+        );
 
-    // value
-    document.querySelectorAll("[data-value]").forEach(el=>{
 
-        const key=el.dataset.value;
+        return key;
 
-        el.value=getText(key);
+    }
 
-    });
+
+    /*
+     * Dynamic variables
+     *
+     * Например:
+     *
+     * t("login.welcome", {
+     *     username: "ADMIN"
+     * })
+     *
+     * → WELCOME ADMIN
+     */
+
+    Object.entries(
+        variables
+    ).forEach(
+        ([name, value]) => {
+
+            text =
+                text.replaceAll(
+                    `{${name}}`,
+                    String(value)
+                );
+
+        }
+    );
+
+
+    return text;
 
 }
+
+
+/* =========================================================
+   GET CURRENT LANGUAGE
+========================================================= */
+
+export function getCurrentLanguage() {
+
+    return currentLanguage;
+
+}
+
+
+/* =========================================================
+   TRANSLATE ELEMENT
+========================================================= */
+
+export function translateElement(
+    el
+) {
+
+    if (!el) return;
+
+
+    /* -----------------------------------------
+       NORMAL TEXT
+    ----------------------------------------- */
+
+    if (
+        el.dataset.lang
+    ) {
+
+        el.textContent =
+            t(
+                el.dataset.lang
+            );
+
+    }
+
+
+    /* -----------------------------------------
+       PLACEHOLDER
+    ----------------------------------------- */
+
+    if (
+        el.dataset.placeholder
+    ) {
+
+        el.placeholder =
+            t(
+                el.dataset.placeholder
+            );
+
+    }
+
+
+    /* -----------------------------------------
+       TITLE
+    ----------------------------------------- */
+
+    if (
+        el.dataset.title
+    ) {
+
+        el.title =
+            t(
+                el.dataset.title
+            );
+
+    }
+
+
+    /* -----------------------------------------
+       VALUE
+    ----------------------------------------- */
+
+    if (
+        el.dataset.value
+    ) {
+
+        el.value =
+            t(
+                el.dataset.value
+            );
+
+    }
+
+}
+
+
+/* =========================================================
+   TRANSLATE PAGE
+========================================================= */
+
+export function translatePage() {
+
+    /*
+     * Обычный текст
+     */
+
+    document
+        .querySelectorAll(
+            "[data-lang]"
+        )
+        .forEach(
+            translateElement
+        );
+
+
+    /*
+     * Placeholder
+     */
+
+    document
+        .querySelectorAll(
+            "[data-placeholder]"
+        )
+        .forEach(
+            translateElement
+        );
+
+
+    /*
+     * Title
+     */
+
+    document
+        .querySelectorAll(
+            "[data-title]"
+        )
+        .forEach(
+            translateElement
+        );
+
+
+    /*
+     * Value
+     */
+
+    document
+        .querySelectorAll(
+            "[data-value]"
+        )
+        .forEach(
+            translateElement
+        );
+
+
+    console.log(
+        "[LANGUAGE] Page translated:",
+        currentLanguage
+    );
+
+}
+
