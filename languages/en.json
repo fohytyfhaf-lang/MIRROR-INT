@@ -68,5 +68,16 @@
   "buttons.apply": "Apply",
   "buttons.close": "Close",
   "buttons.clearData": "Clear Local Data"
+
+  "database.entities": "ENTITIES",
+  "database.projects": "PROJECTS",
+  "database.incidents": "INCIDENTS",
+  "database.personnel": "PERSONNEL FILES",
+  "database.recovered": "RECOVERED FILES",
+
+  "database.files": "FILES",
+  "database.selectCategory": "Select category...",
+  "database.title": "OMEGA DATABASE",
+  "database.clearance": "CLEARANCE II",
 }
 
