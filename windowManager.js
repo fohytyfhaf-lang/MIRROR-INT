@@ -57,16 +57,25 @@ export function makeWindowDraggable(win) {
 ========================= */
 
 export function openWindow(name) {
+
     const win = document.getElementById(name + "Window");
+
     if (!win) return;
 
     win.classList.remove("hidden");
+
     win.style.display = "flex";
 
     state.set(name, "open");
 
     bringToFront(win);
-    makeWindowDraggable(win);
+
+    if (!win.dataset.draggableInitialized) {
+
+        makeWindowDraggable(win);
+
+        win.dataset.draggableInitialized = "true";
+    }
 }
 
 /* =========================
