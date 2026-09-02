@@ -794,6 +794,135 @@ function showHelp() {
 }
 
 
+/* ==========================================================
+   SYS_00 — UNKNOWN SYSTEM CHANNEL
+========================================================== */
+
+function openSys00Prompt() {
+
+    // Если окно уже существует — не создаём второе
+    const existing = document.getElementById("sys00Prompt");
+
+    if (existing) {
+        existing.style.display = "flex";
+        return;
+    }
+
+    const overlay = document.createElement("div");
+
+    overlay.id = "sys00Prompt";
+
+    overlay.innerHTML = `
+        <div class="sys00Window">
+
+            <div class="sys00Header">
+                <span>OMEGA SYSTEM</span>
+                <span>SYS_00</span>
+            </div>
+
+            <div class="sys00Body">
+
+                <div class="sys00Warning">
+                    UNAUTHORIZED SYSTEM CHANNEL
+                </div>
+
+                <div class="sys00Info">
+                    CHANNEL: SYS_00<br>
+                    STATUS: UNKNOWN<br>
+                    SOURCE: LOCAL
+                </div>
+
+                <div class="sys00Text">
+                    SYS_00 requests initialization.
+                    <br><br>
+                    Continue?
+                </div>
+
+                <div class="sys00Buttons">
+
+                    <button id="sys00Yes">
+                        YES
+                    </button>
+
+                    <button id="sys00No">
+                        NO
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    /* YES */
+
+    document
+        .getElementById("sys00Yes")
+        .addEventListener("click", () => {
+
+            console.log(
+                "[SYS_00] Initialization accepted."
+            );
+
+            localStorage.setItem(
+                "mrsmile_sys00",
+                "1"
+            );
+
+            const body =
+                overlay.querySelector(".sys00Body");
+
+            body.innerHTML = `
+                <div class="sys00Warning">
+                    INITIALIZING...
+                </div>
+
+                <div class="sys00Info">
+                    CHANNEL: SYS_00<br>
+                    STATUS: CONNECTING
+                </div>
+            `;
+
+            setTimeout(() => {
+
+                body.innerHTML = `
+                    <div class="sys00Warning">
+                        CONNECTION ESTABLISHED
+                    </div>
+
+                    <div class="sys00Info">
+                        CHANNEL: SYS_00<br>
+                        STATUS: IDLE
+                    </div>
+                `;
+
+                setTimeout(() => {
+                    overlay.remove();
+                }, 1500);
+
+            }, 1200);
+
+        });
+
+
+    /* NO */
+
+    document
+        .getElementById("sys00No")
+        .addEventListener("click", () => {
+
+            console.log(
+                "[SYS_00] Initialization cancelled."
+            );
+
+            overlay.remove();
+
+        });
+
+}
 /* =========================================================
    MAIN COMMAND SYSTEM
 ========================================================= */
