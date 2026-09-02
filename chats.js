@@ -221,6 +221,7 @@ const chats = {
         unread: 7,
 
         special: true,
+        hidden: true,
 
         messages: [
 
@@ -2625,6 +2626,22 @@ window.addChatMessage = function(
     }
 
 };
+
+/* =========================================================
+   REVEAL MR.SMILE CHAT
+========================================================= */
+
+export function revealMrSmileChat() {
+
+    if (!chats.mrsmile) return;
+
+    chats.mrsmile.hidden = false;
+
+    renderChatList();
+
+    console.log("[MR.SMILE CHAT] Channel unlocked.");
+
+}
 /* =========================================================
    INITIALIZATION
 ========================================================= */
