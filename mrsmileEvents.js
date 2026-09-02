@@ -9,6 +9,7 @@ import {
 
 import { getTrust } from "./mrsmileTrust.js";
 import { getMemory } from "./mrsmileMemory.js";
+import { revealMrSmileChat } from "./chats.js";
 
 import {
     on,
