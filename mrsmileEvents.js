@@ -38,18 +38,21 @@ export function initMrSmileEvents() {
     idleLoop();
     observationLoop();
 
-    once(
-        "mrsmile:firstContact",
-        triggerFirstContact
-    );
-
-
+   
     // ===================================
     // FIRST CONTACT EVENT
     // ===================================
 
    
-once("mrsmile:firstContact", triggerFirstContact);
+    once("mrsmile:firstContact", triggerFirstContact);
+
+    on("mrsmile:sys00Accepted", () => {
+
+    console.log(
+        "[MR.SMILE] SYS_00 accepted."
+    );
+
+});
     
 }
 
