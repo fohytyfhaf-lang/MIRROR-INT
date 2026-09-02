@@ -89,6 +89,12 @@
 
 }
 
+.windowHeader {
+    flex: 0 0 46px;
+    position: relative;
+    z-index: 100;
+}
+
 /* ========================================================== */
 
 .windowTitle{
