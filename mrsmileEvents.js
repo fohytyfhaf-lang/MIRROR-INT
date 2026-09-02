@@ -43,6 +43,15 @@ export function initMrSmileEvents() {
         "mrsmile:firstContact",
         triggerFirstContact
     );
+    
+    on("mirror.command", () => {
+
+    console.log("[MR.SMILE] Condition detected: mirror.command");
+
+    triggerMrSmileFirstContact();
+
+});
+    
 
 }
 
