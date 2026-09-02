@@ -1,4 +1,3 @@
-
 // =======================================
 // MR.SMILE EVENT SYSTEM
 // =======================================
@@ -13,7 +12,8 @@ import { getMemory } from "./mrsmileMemory.js";
 
 import {
     on,
-    once
+    once,
+    trigger
 } from "./eventManager.js";
 
 let running = false;
@@ -32,26 +32,30 @@ export function initMrSmileEvents() {
 
     console.log("[MR.SMILE EVENTS] Started");
 
-    // Existing events
     nightLoop();
     glitchLoop();
     idleLoop();
     observationLoop();
 
-    // First contact
     once(
         "mrsmile:firstContact",
         triggerFirstContact
     );
-    
+
+
+    // ===================================
+    // TEMPORARY TEST TRIGGER
+    // ===================================
+
     on("mirror.command", () => {
 
-    console.log("[MR.SMILE] Condition detected: mirror.command");
+        console.log(
+            "[MR.SMILE] TEST CONDITION: mirror.command"
+        );
 
-    triggerMrSmileFirstContact();
+        triggerMrSmileFirstContact();
 
-});
-    
+    });
 
 }
 
@@ -62,11 +66,13 @@ export function initMrSmileEvents() {
 
 async function triggerFirstContact() {
 
-    // Prevent duplicate execution
     if (firstContactRunning) return;
 
-    // Already completed on a previous visit
-    if (localStorage.getItem("mrsmile_first_contact") === "1") {
+    if (
+        localStorage.getItem(
+            "mrsmile_first_contact"
+        ) === "1"
+    ) {
 
         console.log(
             "[MR.SMILE] First contact already completed"
@@ -84,7 +90,7 @@ async function triggerFirstContact() {
 
 
     // ===================================
-    // LOCK EVENT
+    // GLOBAL LOCK
     // ===================================
 
     document.body.classList.add(
@@ -93,49 +99,153 @@ async function triggerFirstContact() {
 
 
     // ===================================
-    // SHORT DELAY
+    // PHASE 1
+    // 0–10 SEC
+    // INTERRUPTION
     // ===================================
 
-    await sleep(700);
+    console.log(
+        "[MR.SMILE] PHASE 1 — INTERRUPTION"
+    );
+
+    document.body.classList.add(
+        "mrSmilePhase1"
+    );
+
+    await sleep(1000);
+
+    document.body.classList.add(
+        "mrSmileFlash"
+    );
+
+    await sleep(120);
+
+    document.body.classList.remove(
+        "mrSmileFlash"
+    );
+
+    await sleep(1800);
+
+    document.body.classList.add(
+        "mrSmileMicroGlitch"
+    );
+
+    await sleep(450);
+
+    document.body.classList.remove(
+        "mrSmileMicroGlitch"
+    );
+
+    await sleep(1200);
+
+    document.body.classList.add(
+        "mrSmileFlash"
+    );
+
+    await sleep(80);
+
+    document.body.classList.remove(
+        "mrSmileFlash"
+    );
+
+    await sleep(2200);
+
+    document.body.classList.remove(
+        "mrSmilePhase1"
+    );
 
 
     // ===================================
-    // BLACK SCREEN
+    // PHASE 2
+    // 10–20 SEC
+    // CORRUPTION
     // ===================================
+
+    console.log(
+        "[MR.SMILE] PHASE 2 — CORRUPTION"
+    );
+
+    document.body.classList.add(
+        "mrSmilePhase2"
+    );
+
+    await sleep(1500);
+
+    document.body.classList.add(
+        "mrSmileDistortion"
+    );
+
+    await sleep(2200);
+
+    document.body.classList.remove(
+        "mrSmileDistortion"
+    );
+
+    await sleep(800);
+
+    document.body.classList.add(
+        "mrSmileTextCorruption"
+    );
+
+    await sleep(1800);
+
+    document.body.classList.remove(
+        "mrSmileTextCorruption"
+    );
+
+    await sleep(1800);
+
+    document.body.classList.remove(
+        "mrSmilePhase2"
+    );
+
+
+    // ===================================
+    // PHASE 3
+    // 20–30 SEC
+    // PRESENCE
+    // ===================================
+
+    console.log(
+        "[MR.SMILE] PHASE 3 — PRESENCE"
+    );
+
+    document.body.classList.add(
+        "mrSmilePhase3"
+    );
+
+
+    await sleep(1300);
+
+
+    // SHORT BLACKOUT
 
     document.body.classList.add(
         "mrSmileBlackout"
     );
 
-
     await sleep(900);
 
 
-    // ===================================
-    // SMILE APPEARS
-    // ===================================
+    // SMILE
 
-    const smile = createFirstContactSmile();
-
-
-    await sleep(1200);
+    const smile =
+        createFirstContactSmile();
 
 
-    // ===================================
-    // HEAVY INTERFERENCE
-    // ===================================
-
-    document.body.classList.add(
-        "mrSmileSevereGlitch"
-    );
+    await sleep(1800);
 
 
-    await sleep(2500);
+    // SMILE DISAPPEARS
 
+    if (smile) {
 
-    // ===================================
-    // REMOVE SMILE
-    // ===================================
+        smile.style.opacity = "0";
+
+    }
+
+    await sleep(700);
+
 
     if (smile) {
 
@@ -144,27 +254,304 @@ async function triggerFirstContact() {
     }
 
 
+    document.body.classList.remove(
+        "mrSmileBlackout"
+    );
+
+
+    await sleep(1100);
+
+
+    // SECOND APPEARANCE
+
+    document.body.classList.add(
+        "mrSmileBlackout"
+    );
+
+    await sleep(400);
+
+
+    const smile2 =
+        createFirstContactSmile();
+
+
+    await sleep(1200);
+
+
+    if (smile2) {
+
+        smile2.style.opacity = "0";
+
+    }
+
+    await sleep(500);
+
+
+    if (smile2) {
+
+        smile2.remove();
+
+    }
+
+
+    document.body.classList.remove(
+        "mrSmileBlackout"
+    );
+
+
+    await sleep(700);
+
+    document.body.classList.remove(
+        "mrSmilePhase3"
+    );
+
+
     // ===================================
-    // RECOVERY
+    // PHASE 4
+    // 30–40 SEC
+    // INTRUSION
     // ===================================
+
+    console.log(
+        "[MR.SMILE] PHASE 4 — INTRUSION"
+    );
+
+    document.body.classList.add(
+        "mrSmilePhase4"
+    );
+
+
+    await sleep(1200);
+
+
+    document.body.classList.add(
+        "mrSmileSevereGlitch"
+    );
+
+
+    await sleep(2400);
+
 
     document.body.classList.remove(
         "mrSmileSevereGlitch"
     );
 
+
+    await sleep(700);
+
+
+    document.body.classList.add(
+        "mrSmileHardShake"
+    );
+
+
+    await sleep(1600);
+
+
+    document.body.classList.remove(
+        "mrSmileHardShake"
+    );
+
+
+    await sleep(1200);
+
+
+    document.body.classList.add(
+        "mrSmileSevereGlitch"
+    );
+
+
+    await sleep(1700);
+
+
+    document.body.classList.remove(
+        "mrSmileSevereGlitch"
+    );
+
+
+    await sleep(900);
+
+
+    document.body.classList.remove(
+        "mrSmilePhase4"
+    );
+
+
+    // ===================================
+    // PHASE 5
+    // 40–50 SEC
+    // COLLAPSE
+    // ===================================
+
+    console.log(
+        "[MR.SMILE] PHASE 5 — COLLAPSE"
+    );
+
+    document.body.classList.add(
+        "mrSmilePhase5"
+    );
+
+
+    await sleep(900);
+
+
+    document.body.classList.add(
+        "mrSmileSevereGlitch"
+    );
+
+
+    await sleep(4200);
+
+
+    document.body.classList.remove(
+        "mrSmileSevereGlitch"
+    );
+
+
+    await sleep(600);
+
+
+    document.body.classList.add(
+        "mrSmileBlackout"
+    );
+
+
     await sleep(500);
+
 
     document.body.classList.remove(
         "mrSmileBlackout"
     );
+
+
+    await sleep(300);
+
+
+    document.body.classList.add(
+        "mrSmileBlackout"
+    );
+
+
+    await sleep(700);
+
+
+    document.body.classList.remove(
+        "mrSmileBlackout"
+    );
+
+
+    await sleep(1200);
+
+
+    document.body.classList.remove(
+        "mrSmilePhase5"
+    );
+
+
+    // ===================================
+    // PHASE 6
+    // 50–57 SEC
+    // SILENCE
+    // ===================================
+
+    console.log(
+        "[MR.SMILE] PHASE 6 — SILENCE"
+    );
+
+    document.body.classList.add(
+        "mrSmilePhase6"
+    );
+
+
+    await sleep(1500);
+
+
+    // Almost complete black
+
+    document.body.classList.add(
+        "mrSmileFinalDarkness"
+    );
+
+
+    await sleep(3000);
+
+
+    // One final smile
+
+    const finalSmile =
+        createFirstContactSmile();
+
+
+    await sleep(1600);
+
+
+    if (finalSmile) {
+
+        finalSmile.style.opacity = "0";
+
+    }
+
+
+    await sleep(500);
+
+
+    if (finalSmile) {
+
+        finalSmile.remove();
+
+    }
+
+
+    document.body.classList.remove(
+        "mrSmileFinalDarkness"
+    );
+
+
+    await sleep(700);
+
+
+    document.body.classList.remove(
+        "mrSmilePhase6"
+    );
+
+
+    // ===================================
+    // RECOVERY
+    // ===================================
+
+    console.log(
+        "[MR.SMILE] OMEGA RECOVERY"
+    );
+
 
     document.body.classList.remove(
         "mrSmileFirstContact"
     );
 
 
+    document.body.classList.remove(
+        "mrSmileBlackout"
+    );
+
+    document.body.classList.remove(
+        "mrSmileSevereGlitch"
+    );
+
+    document.body.classList.remove(
+        "mrSmileHardShake"
+    );
+
+    document.body.classList.remove(
+        "mrSmileDistortion"
+    );
+
+    document.body.classList.remove(
+        "mrSmileTextCorruption"
+    );
+
+
     // ===================================
-    // SAVE PERMANENT CONTACT
+    // SAVE CONTACT
     // ===================================
 
     localStorage.setItem(
@@ -174,10 +561,15 @@ async function triggerFirstContact() {
 
 
     // ===================================
-    // MR.SMILE ENTERS CHAT
+    // FALSE NORMALITY
     // ===================================
 
-    await sleep(900);
+    await sleep(2500);
+
+
+    // ===================================
+    // MR.SMILE ENTERS CHAT
+    // ===================================
 
     await playFirstContactMessage();
 
@@ -221,41 +613,69 @@ function createFirstContactSmile() {
 
 
     smile.style.position = "fixed";
+
     smile.style.left = "50%";
+
     smile.style.top = "50%";
+
 
     smile.style.transform =
         "translate(-50%, -50%)";
 
-    smile.style.zIndex = "999999";
 
-    smile.style.color = "#ffffff";
+    smile.style.zIndex =
+        "2147483647";
+
+
+    smile.style.color =
+        "#ffffff";
+
 
     smile.style.fontFamily =
-        "monospace";
+        '"Courier New", monospace';
+
 
     smile.style.fontSize =
         "clamp(32px, 6vw, 90px)";
 
+
     smile.style.fontWeight =
         "normal";
 
-    smile.style.opacity = "0";
+
+    smile.style.lineHeight =
+        "1";
+
+
+    smile.style.opacity =
+        "0";
+
 
     smile.style.pointerEvents =
         "none";
+
+
+    smile.style.userSelect =
+        "none";
+
 
     smile.style.transition =
         "opacity 1.2s ease";
 
 
-    document.body.appendChild(smile);
+    smile.style.textShadow =
+        "0 0 8px rgba(255,255,255,.35), 0 0 25px rgba(255,255,255,.2)";
 
 
-    // Force browser to register initial state
+    document.body.appendChild(
+        smile
+    );
+
+
     requestAnimationFrame(() => {
 
-        smile.style.opacity = "1";
+        smile.style.opacity =
+            "1";
 
     });
 
@@ -373,9 +793,7 @@ function observationLoop() {
             if (Math.random() < 0.25) {
 
                 typeSystemMessage(
-
                     "MR.SMILE: You seem interested in our archives."
-
                 );
 
             }
@@ -406,9 +824,7 @@ function idleLoop() {
         if (trust > 70) {
 
             typeSystemMessage(
-
                 "MR.SMILE: I was wondering when you would return."
-
             );
 
         } else {
@@ -456,22 +872,9 @@ export function triggerMrSmileFirstContact() {
     }
 
 
-    import("./eventManager.js")
-        .then(({ trigger }) => {
-
-            trigger(
-                "mrsmile:firstContact"
-            );
-
-        })
-        .catch(error => {
-
-            console.error(
-                "[MR.SMILE] Failed to trigger first contact:",
-                error
-            );
-
-        });
+    trigger(
+        "mrsmile:firstContact"
+    );
 
 }
 
