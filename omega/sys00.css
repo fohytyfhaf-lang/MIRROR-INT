@@ -1,0 +1,192 @@
+/* ==========================================================
+   SYS_00 SYSTEM WINDOW
+========================================================== */
+
+#sys00Prompt {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 2147483000;
+
+    pointer-events: auto;
+
+}
+
+
+/* WINDOW */
+
+.sys00Window {
+
+    width: 420px;
+
+    max-width: calc(100vw - 40px);
+
+    box-sizing: border-box;
+
+    background: #050505;
+
+    border: 1px solid #777;
+
+    box-shadow:
+        0 0 0 1px #111,
+        0 0 25px rgba(0, 0, 0, 0.8);
+
+    font-family:
+        "Courier New",
+        monospace;
+
+}
+
+
+/* HEADER */
+
+.sys00Header {
+
+    height: 36px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 12px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid #555;
+
+    background: #111;
+
+    color: #ccc;
+
+    font-size: 12px;
+
+    letter-spacing: 1px;
+
+}
+
+
+/* BODY */
+
+.sys00Body {
+
+    padding: 24px;
+
+    box-sizing: border-box;
+
+    color: #aaa;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+}
+
+
+/* WARNING */
+
+.sys00Warning {
+
+    margin-bottom: 18px;
+
+    color: #ddd;
+
+    font-size: 13px;
+
+    letter-spacing: 1px;
+
+}
+
+
+/* INFORMATION */
+
+.sys00Info {
+
+    padding: 12px;
+
+    margin-bottom: 20px;
+
+    border: 1px solid #333;
+
+    background: #080808;
+
+    color: #888;
+
+    font-size: 11px;
+
+    line-height: 1.8;
+
+}
+
+
+/* TEXT */
+
+.sys00Text {
+
+    color: #aaa;
+
+    margin-bottom: 24px;
+
+}
+
+
+/* BUTTONS */
+
+.sys00Buttons {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+}
+
+
+/* BUTTON */
+
+.sys00Buttons button {
+
+    min-width: 70px;
+
+    padding: 7px 16px;
+
+    border: 1px solid #555;
+
+    background: #111;
+
+    color: #aaa;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+}
+
+
+.sys00Buttons button:hover {
+
+    background: #222;
+
+    color: #fff;
+
+}
+
+
+.sys00Buttons button:active {
+
+    background: #050505;
+
+}
