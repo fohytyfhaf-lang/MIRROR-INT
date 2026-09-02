@@ -86,61 +86,49 @@ function showCamera() {
     const camera = cameras[currentCam];
 
 
-    view.innerHTML = `
+   view.innerHTML = `
+    <div class="cameraScreen">
 
-        <div class="cameraScreen">
+        <img
+            class="cameraImage"
+            src="${camera.image}"
+            alt="${camera.name}"
+        >
 
-            <img
-                class="cameraImage"
-                src="${camera.image}"
-                alt="${camera.name}"
-            >
+        <!-- ЭФФЕКТЫ -->
+        <div class="cameraScanlines"></div>
+        <div class="cameraNoise"></div>
+        <div class="cameraVignette"></div>
 
-            <div class="cameraScanlines"></div>
+        <!-- ИНТЕРФЕЙС -->
+        <div class="cameraOverlay">
 
-            <div class="cameraOverlay">
+            <div class="cameraTop">
+                <span>${camera.id}</span>
 
-                <div class="cameraTop">
+                <span class="cameraRec">
+                    <span class="recDot">●</span>
+                    REC
+                </span>
+            </div>
 
-                    <span>
-                        ${camera.id}
-                    </span>
+            <div class="cameraStatus">
+                OMEGA SECURITY NETWORK
+            </div>
 
-                    <span class="cameraRec">
-                        ● REC
-                    </span>
+            <div class="cameraBottom">
+                <span>${camera.name}</span>
+                <span>SIGNAL: <b>${camera.signal}%</b></span>
+            </div>
 
-                </div>
-
-
-                <div class="cameraStatus">
-                    OMEGA SECURITY NETWORK
-                </div>
-
-
-                <div class="cameraBottom">
-
-                    <span>
-                        ${camera.name}
-                    </span>
-
-                    <span>
-                        SIGNAL:
-                        <b>${camera.signal}%</b>
-                    </span>
-
-                </div>
-
-
-                <div class="cameraTime">
-                    ${getCameraTime()}
-                </div>
-
+            <div class="cameraTime">
+                ${getCameraTime()}
             </div>
 
         </div>
 
-    `;
+    </div>
+`;
 
 
     const image = view.querySelector(".cameraImage");
