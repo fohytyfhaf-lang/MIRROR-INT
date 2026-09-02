@@ -45,19 +45,12 @@ export function initMrSmileEvents() {
 
 
     // ===================================
-    // TEMPORARY TEST TRIGGER
+    // FIRST CONTACT EVENT
     // ===================================
 
-    on("mirror.command", () => {
-
-        console.log(
-            "[MR.SMILE] TEST CONDITION: mirror.command"
-        );
-
-        triggerMrSmileFirstContact();
-
-    });
-
+   
+once("mrsmile:firstContact", triggerFirstContact);
+    
 }
 
 
