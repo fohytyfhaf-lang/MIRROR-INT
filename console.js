@@ -1082,6 +1082,16 @@ export function runCommand(commandText = null) {
 
             break;
 
+        case "sys_00":
+
+             print("SYS_00");
+
+             setTimeout(() => {
+                 openSys00Prompt();
+             }, 150);
+
+             return true;
+
 
         case "personnel":
 
