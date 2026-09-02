@@ -65,6 +65,12 @@
 .windowHeader{
 
     height:46px;
+   
+    flex:0 0 46px;
+   
+    position:relative;
+
+     z-index:100;
 
     display:flex;
 
@@ -89,11 +95,6 @@
 
 }
 
-.windowHeader {
-    flex: 0 0 46px;
-    position: relative;
-    z-index: 100;
-}
 
 /* ========================================================== */
 
@@ -130,7 +131,9 @@
     display:flex;
 
     gap:6px;
-
+   
+    position:relative;
+    z-index:110;
 }
 
 .windowControls button{
@@ -148,6 +151,12 @@
     background:#162738;
 
     color:#b8dfff;
+   
+    cursor:pointer;
+   
+    position:relative;
+   
+    z-index:111;
 
     transition:.2s;
 
