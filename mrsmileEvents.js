@@ -19,6 +19,8 @@ import {
 
 let running = false;
 let firstContactRunning = false;
+let sys00HandshakeArmed = false;
+let sys00HandshakeTriggered = false;
 
 
 // =======================================
@@ -52,11 +54,146 @@ export function initMrSmileEvents() {
         "[MR.SMILE] SYS_00 accepted."
     );
 
+    sys00HandshakeArmed = true;
+
+    console.log(
+        "[MR.SMILE] Waiting for normal user activity..."
+    );
+
 });
+
+document.addEventListener(
+    "click",
+    handleSys00Activity,
+    true
+);
     
 }
 
 
+// =======================================
+// SYS_00 — HANDSHAKE
+// =======================================
+
+function triggerSys00Handshake() {
+
+    if (!sys00HandshakeArmed)
+        return;
+
+    if (sys00HandshakeTriggered)
+        return;
+
+    if (
+        localStorage.getItem(
+            "mrsmile_handshake"
+        ) === "1"
+    ) {
+
+        sys00HandshakeTriggered = true;
+        return;
+
+    }
+
+    sys00HandshakeTriggered = true;
+
+    console.log(
+        "[MR.SMILE] UNKNOWN HANDSHAKE DETECTED"
+    );
+
+    localStorage.setItem(
+        "mrsmile_handshake",
+        "1"
+    );
+
+    trigger(
+        "mrsmile:handshakeDetected"
+    );
+
+    showHandshakeSequence();
+
+}
+
+async function showHandshakeSequence() {
+
+    typeSystemMessage(
+        "SYSTEM NOTICE: Unauthorized handshake detected."
+    );
+
+    await sleep(900);
+
+    typeSystemMessage(
+        "CHANNEL: SYS_00"
+    );
+
+    await sleep(600);
+
+    typeSystemMessage(
+        "SOURCE: UNKNOWN"
+    );
+
+    await sleep(700);
+
+    document.body.classList.add(
+        "screenGlitch"
+    );
+
+    await sleep(300);
+
+    document.body.classList.remove(
+        "screenGlitch"
+    );
+
+    await sleep(500);
+
+    typeSystemMessage(
+        "CONNECTION STATUS: ACTIVE"
+    );
+
+    await sleep(900);
+
+    typeSystemMessage(
+        "REMOTE HANDSHAKE ACCEPTED."
+    );
+
+    console.log(
+        "[MR.SMILE] HANDSHAKE ACCEPTED"
+    );
+
+    trigger(
+        "mrsmile:handshakeAccepted"
+    );
+
+}
+
+
+// =======================================
+// SYS_00 — NORMAL USER ACTIVITY
+// =======================================
+
+function handleSys00Activity(event) {
+
+    if (!sys00HandshakeArmed)
+        return;
+
+    if (sys00HandshakeTriggered)
+        return;
+
+    const target = event.target;
+
+    if (!target)
+        return;
+
+    // Не реагируем на кнопки SYS_00
+    if (
+        target.id === "sys00Yes" ||
+        target.id === "sys00No"
+    ) {
+        return;
+    }
+
+    triggerSys00Handshake();
+
+}
 // =======================================
 // FIRST CONTACT
 // =======================================
