@@ -1,11 +1,11 @@
 /* ==========================================================
-   MR.SMILE — FIRST CONTACT EVENT
-   Covers the entire OMEGA interface
+   MR.SMILE — FIRST CONTACT
+   GLOBAL EVENT EFFECTS
 ========================================================== */
 
 
 /* ==========================================================
-   FIRST CONTACT — GLOBAL LOCK
+   GLOBAL LOCK
 ========================================================== */
 
 body.mrSmileFirstContact {
@@ -13,24 +13,82 @@ body.mrSmileFirstContact {
     cursor: default !important;
 }
 
-
-/*
-   Блокируем взаимодействие со всем интерфейсом,
-   пока происходит первый контакт.
-*/
-
 body.mrSmileFirstContact > * {
     pointer-events: none !important;
 }
 
 
-/*
-   Сам body должен оставаться видимым,
-   потому что поверх него появятся наши эффекты.
-*/
+/* ==========================================================
+   PHASE 1 — INTERRUPTION
+========================================================== */
 
-body.mrSmileFirstContact {
-    position: relative !important;
+body.mrSmilePhase1 {
+    animation:
+        mrSmileTinyJitter
+        0.35s
+        steps(2, end)
+        infinite;
+}
+
+body.mrSmileMicroGlitch {
+    filter:
+        contrast(1.4)
+        brightness(1.15) !important;
+
+    animation:
+        mrSmileMicroShake
+        0.07s
+        steps(2, end)
+        infinite !important;
+}
+
+
+/* ==========================================================
+   PHASE 2 — CORRUPTION
+========================================================== */
+
+body.mrSmilePhase2 {
+    animation:
+        mrSmileCorruption
+        0.22s
+        steps(3, end)
+        infinite;
+}
+
+body.mrSmileDistortion {
+    filter:
+        contrast(1.7)
+        saturate(0.4)
+        brightness(1.15)
+        blur(0.4px) !important;
+
+    animation:
+        mrSmileDistort
+        0.11s
+        steps(3, end)
+        infinite !important;
+}
+
+body.mrSmileTextCorruption * {
+    text-shadow:
+        2px 0 rgba(255,255,255,.3),
+        -2px 0 rgba(255,255,255,.15) !important;
+
+    animation:
+        mrSmileTextShake
+        0.12s
+        steps(2, end)
+        infinite !important;
+}
+
+
+/* ==========================================================
+   PHASE 3 — PRESENCE
+========================================================== */
+
+body.mrSmilePhase3 {
+    filter:
+        contrast(1.15) !important;
 }
 
 
@@ -38,7 +96,7 @@ body.mrSmileFirstContact {
    BLACKOUT
 ========================================================== */
 
-body.mrSmileBlackout::before {
+body.mrSmileBlackout::after {
     content: "";
 
     position: fixed;
@@ -55,403 +113,570 @@ body.mrSmileBlackout::before {
     pointer-events: all;
 
     opacity: 1;
+}
 
+
+/* ==========================================================
+   PHASE 4 — INTRUSION
+========================================================== */
+
+body.mrSmilePhase4 {
     animation:
-        mrSmileBlackoutIn
-        0.45s
-        ease-out
-        forwards;
-}
-
-
-/* ==========================================================
-   BLACKOUT ANIMATION
-========================================================== */
-
-@keyframes mrSmileBlackoutIn {
-
-    0% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
-
-}
-
-
-/* ==========================================================
-   FIRST CONTACT SMILE
-========================================================== */
-
-#mrSmileFirstContactSmile {
-
-    position: fixed !important;
-
-    left: 50% !important;
-    top: 50% !important;
-
-    transform: translate(-50%, -50%) !important;
-
-    z-index: 2147483647 !important;
-
-    color: #fff !important;
-
-    font-family:
-        "Courier New",
-        Courier,
-        monospace !important;
-
-    font-size:
-        clamp(32px, 6vw, 90px) !important;
-
-    font-weight: normal !important;
-
-    line-height: 1 !important;
-
-    white-space: nowrap !important;
-
-    pointer-events: none !important;
-
-    user-select: none !important;
-
-    text-shadow:
-        0 0 8px rgba(255,255,255,0.35),
-        0 0 20px rgba(255,255,255,0.15) !important;
-
-}
-
-
-/* ==========================================================
-   SEVERE GLITCH — GLOBAL
-========================================================== */
-
-body.mrSmileSevereGlitch {
-
-    animation:
-        mrSmileBodyGlitch
-        0.08s
-        steps(2, end)
+        mrSmileIntrusion
+        0.09s
+        steps(3, end)
         infinite !important;
-
 }
 
-
-/*
-   Весь интерфейс начинает дёргаться.
-*/
-
-body.mrSmileSevereGlitch > * {
-
-    animation:
-        mrSmileInterfaceShake
-        0.07s
-        steps(2, end)
-        infinite !important;
-
-}
-
-
-/* ==========================================================
-   GLITCH OVERLAY
-========================================================== */
-
-body.mrSmileSevereGlitch::after {
-
+body.mrSmilePhase4::before {
     content: "";
 
     position: fixed;
 
     inset: 0;
 
-    width: 100vw;
-    height: 100vh;
-
-    z-index: 2147483646;
+    z-index: 2147483644;
 
     pointer-events: none;
 
     background:
-
         repeating-linear-gradient(
-            to bottom,
+            0deg,
             transparent 0px,
             transparent 3px,
-            rgba(255,255,255,0.035) 4px,
+            rgba(255,255,255,.045) 4px,
             transparent 5px
         );
-
-    opacity: 0.9;
 
     mix-blend-mode: screen;
 
     animation:
-        mrSmileScanlines
-        0.09s
-        steps(2, end)
+        mrSmileScan
+        0.08s
+        steps(4, end)
         infinite;
-
 }
 
-
-/* ==========================================================
-   BODY GLITCH
-========================================================== */
-
-@keyframes mrSmileBodyGlitch {
-
-    0% {
-        transform: translate(0, 0);
-        filter: none;
-    }
-
-    20% {
-        transform: translate(-4px, 2px);
-        filter: contrast(1.4);
-    }
-
-    40% {
-        transform: translate(5px, -2px);
-        filter: brightness(1.25) contrast(1.6);
-    }
-
-    60% {
-        transform: translate(-2px, -3px);
-        filter: contrast(1.8);
-    }
-
-    80% {
-        transform: translate(4px, 1px);
-        filter: brightness(0.75) contrast(2);
-    }
-
-    100% {
-        transform: translate(0, 0);
-        filter: none;
-    }
-
-}
-
-
-/* ==========================================================
-   INTERFACE SHAKE
-========================================================== */
-
-@keyframes mrSmileInterfaceShake {
-
-    0% {
-        transform: translate(0, 0);
-    }
-
-    20% {
-        transform: translate(-3px, 1px);
-    }
-
-    40% {
-        transform: translate(4px, -2px);
-    }
-
-    60% {
-        transform: translate(-2px, 3px);
-    }
-
-    80% {
-        transform: translate(3px, -1px);
-    }
-
-    100% {
-        transform: translate(0, 0);
-    }
-
-}
-
-
-/* ==========================================================
-   SCANLINE MOVEMENT
-========================================================== */
-
-@keyframes mrSmileScanlines {
-
-    0% {
-        transform: translateY(-8px);
-    }
-
-    50% {
-        transform: translateY(8px);
-    }
-
-    100% {
-        transform: translateY(-8px);
-    }
-
-}
-
-
-/* ==========================================================
-   RANDOM DIGITAL DISTORTION
-========================================================== */
-
-body.mrSmileSevereGlitch::before {
-
+body.mrSmilePhase4::after {
     content: "";
 
     position: fixed;
 
     inset: 0;
-
-    width: 100vw;
-    height: 100vh;
 
     z-index: 2147483645;
 
     pointer-events: none;
 
-    opacity: 0.35;
-
     background:
-
         repeating-linear-gradient(
             90deg,
             transparent 0px,
-            transparent 40px,
-            rgba(255,255,255,0.025) 41px,
-            transparent 43px
+            transparent 35px,
+            rgba(255,255,255,.025) 36px,
+            transparent 38px
         );
 
     animation:
-        mrSmileDigitalNoise
-        0.11s
-        steps(3, end)
+        mrSmileNoise
+        0.13s
+        steps(4, end)
         infinite;
-
 }
 
 
 /* ==========================================================
-   DIGITAL NOISE
+   SEVERE GLITCH
 ========================================================== */
 
-@keyframes mrSmileDigitalNoise {
+body.mrSmileSevereGlitch {
+    animation:
+        mrSmileSevereShake
+        0.055s
+        steps(3, end)
+        infinite !important;
+
+    filter:
+        contrast(1.8)
+        brightness(1.15) !important;
+}
+
+body.mrSmileSevereGlitch > * {
+    animation:
+        mrSmileElementGlitch
+        0.08s
+        steps(3, end)
+        infinite !important;
+}
+
+
+/* ==========================================================
+   HARD SHAKE
+========================================================== */
+
+body.mrSmileHardShake {
+    animation:
+        mrSmileHardShake
+        0.06s
+        steps(4, end)
+        infinite !important;
+}
+
+
+/* ==========================================================
+   PHASE 5 — COLLAPSE
+========================================================== */
+
+body.mrSmilePhase5 {
+    filter:
+        contrast(2)
+        brightness(1.25) !important;
+}
+
+body.mrSmilePhase5::before {
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 2147483645;
+
+    pointer-events: none;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255,255,255,.025) 0px,
+            transparent 2px,
+            transparent 5px
+        );
+
+    animation:
+        mrSmileCollapse
+        0.07s
+        steps(3, end)
+        infinite;
+}
+
+
+/* ==========================================================
+   PHASE 6 — SILENCE
+========================================================== */
+
+body.mrSmilePhase6 {
+    animation: none !important;
+    filter: none !important;
+}
+
+body.mrSmileFinalDarkness::after {
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    background: #000;
+
+    z-index: 2147483640;
+
+    pointer-events: all;
+
+    animation:
+        mrSmileDarkness
+        1.2s
+        ease-in
+        forwards;
+}
+
+
+/* ==========================================================
+   FLASH
+========================================================== */
+
+body.mrSmileFlash::after {
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    background: #fff;
+
+    z-index: 2147483647;
+
+    pointer-events: none;
+
+    animation:
+        mrSmileFlash
+        0.12s
+        steps(2, end)
+        forwards;
+}
+
+
+/* ==========================================================
+   ANIMATIONS
+========================================================== */
+
+@keyframes mrSmileTinyJitter {
+
+    0% {
+        transform: translate(0,0);
+    }
+
+    25% {
+        transform: translate(-1px,0);
+    }
+
+    50% {
+        transform: translate(1px,1px);
+    }
+
+    75% {
+        transform: translate(0,-1px);
+    }
+
+    100% {
+        transform: translate(0,0);
+    }
+}
+
+
+@keyframes mrSmileMicroShake {
+
+    0% {
+        transform: translate(0,0);
+    }
+
+    25% {
+        transform: translate(-4px,2px);
+    }
+
+    50% {
+        transform: translate(3px,-2px);
+    }
+
+    75% {
+        transform: translate(-2px,-1px);
+    }
+
+    100% {
+        transform: translate(0,0);
+    }
+}
+
+
+@keyframes mrSmileCorruption {
+
+    0% {
+        transform: translate(0,0) skew(0deg);
+    }
+
+    20% {
+        transform: translate(-3px,1px) skew(0.4deg);
+    }
+
+    40% {
+        transform: translate(4px,-2px) skew(-0.6deg);
+    }
+
+    60% {
+        transform: translate(-2px,3px) skew(0.3deg);
+    }
+
+    80% {
+        transform: translate(3px,-1px) skew(-0.5deg);
+    }
+
+    100% {
+        transform: translate(0,0) skew(0deg);
+    }
+}
+
+
+@keyframes mrSmileDistort {
 
     0% {
         transform:
-            translate(0, 0)
+            translate(0,0)
             scale(1);
     }
 
     25% {
         transform:
-            translate(-8px, 2px)
+            translate(-8px,2px)
             scale(1.01);
     }
 
     50% {
         transform:
-            translate(6px, -3px)
-            scale(0.995);
+            translate(7px,-3px)
+            scale(.995);
     }
 
     75% {
         transform:
-            translate(-3px, 4px)
-            scale(1.005);
+            translate(-4px,4px)
+            scale(1.008);
     }
 
     100% {
         transform:
-            translate(0, 0)
+            translate(0,0)
             scale(1);
     }
-
 }
 
 
-/* ==========================================================
-   EXTRA FLICKER
-========================================================== */
-
-body.mrSmileSevereGlitch {
-
-    animation-name:
-        mrSmileBodyGlitch,
-        mrSmileScreenFlicker;
-
-    animation-duration:
-        0.08s,
-        0.13s;
-
-    animation-timing-function:
-        steps(2, end),
-        steps(2, end);
-
-    animation-iteration-count:
-        infinite,
-        infinite;
-
-}
-
-
-/* ==========================================================
-   SCREEN FLICKER
-========================================================== */
-
-@keyframes mrSmileScreenFlicker {
+@keyframes mrSmileTextShake {
 
     0% {
-        opacity: 1;
-    }
-
-    25% {
-        opacity: 0.92;
+        transform: translate(0,0);
     }
 
     50% {
-        opacity: 1;
-    }
-
-    75% {
-        opacity: 0.78;
+        transform: translate(2px,-1px);
     }
 
     100% {
+        transform: translate(-1px,1px);
+    }
+}
+
+
+@keyframes mrSmileIntrusion {
+
+    0% {
+        transform: translate(0,0);
+        filter: contrast(1);
+    }
+
+    20% {
+        transform: translate(-7px,2px);
+        filter: contrast(1.8);
+    }
+
+    40% {
+        transform: translate(6px,-3px);
+        filter: contrast(2.2);
+    }
+
+    60% {
+        transform: translate(-4px,4px);
+        filter: brightness(.8) contrast(2);
+    }
+
+    80% {
+        transform: translate(8px,-2px);
+        filter: contrast(2.5);
+    }
+
+    100% {
+        transform: translate(0,0);
+        filter: contrast(1);
+    }
+}
+
+
+@keyframes mrSmileSevereShake {
+
+    0% {
+        transform:
+            translate(0,0)
+            skew(0deg);
+    }
+
+    20% {
+        transform:
+            translate(-12px,4px)
+            skew(1deg);
+    }
+
+    40% {
+        transform:
+            translate(10px,-5px)
+            skew(-1.2deg);
+    }
+
+    60% {
+        transform:
+            translate(-7px,6px)
+            skew(.8deg);
+    }
+
+    80% {
+        transform:
+            translate(11px,-3px)
+            skew(-.9deg);
+    }
+
+    100% {
+        transform:
+            translate(0,0)
+            skew(0deg);
+    }
+}
+
+
+@keyframes mrSmileElementGlitch {
+
+    0% {
+        transform: translate(0,0);
+    }
+
+    30% {
+        transform: translate(-5px,1px);
+    }
+
+    60% {
+        transform: translate(6px,-2px);
+    }
+
+    100% {
+        transform: translate(0,0);
+    }
+}
+
+
+@keyframes mrSmileHardShake {
+
+    0% {
+        transform: translate(0,0);
+    }
+
+    20% {
+        transform: translate(-15px,6px);
+    }
+
+    40% {
+        transform: translate(13px,-7px);
+    }
+
+    60% {
+        transform: translate(-9px,8px);
+    }
+
+    80% {
+        transform: translate(14px,-5px);
+    }
+
+    100% {
+        transform: translate(0,0);
+    }
+}
+
+
+@keyframes mrSmileScan {
+
+    0% {
+        transform: translateY(-10px);
+    }
+
+    50% {
+        transform: translateY(10px);
+    }
+
+    100% {
+        transform: translateY(-10px);
+    }
+}
+
+
+@keyframes mrSmileNoise {
+
+    0% {
+        transform: translate(0,0);
+    }
+
+    25% {
+        transform: translate(-12px,3px);
+    }
+
+    50% {
+        transform: translate(8px,-4px);
+    }
+
+    75% {
+        transform: translate(-5px,5px);
+    }
+
+    100% {
+        transform: translate(0,0);
+    }
+}
+
+
+@keyframes mrSmileCollapse {
+
+    0% {
+        transform: translate(0,0);
+        opacity: .2;
+    }
+
+    25% {
+        transform: translate(-10px,3px);
+        opacity: .8;
+    }
+
+    50% {
+        transform: translate(12px,-4px);
+        opacity: .3;
+    }
+
+    75% {
+        transform: translate(-8px,5px);
+        opacity: .9;
+    }
+
+    100% {
+        transform: translate(0,0);
+        opacity: .2;
+    }
+}
+
+
+@keyframes mrSmileDarkness {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
+@keyframes mrSmileFlash {
+
+    0% {
+        opacity: 0;
+    }
+
+    40% {
         opacity: 1;
     }
 
-}
-
-
-/* ==========================================================
-   MOBILE
-========================================================== */
-
-@media (max-width: 700px) {
-
-    #mrSmileFirstContactSmile {
-
-        font-size:
-            clamp(28px, 12vw, 65px) !important;
-
+    100% {
+        opacity: 0;
     }
-
 }
 
 
 /* ==========================================================
-   ACCESSIBILITY / REDUCED MOTION
+   REDUCED MOTION
 ========================================================== */
 
 @media (prefers-reduced-motion: reduce) {
 
+    body.mrSmileFirstContact,
+    body.mrSmileFirstContact > *,
     body.mrSmileSevereGlitch,
-    body.mrSmileSevereGlitch > * {
-
-        animation: none !important;
-
-    }
-
-    body.mrSmileSevereGlitch::before,
-    body.mrSmileSevereGlitch::after {
+    body.mrSmileHardShake {
 
         animation: none !important;
 
