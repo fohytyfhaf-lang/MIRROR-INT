@@ -261,6 +261,9 @@ async function startOmegaIntegrityEvent() {
     console.log(
         "[MR.SMILE] OMEGA integrity event complete."
     );
+    
+    startOmegaFalseRecovery();
+    
 
 }
 
