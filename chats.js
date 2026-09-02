@@ -2648,6 +2648,10 @@ export function revealMrSmileChat() {
 
 export function initChats() {
 
+   if (localStorage.getItem("mrsmile_first_contact") === "1") {
+    chats.mrsmile.hidden = false;
+}
+
     renderChatList();
 
     renderActiveChat();
