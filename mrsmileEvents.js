@@ -1119,6 +1119,41 @@ export function triggerMrSmileFirstContact() {
 
 }
 
+// =======================================
+// OMEGA — FALSE RECOVERY
+// =======================================
+
+async function startOmegaFalseRecovery() {
+
+    await sleep(2500);
+
+    typeSystemMessage(
+        "BACKGROUND PROCESS: 1 UNKNOWN"
+    );
+
+    await sleep(1200);
+
+    typeSystemMessage(
+        "BACKGROUND PROCESS: 0 UNKNOWN"
+    );
+
+    await sleep(1800);
+
+    typeSystemMessage(
+        "SYSTEM INTEGRITY: NORMAL"
+    );
+
+    await sleep(3000);
+
+    console.log(
+        "[MR.SMILE] False recovery complete."
+    );
+
+    trigger(
+        "mrsmile:firstContact"
+    );
+}
+
 
 // =======================================
 // RESET — DEBUG ONLY
