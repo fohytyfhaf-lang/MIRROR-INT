@@ -877,6 +877,10 @@ function openSys00Prompt() {
                 "1"
             );
 
+            trigger(
+                "mrsmile:sys00Accepted"
+            );
+
             const body =
                 overlay.querySelector(".sys00Body");
 
