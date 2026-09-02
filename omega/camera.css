@@ -287,16 +287,22 @@
 }
 
 /* ==========================================================
-   OMEGA CCTV SYSTEM
+   OMEGA SECURITY CAMERA SYSTEM
 ========================================================== */
 
 #cameraView {
+
+    position: relative;
+
     width: 100%;
     height: 100%;
+
     min-height: 420px;
+
     background: #020406;
+
     overflow: hidden;
-    position: relative;
+
 }
 
 
@@ -305,39 +311,23 @@
 ========================================================== */
 
 .cameraScreen {
+
     position: relative;
 
     width: 100%;
     height: 100%;
-    min-height: 420px;
 
-    background: #020406;
+    min-height: 420px;
 
     overflow: hidden;
 
-    border: 1px solid #22394b;
+    background: #020406;
 
-    box-shadow:
-        inset 0 0 40px rgba(0, 0, 0, 0.75),
-        0 0 15px rgba(0, 0, 0, 0.45);
+    border: 1px solid #263b4c;
 
-    font-family: Consolas, monospace;
+    box-sizing: border-box;
 
-    animation: cameraStartup 0.35s ease;
-}
-
-
-@keyframes cameraStartup {
-
-    0% {
-        opacity: 0;
-        transform: scale(1.01);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
+    font-family: Consolas, "Courier New", monospace;
 
 }
 
@@ -350,7 +340,8 @@
 
     position: absolute;
 
-    inset: 0;
+    left: 0;
+    top: 0;
 
     width: 100%;
     height: 100%;
@@ -362,7 +353,7 @@
     filter:
         brightness(0.82)
         contrast(1.08)
-        saturate(0.8);
+        saturate(0.75);
 
 }
 
@@ -379,76 +370,46 @@
 
     pointer-events: none;
 
+    z-index: 5;
+
     background:
         repeating-linear-gradient(
             to bottom,
-            rgba(255,255,255,0.035) 0px,
-            rgba(255,255,255,0.035) 1px,
+            rgba(255,255,255,0.025) 0px,
+            rgba(255,255,255,0.025) 1px,
             rgba(0,0,0,0.08) 2px,
             rgba(0,0,0,0.08) 4px
         );
 
-    opacity: 0.75;
-
-    z-index: 5;
-
 }
 
 
 /* ==========================================================
-   NOISE
+   VIGNETTE
 ========================================================== */
 
-.cameraNoise {
+.cameraVignette {
 
     position: absolute;
 
     inset: 0;
 
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-
     pointer-events: none;
-
-    opacity: 0.08;
-
-    mix-blend-mode: screen;
 
     z-index: 6;
-
-}
-
-
-/* ==========================================================
-   DARK CCTV VIGNETTE
-========================================================== */
-
-.cameraScreen::after {
-
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    pointer-events: none;
 
     background:
         radial-gradient(
             ellipse at center,
             transparent 45%,
-            rgba(0,0,0,0.42) 100%
+            rgba(0,0,0,0.45) 100%
         );
-
-    z-index: 7;
 
 }
 
 
 /* ==========================================================
-   TOP INFORMATION
+   TOP BAR
 ========================================================== */
 
 .cameraTop {
@@ -467,16 +428,19 @@
 
     z-index: 10;
 
-    color: #d9f6ff;
+    color: #d9f5ff;
 
     font-size: 13px;
 
     text-shadow:
-        0 0 5px #000,
-        1px 1px 2px #000;
+        0 1px 3px #000;
 
 }
 
+
+/* ==========================================================
+   CAMERA ID
+========================================================== */
 
 .cameraID {
 
@@ -495,6 +459,13 @@
 
     font-weight: bold;
 
+    letter-spacing: 1px;
+
+}
+
+
+.recDot {
+
     animation: recBlink 1.2s infinite;
 
 }
@@ -504,44 +475,48 @@
 
     0%,
     45% {
+
         opacity: 1;
+
     }
 
     50%,
     100% {
-        opacity: 0.35;
+
+        opacity: 0.25;
+
     }
 
 }
 
 
 /* ==========================================================
-   SYSTEM STATUS
+   STATUS
 ========================================================== */
 
 .cameraStatus {
 
     position: absolute;
 
-    top: 43px;
+    top: 42px;
     left: 16px;
 
     z-index: 10;
 
-    color: rgba(210,240,250,0.65);
+    color: rgba(210,235,245,0.65);
 
     font-size: 10px;
 
     letter-spacing: 1px;
 
     text-shadow:
-        0 0 4px #000;
+        0 1px 3px #000;
 
 }
 
 
 /* ==========================================================
-   BOTTOM INFORMATION
+   BOTTOM BAR
 ========================================================== */
 
 .cameraBottom {
@@ -550,7 +525,7 @@
 
     left: 16px;
     right: 16px;
-    bottom: 15px;
+    bottom: 14px;
 
     display: flex;
 
@@ -560,13 +535,12 @@
 
     z-index: 10;
 
-    color: #e7f9ff;
+    color: #e3f7ff;
 
     font-size: 12px;
 
     text-shadow:
-        0 0 5px #000,
-        1px 1px 2px #000;
+        0 1px 3px #000;
 
 }
 
@@ -578,11 +552,18 @@
 }
 
 
+.cameraSignal {
+
+    color: #ccecf5;
+
+}
+
+
 .cameraSignal b {
 
-    font-weight: normal;
+    color: #78ff9e;
 
-    color: #75ff9b;
+    font-weight: normal;
 
 }
 
@@ -596,292 +577,237 @@
     position: absolute;
 
     right: 16px;
-
     bottom: 39px;
 
     z-index: 10;
 
-    color: #a8e9ff;
+    color: #a8e6ff;
 
     font-size: 12px;
 
+    letter-spacing: 1px;
+
     text-shadow:
-        0 0 5px #000;
+        0 1px 3px #000;
 
 }
 
 
 /* ==========================================================
-   CAMERA STARTUP GLITCH
+   CAMERA STARTUP
 ========================================================== */
 
-.cameraGlitch {
+.cameraStartup {
 
-    animation:
-        cameraStartupGlitch 0.35s steps(2);
+    animation: cameraStartup 0.35s ease;
 
 }
 
 
-@keyframes cameraStartupGlitch {
+@keyframes cameraStartup {
 
     0% {
-        filter: brightness(1);
-    }
 
-    20% {
-        filter:
-            brightness(1.5)
-            contrast(1.4);
+        opacity: 0;
+
+        transform: scale(1.015);
+
     }
 
     40% {
-        transform: translateX(-2px);
-    }
 
-    60% {
-        transform: translateX(2px);
-        filter:
-            brightness(0.7)
-            contrast(1.5);
+        opacity: 0.7;
+
     }
 
     100% {
-        transform: translateX(0);
-        filter: none;
-    }
 
-}
-
-
-/* ==========================================================
-   SIGNAL LOST / GLITCH
-========================================================== */
-
-.cameraSignalLost .cameraImage {
-
-    filter:
-        brightness(0.35)
-        contrast(1.8)
-        saturate(0.2);
-
-}
-
-
-.cameraSignalLost {
-
-    animation:
-        signalShake 0.08s infinite;
-
-}
-
-
-@keyframes signalShake {
-
-    0% {
-        transform: translate(0,0);
-    }
-
-    25% {
-        transform: translate(-2px,1px);
-    }
-
-    50% {
-        transform: translate(2px,-1px);
-    }
-
-    75% {
-        transform: translate(-1px,-2px);
-    }
-
-    100% {
-        transform: translate(0,0);
-    }
-
-}
-
-
-/* ==========================================================
-   EFFECT CONTAINER
-========================================================== */
-
-.cameraEffect {
-
-    position: absolute;
-
-    inset: 0;
-
-    z-index: 20;
-
-    pointer-events: none;
-
-    overflow: hidden;
-
-}
-
-
-.cameraEffect img {
-
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-
-}
-
-
-/* ==========================================================
-   GLITCH EFFECT
-========================================================== */
-
-.cameraGlitchEffect {
-
-    animation:
-        glitchAppear 0.9s steps(4);
-
-}
-
-
-.cameraGlitchEffect img {
-
-    opacity: 0.8;
-
-    filter:
-        contrast(1.5)
-        brightness(1.2);
-
-}
-
-
-.cameraLostText {
-
-    position: absolute;
-
-    top: 50%;
-    left: 50%;
-
-    transform: translate(-50%, -50%);
-
-    color: #ffffff;
-
-    font-size: 18px;
-
-    letter-spacing: 3px;
-
-    text-shadow:
-        0 0 8px #000;
-
-    background: rgba(0,0,0,0.55);
-
-    padding: 8px 14px;
-
-}
-
-
-@keyframes glitchAppear {
-
-    0% {
-        opacity: 0;
-    }
-
-    10% {
         opacity: 1;
+
+        transform: scale(1);
+
+    }
+
+}
+
+
+/* ==========================================================
+   CAMERA SWITCH
+========================================================== */
+
+.cameraSwitch {
+
+    animation: cameraSwitch 0.35s steps(3);
+
+}
+
+
+@keyframes cameraSwitch {
+
+    0% {
+
+        filter: brightness(1);
+
     }
 
     20% {
-        opacity: 0.2;
+
+        filter:
+            brightness(1.5)
+            contrast(1.4);
+
+        transform: translateX(-2px);
+
     }
 
-    30% {
-        opacity: 1;
-    }
+    45% {
 
-    50% {
-        opacity: 0.4;
+        filter:
+            brightness(0.55)
+            contrast(1.5);
+
+        transform: translateX(2px);
+
     }
 
     70% {
-        opacity: 1;
+
+        filter:
+            brightness(1.25)
+            contrast(1.2);
+
+        transform: translateX(-1px);
+
     }
 
     100% {
-        opacity: 0;
+
+        filter: brightness(1);
+
+        transform: translateX(0);
+
     }
 
 }
 
 
 /* ==========================================================
-   MOTION ALERT
+   SIGNAL INTERFERENCE
 ========================================================== */
 
-.cameraAlertEffect {
+.cameraInterference {
 
     animation:
-        alertFlash 1.5s ease;
+        interference 0.7s steps(5);
 
 }
 
 
-.cameraAlertEffect img {
-
-    opacity: 0.35;
-
-    mix-blend-mode: screen;
-
-}
-
-
-.cameraAlertText {
-
-    position: absolute;
-
-    top: 18px;
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    padding: 6px 12px;
-
-    background: rgba(100,0,0,0.75);
-
-    border: 1px solid rgba(255,80,80,0.8);
-
-    color: #ffaaaa;
-
-    font-size: 12px;
-
-    font-weight: bold;
-
-    letter-spacing: 2px;
-
-}
-
-
-@keyframes alertFlash {
+@keyframes interference {
 
     0% {
-        opacity: 0;
+
+        filter:
+            brightness(1)
+            contrast(1);
+
     }
 
     15% {
-        opacity: 1;
+
+        filter:
+            brightness(1.7)
+            contrast(1.8);
+
+        transform: translateX(-3px);
+
     }
 
     30% {
-        opacity: 0.3;
+
+        filter:
+            brightness(0.35)
+            contrast(2);
+
+        transform: translateX(3px);
+
     }
 
     45% {
-        opacity: 1;
+
+        filter:
+            brightness(1.4)
+            contrast(1.5);
+
+        transform: translateX(-2px);
+
     }
 
-    70% {
-        opacity: 0.7;
+    60% {
+
+        filter:
+            brightness(0.5)
+            contrast(1.8);
+
+        transform: translateX(2px);
+
     }
 
     100% {
-        opacity: 0;
+
+        filter:
+            brightness(1)
+            contrast(1);
+
+        transform: translateX(0);
+
+    }
+
+}
+
+
+/* ==========================================================
+   FLICKER
+========================================================== */
+
+.cameraFlicker {
+
+    animation: cameraFlicker 0.5s steps(4);
+
+}
+
+
+@keyframes cameraFlicker {
+
+    0%,
+    100% {
+
+        opacity: 1;
+
+    }
+
+    20% {
+
+        opacity: 0.35;
+
+    }
+
+    40% {
+
+        opacity: 0.85;
+
+    }
+
+    60% {
+
+        opacity: 0.25;
+
+    }
+
+    80% {
+
+        opacity: 0.9;
+
     }
 
 }
@@ -897,6 +823,8 @@
 
     inset: 0;
 
+    z-index: 30;
+
     display: flex;
 
     justify-content: center;
@@ -907,26 +835,40 @@
 
     background: #030506;
 
-    color: #ff6666;
-
-    font-size: 20px;
-
-    letter-spacing: 3px;
-
-    z-index: 30;
+    color: #ff6767;
 
 }
 
 
-.cameraOffline small {
+.offlineTitle {
 
-    display: block;
+    font-size: 22px;
+
+    letter-spacing: 3px;
+
+}
+
+
+.offlineSub {
 
     margin-top: 10px;
 
-    color: #777;
+    color: #8b8b8b;
 
-    font-size: 11px;
+    font-size: 12px;
+
+    letter-spacing: 2px;
+
+}
+
+
+.offlineText {
+
+    margin-top: 8px;
+
+    color: #555;
+
+    font-size: 10px;
 
     letter-spacing: 1px;
 
@@ -934,15 +876,11 @@
 
 
 /* ==========================================================
-   HOVER
+   CAMERA HOVER
 ========================================================== */
 
 .cameraScreen:hover {
 
-    border-color: #4fd8ff;
-
-    box-shadow:
-        inset 0 0 40px rgba(0,0,0,0.75),
-        0 0 18px rgba(79,216,255,0.18);
+    border-color: #3d8eac;
 
 }
