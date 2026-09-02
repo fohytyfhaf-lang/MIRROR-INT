@@ -8,7 +8,13 @@ import { playMusic } from "./audio.js";
 import { runCommand } from "./console.js";
 import { initConsole } from "./console.js";
 import { setSoundState } from "./soundManager.js";
-import { nextCam } from "./camera.js";
+
+import {
+    nextCam,
+    previousCam,
+    initCamera
+} from "./camera.js";
+
 import { openExplorer } from "./explorer.js";
 import { initMrSmile,whisper } from "./mrsmile.js";
 import { initMemory } from "./mrsmileMemory.js";
@@ -66,6 +72,9 @@ window.openOmegaLogin = openOmegaLogin;
 window.closeOmegaLogin = closeOmegaLogin;
 window.logoutOmega = logoutOmega;
 window.mrSmileSay = mrSmileSay;
+window.nextCam = nextCam;
+window.previousCam = previousCam;
+window.initCamera = initCamera;
 window.closeWindow = closeWindow;
 window.whisper = whisper;
 
