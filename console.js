@@ -50,6 +50,11 @@ const commands = {
         clearance: 0,
         description: "Run system diagnostics"
     },
+    
+    sys_00: {
+        clearance: 0,
+        description: "Initialize unknown system channel"
+    },
 
     files: {
         clearance: 0,
