@@ -61,6 +61,15 @@ export function initMrSmileEvents() {
     );
 
 });
+on("mrsmile:handshakeAccepted", () => {
+
+    console.log(
+        "[MR.SMILE] Preparing intrusion..."
+    );
+
+    startOmegaIntegrityEvent();
+
+});
 
 document.addEventListener(
     "click",
@@ -192,6 +201,66 @@ function handleSys00Activity(event) {
     }
 
     triggerSys00Handshake();
+
+}
+
+// =======================================
+// OMEGA — INTEGRITY FAILURE
+// =======================================
+
+async function startOmegaIntegrityEvent() {
+
+    await sleep(1200);
+
+    typeSystemMessage(
+        "SYSTEM INTEGRITY: 99.8%"
+    );
+
+    await sleep(900);
+
+    typeSystemMessage(
+        "SYSTEM INTEGRITY: 99.6%"
+    );
+
+    await sleep(900);
+
+    typeSystemMessage(
+        "SYSTEM INTEGRITY: 99.3%"
+    );
+
+    await sleep(700);
+
+    typeSystemMessage(
+        "UNKNOWN PROCESS DETECTED."
+    );
+
+    await sleep(1200);
+
+    document.body.classList.add(
+        "screenGlitch"
+    );
+
+    await sleep(350);
+
+    document.body.classList.remove(
+        "screenGlitch"
+    );
+
+    await sleep(700);
+
+    typeSystemMessage(
+        "PROCESS TERMINATED."
+    );
+
+    await sleep(1000);
+
+    typeSystemMessage(
+        "SYSTEM INTEGRITY: NORMAL"
+    );
+
+    console.log(
+        "[MR.SMILE] OMEGA integrity event complete."
+    );
 
 }
 // =======================================
