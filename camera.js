@@ -4,70 +4,62 @@
 
 let currentCam = 0;
 let cameraClockTimer = null;
-let glitchTimer = null;
-let autoEventTimer = null;
+let cameraEventTimer = null;
 
 const cameras = [
     {
         id: "CAM 01",
-        name: "MAIN HALL",
-        image: "./images/cam_hall.gif",
+        name: "BASE AREA",
+        image: "./images/cam_ba.jpg",
         signal: 98
     },
 
     {
         id: "CAM 02",
-        name: "SERVER ROOM",
-        image: "./images/cam_server.gif",
-        signal: 96
+        name: "CORRIDOR",
+        image: "./images/cam_cor.jpg",
+        signal: 97
     },
 
     {
         id: "CAM 03",
-        name: "RESEARCH LAB",
-        image: "./images/cam_lab.gif",
-        signal: 94
-    },
-
-    {
-        id: "CAM 04",
-        name: "OFFICE",
-        image: "./images/cam_office.gif",
+        name: "SERVER ROOM",
+        image: "./images/cam_server.jpg",
         signal: 99
     },
 
     {
+        id: "CAM 04",
+        name: "EXIT",
+        image: "./images/cam_exit.jpg",
+        signal: 96
+    },
+
+    {
         id: "CAM 05",
-        name: "STORAGE",
-        image: "./images/cam_storage.gif",
-        signal: 91
+        name: "BLACK ZONE",
+        image: "./images/cam_black.jpg",
+        signal: 72
     },
 
     {
         id: "CAM 06",
-        name: "RESTRICTED AREA",
-        image: "./images/cam_secret.gif",
-        signal: 87
+        name: "UNKNOWN AREA",
+        image: "./images/ooooo.jpg",
+        signal: 84
     },
 
     {
         id: "CAM 07",
-        name: "IDLE CHANNEL",
-        image: "./images/cam_idle.gif",
-        signal: 100
-    },
-
-    {
-        id: "CAM 08",
-        name: "UNKNOWN CAMERA",
-        image: "./images/camera.png",
-        signal: 73
+        name: "RESTRICTED AREA",
+        image: "./images/cam_secret.gif",
+        signal: 91
     }
 ];
 
 
 /* ==========================================================
-   INIT
+   INITIALIZATION
 ========================================================== */
 
 export function initCamera() {
@@ -75,6 +67,7 @@ export function initCamera() {
     showCamera();
 
     startCameraClock();
+
     startCameraEvents();
 }
 
@@ -102,11 +95,7 @@ function showCamera() {
 
             <div class="cameraScanlines"></div>
 
-            <img
-                class="cameraNoise"
-                src="./images/noise.gif"
-                alt=""
-            >
+            <div class="cameraVignette"></div>
 
             <div class="cameraTop">
 
@@ -115,13 +104,13 @@ function showCamera() {
                 </span>
 
                 <span class="cameraRec">
-                    ● REC
+                    <span class="recDot">●</span> REC
                 </span>
 
             </div>
 
             <div class="cameraStatus">
-                SECURITY NETWORK // OMEGA
+                OMEGA SECURITY NETWORK
             </div>
 
             <div class="cameraBottom">
@@ -131,7 +120,8 @@ function showCamera() {
                 </span>
 
                 <span class="cameraSignal">
-                    SIGNAL: <b>${camera.signal}%</b>
+                    SIGNAL:
+                    <b>${camera.signal}%</b>
                 </span>
 
             </div>
@@ -144,54 +134,76 @@ function showCamera() {
     `;
 
 
-    /* ------------------------------------------------------
-       IMAGE ERROR
-    ------------------------------------------------------ */
-
     const image = view.querySelector(".cameraImage");
 
     if (image) {
 
         image.addEventListener("error", () => {
 
-            image.style.display = "none";
+            showCameraOffline();
 
-            const screen = view.querySelector(".cameraScreen");
-
-            if (!screen) return;
-
-            const offline = document.createElement("div");
-
-            offline.className = "cameraOffline";
-
-            offline.innerHTML = `
-                <div>
-                    <div>SIGNAL ERROR</div>
-                    <small>${camera.id}</small>
-                </div>
-            `;
-
-            screen.appendChild(offline);
         });
 
     }
 
 
-    /* ------------------------------------------------------
-       INITIAL GLITCH
-    ------------------------------------------------------ */
-
     const screen = view.querySelector(".cameraScreen");
 
     if (screen) {
 
-        screen.classList.remove("cameraGlitch");
+        screen.classList.remove("cameraStartup");
 
         void screen.offsetWidth;
 
-        screen.classList.add("cameraGlitch");
+        screen.classList.add("cameraStartup");
 
     }
+}
+
+
+/* ==========================================================
+   CAMERA IMAGE ERROR
+========================================================== */
+
+function showCameraOffline() {
+
+    const view = document.getElementById("cameraView");
+
+    if (!view) return;
+
+    const screen = view.querySelector(".cameraScreen");
+
+    if (!screen) return;
+
+    const image = screen.querySelector(".cameraImage");
+
+    if (image) {
+        image.style.display = "none";
+    }
+
+    const offline = document.createElement("div");
+
+    offline.className = "cameraOffline";
+
+    offline.innerHTML = `
+        <div class="offlineContent">
+
+            <div class="offlineTitle">
+                SIGNAL ERROR
+            </div>
+
+            <div class="offlineSub">
+                CAMERA ${String(currentCam + 1).padStart(2, "0")}
+            </div>
+
+            <div class="offlineText">
+                CONNECTION LOST
+            </div>
+
+        </div>
+    `;
+
+    screen.appendChild(offline);
 }
 
 
@@ -209,7 +221,7 @@ export function nextCam() {
 
     showCamera();
 
-    randomCameraReaction();
+    cameraSwitchEffect();
 }
 
 
@@ -227,7 +239,31 @@ export function previousCam() {
 
     showCamera();
 
-    randomCameraReaction();
+    cameraSwitchEffect();
+}
+
+
+/* ==========================================================
+   CAMERA SWITCH EFFECT
+========================================================== */
+
+function cameraSwitchEffect() {
+
+    const view = document.getElementById("cameraView");
+
+    if (!view) return;
+
+    const screen = view.querySelector(".cameraScreen");
+
+    if (!screen) return;
+
+    screen.classList.add("cameraSwitch");
+
+    setTimeout(() => {
+
+        screen.classList.remove("cameraSwitch");
+
+    }, 350);
 }
 
 
@@ -238,7 +274,9 @@ export function previousCam() {
 function startCameraClock() {
 
     if (cameraClockTimer) {
+
         clearInterval(cameraClockTimer);
+
     }
 
     cameraClockTimer = setInterval(() => {
@@ -258,207 +296,143 @@ function getCameraTime() {
     const now = new Date();
 
     return now.toLocaleTimeString("en-GB", {
+
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit"
+
     });
 
 }
 
 
 /* ==========================================================
-   RANDOM CAMERA REACTION
-========================================================== */
-
-function randomCameraReaction() {
-
-    const roll = Math.random();
-
-    /*
-        15% chance:
-        signal glitch
-    */
-
-    if (roll < 0.15) {
-
-        setTimeout(() => {
-            triggerGlitch();
-        }, 250);
-
-        return;
-    }
-
-
-    /*
-        8% chance:
-        alert
-    */
-
-    if (roll < 0.23) {
-
-        setTimeout(() => {
-            triggerAlert();
-        }, 400);
-
-    }
-
-}
-
-
-/* ==========================================================
-   GLITCH
-========================================================== */
-
-export function triggerGlitch() {
-
-    const view = document.getElementById("cameraView");
-
-    if (!view) return;
-
-    const screen = view.querySelector(".cameraScreen");
-
-    if (!screen) return;
-
-
-    if (glitchTimer) {
-        clearTimeout(glitchTimer);
-    }
-
-
-    const effect = document.createElement("div");
-
-    effect.className = "cameraEffect cameraGlitchEffect";
-
-    effect.innerHTML = `
-        <img
-            src="./images/cam_glitch.gif"
-            alt=""
-        >
-
-        <div class="cameraLostText">
-            SIGNAL INTERFERENCE
-        </div>
-    `;
-
-    screen.appendChild(effect);
-
-
-    screen.classList.add("cameraSignalLost");
-
-
-    glitchTimer = setTimeout(() => {
-
-        screen.classList.remove("cameraSignalLost");
-
-        effect.remove();
-
-    }, 900);
-
-}
-
-
-/* ==========================================================
-   ALERT
-========================================================== */
-
-export function triggerAlert() {
-
-    const view = document.getElementById("cameraView");
-
-    if (!view) return;
-
-    const screen = view.querySelector(".cameraScreen");
-
-    if (!screen) return;
-
-
-    const alert = document.createElement("div");
-
-    alert.className = "cameraEffect cameraAlertEffect";
-
-    alert.innerHTML = `
-        <img
-            src="./images/cam_alert.gif"
-            alt=""
-        >
-
-        <div class="cameraAlertText">
-            MOTION DETECTED
-        </div>
-    `;
-
-    screen.appendChild(alert);
-
-
-    setTimeout(() => {
-
-        alert.remove();
-
-    }, 1500);
-
-}
-
-
-/* ==========================================================
-   AUTOMATIC CAMERA EVENTS
+   RANDOM CAMERA EVENTS
 ========================================================== */
 
 function startCameraEvents() {
 
-    if (autoEventTimer) {
-        clearInterval(autoEventTimer);
+    if (cameraEventTimer) {
+
+        clearInterval(cameraEventTimer);
+
     }
 
-
     /*
-        Every 15 seconds the system has a chance
-        to react.
+       Камеры большую часть времени
+       работают нормально.
 
-        Most of the time NOTHING happens.
-        This keeps the cameras believable.
+       События редкие.
     */
 
-    autoEventTimer = setInterval(() => {
+    cameraEventTimer = setInterval(() => {
 
-        const view = document.getElementById("cameraView");
+        const cameraWindow =
+            document.getElementById("cameraWindow");
 
-        if (!view) return;
+        if (!cameraWindow) return;
 
-        const cameraWindow = document.getElementById("cameraWindow");
-
-        if (
-            cameraWindow &&
-            cameraWindow.classList.contains("hidden")
-        ) {
+        if (cameraWindow.classList.contains("hidden")) {
             return;
         }
-
 
         const roll = Math.random();
 
 
         /*
-            5% glitch
+           5% — краткая потеря сигнала
         */
 
         if (roll < 0.05) {
 
-            triggerGlitch();
+            signalInterference();
 
             return;
         }
 
 
         /*
-            3% motion alert
+           3% — короткое мигание камеры
         */
 
         if (roll < 0.08) {
 
-            triggerAlert();
+            cameraFlicker();
 
         }
 
     }, 15000);
+}
+
+
+/* ==========================================================
+   SIGNAL INTERFERENCE
+========================================================== */
+
+function signalInterference() {
+
+    const view = document.getElementById("cameraView");
+
+    if (!view) return;
+
+    const screen = view.querySelector(".cameraScreen");
+
+    if (!screen) return;
+
+    screen.classList.add("cameraInterference");
+
+    setTimeout(() => {
+
+        screen.classList.remove("cameraInterference");
+
+    }, 700);
+}
+
+
+/* ==========================================================
+   CAMERA FLICKER
+========================================================== */
+
+function cameraFlicker() {
+
+    const view = document.getElementById("cameraView");
+
+    if (!view) return;
+
+    const screen = view.querySelector(".cameraScreen");
+
+    if (!screen) return;
+
+    screen.classList.add("cameraFlicker");
+
+    setTimeout(() => {
+
+        screen.classList.remove("cameraFlicker");
+
+    }, 500);
+}
+
+
+/* ==========================================================
+   CLEANUP
+========================================================== */
+
+export function destroyCamera() {
+
+    if (cameraClockTimer) {
+
+        clearInterval(cameraClockTimer);
+
+        cameraClockTimer = null;
+
+    }
+
+    if (cameraEventTimer) {
+
+        clearInterval(cameraEventTimer);
+
+        cameraEventTimer = null;
+
+    }
 
 }
