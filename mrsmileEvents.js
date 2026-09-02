@@ -811,6 +811,7 @@ async function triggerFirstContact() {
     // ===================================
     // MR.SMILE ENTERS CHAT
     // ===================================
+    revealMrSmileChat();
 
     await playFirstContactMessage();
 
