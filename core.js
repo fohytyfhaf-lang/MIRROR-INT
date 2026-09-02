@@ -203,8 +203,9 @@ function bootSystem() {
         //minimizeWindow()
 //maximizeWindow()
 //closeApp()
-        initResearch();
-        initChats();
+    initCamera();
+    initResearch();
+     initChats();
     initMemory();
     loadTrust();
     updatePersonality();
