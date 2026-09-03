@@ -1,3 +1,8 @@
+/* ==========================================================
+   MR.SMILE CHAT
+   OMEGA / MIRROR-INT
+========================================================== */
+
 import { mrSmileSay } from "./mrsmileCore.js";
 
 import {
@@ -12,112 +17,365 @@ import {
 
 let initialized = false;
 let idleTimer = null;
+let archiveEventRegistered = false;
 
 
-// =======================================
-// INIT
-// =======================================
+/* ==========================================================
+   UTILS
+========================================================== */
 
-export function initMrSmileChat() {
-
-    if (initialized) return;
-
-    initialized = true;
-
-    console.log(
-        "[MR.SMILE] Chat initialized"
-    );
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 
-    const input =
-        document.getElementById(
-            "chatInput"
-        );
+function getCurrentTime() {
+    const now = new Date();
 
-    const button =
-        document.getElementById(
-            "sendBtn"
-        );
+    return now.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+}
 
 
-    if (!input || !button) {
+/* ==========================================================
+   REAL OMEGA CHAT BRIDGE
+========================================================== */
 
+function addMrSmileChatMessage(text) {
+
+    if (typeof window.addChatMessage !== "function") {
         console.warn(
-            "[MR.SMILE] Chat elements not found."
+            "[MR.SMILE] window.addChatMessage() unavailable."
+        );
+
+        return false;
+    }
+
+    window.addChatMessage("mrsmile", {
+        user: "MR.SMILE",
+        time: getCurrentTime(),
+        text: text
+    });
+
+    return true;
+}
+
+
+function addSystemChatMessage(text) {
+
+    if (typeof window.addChatMessage !== "function") {
+        console.warn(
+            "[MR.SMILE] window.addChatMessage() unavailable."
+        );
+
+        return false;
+    }
+
+    window.addChatMessage("mrsmile", {
+        user: "SYSTEM",
+        time: getCurrentTime(),
+        text: text
+    });
+
+    return true;
+}
+
+
+function addOperatorChatMessage(text) {
+
+    if (typeof window.addChatMessage !== "function") {
+        console.warn(
+            "[MR.SMILE] window.addChatMessage() unavailable."
+        );
+
+        return false;
+    }
+
+    window.addChatMessage("mrsmile", {
+        user: "SYSTEM",
+        time: getCurrentTime(),
+        text: text
+    });
+
+    return true;
+}
+
+
+/* ==========================================================
+   TYPING COMPATIBILITY
+   ==========================================================
+
+   Старые системы вызывают typeMessage() / typeSystemMessage().
+   Теперь они просто отправляют сообщение в настоящий OMEGA chat.
+========================================================== */
+
+export async function typeMessage(text) {
+
+    addMrSmileChatMessage(text);
+
+    await sleep(50);
+}
+
+
+export async function typeSystemMessage(text) {
+
+    addSystemChatMessage(text);
+
+    await sleep(50);
+}
+
+
+/* ==========================================================
+   FIRST CONTACT
+========================================================== */
+
+export async function playFirstContactMessage() {
+
+    await sleep(600);
+
+    addMrSmileChatMessage(":)");
+
+    await sleep(1200);
+
+    addMrSmileChatMessage("Hello, operator.");
+}
+
+
+/* ==========================================================
+   MR.SMILE RESPONSE
+========================================================== */
+
+async function sendMrSmileResponse(text) {
+
+    try {
+
+        const response = await mrSmileSay(text);
+
+        if (!response) {
+            return;
+        }
+
+        addMrSmileChatMessage(response);
+
+    } catch (error) {
+
+        console.error(
+            "[MR.SMILE CHAT] Response error:",
+            error
+        );
+
+    }
+}
+
+
+/* ==========================================================
+   INPUT
+========================================================== */
+
+function sendMessage() {
+
+    const input = document.getElementById("chatInput");
+
+    if (!input) {
+        console.warn(
+            "[MR.SMILE CHAT] chatInput not found."
         );
 
         return;
-
     }
 
+    const text = input.value.trim();
 
-    button.addEventListener(
-        "click",
-        sendMessage
-    );
-
-
-    input.addEventListener(
-        "keydown",
-        e => {
-
-            if (e.key === "Enter") {
-
-                sendMessage();
-
-            }
-
-        }
-    );
-
-
-    // ===================================
-    // MIRROR ARCHIVE ACCESS
-    // ===================================
-
-    registerArchiveAccessListener();
-
-
-    // ===================================
-    // CHECK PENDING REQUEST
-    // ===================================
-    //
-    // Important:
-    // Progress may have detected the
-    // conditions before Chat initialized.
-    //
-    // Therefore we check localStorage
-    // after registering the listener.
-    // ===================================
-
-    if (
-        hasPendingMirrorArchiveAccess()
-    ) {
-
-        handleMirrorArchiveAccess();
-
+    if (!text) {
+        return;
     }
 
+    input.value = "";
 
-    scheduleRandomMessage();
+    /*
+       ВАЖНО:
+
+       Само добавление сообщения пользователя уже делает
+       chats.js.
+
+       Поэтому здесь НЕ добавляем YOU повторно.
+    */
+
+    setTimeout(() => {
+
+        sendMrSmileResponse(text);
+
+    }, 700);
 
 }
 
 
-// =======================================
-// MIRROR ARCHIVE ACCESS LISTENER
-// =======================================
+/* ==========================================================
+   RANDOM IDLE MESSAGES
+========================================================== */
 
-let archiveListenerRegistered = false;
+const idleMessages = [
+    ":)",
+    "I'm still here.",
+    "You are looking in the wrong place.",
+    "I can see this.",
+    "Nothing is wrong.",
+    "Continue.",
+    "You didn't close the channel.",
+    "I remember.",
+    "Closer than you think."
+];
 
 
-function registerArchiveAccessListener() {
+function scheduleRandomMessage() {
 
-    if (archiveListenerRegistered)
+    clearTimeout(idleTimer);
+
+    const delay =
+        30000 +
+        Math.random() * 60000;
+
+    idleTimer = setTimeout(() => {
+
+        /*
+           Не отправляем случайные сообщения,
+           если MR.SMILE ещё не открыт.
+        */
+
+        if (
+            localStorage.getItem(
+                "mrsmile_first_contact"
+            ) !== "1"
+        ) {
+            scheduleRandomMessage();
+            return;
+        }
+
+
+        const message =
+            idleMessages[
+                Math.floor(
+                    Math.random() *
+                    idleMessages.length
+                )
+            ];
+
+
+        addMrSmileChatMessage(message);
+
+        scheduleRandomMessage();
+
+    }, delay);
+}
+
+
+/* ==========================================================
+   MIRROR-00 ACCESS
+========================================================== */
+
+async function handleMirrorArchiveAccess() {
+
+    if (!hasPendingMirrorArchiveAccess()) {
         return;
+    }
 
 
-    archiveListenerRegistered = true;
+    console.log(
+        "[MR.SMILE] MIRROR-00 access request received."
+    );
+
+
+    clearTimeout(idleTimer);
+
+
+    /*
+       MR.SMILE отвечает не мгновенно.
+    */
+
+    await sleep(900);
+
+
+    addMrSmileChatMessage(
+        "You were looking for the Mirror."
+    );
+
+
+    await sleep(1200);
+
+
+    addMrSmileChatMessage(
+        "I've given you access."
+    );
+
+
+    await sleep(700);
+
+
+    /*
+       Именно здесь MR.SMILE официально выдаёт доступ.
+    */
+
+    const granted =
+        grantMirrorArchiveAccess();
+
+
+    if (!granted) {
+
+        console.log(
+            "[MR.SMILE] MIRROR-00 access was already granted."
+        );
+
+        scheduleRandomMessage();
+
+        return;
+    }
+
+
+    console.log(
+        "[MR.SMILE] MIRROR-00 ACCESS GRANTED."
+    );
+
+
+    /*
+       SYSTEM сообщение идёт в тот же MR.SMILE канал,
+       поэтому пользователь реально его увидит.
+    */
+
+    addSystemChatMessage(
+        "MIRROR-00 ACCESS GRANTED BY MR.SMILE."
+    );
+
+
+    await sleep(500);
+
+
+    addSystemChatMessage(
+        "RESOURCE: /files/mirror_archive.txt"
+    );
+
+
+    /*
+       После выдачи доступа возвращаем обычное
+       поведение MR.SMILE.
+    */
+
+    scheduleRandomMessage();
+}
+
+
+/* ==========================================================
+   EVENT REGISTRATION
+========================================================== */
+
+function registerEvents() {
+
+    if (archiveEventRegistered) {
+        return;
+    }
+
+    archiveEventRegistered = true;
 
 
     on(
@@ -128,662 +386,152 @@ function registerArchiveAccessListener() {
                 "[MR.SMILE] MIRROR-00 access request received."
             );
 
-
             handleMirrorArchiveAccess();
 
         }
     );
-
 }
 
 
-// =======================================
-// MR.SMILE GRANTS MIRROR ACCESS
-// =======================================
+/* ==========================================================
+   INITIALIZATION
+========================================================== */
 
-async function handleMirrorArchiveAccess() {
+export function initMrSmileChat() {
 
-    // -----------------------------------
-    // Do not run twice
-    // -----------------------------------
-
-    if (
-        !hasPendingMirrorArchiveAccess()
-    ) {
-
+    if (initialized) {
         return;
-
     }
 
+    initialized = true;
 
-    // -----------------------------------
-    // Stop random message
-    // -----------------------------------
-
-    clearTimeout(
-        idleTimer
-    );
-
-
-    // -----------------------------------
-    // Small delay
-    // -----------------------------------
-
-    await sleep(900);
-
-
-    // -----------------------------------
-    // MR.SMILE speaks
-    // -----------------------------------
-
-    await typeMessage(
-        "You were looking for the Mirror."
-    );
-
-
-    await sleep(
-        1200
-    );
-
-
-    await typeMessage(
-        "I've given you access."
-    );
-
-
-    await sleep(
-        700
-    );
-
-
-    // -----------------------------------
-    // Actually grant access
-    // -----------------------------------
-
-    const granted =
-        grantMirrorArchiveAccess();
-
-
-    if (!granted) {
-
-        scheduleRandomMessage();
-
-        return;
-
-    }
-
-
-    // -----------------------------------
-    // OMEGA records the change
-    // -----------------------------------
-
-    typeSystemMessage(
-        "MIRROR-00 ACCESS GRANTED BY MR.SMILE."
-    );
-
-
-    await sleep(
-        500
-    );
-
-
-    typeSystemMessage(
-        "RESOURCE: /files/mirror_archive.txt"
-    );
-
-
-    // -----------------------------------
-    // Resume normal behavior
-    // -----------------------------------
-
-    scheduleRandomMessage();
-
-}
-
-
-// =======================================
-// PLAYER MESSAGE
-// =======================================
-
-async function sendMessage() {
-
-    const input =
-        document.getElementById(
-            "chatInput"
-        );
-
-
-    if (!input) return;
-
-
-    const text =
-        input.value.trim();
-
-
-    if (!text) return;
-
-
-    input.value = "";
-
-
-    addMessage(
-        "YOU",
-        text,
-        "user"
-    );
-
-
-    clearTimeout(
-        idleTimer
-    );
-
-
-    // ===================================
-    // RANDOM SIGNAL INTERRUPTION
-    // ===================================
-
-    if (Math.random() < 0.08) {
-
-        await fakeTyping(
-            2500
-        );
-
-
-        typeSystemMessage(
-            "Signal interrupted."
-        );
-
-
-        scheduleRandomMessage();
-
-        return;
-
-    }
-
-
-    // ===================================
-    // MR.SMILE THINKING
-    // ===================================
-
-    await fakeTyping(
-        random(
-            1000,
-            4000
-        )
-    );
-
-
-    // ===================================
-    // GENERATE RESPONSE
-    // ===================================
-
-    const response =
-        await mrSmileSay(text);
-
-
-    if (!response) {
-
-        typeSystemMessage(
-            "No response."
-        );
-
-
-        scheduleRandomMessage();
-
-        return;
-
-    }
-
-
-    // ===================================
-    // RESPONSE
-    // ===================================
-
-    await typeMessage(
-        response
-    );
-
-
-    // ===================================
-    // MESSAGE CORRUPTION
-    // ===================================
-
-    if (Math.random() < 0.10) {
-
-        const msgs =
-            document.querySelectorAll(
-                ".msg.smile"
-            );
-
-
-        const last =
-            msgs[msgs.length - 1];
-
-
-        if (last) {
-
-            await sleep(
-                2000
-            );
-
-
-            const textElement =
-                last.querySelector(
-                    ".text"
-                );
-
-
-            if (textElement) {
-
-                textElement.textContent =
-                    "████████████";
-
-
-                await sleep(
-                    900
-                );
-
-
-                textElement.textContent =
-                    "Message removed.";
-
-
-                last.classList.add(
-                    "system"
-                );
-
-            }
-
-        }
-
-    }
-
-
-    scheduleRandomMessage();
-
-}
-
-
-// =======================================
-// NORMAL MESSAGE
-// =======================================
-
-function addMessage(
-    author,
-    text,
-    type
-) {
-
-    const log =
-        document.getElementById(
-            "chatLog"
-        );
-
-
-    if (!log) return;
-
-
-    const div =
-        document.createElement(
-            "div"
-        );
-
-
-    div.className =
-        `msg ${type}`;
-
-
-    div.innerHTML = `
-
-        <div class="author">
-            ${author}
-        </div>
-
-        <div class="text"></div>
-
-    `;
-
-
-    const body =
-        div.querySelector(
-            ".text"
-        );
-
-
-    body.textContent =
-        text;
-
-
-    log.appendChild(
-        div
-    );
-
-
-    log.scrollTop =
-        log.scrollHeight;
-
-}
-
-
-// =======================================
-// MR.SMILE MESSAGE
-// =======================================
-
-async function typeMessage(
-    text
-) {
-
-    const log =
-        document.getElementById(
-            "chatLog"
-        );
-
-
-    if (!log) return;
-
-
-    const div =
-        document.createElement(
-            "div"
-        );
-
-
-    div.className =
-        "msg smile";
-
-
-    div.innerHTML = `
-
-        <div class="author">
-            MR.SMILE
-        </div>
-
-        <div class="text"></div>
-
-    `;
-
-
-    const body =
-        div.querySelector(
-            ".text"
-        );
-
-
-    log.appendChild(
-        div
-    );
-
-
-    for (const ch of text) {
-
-        body.textContent +=
-            ch;
-
-
-        log.scrollTop =
-            log.scrollHeight;
-
-
-        await sleep(
-            random(
-                20,
-                45
-            )
-        );
-
-    }
-
-}
-
-
-// =======================================
-// FIRST CONTACT
-// =======================================
-
-export async function playFirstContactMessage() {
 
     console.log(
-        "[MR.SMILE] First contact message."
+        "[MR.SMILE CHAT] Initializing..."
     );
 
 
-    // Make sure old random messages
-    // do not interrupt the scene.
+    registerEvents();
 
-    clearTimeout(
-        idleTimer
+
+    /*
+       Кнопка отправки.
+
+       Обычно sendMessage уже обрабатывается chats.js,
+       поэтому здесь НЕ назначаем onclick повторно.
+
+       Это важно, чтобы одно сообщение не отправлялось дважды.
+    */
+
+
+    /*
+       Если FIRST CONTACT уже был завершён,
+       запускаем idle-сообщения.
+    */
+
+    if (
+        localStorage.getItem(
+            "mrsmile_first_contact"
+        ) === "1"
+    ) {
+
+        scheduleRandomMessage();
+
+    }
+
+
+    /*
+       Если запрос MIRROR-00 уже существовал до
+       перезагрузки страницы — продолжаем его.
+    */
+
+    if (
+        hasPendingMirrorArchiveAccess()
+    ) {
+
+        setTimeout(() => {
+
+            handleMirrorArchiveAccess();
+
+        }, 1000);
+
+    }
+
+
+    console.log(
+        "[MR.SMILE CHAT] Initialized."
     );
-
-
-    // -----------------------------------
-    // First message
-    // -----------------------------------
-
-    await typeMessage(
-        ":)"
-    );
-
-
-    // -----------------------------------
-    // Silence
-    // -----------------------------------
-
-    await sleep(
-        1000
-    );
-
-
-    // -----------------------------------
-    // Second message
-    // -----------------------------------
-
-    await typeMessage(
-        "Hello, operator."
-    );
-
-
-    // -----------------------------------
-    // Resume normal behavior
-    // -----------------------------------
-
-    scheduleRandomMessage();
-
 }
 
 
-// =======================================
-// SYSTEM MESSAGE
-// =======================================
+/* ==========================================================
+   OPTIONAL DIRECT SEND
+   ========================================================== */
 
-export function typeSystemMessage(
-    text
-) {
+export function mrSmileChatSend(text) {
 
-    const log =
-        document.getElementById(
-            "chatLog"
+    if (!text) {
+        return;
+    }
+
+    sendMrSmileResponse(
+        String(text).trim()
+    );
+}
+
+
+/* ==========================================================
+   GLOBAL DEBUG
+========================================================== */
+
+window.debugMrSmileChat = {
+
+    send(text) {
+
+        if (!text) {
+            return;
+        }
+
+        addMrSmileChatMessage(
+            String(text)
         );
 
+    },
 
-    if (!log) return;
+    system(text) {
 
+        if (!text) {
+            return;
+        }
 
-    const div =
-        document.createElement(
-            "div"
+        addSystemChatMessage(
+            String(text)
         );
 
+    },
 
-    div.className =
-        "msg system";
+    firstContact() {
 
+        playFirstContactMessage();
 
-    div.textContent =
-        text;
+    },
 
+    mirrorAccess() {
 
-    log.appendChild(
-        div
-    );
+        handleMirrorArchiveAccess();
 
+    },
 
-    log.scrollTop =
-        log.scrollHeight;
+    stopIdle() {
 
-}
+        clearTimeout(idleTimer);
 
+    },
 
-// =======================================
-// TYPING EFFECT
-// =======================================
+    startIdle() {
 
-async function fakeTyping(
-    time
-) {
+        scheduleRandomMessage();
 
-    const log =
-        document.getElementById(
-            "chatLog"
-        );
+    }
 
-
-    if (!log) return;
-
-
-    const div =
-        document.createElement(
-            "div"
-        );
-
-
-    div.className =
-        "msg typing";
-
-
-    div.textContent =
-        "MR.SMILE is typing...";
-
-
-    log.appendChild(
-        div
-    );
-
-
-    log.scrollTop =
-        log.scrollHeight;
-
-
-    await sleep(
-        time
-    );
-
-
-    div.remove();
-
-}
-
-
-// =======================================
-// RANDOM EVENTS
-// =======================================
-
-function scheduleRandomMessage() {
-
-    clearTimeout(
-        idleTimer
-    );
-
-
-    idleTimer =
-        setTimeout(
-            async () => {
-
-                const messages = [
-
-                    "Are you still here?",
-
-                    "I can hear the servers.",
-
-                    "Someone is watching us.",
-
-                    "Don't trust Terminal-03.",
-
-                    "You opened something you shouldn't.",
-
-                    "They are lying to you.",
-
-                    "I remember you.",
-
-                    "...",
-
-                    "Can you hear me?",
-
-                    "Stay online."
-
-                ];
-
-
-                await fakeTyping(
-                    random(
-                        1500,
-                        4000
-                    )
-                );
-
-
-                await typeMessage(
-
-                    messages[
-                        random(
-                            0,
-                            messages.length - 1
-                        )
-                    ]
-
-                );
-
-
-                scheduleRandomMessage();
-
-            },
-
-            random(
-                30000,
-                90000
-            )
-
-        );
-
-}
-
-
-// =======================================
-// HELPERS
-// =======================================
-
-function sleep(
-    ms
-) {
-
-    return new Promise(
-        resolve =>
-            setTimeout(
-                resolve,
-                ms
-            )
-    );
-
-}
-
-
-function random(
-    min,
-    max
-) {
-
-    return Math.floor(
-        Math.random() *
-        (max - min + 1)
-    ) + min;
-
-}
+};
