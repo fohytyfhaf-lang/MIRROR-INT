@@ -4,7 +4,12 @@ import {
     getFile
 } from "./filesystem.js";
 
+import {
+    on
+} from "./eventManager.js";
+
 let currentExplorerPath = "/files";
+
 
 
 /* =========================================================
@@ -130,6 +135,34 @@ function renderExplorer(path) {
     });
 
 }
+
+/* =========================================================
+   MR.SMILE ARCHIVE UNLOCK
+========================================================= */
+
+on("mrsmile:archiveUnlocked", () => {
+
+    console.log(
+        "[OMEGA EXPLORER] MIRROR-00 unlocked. Refreshing filesystem..."
+    );
+
+    /*
+       Если Explorer сейчас открыт —
+       обновляем его немедленно.
+    */
+
+    const explorer =
+        document.getElementById("filesList");
+
+    if (!explorer) {
+        return;
+    }
+
+    renderExplorer(
+        currentExplorerPath
+    );
+
+});
 
 
 /* =========================================================
