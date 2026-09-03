@@ -68,17 +68,23 @@ const levels = [
 export function initTrust() {
 
     if (initialized)
-        return;
+        return trust;
 
     initialized = true;
 
     loadTrust();
+
+    // Создаём запись в localStorage,
+    // даже если Trust сейчас равен 0
+    saveTrust();
 
     console.log(
         "[MR.SMILE TRUST] Initialized:",
         trust,
         getTrustName()
     );
+
+    return trust;
 
 }
 
