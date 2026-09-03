@@ -7,7 +7,10 @@ import {
     playFirstContactMessage
 } from "./mrsmileChat.js";
 
-import { getTrust } from "./mrsmileTrust.js";
+import {
+    getTrust,
+    loadTrust
+} from "./mrsmileTrust.js";
 import { getMemory } from "./mrsmileMemory.js";
 import { revealMrSmileChat } from "./chats.js";
 import {
@@ -36,6 +39,7 @@ export function initMrSmileEvents() {
     if (running) return;
 
     running = true;
+    loadTrust();
 
     console.log("[MR.SMILE EVENTS] Started");
 
