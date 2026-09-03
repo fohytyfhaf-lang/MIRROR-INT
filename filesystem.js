@@ -1,5 +1,9 @@
 import { canAccess } from "./security.js";
 
+import {
+    isProgressUnlocked
+} from "./mrsmileProgress.js";
+
 
 /* =========================================================
    OMEGA VIRTUAL FILESYSTEM
@@ -71,6 +75,33 @@ DO NOT ATTEMPT TO IDENTIFY THE ENTITY.`,
                         level: 2
 
                     },
+                   "mirror_archive.txt": {
+                       type: "file",
+
+                       hidden: true,
+
+                       unlockFlag: "archive",
+
+                       data:
+`OMEGA // RESTRICTED ARCHIVE
+
+ARCHIVE ID: MIRROR-00
+
+STATUS: PARTIALLY RECOVERED
+
+The Mirror was not created as a communication system.
+
+It was created as a containment environment.
+
+Further information has been removed.
+
+NOTE:
+
+If this document is visible,
+the restriction has already failed.`,
+
+    level: 2
+},
 
 
                     /* =====================================
@@ -117,18 +148,36 @@ export function listFiles(path = "/") {
 
     const node = getNode(path);
 
-    if (!node) {
+    if (!node)
         return [];
-    }
 
-    if (node.type !== "dir") {
+    if (node.type !== "dir")
         return [];
-    }
 
-    return Object.keys(node.content || {});
+    return Object.keys(node.content || {})
+        .filter(name => {
+
+            const file =
+                node.content[name];
+
+            // Обычные файлы видны всегда
+            if (!file.hidden)
+                return true;
+
+            // Скрытый файл проверяет разблокировку
+            if (file.unlockFlag) {
+
+                return isProgressUnlocked(
+                    file.unlockFlag
+                );
+
+            }
+
+            return false;
+
+        });
 
 }
-
 
 /* =========================================================
    READ INTERNAL TEXT FILE
