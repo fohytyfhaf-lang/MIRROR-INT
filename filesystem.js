@@ -91,47 +91,24 @@ DO NOT ATTEMPT TO IDENTIFY THE ENTITY.`,
                         level: 2
 
                     },
-
-
                     // ===================================
                     // HIDDEN MIRROR ARCHIVE
                     // ===================================
 
                     "mirror_archive.txt": {
 
-                        type: "file",
+                     type: "external",
 
-                        hidden: true,
+                     hidden: true,
 
-                        unlockFlag: "archive",
+                    unlockFlag: "archive",
 
-                        data:
-`OMEGA // RESTRICTED ARCHIVE
+                    path: "files/mirror_archive.txt",
 
-ARCHIVE ID: MIRROR-00
-
-STATUS: PARTIALLY RECOVERED
-
-
-The Mirror was not created as a
-communication system.
-
-It was created as a containment
-environment.
-
-
-Further information has been removed.
-
-
-NOTE:
-
-If this document is visible,
-
-the restriction has already failed.`,
-
-                        level: 2
+                    level: 2
 
                     },
+                   
 
 
                     // ===================================
