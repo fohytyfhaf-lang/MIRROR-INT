@@ -835,6 +835,12 @@ function sendMessage() {
 
    updateChatContext(activeChat, text);
 
+   if (activeChat === "mrsmile") {
+
+        processMrSmileInput(text);
+
+   }
+
     input.value = "";
 
     renderActiveChat();
