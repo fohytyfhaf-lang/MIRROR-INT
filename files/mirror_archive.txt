@@ -1,0 +1,33 @@
+data:
+`OMEGA // RESTRICTED ARCHIVE
+
+========================================
+ARCHIVE ID: MIRROR-00
+STATUS: UNLOCKED
+========================================
+
+TEST RECORD
+
+If you can read this file,
+the MR.SMILE progression system
+is working correctly.
+
+----------------------------------------
+
+PROGRESSION CHECK
+
+[✓] FIRST CONTACT
+[✓] KEYWORD RECOGNIZED
+[✓] TRUST REQUIREMENT
+[✓] ARCHIVE UNLOCKED
+
+----------------------------------------
+
+CURRENT MESSAGE:
+
+"Something was already here
+before you arrived."
+
+----------------------------------------
+
+END OF TEST RECORD`
