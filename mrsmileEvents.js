@@ -816,6 +816,7 @@ console.log(
 );
 
 firstContactRunning = false;
+}
 
 
 // =======================================
