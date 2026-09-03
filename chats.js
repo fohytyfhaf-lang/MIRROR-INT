@@ -3,6 +3,9 @@
 ========================================================= */
 import { canAccess } from "./security.js";
 import {
+    processMrSmileInput
+} from "./mrsmileProgress.js";
+import {
     generatePersonnelResponse
 } from "./personnelAI.js";
 
