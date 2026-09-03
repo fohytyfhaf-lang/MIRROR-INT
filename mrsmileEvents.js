@@ -10,6 +10,10 @@ import {
 import { getTrust } from "./mrsmileTrust.js";
 import { getMemory } from "./mrsmileMemory.js";
 import { revealMrSmileChat } from "./chats.js";
+import {
+    initMrSmileProgress,
+    evaluateProgress
+} from "./mrsmileProgress.js";
 
 import {
     on,
@@ -39,6 +43,7 @@ export function initMrSmileEvents() {
     glitchLoop();
     idleLoop();
     observationLoop();
+    initMrSmileProgress();
 
    
     // ===================================
@@ -113,6 +118,8 @@ function triggerSys00Handshake() {
         "mrsmile_handshake",
         "1"
     );
+    
+    evaluateProgress();
 
     trigger(
         "mrsmile:handshakeDetected"
