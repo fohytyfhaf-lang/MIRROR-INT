@@ -13,7 +13,8 @@ import {
 } from "./mrsmileTrust.js";
 import { getMemory } from "./mrsmileMemory.js";
 import {
-    triggerMrSmileManifestation
+    triggerMrSmileManifestation,
+    showMrSmileFirstContactFace
 } from "./mrsmileAppearance.js";
 import { revealMrSmileChat } from "./chats.js";
 import {
