@@ -654,3 +654,11 @@ function getLevelForValue(value) {
     return current;
 
 }
+
+window.debugTrust = {
+    get: getTrust,
+    set: setTrust,
+    add: addTrust,
+    init: initTrust,
+    status: getTrustStatus
+};
