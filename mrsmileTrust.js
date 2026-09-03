@@ -288,3 +288,7 @@ export function loadTrust() {
     }
 
 }
+
+
+window.debugSetTrust = setTrust;
+window.debugGetTrust = getTrust;
