@@ -119,8 +119,7 @@ function triggerSys00Handshake() {
         "1"
     );
     
-    evaluateProgress();
-
+   
     trigger(
         "mrsmile:handshakeDetected"
     );
@@ -806,7 +805,8 @@ async function triggerFirstContact() {
         "mrsmile_first_contact",
         "1"
     );
-
+    
+    evaluateProgress();
 
     // ===================================
     // FALSE NORMALITY
