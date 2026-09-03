@@ -185,24 +185,56 @@ export function listFiles(path = "/") {
 
 export function readFile(path) {
 
-    const node = getNode(path);
+    const node =
+        getNode(path);
 
-    if (!node) {
+    if (!node)
         return null;
+
+    if (node.type !== "file")
+        return null;
+
+
+    // ===================================
+    // HIDDEN CONTENT
+    // ===================================
+
+    if (node.hidden) {
+
+        if (!node.unlockFlag)
+            return "ACCESS DENIED";
+
+        if (
+            !isProgressUnlocked(
+                node.unlockFlag
+            )
+        ) {
+
+            return "ACCESS DENIED";
+
+        }
+
     }
 
-    if (node.type !== "file") {
-        return null;
-    }
 
-    if (!canAccess(node.level || 0)) {
+    // ===================================
+    // SECURITY LEVEL
+    // ===================================
+
+    if (
+        !canAccess(
+            node.level || 0
+        )
+    ) {
+
         return "ACCESS DENIED";
+
     }
+
 
     return node.data;
 
 }
-
 
 /* =========================================================
    GET FILE
@@ -214,6 +246,35 @@ export function getFile(path) {
 
     if (!node) {
         return null;
+    }
+
+
+    /* -----------------------------------------
+       HIDDEN CONTENT
+    ----------------------------------------- */
+
+    if (node.hidden) {
+
+        if (!node.unlockFlag) {
+
+            return {
+                type: "denied"
+            };
+
+        }
+
+        if (
+            !isProgressUnlocked(
+                node.unlockFlag
+            )
+        ) {
+
+            return {
+                type: "denied"
+            };
+
+        }
+
     }
 
 
