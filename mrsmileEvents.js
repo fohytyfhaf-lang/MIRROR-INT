@@ -795,20 +795,27 @@ async function triggerFirstContact() {
 
 
     // ===================================
-    // MR.SMILE ENTERS CHAT
-    // ===================================
-    revealMrSmileChat();
+// MR.SMILE ENTERS CHAT
+// ===================================
+revealMrSmileChat();
 
-    await playFirstContactMessage();
+await playFirstContactMessage();
 
 
-    console.log(
-        "[MR.SMILE] FIRST CONTACT COMPLETE"
-    );
+// ===================================
+// INTERFACE MANIFESTATION
+// ===================================
 
-    firstContactRunning = false;
+await sleep(1200);
 
-}
+await triggerMrSmileManifestation();
+
+
+console.log(
+    "[MR.SMILE] FIRST CONTACT COMPLETE"
+);
+
+firstContactRunning = false;
 
 
 // =======================================
