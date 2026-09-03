@@ -1,5 +1,14 @@
-
 import { mrSmileSay } from "./mrsmileCore.js";
+
+import {
+    on
+} from "./eventManager.js";
+
+import {
+    grantMirrorArchiveAccess,
+    hasPendingMirrorArchiveAccess
+} from "./mrsmileProgress.js";
+
 
 let initialized = false;
 let idleTimer = null;
@@ -15,14 +24,20 @@ export function initMrSmileChat() {
 
     initialized = true;
 
-    console.log("[MR.SMILE] Chat initialized");
+    console.log(
+        "[MR.SMILE] Chat initialized"
+    );
 
 
     const input =
-        document.getElementById("chatInput");
+        document.getElementById(
+            "chatInput"
+        );
 
     const button =
-        document.getElementById("sendBtn");
+        document.getElementById(
+            "sendBtn"
+        );
 
 
     if (!input || !button) {
@@ -56,6 +71,171 @@ export function initMrSmileChat() {
     );
 
 
+    // ===================================
+    // MIRROR ARCHIVE ACCESS
+    // ===================================
+
+    registerArchiveAccessListener();
+
+
+    // ===================================
+    // CHECK PENDING REQUEST
+    // ===================================
+    //
+    // Important:
+    // Progress may have detected the
+    // conditions before Chat initialized.
+    //
+    // Therefore we check localStorage
+    // after registering the listener.
+    // ===================================
+
+    if (
+        hasPendingMirrorArchiveAccess()
+    ) {
+
+        handleMirrorArchiveAccess();
+
+    }
+
+
+    scheduleRandomMessage();
+
+}
+
+
+// =======================================
+// MIRROR ARCHIVE ACCESS LISTENER
+// =======================================
+
+let archiveListenerRegistered = false;
+
+
+function registerArchiveAccessListener() {
+
+    if (archiveListenerRegistered)
+        return;
+
+
+    archiveListenerRegistered = true;
+
+
+    on(
+        "mrsmile:archiveAccessRequested",
+        () => {
+
+            console.log(
+                "[MR.SMILE] MIRROR-00 access request received."
+            );
+
+
+            handleMirrorArchiveAccess();
+
+        }
+    );
+
+}
+
+
+// =======================================
+// MR.SMILE GRANTS MIRROR ACCESS
+// =======================================
+
+async function handleMirrorArchiveAccess() {
+
+    // -----------------------------------
+    // Do not run twice
+    // -----------------------------------
+
+    if (
+        !hasPendingMirrorArchiveAccess()
+    ) {
+
+        return;
+
+    }
+
+
+    // -----------------------------------
+    // Stop random message
+    // -----------------------------------
+
+    clearTimeout(
+        idleTimer
+    );
+
+
+    // -----------------------------------
+    // Small delay
+    // -----------------------------------
+
+    await sleep(900);
+
+
+    // -----------------------------------
+    // MR.SMILE speaks
+    // -----------------------------------
+
+    await typeMessage(
+        "You were looking for the Mirror."
+    );
+
+
+    await sleep(
+        1200
+    );
+
+
+    await typeMessage(
+        "I've given you access."
+    );
+
+
+    await sleep(
+        700
+    );
+
+
+    // -----------------------------------
+    // Actually grant access
+    // -----------------------------------
+
+    const granted =
+        grantMirrorArchiveAccess();
+
+
+    if (!granted) {
+
+        scheduleRandomMessage();
+
+        return;
+
+    }
+
+
+    // -----------------------------------
+    // OMEGA records the change
+    // -----------------------------------
+
+    typeSystemMessage(
+        "MIRROR-00 ACCESS GRANTED BY MR.SMILE."
+    );
+
+
+    await sleep(
+        500
+    );
+
+
+    typeSystemMessage(
+        "RESOURCE: /files/mirror_archive.txt"
+    );
+
+
+    // -----------------------------------
+    // Resume normal behavior
+    // -----------------------------------
+
     scheduleRandomMessage();
 
 }
@@ -68,7 +248,9 @@ export function initMrSmileChat() {
 async function sendMessage() {
 
     const input =
-        document.getElementById("chatInput");
+        document.getElementById(
+            "chatInput"
+        );
 
 
     if (!input) return;
@@ -91,7 +273,9 @@ async function sendMessage() {
     );
 
 
-    clearTimeout(idleTimer);
+    clearTimeout(
+        idleTimer
+    );
 
 
     // ===================================
@@ -100,7 +284,9 @@ async function sendMessage() {
 
     if (Math.random() < 0.08) {
 
-        await fakeTyping(2500);
+        await fakeTyping(
+            2500
+        );
 
 
         typeSystemMessage(
@@ -120,7 +306,10 @@ async function sendMessage() {
     // ===================================
 
     await fakeTyping(
-        random(1000, 4000)
+        random(
+            1000,
+            4000
+        )
     );
 
 
@@ -173,27 +362,37 @@ async function sendMessage() {
 
         if (last) {
 
-            await sleep(2000);
-
-
-            last
-                .querySelector(".text")
-                .textContent =
-                "████████████";
-
-
-            await sleep(900);
-
-
-            last
-                .querySelector(".text")
-                .textContent =
-                "Message removed.";
-
-
-            last.classList.add(
-                "system"
+            await sleep(
+                2000
             );
+
+
+            const textElement =
+                last.querySelector(
+                    ".text"
+                );
+
+
+            if (textElement) {
+
+                textElement.textContent =
+                    "████████████";
+
+
+                await sleep(
+                    900
+                );
+
+
+                textElement.textContent =
+                    "Message removed.";
+
+
+                last.classList.add(
+                    "system"
+                );
+
+            }
 
         }
 
@@ -255,7 +454,9 @@ function addMessage(
         text;
 
 
-    log.appendChild(div);
+    log.appendChild(
+        div
+    );
 
 
     log.scrollTop =
@@ -308,12 +509,15 @@ async function typeMessage(
         );
 
 
-    log.appendChild(div);
+    log.appendChild(
+        div
+    );
 
 
     for (const ch of text) {
 
-        body.textContent += ch;
+        body.textContent +=
+            ch;
 
 
         log.scrollTop =
@@ -321,7 +525,10 @@ async function typeMessage(
 
 
         await sleep(
-            random(20, 45)
+            random(
+                20,
+                45
+            )
         );
 
     }
@@ -348,28 +555,36 @@ export async function playFirstContactMessage() {
     );
 
 
+    // -----------------------------------
     // First message
+    // -----------------------------------
 
     await typeMessage(
         ":)"
     );
 
 
+    // -----------------------------------
     // Silence
+    // -----------------------------------
 
     await sleep(
         1000
     );
 
 
+    // -----------------------------------
     // Second message
+    // -----------------------------------
 
     await typeMessage(
         "Hello, operator."
     );
 
 
+    // -----------------------------------
     // Resume normal behavior
+    // -----------------------------------
 
     scheduleRandomMessage();
 
@@ -407,7 +622,9 @@ export function typeSystemMessage(
         text;
 
 
-    log.appendChild(div);
+    log.appendChild(
+        div
+    );
 
 
     log.scrollTop =
@@ -447,7 +664,9 @@ async function fakeTyping(
         "MR.SMILE is typing...";
 
 
-    log.appendChild(div);
+    log.appendChild(
+        div
+    );
 
 
     log.scrollTop =
@@ -542,7 +761,9 @@ function scheduleRandomMessage() {
 // HELPERS
 // =======================================
 
-function sleep(ms) {
+function sleep(
+    ms
+) {
 
     return new Promise(
         resolve =>
@@ -566,4 +787,3 @@ function random(
     ) + min;
 
 }
-
