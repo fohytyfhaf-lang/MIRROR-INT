@@ -21,6 +21,9 @@ import {
 const STORAGE_KEY =
     "mrsmile_progress";
 
+const ARCHIVE_PENDING_KEY =
+    "mrsmile_archive_access_pending";
+
 
 // =======================================
 // STATE
@@ -56,8 +59,8 @@ let trustListenerRegistered = false;
 // =======================================
 //
 // Игрок не видит этот список.
-// Ключевые слова распознаются только
-// внутри сообщений MR.SMILE.
+// Ключевые слова распознаются внутри
+// сообщений оператора.
 // =======================================
 
 const keywordRules = [
@@ -107,9 +110,6 @@ export function initMrSmileProgress() {
 
     if (initialized) {
 
-        // Даже если Progress уже был
-        // инициализирован, перепроверяем
-        // условия.
         evaluateProgress();
 
         return;
@@ -117,6 +117,7 @@ export function initMrSmileProgress() {
     }
 
     initialized = true;
+
 
     // -----------------------------------
     // TRUST
@@ -164,6 +165,7 @@ function registerTrustListener() {
 
     trustListenerRegistered = true;
 
+
     on(
         "mrsmile:trustChanged",
         () => {
@@ -181,13 +183,14 @@ function registerTrustListener() {
 
 
 // =======================================
-// PROCESS MR.SMILE MESSAGE
+// PROCESS MR.SMILE INPUT
 // =======================================
 
 export function processMrSmileInput(text) {
 
     if (!text)
         return;
+
 
     initMrSmileProgress();
 
@@ -205,7 +208,7 @@ export function processMrSmileInput(text) {
 
     for (const rule of keywordRules) {
 
-        // Уже найдено
+        // Already recognized
         if (
             state.keywords.includes(
                 rule.id
@@ -217,7 +220,7 @@ export function processMrSmileInput(text) {
         }
 
 
-        // Не найдено
+        // Check message
         if (
             !matchesKeyword(
                 normalized,
@@ -288,7 +291,7 @@ export function processMrSmileInput(text) {
 export function evaluateProgress() {
 
     // -----------------------------------
-    // Make absolutely sure Trust exists
+    // Make sure Trust exists
     // -----------------------------------
 
     initTrust();
@@ -324,6 +327,13 @@ export function evaluateProgress() {
     // +
     // MIRROR KEYWORD
     //
+    // IMPORTANT:
+    //
+    // These conditions DO NOT directly
+    // unlock the archive.
+    //
+    // They only make MR.SMILE aware that
+    // the operator qualifies for access.
     // ===================================
 
     if (
@@ -340,21 +350,7 @@ export function evaluateProgress() {
 
     ) {
 
-        state.flags.archiveUnlocked =
-            true;
-
-
-        saveProgress();
-
-
-        console.log(
-            "[MR.SMILE PROGRESS] Hidden archive unlocked."
-        );
-
-
-        trigger(
-            "mrsmile:archiveUnlocked"
-        );
+        requestMirrorArchiveAccess();
 
     }
 
@@ -370,7 +366,6 @@ export function evaluateProgress() {
     // TRUST >= 40
     // +
     // PLAY KEYWORD
-    //
     // ===================================
 
     if (
@@ -417,7 +412,6 @@ export function evaluateProgress() {
     // TRUST >= 60
     // +
     // TRUTH KEYWORD
-    //
     // ===================================
 
     if (
@@ -456,6 +450,152 @@ export function evaluateProgress() {
 
 
 // =======================================
+// REQUEST MIRROR ARCHIVE ACCESS
+// =======================================
+//
+// This does NOT unlock the archive.
+//
+// It tells the system that the operator
+// has met the requirements and MR.SMILE
+// can decide whether to grant access.
+// =======================================
+
+export function requestMirrorArchiveAccess() {
+
+    if (
+        state.flags.archiveUnlocked
+    ) {
+
+        return false;
+
+    }
+
+
+    // -----------------------------------
+    // Already waiting for MR.SMILE
+    // -----------------------------------
+
+    if (
+        localStorage.getItem(
+            ARCHIVE_PENDING_KEY
+        ) === "1"
+    ) {
+
+        return false;
+
+    }
+
+
+    // -----------------------------------
+    // Mark request as pending
+    // -----------------------------------
+
+    localStorage.setItem(
+        ARCHIVE_PENDING_KEY,
+        "1"
+    );
+
+
+    console.log(
+        "[MR.SMILE PROGRESS] MIRROR-00 access request pending."
+    );
+
+
+    // -----------------------------------
+    // Tell MR.SMILE
+    // -----------------------------------
+
+    trigger(
+        "mrsmile:archiveAccessRequested"
+    );
+
+
+    return true;
+
+}
+
+
+// =======================================
+// GRANT MIRROR ARCHIVE ACCESS
+// =======================================
+//
+// ONLY this function actually unlocks
+// MIRROR-00.
+//
+// It is called by MR.SMILE.
+// =======================================
+
+export function grantMirrorArchiveAccess() {
+
+    if (
+        state.flags.archiveUnlocked
+    ) {
+
+        return false;
+
+    }
+
+
+    state.flags.archiveUnlocked =
+        true;
+
+
+    // -----------------------------------
+    // Request is no longer pending
+    // -----------------------------------
+
+    localStorage.removeItem(
+        ARCHIVE_PENDING_KEY
+    );
+
+
+    // -----------------------------------
+    // Save progress
+    // -----------------------------------
+
+    saveProgress();
+
+
+    console.log(
+        "[MR.SMILE] MIRROR-00 ACCESS GRANTED."
+    );
+
+
+    // -----------------------------------
+    // Notify OMEGA
+    // -----------------------------------
+
+    trigger(
+        "mrsmile:archiveUnlocked"
+    );
+
+
+    return true;
+
+}
+
+
+// =======================================
+// CHECK ARCHIVE REQUEST
+// =======================================
+//
+// Used by MR.SMILE chat during initialization.
+// This prevents the request from being lost
+// if Progress initialized before Chat.
+// =======================================
+
+export function hasPendingMirrorArchiveAccess() {
+
+    return (
+        localStorage.getItem(
+            ARCHIVE_PENDING_KEY
+        ) === "1"
+    );
+
+}
+
+
+// =======================================
 // KEYWORD CHECK
 // =======================================
 
@@ -464,6 +604,7 @@ export function hasKeyword(
 ) {
 
     initMrSmileProgress();
+
 
     return state.keywords.includes(
         keyword
@@ -564,6 +705,9 @@ export function getMrSmileProgressStatus() {
             ...state.keywords
         ],
 
+        archiveAccessPending:
+            hasPendingMirrorArchiveAccess(),
+
         archiveUnlocked:
             state.flags.archiveUnlocked,
 
@@ -599,6 +743,11 @@ export function resetMrSmileProgress() {
 
     localStorage.removeItem(
         STORAGE_KEY
+    );
+
+
+    localStorage.removeItem(
+        ARCHIVE_PENDING_KEY
     );
 
 
@@ -697,7 +846,6 @@ function saveProgress() {
     try {
 
         localStorage.setItem(
-
             STORAGE_KEY,
 
             JSON.stringify({
