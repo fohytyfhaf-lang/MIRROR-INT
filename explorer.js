@@ -316,6 +316,75 @@ function openExternalFile(filePath, omegaPath) {
         return;
     }
 
+    /* =====================================================
+   TEXT FILE
+===================================================== */
+
+if (extension === "txt") {
+
+    console.log(
+        "[OMEGA EXPLORER] OPENING TXT:",
+        filePath
+    );
+
+    openDocumentWindow(
+        omegaPath.split("/").pop()
+    );
+
+    const content =
+        document.getElementById("documentContent");
+
+    if (!content) return;
+
+    content.innerHTML = `
+        <div class="documentLoading">
+            READING DOCUMENT...
+        </div>
+    `;
+
+    fetch(filePath)
+        .then(response => {
+
+            if (!response.ok) {
+                throw new Error(
+                    `HTTP ${response.status}`
+                );
+            }
+
+            return response.text();
+
+        })
+        .then(text => {
+
+            content.innerHTML = `
+                <pre class="textDocument">${escapeHtml(text)}</pre>
+            `;
+
+        })
+        .catch(error => {
+
+            console.error(
+                "[OMEGA EXPLORER] TXT LOAD ERROR:",
+                error
+            );
+
+            content.innerHTML = `
+                <div class="documentUnknown">
+
+                    <h2>FILE READ ERROR</h2>
+
+                    <p>
+                        Unable to read external document.
+                    </p>
+
+                </div>
+            `;
+
+        });
+
+    return;
+}
+
 
     /* =====================================================
        VIDEO
