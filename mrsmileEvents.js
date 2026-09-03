@@ -52,8 +52,7 @@ export function initMrSmileEvents() {
 
    
     once("mrsmile:firstContact", triggerFirstContact);
-
-    on("mrsmile:sys00Accepted", () => {
+on("mrsmile:sys00Accepted", () => {
 
     console.log(
         "[MR.SMILE] SYS_00 accepted."
@@ -62,10 +61,17 @@ export function initMrSmileEvents() {
     sys00HandshakeArmed = true;
 
     console.log(
-        "[MR.SMILE] Waiting for normal user activity..."
+        "[MR.SMILE] SYS_00 channel active."
     );
 
+    setTimeout(() => {
+
+        triggerSys00Handshake();
+
+    }, 1500);
+
 });
+   
 on("mrsmile:handshakeAccepted", () => {
 
     console.log(
@@ -76,12 +82,6 @@ on("mrsmile:handshakeAccepted", () => {
 
 });
 
-document.addEventListener(
-    "click",
-    handleSys00Activity,
-    true
-);
-    
 }
 
 
@@ -181,34 +181,6 @@ async function showHandshakeSequence() {
 }
 
 
-// =======================================
-// SYS_00 — NORMAL USER ACTIVITY
-// =======================================
-
-function handleSys00Activity(event) {
-
-    if (!sys00HandshakeArmed)
-        return;
-
-    if (sys00HandshakeTriggered)
-        return;
-
-    const target = event.target;
-
-    if (!target)
-        return;
-
-    // Не реагируем на кнопки SYS_00
-    if (
-        target.id === "sys00Yes" ||
-        target.id === "sys00No"
-    ) {
-        return;
-    }
-
-    triggerSys00Handshake();
-
-}
 
 // =======================================
 // OMEGA — INTEGRITY FAILURE
