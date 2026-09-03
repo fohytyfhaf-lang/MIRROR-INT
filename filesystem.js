@@ -1,3 +1,7 @@
+// =======================================
+// OMEGA VIRTUAL FILESYSTEM
+// =======================================
+
 import { canAccess } from "./security.js";
 
 import {
@@ -5,9 +9,9 @@ import {
 } from "./mrsmileProgress.js";
 
 
-/* =========================================================
-   OMEGA VIRTUAL FILESYSTEM
-========================================================= */
+// =======================================
+// FILESYSTEM DATA
+// =======================================
 
 const filesystem = {
 
@@ -23,6 +27,10 @@ const filesystem = {
 
                 content: {
 
+                    // ===================================
+                    // PUBLIC
+                    // ===================================
+
                     "readme.txt": {
 
                         type: "file",
@@ -37,6 +45,10 @@ Welcome.`,
 
                     },
 
+
+                    // ===================================
+                    // INTERNAL
+                    // ===================================
 
                     "memo.txt": {
 
@@ -57,6 +69,10 @@ Further investigation required.`,
                     },
 
 
+                    // ===================================
+                    // MR.SMILE
+                    // ===================================
+
                     "entity_mrsmile.txt": {
 
                         type: "file",
@@ -75,38 +91,52 @@ DO NOT ATTEMPT TO IDENTIFY THE ENTITY.`,
                         level: 2
 
                     },
-                   "mirror_archive.txt": {
-                       type: "file",
 
-                       hidden: true,
 
-                       unlockFlag: "archive",
+                    // ===================================
+                    // HIDDEN MIRROR ARCHIVE
+                    // ===================================
 
-                       data:
+                    "mirror_archive.txt": {
+
+                        type: "file",
+
+                        hidden: true,
+
+                        unlockFlag: "archive",
+
+                        data:
 `OMEGA // RESTRICTED ARCHIVE
 
 ARCHIVE ID: MIRROR-00
 
 STATUS: PARTIALLY RECOVERED
 
-The Mirror was not created as a communication system.
 
-It was created as a containment environment.
+The Mirror was not created as a
+communication system.
+
+It was created as a containment
+environment.
+
 
 Further information has been removed.
+
 
 NOTE:
 
 If this document is visible,
+
 the restriction has already failed.`,
 
-    level: 2
-},
+                        level: 2
+
+                    },
 
 
-                    /* =====================================
-                       REAL PDF FILES
-                    ===================================== */
+                    // ===================================
+                    // REAL PDF FILES
+                    // ===================================
 
                     "experiment_Ten.pdf": {
 
@@ -140,156 +170,153 @@ the restriction has already failed.`,
 };
 
 
-/* =========================================================
-   LIST DIRECTORY
-========================================================= */
+// =======================================
+// LIST DIRECTORY
+// =======================================
 
 export function listFiles(path = "/") {
 
-    const node = getNode(path);
+    const normalizedPath =
+        normalizePath(path);
 
-    if (!node)
+    const node =
+        getNode(normalizedPath);
+
+    if (!node) {
+
         return [];
 
-    if (node.type !== "dir")
+    }
+
+    if (node.type !== "dir") {
+
         return [];
 
-    return Object.keys(node.content || {})
-        .filter(name => {
+    }
 
-            const file =
-                node.content[name];
+    return Object.keys(
+        node.content || {}
+    ).filter(name => {
 
-            // Обычные файлы видны всегда
-            if (!file.hidden)
-                return true;
+        const item =
+            node.content[name];
 
-            // Скрытый файл проверяет разблокировку
-            if (file.unlockFlag) {
+        return canListItem(item);
 
-                return isProgressUnlocked(
-                    file.unlockFlag
-                );
-
-            }
-
-            return false;
-
-        });
+    });
 
 }
 
-/* =========================================================
-   READ INTERNAL TEXT FILE
-========================================================= */
+
+// =======================================
+// CHECK IF ITEM CAN BE LISTED
+// =======================================
+
+function canListItem(item) {
+
+    if (!item) {
+
+        return false;
+
+    }
+
+    // -----------------------------------
+    // NORMAL FILE / DIRECTORY
+    // -----------------------------------
+
+    if (!item.hidden) {
+
+        return true;
+
+    }
+
+    // -----------------------------------
+    // HIDDEN ITEM
+    // -----------------------------------
+
+    if (!item.unlockFlag) {
+
+        return false;
+
+    }
+
+    return isProgressUnlocked(
+        item.unlockFlag
+    );
+
+}
+
+
+// =======================================
+// READ FILE
+// =======================================
 
 export function readFile(path) {
 
     const node =
-        getNode(path);
+        getNode(
+            normalizePath(path)
+        );
 
-    if (!node)
+    if (!node) {
+
         return null;
-
-    if (node.type !== "file")
-        return null;
-
-
-    // ===================================
-    // HIDDEN CONTENT
-    // ===================================
-
-    if (node.hidden) {
-
-        if (!node.unlockFlag)
-            return "ACCESS DENIED";
-
-        if (
-            !isProgressUnlocked(
-                node.unlockFlag
-            )
-        ) {
-
-            return "ACCESS DENIED";
-
-        }
 
     }
 
+    if (node.type !== "file") {
 
-    // ===================================
-    // SECURITY LEVEL
-    // ===================================
+        return null;
 
-    if (
-        !canAccess(
-            node.level || 0
-        )
-    ) {
+    }
+
+    // -----------------------------------
+    // HIDDEN ACCESS
+    // -----------------------------------
+
+    if (!isHiddenUnlocked(node)) {
 
         return "ACCESS DENIED";
 
     }
 
+    // -----------------------------------
+    // SECURITY ACCESS
+    // -----------------------------------
+
+    if (!hasSecurityAccess(node)) {
+
+        return "ACCESS DENIED";
+
+    }
 
     return node.data;
 
 }
 
-/* =========================================================
-   GET FILE
-========================================================= */
+
+// =======================================
+// GET FILE / NODE
+// =======================================
 
 export function getFile(path) {
 
-    const node = getNode(path);
+    const node =
+        getNode(
+            normalizePath(path)
+        );
 
     if (!node) {
+
         return null;
-    }
-
-
-    /* -----------------------------------------
-       HIDDEN CONTENT
-    ----------------------------------------- */
-
-    if (node.hidden) {
-
-        if (!node.unlockFlag) {
-
-            return {
-                type: "denied"
-            };
-
-        }
-
-        if (
-            !isProgressUnlocked(
-                node.unlockFlag
-            )
-        ) {
-
-            return {
-                type: "denied"
-            };
-
-        }
 
     }
 
+    // -----------------------------------
+    // HIDDEN ACCESS
+    // -----------------------------------
 
-    /* -----------------------------------------
-       SECURITY
-    ----------------------------------------- */
-
-    if (
-        (
-            node.type === "file" ||
-            node.type === "external"
-        )
-        &&
-        !canAccess(node.level || 0)
-    ) {
+    if (!isHiddenUnlocked(node)) {
 
         return {
             type: "denied"
@@ -297,38 +324,111 @@ export function getFile(path) {
 
     }
 
+    // -----------------------------------
+    // SECURITY ACCESS
+    // -----------------------------------
+
+    if (!hasSecurityAccess(node)) {
+
+        return {
+            type: "denied"
+        };
+
+    }
 
     return node;
 
 }
 
 
-/* =========================================================
-   INTERNAL NODE SEARCH
-========================================================= */
+// =======================================
+// CHECK HIDDEN ACCESS
+// =======================================
+
+function isHiddenUnlocked(node) {
+
+    // Not hidden
+    if (!node.hidden) {
+
+        return true;
+
+    }
+
+    // Hidden but has no unlock condition
+    if (!node.unlockFlag) {
+
+        return false;
+
+    }
+
+    return isProgressUnlocked(
+        node.unlockFlag
+    );
+
+}
+
+
+// =======================================
+// SECURITY ACCESS
+// =======================================
+
+function hasSecurityAccess(node) {
+
+    // Directories don't require
+    // file-level clearance here.
+    if (node.type === "dir") {
+
+        return true;
+
+    }
+
+    return canAccess(
+        node.level || 0
+    );
+
+}
+
+
+// =======================================
+// GET NODE
+// =======================================
 
 function getNode(path) {
 
-    if (!path) {
-        return null;
-    }
+    const normalizedPath =
+        normalizePath(path);
 
     const parts =
-        path
+        normalizedPath
             .split("/")
             .filter(Boolean);
 
-    let current = filesystem["/"];
-
+    let current =
+        filesystem["/"];
 
     for (const part of parts) {
 
-        if (!current.content) {
+        if (!current) {
+
             return null;
+
         }
 
-        if (!current.content[part]) {
+        if (!current.content) {
+
             return null;
+
+        }
+
+        if (
+            !Object.prototype.hasOwnProperty.call(
+                current.content,
+                part
+            )
+        ) {
+
+            return null;
+
         }
 
         current =
@@ -336,7 +436,122 @@ function getNode(path) {
 
     }
 
-
     return current;
+
+}
+
+
+// =======================================
+// NORMALIZE PATH
+// =======================================
+
+function normalizePath(path) {
+
+    if (
+        typeof path !== "string" ||
+        path.trim() === ""
+    ) {
+
+        return "/";
+
+    }
+
+    let normalized =
+        path.trim();
+
+    // Backslashes → slashes
+    normalized =
+        normalized.replace(
+            /\\/g,
+            "/"
+        );
+
+    // Ensure leading slash
+    if (!normalized.startsWith("/")) {
+
+        normalized =
+            "/" + normalized;
+
+    }
+
+    // Remove duplicate slashes
+    normalized =
+        normalized.replace(
+            /\/+/g,
+            "/"
+        );
+
+    // Remove trailing slash
+    // except for root
+    if (
+        normalized.length > 1 &&
+        normalized.endsWith("/")
+    ) {
+
+        normalized =
+            normalized.slice(
+                0,
+                -1
+            );
+
+    }
+
+    return normalized;
+
+}
+
+
+// =======================================
+// OPTIONAL DEBUG ACCESS
+// =======================================
+
+export function fileExists(path) {
+
+    return (
+        getNode(
+            normalizePath(path)
+        ) !== null
+    );
+
+}
+
+
+// =======================================
+// OPTIONAL DIRECTORY CHECK
+// =======================================
+
+export function isDirectory(path) {
+
+    const node =
+        getNode(
+            normalizePath(path)
+        );
+
+    return (
+        node !== null &&
+        node.type === "dir"
+    );
+
+}
+
+
+// =======================================
+// OPTIONAL FILE CHECK
+// =======================================
+
+export function isFile(path) {
+
+    const node =
+        getNode(
+            normalizePath(path)
+        );
+
+    return (
+        node !== null &&
+        (
+            node.type === "file" ||
+            node.type === "external"
+        )
+    );
 
 }
