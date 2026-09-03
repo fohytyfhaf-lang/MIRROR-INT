@@ -454,32 +454,9 @@ async function triggerFirstContact() {
     await sleep(900);
 
 
-    // SMILE
+    // MR.SMILE — INTERFACE FACE
 
-    const smile =
-        createFirstContactSmile();
-
-
-    await sleep(1800);
-
-
-    // SMILE DISAPPEARS
-
-    if (smile) {
-
-        smile.style.opacity = "0";
-
-    }
-
-    await sleep(700);
-
-
-    if (smile) {
-
-        smile.remove();
-
-    }
-
+    await showMrSmileFirstContactFace();
 
     document.body.classList.remove(
         "mrSmileBlackout"
@@ -497,29 +474,8 @@ async function triggerFirstContact() {
 
     await sleep(400);
 
-
-    const smile2 =
-        createFirstContactSmile();
-
-
-    await sleep(1200);
-
-
-    if (smile2) {
-
-        smile2.style.opacity = "0";
-
-    }
-
-    await sleep(500);
-
-
-    if (smile2) {
-
-        smile2.remove();
-
-    }
-
+    await showMrSmileFirstContactFace();
+    
 
     document.body.classList.remove(
         "mrSmileBlackout"
@@ -703,30 +659,9 @@ async function triggerFirstContact() {
     await sleep(3000);
 
 
-    // One final smile
+   // FINAL MR.SMILE — INTERFACE FACE
 
-    const finalSmile =
-        createFirstContactSmile();
-
-
-    await sleep(1600);
-
-
-    if (finalSmile) {
-
-        finalSmile.style.opacity = "0";
-
-    }
-
-
-    await sleep(500);
-
-
-    if (finalSmile) {
-
-        finalSmile.remove();
-
-    }
+   await showMrSmileFirstContactFace();
 
 
     document.body.classList.remove(
@@ -820,106 +755,6 @@ firstContactRunning = false;
 }
 
 
-// =======================================
-// FIRST CONTACT SMILE
-// =======================================
-
-function createFirstContactSmile() {
-
-    const existing =
-        document.getElementById(
-            "mrSmileFirstContactSmile"
-        );
-
-    if (existing) {
-
-        existing.remove();
-
-    }
-
-
-    const smile =
-        document.createElement("div");
-
-
-    smile.id =
-        "mrSmileFirstContactSmile";
-
-
-    smile.textContent = ":)";
-
-
-    smile.style.position = "fixed";
-
-    smile.style.left = "50%";
-
-    smile.style.top = "50%";
-
-
-    smile.style.transform =
-        "translate(-50%, -50%)";
-
-
-    smile.style.zIndex =
-        "2147483647";
-
-
-    smile.style.color =
-        "#ffffff";
-
-
-    smile.style.fontFamily =
-        '"Courier New", monospace';
-
-
-    smile.style.fontSize =
-        "clamp(32px, 6vw, 90px)";
-
-
-    smile.style.fontWeight =
-        "normal";
-
-
-    smile.style.lineHeight =
-        "1";
-
-
-    smile.style.opacity =
-        "0";
-
-
-    smile.style.pointerEvents =
-        "none";
-
-
-    smile.style.userSelect =
-        "none";
-
-
-    smile.style.transition =
-        "opacity 1.2s ease";
-
-
-    smile.style.textShadow =
-        "0 0 8px rgba(255,255,255,.35), 0 0 25px rgba(255,255,255,.2)";
-
-
-    document.body.appendChild(
-        smile
-    );
-
-
-    requestAnimationFrame(() => {
-
-        smile.style.opacity =
-            "1";
-
-    });
-
-
-    return smile;
-
-}
 
 
 // =======================================
