@@ -3,10 +3,28 @@
 // OMEGA SYSTEM
 // =======================================
 
-import { trigger } from "./eventManager.js";
-import { getTrust } from "./mrsmileTrust.js";
+import {
+    trigger,
+    on
+} from "./eventManager.js";
 
-const STORAGE_KEY = "mrsmile_progress";
+import {
+    getTrust,
+    initTrust
+} from "./mrsmileTrust.js";
+
+
+// =======================================
+// STORAGE
+// =======================================
+
+const STORAGE_KEY =
+    "mrsmile_progress";
+
+
+// =======================================
+// STATE
+// =======================================
 
 const state = {
 
@@ -15,21 +33,32 @@ const state = {
     flags: {
 
         archiveUnlocked: false,
+
         gameUnlocked: false,
+
         truthUnlocked: false
 
     }
 
 };
 
+
+// =======================================
+// INITIALIZATION
+// =======================================
+
 let initialized = false;
+let trustListenerRegistered = false;
 
 
 // =======================================
-// IMPORTANT WORDS
+// HIDDEN KEYWORD RULES
 // =======================================
-// Не экспортируются.
-// Игрок не должен видеть список.
+//
+// Игрок не видит этот список.
+// Ключевые слова распознаются только
+// внутри сообщений MR.SMILE.
+// =======================================
 
 const keywordRules = [
 
@@ -76,14 +105,46 @@ const keywordRules = [
 
 export function initMrSmileProgress() {
 
-    if (initialized)
+    if (initialized) {
+
+        // Даже если Progress уже был
+        // инициализирован, перепроверяем
+        // условия.
+        evaluateProgress();
+
         return;
+
+    }
 
     initialized = true;
 
+    // -----------------------------------
+    // TRUST
+    // -----------------------------------
+
+    initTrust();
+
+
+    // -----------------------------------
+    // LOAD PROGRESS
+    // -----------------------------------
+
     loadProgress();
 
+
+    // -----------------------------------
+    // LISTEN FOR TRUST CHANGES
+    // -----------------------------------
+
+    registerTrustListener();
+
+
+    // -----------------------------------
+    // FIRST EVALUATION
+    // -----------------------------------
+
     evaluateProgress();
+
 
     console.log(
         "[MR.SMILE PROGRESS] Initialized"
@@ -93,7 +154,34 @@ export function initMrSmileProgress() {
 
 
 // =======================================
-// PROCESS MESSAGE
+// TRUST LISTENER
+// =======================================
+
+function registerTrustListener() {
+
+    if (trustListenerRegistered)
+        return;
+
+    trustListenerRegistered = true;
+
+    on(
+        "mrsmile:trustChanged",
+        () => {
+
+            console.log(
+                "[MR.SMILE PROGRESS] Trust changed. Re-evaluating."
+            );
+
+            evaluateProgress();
+
+        }
+    );
+
+}
+
+
+// =======================================
+// PROCESS MR.SMILE MESSAGE
 // =======================================
 
 export function processMrSmileInput(text) {
@@ -103,32 +191,48 @@ export function processMrSmileInput(text) {
 
     initMrSmileProgress();
 
+
     const normalized =
         normalize(text);
+
 
     let changed = false;
 
 
+    // ===================================
+    // CHECK KEYWORDS
+    // ===================================
+
     for (const rule of keywordRules) {
 
+        // Уже найдено
         if (
             state.keywords.includes(
                 rule.id
             )
         ) {
+
             continue;
+
         }
 
 
+        // Не найдено
         if (
             !matchesKeyword(
                 normalized,
                 rule.words
             )
         ) {
+
             continue;
+
         }
 
+
+        // --------------------------------
+        // SAVE KEYWORD
+        // --------------------------------
 
         state.keywords.push(
             rule.id
@@ -143,6 +247,10 @@ export function processMrSmileInput(text) {
         );
 
 
+        // --------------------------------
+        // EVENT
+        // --------------------------------
+
         trigger(
             "mrsmile:keywordRecognized",
             {
@@ -153,6 +261,10 @@ export function processMrSmileInput(text) {
     }
 
 
+    // ===================================
+    // SAVE
+    // ===================================
+
     if (changed) {
 
         saveProgress();
@@ -160,21 +272,39 @@ export function processMrSmileInput(text) {
     }
 
 
+    // ===================================
+    // RECHECK EVERYTHING
+    // ===================================
+
     evaluateProgress();
 
 }
 
 
 // =======================================
-// CHECK PROGRESS
+// EVALUATE PROGRESS
 // =======================================
 
 export function evaluateProgress() {
 
-    initMrSmileProgressWithoutRecursion();
+    // -----------------------------------
+    // Make absolutely sure Trust exists
+    // -----------------------------------
+
+    initTrust();
+
+
+    // -----------------------------------
+    // Current Trust
+    // -----------------------------------
 
     const trust =
         getTrust();
+
+
+    // -----------------------------------
+    // FIRST CONTACT
+    // -----------------------------------
 
     const firstContact =
         localStorage.getItem(
@@ -183,7 +313,17 @@ export function evaluateProgress() {
 
 
     // ===================================
-    // HIDDEN ARCHIVE
+    // ARCHIVE
+    // ===================================
+    //
+    // Requirements:
+    //
+    // FIRST CONTACT
+    // +
+    // TRUST >= 30
+    // +
+    // MIRROR KEYWORD
+    //
     // ===================================
 
     if (
@@ -194,11 +334,15 @@ export function evaluateProgress() {
 
         trust >= 30 &&
 
-        state.keywords.includes("mirror")
+        state.keywords.includes(
+            "mirror"
+        )
 
     ) {
 
-        state.flags.archiveUnlocked = true;
+        state.flags.archiveUnlocked =
+            true;
+
 
         saveProgress();
 
@@ -216,7 +360,17 @@ export function evaluateProgress() {
 
 
     // ===================================
-    // HIDDEN GAME
+    // GAME
+    // ===================================
+    //
+    // Requirements:
+    //
+    // FIRST CONTACT
+    // +
+    // TRUST >= 40
+    // +
+    // PLAY KEYWORD
+    //
     // ===================================
 
     if (
@@ -227,11 +381,15 @@ export function evaluateProgress() {
 
         trust >= 40 &&
 
-        state.keywords.includes("play")
+        state.keywords.includes(
+            "play"
+        )
 
     ) {
 
-        state.flags.gameUnlocked = true;
+        state.flags.gameUnlocked =
+            true;
+
 
         saveProgress();
 
@@ -251,6 +409,16 @@ export function evaluateProgress() {
     // ===================================
     // DEEP TRUTH
     // ===================================
+    //
+    // Requirements:
+    //
+    // FIRST CONTACT
+    // +
+    // TRUST >= 60
+    // +
+    // TRUTH KEYWORD
+    //
+    // ===================================
 
     if (
 
@@ -260,11 +428,15 @@ export function evaluateProgress() {
 
         trust >= 60 &&
 
-        state.keywords.includes("truth")
+        state.keywords.includes(
+            "truth"
+        )
 
     ) {
 
-        state.flags.truthUnlocked = true;
+        state.flags.truthUnlocked =
+            true;
+
 
         saveProgress();
 
@@ -284,10 +456,12 @@ export function evaluateProgress() {
 
 
 // =======================================
-// ACCESS
+// KEYWORD CHECK
 // =======================================
 
-export function hasKeyword(keyword) {
+export function hasKeyword(
+    keyword
+) {
 
     initMrSmileProgress();
 
@@ -298,22 +472,42 @@ export function hasKeyword(keyword) {
 }
 
 
-export function isProgressUnlocked(flag) {
+// =======================================
+// PROGRESS UNLOCK CHECK
+// =======================================
+
+export function isProgressUnlocked(
+    flag
+) {
 
     initMrSmileProgress();
+
 
     switch (flag) {
 
         case "archive":
-            return state.flags.archiveUnlocked;
+
+            return (
+                state.flags.archiveUnlocked
+            );
+
 
         case "game":
-            return state.flags.gameUnlocked;
+
+            return (
+                state.flags.gameUnlocked
+            );
+
 
         case "truth":
-            return state.flags.truthUnlocked;
+
+            return (
+                state.flags.truthUnlocked
+            );
+
 
         default:
+
             return false;
 
     }
@@ -321,9 +515,14 @@ export function isProgressUnlocked(flag) {
 }
 
 
+// =======================================
+// GET COMPLETE PROGRESS
+// =======================================
+
 export function getMrSmileProgress() {
 
     initMrSmileProgress();
+
 
     return {
 
@@ -332,7 +531,9 @@ export function getMrSmileProgress() {
         ],
 
         flags: {
+
             ...state.flags
+
         }
 
     };
@@ -341,16 +542,59 @@ export function getMrSmileProgress() {
 
 
 // =======================================
-// RESET
+// GET PROGRESS STATUS
+// =======================================
+
+export function getMrSmileProgressStatus() {
+
+    initMrSmileProgress();
+
+
+    return {
+
+        trust:
+            getTrust(),
+
+        firstContact:
+            localStorage.getItem(
+                "mrsmile_first_contact"
+            ) === "1",
+
+        keywords: [
+            ...state.keywords
+        ],
+
+        archiveUnlocked:
+            state.flags.archiveUnlocked,
+
+        gameUnlocked:
+            state.flags.gameUnlocked,
+
+        truthUnlocked:
+            state.flags.truthUnlocked
+
+    };
+
+}
+
+
+// =======================================
+// RESET PROGRESS
 // =======================================
 
 export function resetMrSmileProgress() {
 
     state.keywords = [];
 
-    state.flags.archiveUnlocked = false;
-    state.flags.gameUnlocked = false;
-    state.flags.truthUnlocked = false;
+
+    state.flags.archiveUnlocked =
+        false;
+
+    state.flags.gameUnlocked =
+        false;
+
+    state.flags.truthUnlocked =
+        false;
 
 
     localStorage.removeItem(
@@ -362,16 +606,21 @@ export function resetMrSmileProgress() {
         "[MR.SMILE PROGRESS] Progress reset."
     );
 
+
+    trigger(
+        "mrsmile:progressReset"
+    );
+
 }
 
 
 // =======================================
-// HELPERS
+// NORMALIZE TEXT
 // =======================================
 
 function normalize(text) {
 
-    return text
+    return String(text)
 
         .toLowerCase()
 
@@ -390,6 +639,10 @@ function normalize(text) {
 }
 
 
+// =======================================
+// MATCH KEYWORD
+// =======================================
+
 function matchesKeyword(
     text,
     words
@@ -400,20 +653,28 @@ function matchesKeyword(
         const normalizedWord =
             normalize(word);
 
+
         return (
 
-            text === normalizedWord ||
+            text ===
+            normalizedWord
+
+            ||
 
             text.includes(
                 " " +
                 normalizedWord +
                 " "
-            ) ||
+            )
+
+            ||
 
             text.startsWith(
                 normalizedWord +
                 " "
-            ) ||
+            )
+
+            ||
 
             text.endsWith(
                 " " +
@@ -428,21 +689,55 @@ function matchesKeyword(
 
 
 // =======================================
-// STORAGE
+// SAVE PROGRESS
 // =======================================
 
 function saveProgress() {
 
-    localStorage.setItem(
+    try {
 
-        STORAGE_KEY,
+        localStorage.setItem(
 
-        JSON.stringify(state)
+            STORAGE_KEY,
 
-    );
+            JSON.stringify({
+
+                keywords:
+                    state.keywords,
+
+                flags: {
+
+                    archiveUnlocked:
+                        state.flags.archiveUnlocked,
+
+                    gameUnlocked:
+                        state.flags.gameUnlocked,
+
+                    truthUnlocked:
+                        state.flags.truthUnlocked
+
+                }
+
+            })
+
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "[MR.SMILE PROGRESS] Failed to save progress.",
+            error
+        );
+
+    }
 
 }
 
+
+// =======================================
+// LOAD PROGRESS
+// =======================================
 
 function loadProgress() {
 
@@ -450,6 +745,7 @@ function loadProgress() {
         localStorage.getItem(
             STORAGE_KEY
         );
+
 
     if (!raw)
         return;
@@ -461,6 +757,10 @@ function loadProgress() {
             JSON.parse(raw);
 
 
+        // --------------------------------
+        // KEYWORDS
+        // --------------------------------
+
         if (
             Array.isArray(
                 saved.keywords
@@ -468,18 +768,28 @@ function loadProgress() {
         ) {
 
             state.keywords =
-                saved.keywords;
+                [
+                    ...new Set(
+                        saved.keywords
+                    )
+                ];
 
         }
 
+
+        // --------------------------------
+        // FLAGS
+        // --------------------------------
 
         if (saved.flags) {
 
             state.flags.archiveUnlocked =
                 saved.flags.archiveUnlocked === true;
 
+
             state.flags.gameUnlocked =
                 saved.flags.gameUnlocked === true;
+
 
             state.flags.truthUnlocked =
                 saved.flags.truthUnlocked === true;
@@ -487,7 +797,6 @@ function loadProgress() {
         }
 
     }
-
     catch (error) {
 
         console.error(
@@ -496,21 +805,5 @@ function loadProgress() {
         );
 
     }
-
-}
-
-
-// =======================================
-// INTERNAL INIT
-// =======================================
-
-function initMrSmileProgressWithoutRecursion() {
-
-    if (initialized)
-        return;
-
-    initialized = true;
-
-    loadProgress();
 
 }
