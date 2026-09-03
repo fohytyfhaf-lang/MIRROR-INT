@@ -61,6 +61,8 @@ export function addTrust(amount, reason = "") {
 
     if (trust < -100)
         trust = -100;
+    
+    saveTrust();
 
     console.log("[MR.SMILE] Trust:", trust, reason);
 
@@ -93,6 +95,8 @@ export function getTrust() {
 export function setTrust(value) {
 
     trust = value;
+    
+    saveTrust();
 
 }
 
