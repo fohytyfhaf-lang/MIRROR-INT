@@ -12,6 +12,9 @@ import {
     loadTrust
 } from "./mrsmileTrust.js";
 import { getMemory } from "./mrsmileMemory.js";
+import {
+    triggerMrSmileManifestation
+} from "./mrsmileAppearance.js";
 import { revealMrSmileChat } from "./chats.js";
 import {
     initMrSmileProgress,
