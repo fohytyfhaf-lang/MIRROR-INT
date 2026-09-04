@@ -1900,23 +1900,51 @@
 ========================================================== */
 
 #nullSpaceRoot .nullInterface {
-    position: absolute;
-    inset: 0;
-
-    z-index: 300;
-
-    display: flex;
-
-    flex-direction: column;
-
-    pointer-events: none;
+    position:absolute;
+    inset:0;
+    z-index:300;
+    display:flex;
+    flex-direction:column;
+    pointer-events:none;
 }
 
+/* UI пропускает клики в мир */
 #nullSpaceRoot .nullInterface > * {
-    pointer-events: auto;
+    pointer-events:none;
 }
 
+/* Верхняя панель */
+#nullSpaceRoot .nullTopBar {
+    pointer-events:auto;
+}
 
+/* Навигация */
+#nullSpaceRoot .nullNavigation {
+    pointer-events:auto;
+}
+
+/* Рабочая область не блокирует объекты мира */
+#nullSpaceRoot .nullWorkspace {
+    pointer-events:none;
+}
+
+/* Само содержимое окна снова кликабельно */
+#nullSpaceRoot .nullMain {
+    pointer-events:none;
+}
+
+#nullSpaceRoot .nullMain .nullInternalWindow.active {
+    pointer-events:auto;
+}
+
+#nullSpaceRoot .nullMain .nullInternalWindow.active * {
+    pointer-events:auto;
+}
+
+/* Нижняя панель */
+#nullSpaceRoot .nullTaskbar {
+    pointer-events:auto;
+}
 /* ==========================================================
    TOP BAR
 ========================================================== */
@@ -2988,4 +3016,121 @@
     #nullSpaceRoot .nullInternalWindow {
         inset: 8px;
     }
+}
+
+/* ==========================================================
+   NULL DOOR — INTERACTION FIX
+========================================================== */
+
+#nullSpaceRoot .nullWorldDoor {
+    pointer-events: auto !important;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+#nullSpaceRoot .nullDoorFrame,
+#nullSpaceRoot .nullDoorPanel,
+#nullSpaceRoot .nullDoorPanel span,
+#nullSpaceRoot .nullDoorStatus {
+    pointer-events: none !important;
+}
+
+
+/* Кнопка/дверь гарантированно находится выше декораций */
+
+#nullSpaceRoot .nullWorldDoor {
+    z-index: 300 !important;
+}
+
+
+/* Когда дверь открывается — панель реально уходит в сторону */
+
+#nullSpaceRoot .nullWorldDoor.is-open {
+    z-index: 300 !important;
+}
+
+#nullSpaceRoot .nullWorldDoor.is-open .nullDoorPanel {
+    transform:
+        perspective(600px)
+        rotateY(-82deg)
+        translateX(12px);
+
+    opacity: .03;
+
+    filter: brightness(.45);
+}
+
+
+/* Проём становится заметнее */
+
+#nullSpaceRoot .nullWorldDoor.is-open::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(255,255,255,.045),
+            rgba(0,0,0,.7) 65%,
+            #000 100%
+        );
+
+    pointer-events: none;
+
+    z-index: -1;
+
+    animation: nullDoorVoidPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes nullDoorVoidPulse {
+
+    0%,100% {
+        opacity: .35;
+    }
+
+    50% {
+        opacity: .75;
+    }
+}
+
+
+/* Нажатие */
+
+#nullSpaceRoot .nullWorldDoor:active {
+    transform:
+        translateX(-50%)
+        scale(.985);
+}
+
+#nullSpaceRoot .nullWorldDoor.is-open:active {
+    transform:
+        translateX(-50%)
+        scale(.985);
+}
+
+
+/* Статус */
+
+#nullSpaceRoot .nullWorldDoor.is-open .nullDoorStatus {
+    color: rgba(255,255,255,.75);
+}
+
+
+/* ==========================================================
+   NULL WORLD OBJECTS — CLICK FIX
+========================================================== */
+
+#nullSpaceRoot .nullWorldDoor {
+    pointer-events:auto !important;
+    cursor:pointer;
+}
+
+#nullSpaceRoot .nullDoorFrame,
+#nullSpaceRoot .nullDoorPanel,
+#nullSpaceRoot .nullDoorPanel span,
+#nullSpaceRoot .nullDoorStatus {
+    pointer-events:none !important;
 }
