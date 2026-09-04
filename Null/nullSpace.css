@@ -1,794 +1,54 @@
 /* ==========================================================
    NULL SPACE
-   OMEGA ALTERED INTERFACE
-   ----------------------------------------------------------
-   Activated by:
-   body.nullSpaceActive
-   ========================================================== */
-
-
-/* ==========================================================
-   01. ROOT / GLOBAL
-========================================================== */
-
-body.nullSpaceActive {
-    --null-black: #000;
-    --null-bg: #050505;
-    --null-bg-2: #080808;
-    --null-panel: #0b0b0b;
-    --null-panel-2: #101010;
-
-    --null-border: #252525;
-    --null-border-dark: #171717;
-    --null-border-light: #383838;
-
-    --null-text: #bdbdbd;
-    --null-text-dim: #666;
-    --null-text-dark: #3d3d3d;
-    --null-white: #ededed;
-
-    --null-red: #5d1616;
-
-    background: #000 !important;
-    color: var(--null-text) !important;
-
-    overflow: hidden !important;
-
-    transition:
-        background 1.2s ease,
-        color 1.2s ease;
-}
-
-
-/* ==========================================================
-   02. MAIN PAGE
-========================================================== */
-
-body.nullSpaceActive,
-body.nullSpaceActive #app,
-body.nullSpaceActive #desktop,
-body.nullSpaceActive .desktop,
-body.nullSpaceActive #main,
-body.nullSpaceActive .main {
-    background:
-        radial-gradient(
-            ellipse at center,
-            #0a0a0a 0%,
-            #050505 42%,
-            #000 100%
-        ) !important;
-}
-
-
-/* ==========================================================
-   03. REMOVE NORMAL OMEGA COLOR LANGUAGE
-========================================================== */
-
-body.nullSpaceActive * {
-    scrollbar-color: #252525 #050505;
-}
-
-body.nullSpaceActive *::-webkit-scrollbar {
-    width: 7px;
-    height: 7px;
-}
-
-body.nullSpaceActive *::-webkit-scrollbar-track {
-    background: #050505;
-}
-
-body.nullSpaceActive *::-webkit-scrollbar-thumb {
-    background: #272727;
-    border-radius: 0;
-}
-
-body.nullSpaceActive *::-webkit-scrollbar-thumb:hover {
-    background: #444;
-}
-
-
-/* ==========================================================
-   04. WINDOWS
-   ----------------------------------------------------------
-   Deliberately NOT replacing the normal .window geometry.
-   Only visual appearance changes.
-========================================================== */
-
-body.nullSpaceActive .window {
-    background:
-        linear-gradient(
-            180deg,
-            #0a0a0a 0%,
-            #060606 100%
-        ) !important;
-
-    border-color: #252525 !important;
-
-    box-shadow:
-        0 20px 60px rgba(0,0,0,.85),
-        0 0 0 1px rgba(255,255,255,.015) !important;
-
-    backdrop-filter: none !important;
-
-    animation:
-        nullWindowAppear .55s ease !important;
-}
-
-
-/* Active window */
-
-body.nullSpaceActive .window.active {
-    border-color: #414141 !important;
-
-    box-shadow:
-        0 25px 70px rgba(0,0,0,.9),
-        0 0 0 1px rgba(255,255,255,.025) !important;
-}
-
-
-/* Non-active windows become almost dead */
-
-body.nullSpaceActive .window:not(.active) {
-    opacity: .72 !important;
-}
-
-
-/* ==========================================================
-   05. WINDOW HEADER
-========================================================== */
-
-body.nullSpaceActive .windowHeader {
-    background:
-        linear-gradient(
-            180deg,
-            #111 0%,
-            #090909 100%
-        ) !important;
-
-    border-bottom-color: #222 !important;
-
-    color: #777 !important;
-
-    cursor: move;
-}
-
-
-/* Header title */
-
-body.nullSpaceActive .windowTitle {
-    color: #a6a6a6 !important;
-
-    font-weight: 500 !important;
-
-    letter-spacing: .8px !important;
-
-    text-shadow: none !important;
-}
-
-
-/* Window icon */
-
-body.nullSpaceActive .windowIcon {
-    color: #666 !important;
-
-    filter:
-        grayscale(1)
-        brightness(.55) !important;
-}
-
-
-/* ==========================================================
-   06. WINDOW CONTROLS
-========================================================== */
-
-body.nullSpaceActive .windowControls button {
-    background: #0d0d0d !important;
-
-    color: #666 !important;
-
-    border: 1px solid #202020 !important;
-
-    border-radius: 0 !important;
-
-    box-shadow: none !important;
-}
-
-
-body.nullSpaceActive .windowControls button:hover {
-    background: #181818 !important;
-
-    color: #aaa !important;
-
-    border-color: #414141 !important;
-}
-
-
-body.nullSpaceActive .windowControls button:last-child:hover {
-    background: #260909 !important;
-
-    color: #b5b5b5 !important;
-
-    border-color: #541414 !important;
-}
-
-
-/* ==========================================================
-   07. WINDOW BODY
-========================================================== */
-
-body.nullSpaceActive .windowBody {
-    background: #050505 !important;
-
-    color: #999 !important;
-}
-
-
-/* ==========================================================
-   08. WINDOW CONTENT
-========================================================== */
-
-body.nullSpaceActive .windowContent {
-    background:
-        linear-gradient(
-            180deg,
-            #070707 0%,
-            #040404 100%
-        ) !important;
-
-    color: #999 !important;
-}
-
-
-/* ==========================================================
-   09. STATUS BAR
-========================================================== */
-
-body.nullSpaceActive .windowStatus {
-    background: #080808 !important;
-
-    border-top-color: #1b1b1b !important;
-
-    color: #555 !important;
-}
-
-
-/* ==========================================================
-   10. FOOTER
-========================================================== */
-
-body.nullSpaceActive .windowFooter {
-    background: #080808 !important;
-
-    border-top-color: #1d1d1d !important;
-
-    color: #666 !important;
-}
-
-
-/* ==========================================================
-   11. BUTTONS
-========================================================== */
-
-body.nullSpaceActive button {
-    background: #0c0c0c !important;
-
-    color: #929292 !important;
-
-    border-color: #292929 !important;
-
-    box-shadow: none !important;
-}
-
-
-body.nullSpaceActive button:hover {
-    background: #151515 !important;
-
-    color: #ddd !important;
-
-    border-color: #444 !important;
-
-    box-shadow: none !important;
-}
-
-
-body.nullSpaceActive button:active {
-    background: #050505 !important;
-
-    color: #aaa !important;
-}
-
-
-/* ==========================================================
-   12. INPUTS
-========================================================== */
-
-body.nullSpaceActive input,
-body.nullSpaceActive textarea,
-body.nullSpaceActive select {
-    background: #050505 !important;
-
-    color: #aaa !important;
-
-    border-color: #292929 !important;
-
-    box-shadow: none !important;
-
-    outline: none !important;
-}
-
-
-body.nullSpaceActive input:focus,
-body.nullSpaceActive textarea:focus,
-body.nullSpaceActive select:focus {
-    border-color: #4a4a4a !important;
-
-    box-shadow:
-        0 0 0 1px rgba(255,255,255,.025) !important;
-}
-
-
-body.nullSpaceActive input::placeholder,
-body.nullSpaceActive textarea::placeholder {
-    color: #3f3f3f !important;
-}
-
-
-/* ==========================================================
-   13. LINKS
-========================================================== */
-
-body.nullSpaceActive a {
-    color: #858585 !important;
-
-    text-decoration-color: #333 !important;
-}
-
-
-body.nullSpaceActive a:hover {
-    color: #d0d0d0 !important;
-}
-
-
-/* ==========================================================
-   14. TEXT
-========================================================== */
-
-body.nullSpaceActive h1,
-body.nullSpaceActive h2,
-body.nullSpaceActive h3,
-body.nullSpaceActive h4,
-body.nullSpaceActive h5,
-body.nullSpaceActive h6 {
-    color: #c4c4c4 !important;
-
-    text-shadow: none !important;
-}
-
-
-body.nullSpaceActive p,
-body.nullSpaceActive span,
-body.nullSpaceActive label {
-    text-shadow: none !important;
-}
-
-
-/* ==========================================================
-   15. OMEGA CYAN OVERRIDE
-   ----------------------------------------------------------
-   Anything that used the normal OMEGA cyan becomes gray.
-========================================================== */
-
-body.nullSpaceActive [style*="#4fd8ff"],
-body.nullSpaceActive [style*="#4FD8FF"],
-body.nullSpaceActive [style*="rgb(79, 216, 255)"] {
-    color: #999 !important;
-    border-color: #444 !important;
-    background-color: #111 !important;
-}
-
-
-/* ==========================================================
-   16. SELECTION
-========================================================== */
-
-body.nullSpaceActive ::selection {
-    background: #bdbdbd !important;
-
-    color: #000 !important;
-}
-
-
-/* ==========================================================
-   17. DESKTOP ICONS
-========================================================== */
-
-body.nullSpaceActive .desktopIcon,
-body.nullSpaceActive .icon,
-body.nullSpaceActive .appIcon {
-    filter:
-        grayscale(1)
-        brightness(.58) !important;
-
-    color: #777 !important;
-
-    text-shadow: none !important;
-
-    transition:
-        filter .25s ease,
-        opacity .25s ease,
-        transform .25s ease;
-}
-
-
-body.nullSpaceActive .desktopIcon:hover,
-body.nullSpaceActive .icon:hover,
-body.nullSpaceActive .appIcon:hover {
-    filter:
-        grayscale(1)
-        brightness(.95) !important;
-
-    transform: translateY(-1px);
-}
-
-
-/* ==========================================================
-   18. TASKBAR
-========================================================== */
-
-body.nullSpaceActive #taskbar,
-body.nullSpaceActive .taskbar,
-body.nullSpaceActive #taskBar {
-    background:
-        linear-gradient(
-            180deg,
-            #0d0d0d,
-            #050505
-        ) !important;
-
-    border-top-color: #292929 !important;
-
-    box-shadow:
-        0 -10px 30px rgba(0,0,0,.55) !important;
-}
-
-
-body.nullSpaceActive #taskbar *,
-body.nullSpaceActive .taskbar *,
-body.nullSpaceActive #taskBar * {
-    color: #777 !important;
-}
-
-
-body.nullSpaceActive #taskbar button:hover,
-body.nullSpaceActive .taskbar button:hover,
-body.nullSpaceActive #taskBar button:hover {
-    background: #171717 !important;
-
-    color: #ccc !important;
-}
-
-
-/* ==========================================================
-   19. CLOCK
-========================================================== */
-
-body.nullSpaceActive #clock,
-body.nullSpaceActive #systemClock,
-body.nullSpaceActive .clock,
-body.nullSpaceActive .systemClock {
-    color: #666 !important;
-
-    text-shadow: none !important;
-
-    font-variant-numeric: tabular-nums;
-}
-
-
-/* ==========================================================
-   20. NORMAL OMEGA STATUS INDICATORS
-========================================================== */
-
-body.nullSpaceActive .status-online,
-body.nullSpaceActive .online,
-body.nullSpaceActive .connected,
-body.nullSpaceActive .status-active {
-    color: #777 !important;
-}
-
-
-body.nullSpaceActive .status-online::before,
-body.nullSpaceActive .online::before,
-body.nullSpaceActive .connected::before {
-    background: #555 !important;
-
-    box-shadow: none !important;
-}
-
-
-/* ==========================================================
-   21. CHAT
-========================================================== */
-
-body.nullSpaceActive .chatMessage {
-    background: #090909 !important;
-
-    border-color: #1e1e1e !important;
-
-    color: #8f8f8f !important;
-
-    box-shadow: none !important;
-}
-
-
-body.nullSpaceActive .chatMessage:hover {
-    background: #0d0d0d !important;
-
-    border-color: #2d2d2d !important;
-}
-
-
-body.nullSpaceActive .messageUser,
-body.nullSpaceActive .chatUser {
-    color: #a0a0a0 !important;
-}
-
-
-body.nullSpaceActive .messageTime,
-body.nullSpaceActive .chatTime {
-    color: #444 !important;
-}
-
-
-body.nullSpaceActive .messageText,
-body.nullSpaceActive .chatText {
-    color: #8a8a8a !important;
-}
-
-
-/* ==========================================================
-   22. NULL CHAT
-   ----------------------------------------------------------
-   NULL gets slightly different treatment.
-========================================================== */
-
-body.nullSpaceActive [data-chat="nullEntity"],
-body.nullSpaceActive #chat-nullEntity,
-body.nullSpaceActive .chatItem[data-chat-id="nullEntity"] {
-    background: #070707 !important;
-
-    border-color: #292929 !important;
-}
-
-
-body.nullSpaceActive [data-chat="nullEntity"] *,
-body.nullSpaceActive #chat-nullEntity *,
-body.nullSpaceActive .chatItem[data-chat-id="nullEntity"] * {
-    color: #999 !important;
-}
-
-
-/* NULL name */
-
-body.nullSpaceActive .nullEntity,
-body.nullSpaceActive .null-name {
-    color: #c7c7c7 !important;
-
-    letter-spacing: 1px;
-}
-
-
-/* ==========================================================
-   23. FILE EXPLORER
-========================================================== */
-
-body.nullSpaceActive .fileItem,
-body.nullSpaceActive .explorerItem,
-body.nullSpaceActive .file-entry {
-    background: #070707 !important;
-
-    border-color: #1d1d1d !important;
-
-    color: #858585 !important;
-}
-
-
-body.nullSpaceActive .fileItem:hover,
-body.nullSpaceActive .explorerItem:hover,
-body.nullSpaceActive .file-entry:hover {
-    background: #101010 !important;
-
-    border-color: #383838 !important;
-
-    color: #c0c0c0 !important;
-}
-
-
-/* ==========================================================
-   24. CONSOLE
-========================================================== */
-
-body.nullSpaceActive .console,
-body.nullSpaceActive #consoleOutput,
-body.nullSpaceActive .consoleOutput {
-    background: #020202 !important;
-
-    color: #777 !important;
-
-    border-color: #181818 !important;
-
-    box-shadow: none !important;
-}
-
-
-body.nullSpaceActive .consoleLine {
-    color: #777 !important;
-}
-
-
-body.nullSpaceActive .consoleLine.system {
-    color: #888 !important;
-}
-
-
-body.nullSpaceActive .consoleLine.error {
-    color: #8a4545 !important;
-}
-
-
-/* ==========================================================
-   25. CAMERAS
-   ----------------------------------------------------------
-   We don't modify camera.css geometry.
-   Only visual tint when NULL SPACE is active.
-========================================================== */
-
-body.nullSpaceActive .cameraWindow,
-body.nullSpaceActive #cameraWindow {
-    background: #030303 !important;
-}
-
-
-body.nullSpaceActive .cameraFeed,
-body.nullSpaceActive .cameraScreen,
-body.nullSpaceActive .cameraViewport {
-    filter:
-        grayscale(1)
-        contrast(1.05)
-        brightness(.72) !important;
-}
-
-
-/* ==========================================================
-   26. RESEARCH / DOCUMENTS
-========================================================== */
-
-body.nullSpaceActive .document,
-body.nullSpaceActive .researchDocument,
-body.nullSpaceActive .documentContent {
-    background: #070707 !important;
-
-    color: #999 !important;
-}
-
-
-body.nullSpaceActive .documentHeader,
-body.nullSpaceActive .documentTitle {
-    color: #aaa !important;
-
-    border-color: #222 !important;
-}
-
-
-/* ==========================================================
-   27. PERSONNEL
-========================================================== */
-
-body.nullSpaceActive .personnelCard,
-body.nullSpaceActive .employeeCard,
-body.nullSpaceActive .personCard {
-    background: #080808 !important;
-
-    border-color: #222 !important;
-
-    box-shadow: none !important;
-}
-
-
-body.nullSpaceActive .personnelCard:hover,
-body.nullSpaceActive .employeeCard:hover,
-body.nullSpaceActive .personCard:hover {
-    background: #0d0d0d !important;
-
-    border-color: #383838 !important;
-}
-
-
-/* ==========================================================
-   28. HIDE NORMAL GLOW
-========================================================== */
-
-body.nullSpaceActive [class*="glow"],
-body.nullSpaceActive [class*="Glow"] {
-    text-shadow: none !important;
-
-    box-shadow:
-        none !important;
-}
-
-
-/* ==========================================================
-   29. OMEGA LOGO
-========================================================== */
-
-body.nullSpaceActive .omegaLogo,
-body.nullSpaceActive #omegaLogo,
-body.nullSpaceActive .logo {
-    filter:
-        grayscale(1)
-        brightness(.55) !important;
-
-    text-shadow: none !important;
-}
-
-
-/* ==========================================================
-   30. NULL SPACE ROOT
-   ----------------------------------------------------------
-   This is where future NULL-only objects can live.
+   Completely separate OMEGA instance
 ========================================================== */
 
 #nullSpaceRoot {
     position: fixed;
-
     inset: 0;
-
-    z-index: 9990;
-
-    pointer-events: none;
-
-    opacity: 0;
-
-    background:
-        #000;
-
-    transition:
-        opacity 1s ease;
+    z-index: 999999;
+    display: none;
+    overflow: hidden;
+    background: #050505;
+    color: #d8d8d8;
+    font-family:
+        "Courier New",
+        Consolas,
+        monospace;
 }
 
-
-body.nullSpaceActive #nullSpaceRoot {
-    opacity: 1;
+#nullSpaceRoot.hidden {
+    display: none !important;
 }
 
 
 /* ==========================================================
-   31. NULL ATMOSPHERE
-   ----------------------------------------------------------
-   Very subtle. No cheap RGB glitch.
+   ROOT
 ========================================================== */
 
-#nullSpaceRoot::before {
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    pointer-events: none;
-
+.nullSpace {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-width: 900px;
+    min-height: 600px;
+    overflow: hidden;
     background:
         radial-gradient(
-            ellipse at center,
-            transparent 25%,
-            rgba(0,0,0,.35) 70%,
-            rgba(0,0,0,.85) 100%
+            circle at 50% 45%,
+            #111 0%,
+            #080808 38%,
+            #030303 100%
         );
-
-    opacity: .75;
 }
 
 
-#nullSpaceRoot::after {
+/* ==========================================================
+   SUBTLE GRID
+========================================================== */
+
+.nullSpace::before {
+
     content: "";
 
     position: absolute;
@@ -797,119 +57,343 @@ body.nullSpaceActive #nullSpaceRoot {
 
     pointer-events: none;
 
-    background:
-        repeating-linear-gradient(
-            90deg,
-            transparent 0,
-            transparent 119px,
-            rgba(255,255,255,.008) 120px
-        );
+    opacity: .12;
 
-    opacity: .25;
-}
-
-
-/* ==========================================================
-   32. NULL SPACE FAINT LINES
-   ----------------------------------------------------------
-   Empty-space effect.
-========================================================== */
-
-body.nullSpaceActive::before {
-    content: "";
-
-    position: fixed;
-
-    inset: 0;
-
-    pointer-events: none;
-
-    z-index: 9980;
-
-    background:
+    background-image:
+        linear-gradient(
+            rgba(255,255,255,.025) 1px,
+            transparent 1px
+        ),
         linear-gradient(
             90deg,
-            transparent 0%,
-            transparent 49.85%,
-            rgba(255,255,255,.018) 50%,
-            transparent 50.15%,
-            transparent 100%
+            rgba(255,255,255,.025) 1px,
+            transparent 1px
         );
 
-    opacity: .25;
+    background-size:
+        32px 32px;
+
 }
 
 
 /* ==========================================================
-   33. NULL SPACE VIGNETTE
+   TOP BAR
 ========================================================== */
 
-body.nullSpaceActive::after {
-    content: "";
+.nullTopBar {
 
-    position: fixed;
+    position: absolute;
 
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
 
-    pointer-events: none;
+    height: 58px;
 
-    z-index: 9979;
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding:
+        0 22px;
+
+    box-sizing: border-box;
+
+    border-bottom:
+        1px solid #222;
 
     background:
-        radial-gradient(
-            ellipse at center,
-            transparent 40%,
-            rgba(0,0,0,.18) 70%,
-            rgba(0,0,0,.65) 100%
-        );
+        rgba(5,5,5,.94);
 
-    pointer-events: none;
+    z-index: 10;
+
+}
+
+
+.nullBrand {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+.nullBrandMark {
+
+    width: 31px;
+    height: 31px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border:
+        1px solid #777;
+
+    color: #eee;
+
+    font-size: 17px;
+
+}
+
+
+.nullBrandTitle {
+
+    font-size: 13px;
+
+    letter-spacing:
+        4px;
+
+    color: #ddd;
+
+}
+
+
+.nullBrandSubtitle {
+
+    margin-top: 3px;
+
+    font-size: 9px;
+
+    letter-spacing:
+        2px;
+
+    color: #555;
+
+}
+
+
+.nullTopStatus {
+
+    display: flex;
+
+    gap: 12px;
+
+    font-size: 9px;
+
+    letter-spacing:
+        2px;
+
+}
+
+
+.nullStatusLabel {
+
+    color: #555;
+
+}
+
+
+.nullStatusValue {
+
+    color: #aaa;
+
 }
 
 
 /* ==========================================================
-   34. NULL TEXT
+   WORKSPACE
 ========================================================== */
 
-.nullSpaceText {
-    color: #888;
+.nullWorkspace {
+
+    position: absolute;
+
+    top: 58px;
+    bottom: 42px;
+
+    left: 0;
+    right: 0;
+
+    display: flex;
+
+}
+
+
+/* ==========================================================
+   NAVIGATION
+========================================================== */
+
+.nullNavigation {
+
+    position: relative;
+
+    width: 210px;
+
+    flex:
+        0 0 210px;
+
+    border-right:
+        1px solid #1c1c1c;
+
+    background:
+        rgba(3,3,3,.88);
+
+    padding:
+        20px 12px;
+
+    box-sizing: border-box;
+
+}
+
+
+.nullNavTitle {
+
+    padding:
+        0 9px 13px;
+
+    font-size: 9px;
+
+    letter-spacing:
+        3px;
+
+    color: #4d4d4d;
+
+}
+
+
+.nullNavButton {
+
+    width: 100%;
+
+    height: 40px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    border: 0;
+
+    border-bottom:
+        1px solid #151515;
+
+    background:
+        transparent;
+
+    color: #777;
+
+    text-align: left;
 
     font-family:
-        monospace,
-        "Courier New",
-        sans-serif;
+        inherit;
 
-    letter-spacing: .08em;
+    font-size: 10px;
 
-    text-transform: uppercase;
+    letter-spacing:
+        1.5px;
 
-    user-select: none;
+    cursor: pointer;
+
+    transition:
+        background .15s,
+        color .15s;
+
 }
 
 
-.nullSpaceText.dim {
-    color: #414141;
+.nullNavButton span {
+
+    width: 25px;
+
+    color: #3d3d3d;
+
 }
 
 
-.nullSpaceText.faint {
-    color: #292929;
+.nullNavButton:hover {
+
+    background:
+        #101010;
+
+    color: #eee;
+
 }
 
 
-.nullSpaceText.visible {
-    color: #bcbcbc;
+.nullNavButton:hover span {
+
+    color: #aaa;
+
+}
+
+
+.nullUnknownButton {
+
+    margin-top: 3px;
+
+}
+
+
+.nullNavDivider {
+
+    height: 35px;
+
+}
+
+
+.nullNavigationBottom {
+
+    position: absolute;
+
+    left: 21px;
+    right: 21px;
+    bottom: 18px;
+
+    font-size: 8px;
+
+    letter-spacing:
+        2px;
+
+    color: #363636;
+
+}
+
+
+.nullNavigationBottom strong {
+
+    display: block;
+
+    margin-top: 5px;
+
+    color: #555;
+
+    font-weight: normal;
+
 }
 
 
 /* ==========================================================
-   35. NULL OBJECTS
-   ----------------------------------------------------------
-   Future objects that don't exist in normal OMEGA.
+   MAIN
 ========================================================== */
 
-.nullObject {
+.nullMain {
+
     position: relative;
+
+    flex: 1;
+
+    overflow: hidden;
+
+}
+
+
+/* ==========================================================
+   EMPTY STATE
+========================================================== */
+
+.nullEmptyState {
+
+    position: absolute;
+
+    inset: 0;
 
     display: flex;
 
@@ -917,134 +401,735 @@ body.nullSpaceActive::after {
 
     justify-content: center;
 
-    min-width: 110px;
+    flex-direction: column;
 
-    min-height: 70px;
+}
 
-    padding: 14px;
 
-    background: #070707;
+.nullZero {
 
-    border: 1px solid #292929;
+    font-size: 110px;
+
+    font-weight: 300;
+
+    line-height: 1;
+
+    color: #171717;
+
+}
+
+
+.nullEmptyTitle {
+
+    margin-top: 20px;
+
+    font-size: 11px;
+
+    letter-spacing:
+        5px;
+
+    color: #555;
+
+}
+
+
+.nullEmptyText {
+
+    margin-top: 8px;
+
+    font-size: 8px;
+
+    letter-spacing:
+        3px;
+
+    color: #303030;
+
+}
+
+
+/* ==========================================================
+   INTERNAL WINDOWS
+========================================================== */
+
+.nullInternalWindow {
+
+    position: absolute;
+
+    inset: 35px;
+
+    border:
+        1px solid #262626;
+
+    background:
+        rgba(4,4,4,.94);
+
+    box-shadow:
+        0 25px 80px rgba(0,0,0,.7);
+
+}
+
+
+.nullInternalWindow.hidden {
+
+    display: none;
+
+}
+
+
+.nullWindowHeader {
+
+    height: 45px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding:
+        0 16px;
+
+    border-bottom:
+        1px solid #222;
+
+    box-sizing: border-box;
+
+    font-size: 10px;
+
+    letter-spacing:
+        3px;
+
+    color: #bbb;
+
+}
+
+
+.nullWindowHeader span {
+
+    font-size: 8px;
+
+    color: #444;
+
+    letter-spacing:
+        2px;
+
+}
+
+
+/* ==========================================================
+   ARCHIVE
+========================================================== */
+
+.nullArchive {
+
+    padding: 20px;
+
+}
+
+
+.nullArchiveItem {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding:
+        15px 12px;
+
+    border-bottom:
+        1px solid #151515;
+
+    font-size: 10px;
+
+    color: #555;
+
+}
+
+
+.nullArchiveItem strong {
+
+    font-weight: normal;
+
+    color: #777;
+
+}
+
+
+.nullArchiveItem:hover {
+
+    background:
+        #0b0b0b;
+
+    color: #aaa;
+
+}
+
+
+.nullArchiveItem.nullCorrupt strong {
+
+    color: #aaa;
+
+}
+
+
+/* ==========================================================
+   CHAT
+========================================================== */
+
+.nullChatMessages {
+
+    position: absolute;
+
+    top: 45px;
+    bottom: 58px;
+
+    left: 0;
+    right: 0;
+
+    overflow-y: auto;
+
+    padding: 22px;
+
+    box-sizing: border-box;
+
+}
+
+
+.nullMessage {
+
+    max-width: 80%;
+
+    margin-bottom: 18px;
+
+    font-size: 11px;
+
+    line-height: 1.7;
+
+    color: #888;
+
+}
+
+
+.nullMessage span {
+
+    display: inline-block;
+
+    width: 70px;
+
+    color: #3e3e3e;
+
+    font-size: 8px;
+
+    letter-spacing:
+        2px;
+
+}
+
+
+.nullSystem {
+
+    color: #555;
+
+}
+
+
+.nullUnknownMessage {
+
+    color: #bbb;
+
+}
+
+
+.nullUnknownMessage span {
+
+    color: #aaa;
+
+}
+
+
+.nullChatInput {
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 58px;
+
+    display: flex;
+
+    border-top:
+        1px solid #222;
+
+}
+
+
+.nullChatInput input {
+
+    flex: 1;
+
+    border: 0;
+
+    outline: 0;
+
+    background:
+        #070707;
+
+    color: #ddd;
+
+    padding:
+        0 18px;
+
+    font-family:
+        inherit;
+
+    font-size: 11px;
+
+}
+
+
+.nullChatInput button {
+
+    width: 60px;
+
+    border: 0;
+
+    border-left:
+        1px solid #222;
+
+    background:
+        #0b0b0b;
 
     color: #777;
 
     font-family:
-        monospace,
-        "Courier New",
-        sans-serif;
-
-    font-size: 11px;
-
-    letter-spacing: .08em;
+        inherit;
 
     cursor: pointer;
 
-    transition:
-        background .25s ease,
-        border-color .25s ease,
-        color .25s ease,
-        transform .25s ease;
 }
 
 
-.nullObject:hover {
-    background: #0d0d0d;
+.nullChatInput button:hover {
 
-    border-color: #444;
-
-    color: #ccc;
-
-    transform: translateY(-1px);
-}
-
-
-.nullObject:active {
-    background: #030303;
-
-    transform: translateY(0);
-}
-
-
-/* ==========================================================
-   36. NULL OBJECT — UNKNOWN
-========================================================== */
-
-.nullObject.unknown {
-    border-color: #1c1c1c;
-
-    color: #4d4d4d;
-}
-
-
-.nullObject.unknown:hover {
-    border-color: #353535;
-
-    color: #999;
-}
-
-
-/* ==========================================================
-   37. NULL OBJECT — IMPOSSIBLE
-========================================================== */
-
-.nullObject.impossible {
-    border-color: #252525;
+    color: white;
 
     background:
-        linear-gradient(
-            135deg,
-            #050505,
-            #0b0b0b
-        );
+        #151515;
 
-    color: #aaa;
 }
 
 
 /* ==========================================================
-   38. NULL ROOM
+   MEMORY
 ========================================================== */
 
-.nullRoom {
-    position: relative;
+.nullMemoryContent {
 
-    width: 100%;
+    padding: 20px;
 
-    min-height: 100%;
+}
+
+
+.nullMemoryLine {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    padding:
+        16px 12px;
+
+    border-bottom:
+        1px solid #151515;
+
+    font-size: 10px;
+
+    color: #444;
+
+}
+
+
+.nullMemoryLine b {
+
+    font-weight: normal;
+
+    color: #777;
+
+}
+
+
+.nullMemoryBroken b {
+
+    color: #aaa;
+
+}
+
+
+/* ==========================================================
+   CONSOLE
+========================================================== */
+
+.nullConsoleOutput {
+
+    position: absolute;
+
+    top: 45px;
+    left: 0;
+    right: 0;
+    bottom: 55px;
+
+    margin: 0;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    overflow: auto;
+
+    color: #888;
 
     background:
         #030303;
 
-    overflow: hidden;
+    font-family:
+        inherit;
+
+    font-size: 10px;
+
+    line-height: 1.8;
+
 }
 
 
-.nullRoom::before {
-    content: "";
+.nullConsoleInput {
 
     position: absolute;
 
-    inset: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 55px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding:
+        0 18px;
+
+    border-top:
+        1px solid #222;
+
+    box-sizing: border-box;
+
+    color: #555;
+
+}
+
+
+.nullConsoleInput input {
+
+    flex: 1;
+
+    border: 0;
+
+    outline: 0;
 
     background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255,255,255,.012),
-            transparent
-        );
+        transparent;
 
-    pointer-events: none;
+    color: #bbb;
+
+    font-family:
+        inherit;
+
+    font-size: 10px;
+
 }
 
 
 /* ==========================================================
-   39. NULL DOOR
+   OBJECTS
 ========================================================== */
 
-.nullDoor {
-    position: relative;
+.nullObjectsGrid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 1px;
+
+    background:
+        #202020;
+
+    margin: 20px;
+
+}
+
+
+.nullObject {
+
+    min-height: 130px;
+
+    border: 0;
+
+    background:
+        #070707;
+
+    color: #555;
+
+    font-family:
+        inherit;
+
+    cursor: pointer;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    justify-content: flex-end;
+
+    padding: 18px;
+
+    font-size: 10px;
+
+    letter-spacing:
+        2px;
+
+    text-align: left;
+
+}
+
+
+.nullObject span {
+
+    margin-bottom: 10px;
+
+    font-size: 8px;
+
+    color: #333;
+
+}
+
+
+.nullObject:hover {
+
+    background:
+        #111;
+
+    color: #aaa;
+
+}
+
+
+.nullObject:hover span {
+
+    color: #666;
+
+}
+
+
+.nullImpossibleObject {
+
+    color: #777;
+
+}
+
+
+.nullImpossibleObject:hover {
+
+    color: white;
+
+}
+
+
+/* ==========================================================
+   ROOM
+========================================================== */
+
+.nullRoom {
+
+    position: absolute;
+
+    inset: 45px 0 0;
+
+    overflow: hidden;
+
+    background:
+        #060606;
+
+}
+
+
+.nullRoomWall {
+
+    position: absolute;
+
+    inset: 0 0 90px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #070707,
+            #0c0c0c 50%,
+            #070707
+        );
+
+}
+
+
+.nullRoomFloor {
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 90px;
+
+    border-top:
+        1px solid #151515;
+
+    background:
+        #050505;
+
+}
+
+
+.nullRoomDoor {
+
+    position: absolute;
+
+    left: 50%;
+
+    top: 50%;
+
+    width: 90px;
+
+    height: 180px;
+
+    transform:
+        translate(-50%, -50%);
+
+    border:
+        1px solid #242424;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    padding-bottom: 12px;
+
+    box-sizing: border-box;
+
+    color: #303030;
+
+    font-size: 7px;
+
+    letter-spacing:
+        3px;
+
+}
+
+
+.nullRoomObject {
+
+    position: absolute;
+
+    left: 17%;
+
+    bottom: 90px;
+
+    width: 90px;
+
+    height: 90px;
+
+}
+
+
+.nullChair {
+
+    position: absolute;
+
+    bottom: 0;
+
+    left: 25px;
+
+    width: 40px;
+
+    height: 50px;
+
+    border:
+        1px solid #202020;
+
+}
+
+
+.nullChair::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 5px;
+
+    bottom: 48px;
+
+    width: 28px;
+
+    height: 35px;
+
+    border:
+        1px solid #202020;
+
+}
+
+
+.nullRoomText {
+
+    position: absolute;
+
+    right: 8%;
+
+    bottom: 110px;
+
+    width: 180px;
+
+    color: #252525;
+
+    font-size: 8px;
+
+    line-height: 2;
+
+    letter-spacing:
+        2px;
+
+}
+
+
+/* ==========================================================
+   UNKNOWN
+========================================================== */
+
+.nullUnknown {
+
+    position: absolute;
+
+    inset: 45px 0 0;
 
     display: flex;
 
@@ -1052,733 +1137,294 @@ body.nullSpaceActive::after {
 
     justify-content: center;
 
-    width: 150px;
+    flex-direction: column;
 
-    height: 260px;
+}
+
+
+.nullUnknownNumber {
+
+    font-size: 150px;
+
+    color: #0d0d0d;
+
+}
+
+
+.nullUnknownText {
+
+    position: absolute;
+
+    bottom: 50px;
+
+    left: 50px;
+
+    color: #3c3c3c;
+
+    font-size: 9px;
+
+    line-height: 2.4;
+
+}
+
+
+.nullUnknownFinal {
+
+    color: #777;
+
+}
+
+
+/* ==========================================================
+   TASKBAR
+========================================================== */
+
+.nullTaskbar {
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding:
+        0 15px;
+
+    box-sizing: border-box;
+
+    border-top:
+        1px solid #1d1d1d;
 
     background:
-        linear-gradient(
-            90deg,
-            #050505,
-            #101010,
-            #050505
-        );
+        #040404;
 
-    border:
-        1px solid #292929;
+    z-index: 20;
+
+    font-size: 8px;
+
+    letter-spacing:
+        2px;
+
+}
+
+
+.nullTaskLeft {
+
+    display: flex;
+
+    gap: 9px;
 
     color: #444;
 
+}
+
+
+.nullTaskCenter {
+
+    position: absolute;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    color: #555;
+
+}
+
+
+.nullReturnButton {
+
+    border: 0;
+
+    background:
+        transparent;
+
+    color: #555;
+
     font-family:
-        monospace,
-        "Courier New",
-        sans-serif;
+        inherit;
+
+    font-size: 8px;
+
+    letter-spacing:
+        2px;
 
     cursor: pointer;
 
-    transition:
-        border-color .5s ease,
-        color .5s ease,
-        background .5s ease;
 }
 
 
-.nullDoor:hover {
-    border-color: #555;
+.nullReturnButton:hover {
 
-    color: #aaa;
+    color: white;
 
-    background:
-        linear-gradient(
-            90deg,
-            #080808,
-            #171717,
-            #080808
-        );
 }
 
 
 /* ==========================================================
-   40. NULL ARCHIVE
+   BACKGROUND CODE
 ========================================================== */
 
-.nullArchive {
-    background: #050505;
+.nullBackgroundCode {
 
-    border: 1px solid #222;
+    position: absolute;
 
-    color: #888;
+    inset: 0;
 
-    font-family:
-        monospace,
-        "Courier New",
-        sans-serif;
-}
+    pointer-events: none;
 
+    overflow: hidden;
 
-.nullArchiveHeader {
-    padding: 10px 14px;
+    opacity: .035;
 
-    border-bottom: 1px solid #222;
+    font-size: 80px;
 
-    color: #999;
+    color: #fff;
 
-    letter-spacing: .1em;
-}
+    line-height: 1.8;
 
-
-.nullArchiveEntry {
-    padding: 9px 14px;
-
-    border-bottom: 1px solid #151515;
-
-    color: #5f5f5f;
-
-    cursor: pointer;
-}
-
-
-.nullArchiveEntry:hover {
-    background: #0c0c0c;
-
-    color: #b0b0b0;
-}
-
-
-/* ==========================================================
-   41. NULL TERMINAL
-========================================================== */
-
-.nullTerminal {
-    background: #020202;
-
-    border: 1px solid #1b1b1b;
-
-    color: #777;
-
-    font-family:
-        monospace,
-        "Courier New",
-        monospace;
-
-    box-shadow:
-        inset 0 0 40px rgba(255,255,255,.008);
-}
-
-
-.nullTerminalInput {
-    background: transparent !important;
-
-    border: none !important;
-
-    color: #aaa !important;
-
-    font-family:
-        monospace,
-        "Courier New",
-        monospace !important;
-}
-
-
-/* ==========================================================
-   42. NULL CURSOR
-========================================================== */
-
-body.nullSpaceActive .mrSmileControlledCursor {
-    filter:
-        grayscale(1)
-        brightness(.65);
-}
-
-
-/* Future NULL cursor */
-
-.nullCursor {
-    position: fixed;
-
-    width: 12px;
-
-    height: 18px;
-
-    border-left: 1px solid #aaa;
-
-    border-top: 1px solid #aaa;
+    word-break: break-all;
 
     transform:
-        rotate(-45deg);
+        rotate(-8deg)
+        scale(1.3);
 
-    pointer-events: none;
+}
 
-    z-index: 10000;
 
-    opacity: .65;
+.nullBackgroundCode span {
+
+    margin-right: 90px;
+
 }
 
 
 /* ==========================================================
-   43. NULL STATIC
+   ENTRY
 ========================================================== */
 
-.nullStatic {
-    position: absolute;
+.nullSpaceEntering {
 
-    inset: 0;
+    animation:
+        nullSpaceEntry
+        1.8s
+        ease
+        both;
 
-    pointer-events: none;
+}
 
-    opacity: .04;
+
+@keyframes nullSpaceEntry {
+
+    0% {
+
+        opacity: 0;
+
+        filter:
+            brightness(0);
+
+        transform:
+            scale(1.02);
+
+    }
+
+    35% {
+
+        opacity: .4;
+
+    }
+
+    60% {
+
+        opacity: .85;
+
+    }
+
+    100% {
+
+        opacity: 1;
+
+        filter:
+            brightness(1);
+
+        transform:
+            scale(1);
+
+    }
+
+}
+
+
+/* ==========================================================
+   SCROLLBARS
+========================================================== */
+
+#nullSpaceRoot *::-webkit-scrollbar {
+
+    width: 6px;
+    height: 6px;
+
+}
+
+
+#nullSpaceRoot *::-webkit-scrollbar-track {
 
     background:
-        repeating-radial-gradient(
-            circle at 50% 50%,
-            #fff 0,
-            #fff 1px,
-            transparent 1px,
-            transparent 3px
-        );
+        #050505;
 
-    mix-blend-mode: screen;
 }
 
 
-/* ==========================================================
-   44. VERY SUBTLE FLICKER
-========================================================== */
-
-.nullFlicker {
-    animation:
-        nullFlicker 4.5s infinite;
-}
-
-
-/* ==========================================================
-   45. NULL APPEARANCE
-========================================================== */
-
-.nullAppear {
-    animation:
-        nullAppear .8s ease forwards;
-}
-
-
-.nullDisappear {
-    animation:
-        nullDisappear .8s ease forwards;
-}
-
-
-/* ==========================================================
-   46. NULL WATCHING STATE
-========================================================== */
-
-.nullWatching {
-    position: relative;
-}
-
-
-.nullWatching::after {
-    content: "";
-
-    position: absolute;
-
-    width: 5px;
-
-    height: 5px;
-
-    right: 12px;
-
-    top: 12px;
-
-    background: #aaa;
-
-    opacity: .25;
-
-    border-radius: 50%;
-
-    animation:
-        nullWatchPulse 3s infinite;
-}
-
-
-/* ==========================================================
-   47. ALTERED OMEGA TITLE
-========================================================== */
-
-body.nullSpaceActive .omegaTitle,
-body.nullSpaceActive .systemTitle {
-    color: #777 !important;
-
-    letter-spacing: 1.5px !important;
-
-    text-shadow: none !important;
-}
-
-
-body.nullSpaceActive .omegaTitle::after {
-    content: "";
-
-    display: inline-block;
-
-    width: 4px;
-
-    height: 4px;
-
-    margin-left: 8px;
-
-    background: #555;
-
-    vertical-align: middle;
-
-    opacity: .5;
-}
-
-
-/* ==========================================================
-   48. HIDDEN / MISSING ELEMENT FEEL
-========================================================== */
-
-.nullMissing {
-    visibility: hidden !important;
-
-    opacity: 0 !important;
-}
-
-
-.nullBrokenLabel {
-    color: #3b3b3b !important;
-
-    text-decoration:
-        line-through;
-
-    text-decoration-color: #171717;
-}
-
-
-/* ==========================================================
-   49. NULL WARNING
-========================================================== */
-
-.nullWarning {
-    color: #777;
-
-    border-left:
-        2px solid #333;
-
-    padding:
-        8px 12px;
-
-    background: #080808;
-
-    font-family:
-        monospace,
-        "Courier New",
-        monospace;
-
-    font-size: 11px;
-
-    letter-spacing: .04em;
-}
-
-
-/* ==========================================================
-   50. NULL ERROR
-========================================================== */
-
-.nullError {
-    color: #754545;
-
-    border-left:
-        2px solid #461919;
-
-    padding:
-        8px 12px;
-
-    background: #080505;
-
-    font-family:
-        monospace,
-        "Courier New",
-        monospace;
-}
-
-
-/* ==========================================================
-   51. NULL 0
-========================================================== */
-
-.nullZero {
-    position: relative;
-
-    color: #cfcfcf;
-
-    font-family:
-        monospace,
-        "Courier New",
-        monospace;
-
-    font-size: 18px;
-
-    letter-spacing: .2em;
-
-    text-align: center;
-}
-
-
-.nullZero::before {
-    content: "0";
-
-    position: absolute;
-
-    inset: 0;
-
-    color: #292929;
-
-    transform:
-        translate(2px, 1px);
-
-    z-index: -1;
-}
-
-
-/* ==========================================================
-   52. NULL FULLSCREEN TRANSITION
-========================================================== */
-
-.nullSpaceTransition {
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 20000;
-
-    background: #000;
-
-    pointer-events: all;
-
-    opacity: 0;
-
-    animation:
-        nullTransition .9s ease forwards;
-}
-
-
-/* ==========================================================
-   53. NULL BLACKOUT
-========================================================== */
-
-.nullBlackout {
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 20000;
-
-    background: #000;
-
-    pointer-events: all;
-
-    opacity: 1;
-}
-
-
-.nullBlackout.fade {
-    animation:
-        nullBlackoutFade 1s ease forwards;
-}
-
-
-/* ==========================================================
-   54. NULL SPACE GRID
-   ----------------------------------------------------------
-   Extremely faint. More "wrong geometry" than UI.
-========================================================== */
-
-.nullGrid {
-    position: absolute;
-
-    inset: 0;
-
-    pointer-events: none;
-
-    opacity: .09;
+#nullSpaceRoot *::-webkit-scrollbar-thumb {
 
     background:
-        linear-gradient(
-            90deg,
-            transparent 49.95%,
-            #777 50%,
-            transparent 50.05%
-        ),
-        linear-gradient(
-            0deg,
-            transparent 49.95%,
-            #777 50%,
-            transparent 50.05%
-        );
+        #242424;
 
-    background-size:
-        80px 80px;
 }
 
 
-/* ==========================================================
-   55. NULL DISTANCE LINES
-========================================================== */
-
-.nullDistanceLine {
-    position: absolute;
-
-    height: 1px;
+#nullSpaceRoot *::-webkit-scrollbar-thumb:hover {
 
     background:
-        linear-gradient(
-            90deg,
-            transparent,
-            #292929,
-            transparent
-        );
-
-    opacity: .5;
-
-    pointer-events: none;
-}
-
-
-/* ==========================================================
-   56. NULL OBJECT HIGHLIGHT
-========================================================== */
-
-.nullObjectHighlight {
-    box-shadow:
-        0 0 0 1px #444;
-
-    animation:
-        nullObjectPulse 3s infinite;
-}
-
-
-/* ==========================================================
-   57. NULL SPACE MODE — REDUCE NORMAL ANIMATIONS
-========================================================== */
-
-body.nullSpaceActive .window,
-body.nullSpaceActive .desktopIcon,
-body.nullSpaceActive button,
-body.nullSpaceActive .appIcon {
-    animation-duration:
-        .35s !important;
-}
-
-
-/* ==========================================================
-   58. MOBILE
-========================================================== */
-
-@media (max-width: 900px) {
-
-    body.nullSpaceActive .window {
-        background: #050505 !important;
-
-        box-shadow:
-            0 10px 40px rgba(0,0,0,.85) !important;
-    }
-
-    body.nullSpaceActive .windowHeader {
-        background: #090909 !important;
-    }
-
-    .nullObject {
-        min-width: 90px;
-
-        min-height: 60px;
-    }
+        #444;
 
 }
 
 
 /* ==========================================================
-   59. REDUCED MOTION
+   RESPONSIVE
 ========================================================== */
 
-@media (prefers-reduced-motion: reduce) {
+@media(max-width:900px) {
 
-    body.nullSpaceActive *,
-    body.nullSpaceActive *::before,
-    body.nullSpaceActive *::after {
-        animation-duration: .01ms !important;
+    .nullNavigation {
 
-        animation-iteration-count: 1 !important;
+        width: 160px;
 
-        transition-duration: .01ms !important;
+        flex-basis: 160px;
+
     }
 
-}
+    .nullBrandSubtitle {
 
+        display: none;
 
-/* ==========================================================
-   60. ANIMATIONS
-========================================================== */
-
-@keyframes nullWindowAppear {
-
-    from {
-        opacity: 0;
-
-        transform:
-            translateY(8px);
     }
 
-    to {
-        opacity: 1;
+    .nullObjectsGrid {
 
-        transform:
-            translateY(0);
-    }
+        grid-template-columns:
+            repeat(2, 1fr);
 
-}
-
-
-@keyframes nullAppear {
-
-    from {
-        opacity: 0;
-
-        transform:
-            translateY(8px);
-    }
-
-    to {
-        opacity: 1;
-
-        transform:
-            translateY(0);
-    }
-
-}
-
-
-@keyframes nullDisappear {
-
-    from {
-        opacity: 1;
-    }
-
-    to {
-        opacity: 0;
-    }
-
-}
-
-
-@keyframes nullFlicker {
-
-    0% {
-        opacity: 1;
-    }
-
-    47% {
-        opacity: 1;
-    }
-
-    48% {
-        opacity: .78;
-    }
-
-    49% {
-        opacity: 1;
-    }
-
-    82% {
-        opacity: 1;
-    }
-
-    83% {
-        opacity: .88;
-    }
-
-    84% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 1;
-    }
-
-}
-
-
-@keyframes nullWatchPulse {
-
-    0% {
-        opacity: .12;
-
-        transform: scale(.8);
-    }
-
-    50% {
-        opacity: .5;
-
-        transform: scale(1);
-    }
-
-    100% {
-        opacity: .12;
-
-        transform: scale(.8);
-    }
-
-}
-
-
-@keyframes nullObjectPulse {
-
-    0% {
-        box-shadow:
-            0 0 0 1px #333;
-    }
-
-    50% {
-        box-shadow:
-            0 0 0 1px #555;
-    }
-
-    100% {
-        box-shadow:
-            0 0 0 1px #333;
-    }
-
-}
-
-
-@keyframes nullTransition {
-
-    0% {
-        opacity: 0;
-    }
-
-    30% {
-        opacity: 1;
-    }
-
-    70% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0;
-    }
-
-}
-
-
-@keyframes nullBlackoutFade {
-
-    from {
-        opacity: 1;
-    }
-
-    to {
-        opacity: 0;
     }
 
 }
