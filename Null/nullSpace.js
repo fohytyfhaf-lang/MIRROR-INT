@@ -1,17 +1,22 @@
 /* ==========================================================
    NULL SPACE
-   Anomalous World Controller
+   FULL WORLD CONTROLLER
    ========================================================== */
 
 let nullSpaceActive = false;
 let nullSpaceInitialized = false;
+
 let nullEventTimer = null;
-let nullEyeTimer = null;
+let nullRoomTimer = null;
+
 let nullAnomalyLevel = 0;
 let nullInsultCount = 0;
 let nullBanned = false;
+
 let nullDoorOpen = false;
 let nullCurrentRoom = "main";
+let nullNullVisible = false;
+let nullEventRunning = false;
 
 const NULL_STORAGE = {
     active: "null_space_active",
@@ -23,20 +28,31 @@ const NULL_STORAGE = {
 
 
 /* ==========================================================
-   INIT
+   INITIALIZATION
 ========================================================== */
 
 export function initNullSpace() {
-    if (nullSpaceInitialized) return;
+
+    if (nullSpaceInitialized)
+        return;
 
     nullSpaceInitialized = true;
 
     loadNullState();
+
     createNullSpace();
+
     bindNullSpaceEvents();
 
-    if (localStorage.getItem(NULL_STORAGE.active) === "1") {
-        setTimeout(() => enterNullSpace(false), 300);
+    if (
+        localStorage.getItem(
+            NULL_STORAGE.active
+        ) === "1"
+    ) {
+
+        setTimeout(() => {
+            enterNullSpace(false);
+        }, 300);
     }
 }
 
@@ -46,16 +62,28 @@ export function initNullSpace() {
 ========================================================== */
 
 function loadNullState() {
+
     nullInsultCount = Number(
-        localStorage.getItem(NULL_STORAGE.reputation) || 0
+        localStorage.getItem(
+            NULL_STORAGE.reputation
+        ) || 0
     );
 
     nullBanned =
-        localStorage.getItem(NULL_STORAGE.banned) === "1";
+        localStorage.getItem(
+            NULL_STORAGE.banned
+        ) === "1";
+
+    nullAnomalyLevel =
+        Math.min(
+            5,
+            nullInsultCount
+        );
 }
 
 
 function saveNullState() {
+
     localStorage.setItem(
         NULL_STORAGE.reputation,
         String(nullInsultCount)
@@ -63,26 +91,37 @@ function saveNullState() {
 
     localStorage.setItem(
         NULL_STORAGE.banned,
-        nullBanned ? "1" : "0"
+        nullBanned
+            ? "1"
+            : "0"
     );
 }
 
 
 /* ==========================================================
-   CREATE
+   CREATE WORLD
 ========================================================== */
 
 function createNullSpace() {
 
-    let root = document.getElementById("nullSpaceRoot");
+    let root =
+        document.getElementById(
+            "nullSpaceRoot"
+        );
 
     if (!root) {
-        root = document.createElement("div");
-        root.id = "nullSpaceRoot";
+
+        root =
+            document.createElement("div");
+
+        root.id =
+            "nullSpaceRoot";
+
         document.body.appendChild(root);
     }
 
-    root.className = "hidden";
+    root.className =
+        "hidden";
 
     root.innerHTML = `
 
@@ -96,112 +135,188 @@ function createNullSpace() {
 
             <div class="nullVoidBackdrop"></div>
 
-            <div class="nullVoidRoom room-main">
+            <div
+                class="nullVoidRoom room-main"
+                data-room="main">
+
+                <!-- STRUCTURE -->
 
                 <div class="nullVoidCeiling"></div>
 
-                <div class="nullVoidWall wall-back"></div>
-                <div class="nullVoidWall wall-left"></div>
-                <div class="nullVoidWall wall-right"></div>
+                <div
+                    class="nullVoidWall wall-back">
+                </div>
+
+                <div
+                    class="nullVoidWall wall-left">
+                </div>
+
+                <div
+                    class="nullVoidWall wall-right">
+                </div>
 
                 <div class="nullVoidFloor"></div>
 
-                <!-- LIGHTS -->
 
-                <div class="nullVoidLight light-1"
-                     data-null-light="1"></div>
+                <!-- VOID LIGHT -->
 
-                <div class="nullVoidLight light-2"
-                     data-null-light="2"></div>
+                <div
+                    class="nullVoidLight light-1"
+                    data-null-object="light">
+                </div>
 
-                <div class="nullVoidLight light-3"
-                     data-null-light="3"></div>
+                <div
+                    class="nullVoidLight light-2"
+                    data-null-object="light">
+                </div>
 
-                <div class="nullVoidLight light-4"
-                     data-null-light="4"></div>
+                <div
+                    class="nullVoidLight light-3"
+                    data-null-object="light">
+                </div>
+
+                <div
+                    class="nullVoidLight light-4"
+                    data-null-object="light">
+                </div>
+
 
                 <!-- PILLARS -->
 
-                <div class="nullVoidPillar pillar-1"></div>
-                <div class="nullVoidPillar pillar-2"></div>
-                <div class="nullVoidPillar pillar-3"></div>
-                <div class="nullVoidPillar pillar-4"></div>
-
-                <!-- DOOR -->
-
                 <div
-                    class="nullWorldDoor"
-                    data-null-object="door"
-                    data-door="main">
-
-                    <div class="nullDoorFrame"></div>
-
-                    <div class="nullDoorPanel">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-
-                    <div class="nullDoorStatus">
-                        CLOSED
-                    </div>
-
+                    class="nullVoidPillar pillar-1">
                 </div>
 
-                <!-- BEYOND DOOR -->
+                <div
+                    class="nullVoidPillar pillar-2">
+                </div>
+
+                <div
+                    class="nullVoidPillar pillar-3">
+                </div>
+
+                <div
+                    class="nullVoidPillar pillar-4">
+                </div>
+
+
+                <!-- ==================================================
+                     MAIN DOOR
+                ================================================== -->
+
+                <button
+                    class="nullWorldDoor"
+                    data-null-object="door"
+                    data-door="main"
+                    aria-label="Void Door">
+
+                    <span
+                        class="nullDoorFrame">
+                    </span>
+
+                    <span
+                        class="nullDoorPanel">
+
+                        <i></i>
+                        <i></i>
+                        <i></i>
+
+                    </span>
+
+                    <span
+                        class="nullDoorStatus">
+                        CLOSED
+                    </span>
+
+                </button>
+
+
+                <!-- ==================================================
+                     SPACE BEHIND DOOR
+                ================================================== -->
 
                 <div class="nullDoorBeyond">
 
-                    <div class="nullBeyondLight"></div>
+                    <div
+                        class="nullBeyondLight">
+                    </div>
 
-                    <div class="nullBeyondHall">
+                    <div
+                        class="nullBeyondHall">
 
-                        <div class="nullBeyondPillar"></div>
-                        <div class="nullBeyondPillar"></div>
-                        <div class="nullBeyondPillar"></div>
+                        <div
+                            class="nullBeyondPillar">
+                        </div>
 
-                        <div class="nullBeyondEyePoint"></div>
+                        <div
+                            class="nullBeyondPillar">
+                        </div>
+
+                        <div
+                            class="nullBeyondPillar">
+                        </div>
+
+                        <div
+                            class="nullBeyondBlack">
+                        </div>
+
+                        <div
+                            class="nullBeyondEyePoint">
+                        </div>
 
                     </div>
 
                 </div>
 
 
-                <!-- PHYSICAL CONSOLE -->
+                <!-- ==================================================
+                     CONSOLE
+                ================================================== -->
 
-                <div
+                <button
                     class="nullWorldConsole"
                     data-null-object="console">
 
-                    <div class="nullConsoleScreen">
-                        <span>NULL//CONSOLE</span>
-                        <span class="nullConsoleCursor">_</span>
-                    </div>
+                    <span
+                        class="nullConsoleScreen">
 
-                    <div class="nullConsoleBody">
+                        <b>NULL//CONSOLE</b>
+                        <i>_</i>
+
+                    </span>
+
+                    <span
+                        class="nullConsoleBody">
+
                         <i></i>
                         <i></i>
                         <i></i>
-                    </div>
 
-                </div>
+                    </span>
+
+                </button>
 
 
-                <!-- 431434 -->
+                <!-- ==================================================
+                     431434
+                ================================================== -->
 
-                <div
+                <button
                     class="nullWorldBlackBlock"
-                    data-null-object="431434"
-                    title="431434">
+                    data-null-object="431434">
 
-                    <span>431434</span>
+                    <span>
+                        431434
+                    </span>
 
-                </div>
+                </button>
 
 
-                <!-- DISRUPTION -->
+                <!-- ==================================================
+                     DISRUPTION
+                ================================================== -->
 
-                <div
+                <button
                     class="nullWorldDisruption"
                     data-null-object="disruption">
 
@@ -209,118 +324,174 @@ function createNullSpace() {
                     <span>NULL</span>
                     <span>ERR</span>
 
-                </div>
+                </button>
 
 
-                <!-- IT -->
+                <!-- ==================================================
+                     IT
+                ================================================== -->
 
-                <div
+                <button
                     class="nullWorldIt"
                     data-null-object="it">
 
                     <span>404</span>
-                    <span>!</span>
-                    <span>!</span>
+                    <b>!</b>
+                    <b>!</b>
 
-                </div>
+                </button>
 
 
-                <!-- HELLO -->
+                <!-- ==================================================
+                     HELLO
+                ================================================== -->
 
-                <div
+                <button
                     class="nullWorldHello"
                     data-null-object="hello">
 
                     HELLO
 
-                </div>
+                </button>
 
 
-                <!-- EXIT -->
+                <!-- ==================================================
+                     EXIT
+                ================================================== -->
 
-                <div
+                <button
                     class="nullWorldExit"
                     data-null-object="exit">
 
-                    <span>53135</span>
-                    <span>EXIT</span>
+                    <span>
+                        53135
+                    </span>
+
+                    <b>
+                        EXIT
+                    </b>
+
+                </button>
+
+
+                <!-- ==================================================
+                     NULL ENTITY
+                ================================================== -->
+
+                <div
+                    class="nullEntity"
+                    aria-hidden="true">
+
+                    <div
+                        class="nullEntityHead">
+                    </div>
+
+                    <div
+                        class="nullEntityBody">
+                    </div>
+
+                    <div
+                        class="nullEntityGlow">
+                    </div>
 
                 </div>
 
 
-                <!-- NULL -->
+                <!-- ==================================================
+                     EYES
+                ================================================== -->
 
-                <div class="nullEntity">
-                    <div class="nullEntityHead"></div>
-                    <div class="nullEntityBody"></div>
-                    <div class="nullEntityGlow"></div>
+                <div
+                    class="nullEyeField">
                 </div>
 
 
-                <!-- EYES -->
+                <!-- ==================================================
+                     HELLO CROSS
+                ================================================== -->
 
-                <div class="nullEyeField"></div>
+                <div
+                    class="nullHelloCross">
 
-
-                <!-- CROSS -->
-
-                <div class="nullHelloCross">
                     <div></div>
                     <div></div>
                     <div></div>
+
                 </div>
 
 
-                <!-- WORLD CODE -->
+                <!-- ==================================================
+                     WORLD CODE
+                ================================================== -->
 
-                <div class="nullWorldCode">
+                <div
+                    class="nullWorldCode">
 
                     <span>00000000</span>
                     <span>ERR.NULL</span>
                     <span>431434</span>
                     <span>000</span>
                     <span>VOID</span>
+                    <span>ERR0R</span>
 
                 </div>
 
             </div>
 
 
-            <!-- EVENT OVERLAY -->
+            <!-- ==================================================
+                 WORLD EFFECTS
+            ================================================== -->
 
-            <div class="nullEventOverlay"></div>
+            <div
+                class="nullEventOverlay">
+            </div>
 
-            <div class="nullEventText"></div>
+            <div
+                class="nullEventText">
+            </div>
 
-            <div class="nullHeartbeat"></div>
+            <div
+                class="nullHeartbeat">
+            </div>
 
-            <div class="nullStatic"></div>
+            <div
+                class="nullStatic">
+            </div>
 
         </div>
 
 
         <!-- ==================================================
-             UI
+             INTERFACE
         ================================================== -->
 
         <div class="nullInterface">
+
+
+            <!-- TOP -->
 
             <header class="nullTopBar">
 
                 <div class="nullBrand">
 
-                    <div class="nullBrandMark">
+                    <div
+                        class="nullBrandMark">
                         0
                     </div>
 
                     <div>
-                        <div class="nullBrandTitle">
+
+                        <div
+                            class="nullBrandTitle">
                             NULL
                         </div>
 
-                        <div class="nullBrandSubtitle">
-                            SPACE / INSTANCE 0
+                        <div
+                            class="nullBrandSubtitle">
+                            VOID / INSTANCE 0
                         </div>
+
                     </div>
 
                 </div>
@@ -328,7 +499,8 @@ function createNullSpace() {
 
                 <div class="nullStatus">
 
-                    <span class="nullStatusLabel">
+                    <span
+                        class="nullStatusLabel">
                         CONNECTION
                     </span>
 
@@ -342,21 +514,28 @@ function createNullSpace() {
             </header>
 
 
+            <!-- WORKSPACE -->
+
             <main class="nullWorkspace">
 
-                <!-- NAV -->
 
-                <aside class="nullNavigation">
+                <!-- NAVIGATION -->
 
-                    <div class="nullNavigationTitle">
-                        OBJECTS
+                <aside
+                    class="nullNavigation">
+
+                    <div
+                        class="nullNavigationTitle">
+                        OBSERVATION
                     </div>
+
 
                     <button
                         class="nullNavButton"
                         data-null-window="archive">
-                        01&nbsp;&nbsp;ARCHIVE_0
+                        01&nbsp;&nbsp;ARCHIVE
                     </button>
+
 
                     <button
                         class="nullNavButton"
@@ -364,11 +543,13 @@ function createNullSpace() {
                         02&nbsp;&nbsp;CHAT
                     </button>
 
+
                     <button
                         class="nullNavButton"
                         data-null-window="memory">
                         03&nbsp;&nbsp;MEMORY
                     </button>
+
 
                     <button
                         class="nullNavButton"
@@ -376,17 +557,20 @@ function createNullSpace() {
                         04&nbsp;&nbsp;CONSOLE
                     </button>
 
+
                     <button
                         class="nullNavButton"
                         data-null-window="objects">
                         05&nbsp;&nbsp;OBJECTS
                     </button>
 
+
                     <button
                         class="nullNavButton"
                         data-null-window="room">
                         06&nbsp;&nbsp;ROOM
                     </button>
+
 
                     <button
                         class="nullNavButton"
@@ -395,14 +579,16 @@ function createNullSpace() {
                     </button>
 
 
-                    <div class="nullNavigationBottom">
+                    <div
+                        class="nullNavigationBottom">
 
                         <span>
-                            CONNECTION
+                            LOCATION
                         </span>
 
-                        <strong>
-                            00000000
+                        <strong
+                            id="nullNavigationRoom">
+                            MAIN
                         </strong>
 
                     </div>
@@ -410,13 +596,18 @@ function createNullSpace() {
                 </aside>
 
 
-                <!-- MAIN -->
+                <!-- MAIN UI -->
 
                 <section class="nullMain">
 
-                    <div class="nullEmptyState">
 
-                        <div class="nullEmptyZero">
+                    <!-- EMPTY -->
+
+                    <div
+                        class="nullEmptyState">
+
+                        <div
+                            class="nullEmptyZero">
                             0
                         </div>
 
@@ -427,39 +618,63 @@ function createNullSpace() {
                     </div>
 
 
-                    <!-- ARCHIVE -->
+                    <!-- ==================================================
+                         ARCHIVE
+                    ================================================== -->
 
                     <section
                         id="nullWindowArchive"
                         class="nullInternalWindow">
 
-                        <div class="nullWindowHeader">
+                        <div
+                            class="nullWindowHeader">
                             ARCHIVE_0
                         </div>
 
-                        <div class="nullArchiveList">
+                        <div
+                            class="nullArchiveList">
 
-                            <div>FILE_000</div>
-                            <div>FILE_001</div>
-                            <div>FILE_002</div>
-                            <div>FILE_003</div>
-                            <div class="corrupt">
+                            <button>
+                                FILE_000
+                            </button>
+
+                            <button>
+                                FILE_001
+                            </button>
+
+                            <button>
+                                FILE_002
+                            </button>
+
+                            <button>
+                                FILE_003
+                            </button>
+
+                            <button class="corrupt">
+
                                 FILE_004
-                                <small>NULL</small>
-                            </div>
+
+                                <small>
+                                    NULL
+                                </small>
+
+                            </button>
 
                         </div>
 
                     </section>
 
 
-                    <!-- CHAT -->
+                    <!-- ==================================================
+                         CHAT
+                    ================================================== -->
 
                     <section
                         id="nullWindowChat"
                         class="nullInternalWindow">
 
-                        <div class="nullWindowHeader">
+                        <div
+                            class="nullWindowHeader">
                             CHANNEL // NULL
                         </div>
 
@@ -467,23 +682,33 @@ function createNullSpace() {
                             id="nullChatMessages"
                             class="nullChatMessages">
 
-                            <div class="nullMessage nullSystemMessage">
-                                <b>SYSTEM</b>
+                            <div
+                                class="nullMessage
+                                       nullSystemMessage">
+
+                                <b>
+                                    SYSTEM
+                                </b>
+
                                 <span>
-                                    NULL INSTANCE CONNECTED.
+                                    INSTANCE AVAILABLE.
                                 </span>
+
                             </div>
 
                         </div>
 
-                        <div class="nullChatInputRow">
+
+                        <div
+                            class="nullChatInputRow">
 
                             <input
                                 id="nullChatInput"
                                 autocomplete="off"
                                 placeholder="message">
 
-                            <button id="nullChatSend">
+                            <button
+                                id="nullChatSend">
                                 SEND
                             </button>
 
@@ -492,36 +717,57 @@ function createNullSpace() {
                     </section>
 
 
-                    <!-- MEMORY -->
+                    <!-- ==================================================
+                         MEMORY
+                    ================================================== -->
 
                     <section
                         id="nullWindowMemory"
                         class="nullInternalWindow">
 
-                        <div class="nullWindowHeader">
+                        <div
+                            class="nullWindowHeader">
                             MEMORY
                         </div>
 
-                        <div class="nullMemoryList">
+                        <div
+                            class="nullMemoryList">
 
-                            <div>MEM_000 — PLAYER</div>
-                            <div>MEM_001 — OMEGA</div>
-                            <div>MEM_002 — MR.SMILE</div>
-                            <div>MEM_003 — NULL</div>
-                            <div>MEM_004 — ????????</div>
+                            <div>
+                                MEM_000 — PLAYER
+                            </div>
+
+                            <div>
+                                MEM_001 — OMEGA
+                            </div>
+
+                            <div>
+                                MEM_002 — MR.SMILE
+                            </div>
+
+                            <div>
+                                MEM_003 — NULL
+                            </div>
+
+                            <div>
+                                MEM_004 — ????????
+                            </div>
 
                         </div>
 
                     </section>
 
 
-                    <!-- CONSOLE -->
+                    <!-- ==================================================
+                         CONSOLE
+                    ================================================== -->
 
                     <section
                         id="nullWindowConsole"
                         class="nullInternalWindow">
 
-                        <div class="nullWindowHeader">
+                        <div
+                            class="nullWindowHeader">
                             CONSOLE
                         </div>
 
@@ -529,14 +775,18 @@ function createNullSpace() {
                             id="nullConsoleOutput"
                             class="nullConsoleOutput">
 
-                            OMEGA NULL INSTANCE<br>
+                            NULL SPACE INSTANCE<br>
                             TYPE "help"
 
                         </div>
 
-                        <div class="nullConsoleInputRow">
 
-                            <span>&gt;</span>
+                        <div
+                            class="nullConsoleInputRow">
+
+                            <span>
+                                &gt;
+                            </span>
 
                             <input
                                 id="nullConsoleCommand"
@@ -547,17 +797,22 @@ function createNullSpace() {
                     </section>
 
 
-                    <!-- OBJECTS -->
+                    <!-- ==================================================
+                         OBJECTS
+                    ================================================== -->
 
                     <section
                         id="nullWindowObjects"
                         class="nullInternalWindow">
 
-                        <div class="nullWindowHeader">
+                        <div
+                            class="nullWindowHeader">
                             OBJECT DATABASE
                         </div>
 
-                        <div class="nullObjectGrid">
+
+                        <div
+                            class="nullObjectGrid">
 
                             <button
                                 class="nullObject"
@@ -574,7 +829,7 @@ function createNullSpace() {
                             <button
                                 class="nullObject"
                                 data-null-object="door">
-                                DOOR
+                                VOID DOOR
                             </button>
 
                             <button
@@ -590,7 +845,8 @@ function createNullSpace() {
                             </button>
 
                             <button
-                                class="nullObject nullImpossibleObject"
+                                class="nullObject
+                                       nullImpossibleObject"
                                 data-null-object="null">
                                 NULL
                             </button>
@@ -600,35 +856,43 @@ function createNullSpace() {
                     </section>
 
 
-                    <!-- ROOM -->
+                    <!-- ==================================================
+                         ROOM
+                    ================================================== -->
 
                     <section
                         id="nullWindowRoom"
                         class="nullInternalWindow">
 
-                        <div class="nullWindowHeader">
+                        <div
+                            class="nullWindowHeader">
                             LOCATION
                         </div>
 
-                        <div class="nullRoomData">
+
+                        <div
+                            class="nullRoomData">
 
                             <div>
                                 ROOM:
-                                <strong id="nullRoomName">
+                                <strong
+                                    id="nullRoomName">
                                     MAIN
                                 </strong>
                             </div>
 
                             <div>
                                 OBJECTS:
-                                <strong id="nullRoomObjects">
+                                <strong
+                                    id="nullRoomObjects">
                                     07
                                 </strong>
                             </div>
 
                             <div>
                                 INTEGRITY:
-                                <strong id="nullRoomIntegrity">
+                                <strong
+                                    id="nullRoomIntegrity">
                                     UNKNOWN
                                 </strong>
                             </div>
@@ -638,19 +902,25 @@ function createNullSpace() {
                     </section>
 
 
-                    <!-- UNKNOWN -->
+                    <!-- ==================================================
+                         UNKNOWN
+                    ================================================== -->
 
                     <section
                         id="nullWindowUnknown"
                         class="nullInternalWindow">
 
-                        <div class="nullWindowHeader">
+                        <div
+                            class="nullWindowHeader">
                             UNKNOWN
                         </div>
 
-                        <div class="nullUnknownContent">
 
-                            <div class="nullUnknownBig">
+                        <div
+                            class="nullUnknownContent">
+
+                            <div
+                                class="nullUnknownBig">
                                 0
                             </div>
 
@@ -660,6 +930,10 @@ function createNullSpace() {
 
                             <p>
                                 THIS IS NOT PART OF OMEGA.
+                            </p>
+
+                            <p>
+                                IT WAS HERE FIRST.
                             </p>
 
                             <p>
@@ -677,13 +951,16 @@ function createNullSpace() {
 
             <!-- TASKBAR -->
 
-            <footer class="nullTaskbar">
+            <footer
+                class="nullTaskbar">
 
-                <span id="nullTaskMessage">
+                <span
+                    id="nullTaskMessage">
                     NOTHING IS WRONG.
                 </span>
 
-                <button id="nullReturnButton">
+                <button
+                    id="nullReturnButton">
                     RETURN
                 </button>
 
@@ -695,57 +972,79 @@ function createNullSpace() {
     `;
 
     root.classList.remove("hidden");
-
-    if (nullBanned) {
-        showNullBanScreen();
-    }
 }
 
 
 /* ==========================================================
-   ENTER / EXIT
+   ENTER
 ========================================================== */
 
-export function enterNullSpace(saveState = true) {
+export function enterNullSpace(
+    saveState = true
+) {
 
-    if (nullSpaceActive) return;
+    if (nullSpaceActive)
+        return;
 
-    const root = document.getElementById("nullSpaceRoot");
+    const root =
+        document.getElementById(
+            "nullSpaceRoot"
+        );
 
-    if (!root) return;
+    if (!root)
+        return;
 
     nullSpaceActive = true;
 
     const desktop =
-        document.getElementById("desktop");
+        document.getElementById(
+            "desktop"
+        );
 
     const publicSite =
-        document.getElementById("publicSite");
+        document.getElementById(
+            "publicSite"
+        );
 
     const loginScreen =
-        document.getElementById("loginScreen");
+        document.getElementById(
+            "loginScreen"
+        );
 
-    if (desktop) desktop.classList.add("hidden");
-    if (publicSite) publicSite.classList.add("hidden");
-    if (loginScreen) loginScreen.classList.add("hidden");
+    if (desktop)
+        desktop.classList.add("hidden");
 
-    const overlays = [
+    if (publicSite)
+        publicSite.classList.add("hidden");
+
+    if (loginScreen)
+        loginScreen.classList.add("hidden");
+
+
+    [
         "notificationArea",
         "mrsmileEntity",
         "glitchLayer",
         "eyesLayer"
-    ];
+    ].forEach(id => {
 
-    overlays.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = "none";
+        const element =
+            document.getElementById(id);
+
+        if (element)
+            element.style.display = "none";
     });
+
 
     root.classList.remove("hidden");
 
-    document.body.classList.add("nullSpaceActive");
+    document.body.classList.add(
+        "nullSpaceActive"
+    );
+
 
     if (saveState) {
+
         localStorage.setItem(
             NULL_STORAGE.active,
             "1"
@@ -757,41 +1056,65 @@ export function enterNullSpace(saveState = true) {
         );
     }
 
-    resetNullWindows();
+
+    resetNullWorld();
+
     playNullEntry();
 
+
     if (nullBanned) {
+
         showNullBanScreen();
+
         return;
     }
+
 
     startNullEvents();
 }
 
 
+/* ==========================================================
+   EXIT
+========================================================== */
+
 export function exitNullSpace() {
 
-    if (!nullSpaceActive) return;
+    if (!nullSpaceActive)
+        return;
 
     nullSpaceActive = false;
 
     stopNullEvents();
 
-    const root =
-        document.getElementById("nullSpaceRoot");
 
-    if (root) root.classList.add("hidden");
+    const root =
+        document.getElementById(
+            "nullSpaceRoot"
+        );
+
+    if (root)
+        root.classList.add("hidden");
+
 
     const desktop =
-        document.getElementById("desktop");
+        document.getElementById(
+            "desktop"
+        );
 
     const publicSite =
-        document.getElementById("publicSite");
+        document.getElementById(
+            "publicSite"
+        );
 
     const loginScreen =
-        document.getElementById("loginScreen");
+        document.getElementById(
+            "loginScreen"
+        );
 
-    if (desktop) desktop.classList.remove("hidden");
+
+    if (desktop)
+        desktop.classList.remove("hidden");
 
     if (publicSite)
         publicSite.classList.remove("hidden");
@@ -799,19 +1122,26 @@ export function exitNullSpace() {
     if (loginScreen)
         loginScreen.classList.remove("hidden");
 
+
     [
         "notificationArea",
         "mrsmileEntity",
         "glitchLayer",
         "eyesLayer"
     ].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = "";
+
+        const element =
+            document.getElementById(id);
+
+        if (element)
+            element.style.display = "";
     });
+
 
     document.body.classList.remove(
         "nullSpaceActive"
     );
+
 
     localStorage.removeItem(
         NULL_STORAGE.active
@@ -825,29 +1155,120 @@ export function exitNullSpace() {
 
 
 /* ==========================================================
+   RESET WORLD
+========================================================== */
+
+function resetNullWorld() {
+
+    nullDoorOpen = false;
+    nullCurrentRoom = "main";
+    nullNullVisible = false;
+    nullEventRunning = false;
+
+    const root =
+        document.getElementById(
+            "nullSpaceRoot"
+        );
+
+    if (!root)
+        return;
+
+
+    const door =
+        root.querySelector(
+            ".nullWorldDoor"
+        );
+
+    if (door) {
+
+        door.classList.remove(
+            "is-open"
+        );
+
+        const status =
+            door.querySelector(
+                ".nullDoorStatus"
+            );
+
+        if (status)
+            status.textContent =
+                "CLOSED";
+    }
+
+
+    const beyond =
+        root.querySelector(
+            ".nullDoorBeyond"
+        );
+
+    if (beyond)
+        beyond.classList.remove(
+            "visible"
+        );
+
+
+    const entity =
+        root.querySelector(
+            ".nullEntity"
+        );
+
+    if (entity)
+        entity.classList.remove(
+            "visible",
+            "is-chasing"
+        );
+
+
+    clearEyes();
+
+    resetNullWindows();
+
+    updateNullRoom("main");
+
+    setNullTask(
+        "NOTHING IS WRONG."
+    );
+}
+
+
+/* ==========================================================
    WINDOWS
 ========================================================== */
 
 export function openNullWindow(name) {
 
-    if (nullBanned) return;
+    if (nullBanned)
+        return;
 
     const root =
-        document.getElementById("nullSpaceRoot");
+        document.getElementById(
+            "nullSpaceRoot"
+        );
 
-    if (!root) return;
+    if (!root)
+        return;
+
 
     root.querySelectorAll(
         ".nullInternalWindow"
     ).forEach(window => {
-        window.classList.remove("active");
+
+        window.classList.remove(
+            "active"
+        );
     });
 
+
     const empty =
-        root.querySelector(".nullEmptyState");
+        root.querySelector(
+            ".nullEmptyState"
+        );
 
     if (empty)
-        empty.classList.add("hidden");
+        empty.classList.add(
+            "hidden"
+        );
+
 
     const id =
         "nullWindow" +
@@ -857,40 +1278,74 @@ export function openNullWindow(name) {
         document.getElementById(id);
 
     if (target)
-        target.classList.add("active");
+        target.classList.add(
+            "active"
+        );
 
-    setNullTask({
-        archive: "ARCHIVE OPEN.",
-        chat: "CHANNEL OPEN.",
-        memory: "MEMORY ACCESS.",
-        console: "CONSOLE READY.",
-        objects: "OBJECT DATABASE.",
-        room: `LOCATION: ${nullCurrentRoom.toUpperCase()}.`,
-        unknown: "YOU FOUND IT."
-    }[name] || "UNKNOWN.");
+
+    const messages = {
+
+        archive:
+            "ARCHIVE OPEN.",
+
+        chat:
+            "CHANNEL OPEN.",
+
+        memory:
+            "MEMORY ACCESS.",
+
+        console:
+            "CONSOLE READY.",
+
+        objects:
+            "OBJECT DATABASE.",
+
+        room:
+            `LOCATION: ${nullCurrentRoom.toUpperCase()}.`,
+
+        unknown:
+            "YOU FOUND IT."
+
+    };
+
+
+    setNullTask(
+        messages[name] ||
+        "UNKNOWN."
+    );
 }
 
 
 function resetNullWindows() {
 
     const root =
-        document.getElementById("nullSpaceRoot");
+        document.getElementById(
+            "nullSpaceRoot"
+        );
 
-    if (!root) return;
+    if (!root)
+        return;
+
 
     root.querySelectorAll(
         ".nullInternalWindow"
     ).forEach(window => {
-        window.classList.remove("active");
+
+        window.classList.remove(
+            "active"
+        );
     });
 
+
     const empty =
-        root.querySelector(".nullEmptyState");
+        root.querySelector(
+            ".nullEmptyState"
+        );
 
     if (empty)
-        empty.classList.remove("hidden");
-
-    setNullTask("NOTHING IS WRONG.");
+        empty.classList.remove(
+            "hidden"
+        );
 }
 
 
@@ -898,57 +1353,101 @@ function resetNullWindows() {
    DOOR
 ========================================================== */
 
-function toggleNullDoor() {
+function toggleNullDoor(
+    automatic = false
+) {
 
-    if (nullBanned) return;
+    if (nullBanned)
+        return;
 
     const door =
-        document.querySelector(".nullWorldDoor");
+        document.querySelector(
+            ".nullWorldDoor"
+        );
 
-    if (!door) return;
+    if (!door)
+        return;
 
-    nullDoorOpen = !nullDoorOpen;
+
+    nullDoorOpen =
+        !nullDoorOpen;
+
 
     door.classList.toggle(
         "is-open",
         nullDoorOpen
     );
 
+
     const status =
-        door.querySelector(".nullDoorStatus");
+        door.querySelector(
+            ".nullDoorStatus"
+        );
+
 
     if (status) {
+
         status.textContent =
             nullDoorOpen
                 ? "OPEN"
                 : "CLOSED";
     }
 
-    triggerScreenPulse(
-        nullDoorOpen ? "door-open" : "door-close"
-    );
 
     if (nullDoorOpen) {
 
-        setNullTask(
-            "DOOR OPENED. LOCATION BEHIND: UNKNOWN."
-        );
-
         revealDoorBeyond();
 
-        setTimeout(() => {
+        setNullTask(
+            automatic
+                ? "THE DOOR OPENED."
+                : "DOOR OPENED. LOCATION BEHIND: UNKNOWN."
+        );
 
-            if (Math.random() < 0.35) {
+
+        triggerScreenPulse(
+            "door-open"
+        );
+
+
+        if (
+            Math.random() < 0.45
+        ) {
+
+            setTimeout(() => {
+
                 spawnEyeCluster(true);
-            }
 
-        }, 800);
+            }, 700);
+        }
+
+
+        if (
+            Math.random() < 0.20
+        ) {
+
+            setTimeout(() => {
+
+                triggerNullAppearance(
+                    "behind-door"
+                );
+
+            }, 1300);
+        }
 
     } else {
 
-        setNullTask("DOOR CLOSED.");
-
         hideDoorBeyond();
+
+        setNullTask(
+            automatic
+                ? "THE DOOR CLOSED."
+                : "DOOR CLOSED."
+        );
+
+        triggerScreenPulse(
+            "door-close"
+        );
     }
 }
 
@@ -961,7 +1460,9 @@ function revealDoorBeyond() {
         );
 
     if (beyond)
-        beyond.classList.add("visible");
+        beyond.classList.add(
+            "visible"
+        );
 }
 
 
@@ -973,7 +1474,113 @@ function hideDoorBeyond() {
         );
 
     if (beyond)
-        beyond.classList.remove("visible");
+        beyond.classList.remove(
+            "visible"
+        );
+}
+
+
+/* ==========================================================
+   ROOM
+========================================================== */
+
+function updateNullRoom(room) {
+
+    nullCurrentRoom =
+        room;
+
+
+    const world =
+        document.querySelector(
+            ".nullVoidRoom"
+        );
+
+    if (world) {
+
+        world.classList.remove(
+            "room-main",
+            "room-corridor",
+            "room-pillars",
+            "room-anomaly"
+        );
+
+        world.classList.add(
+            `room-${room}`
+        );
+    }
+
+
+    const roomName =
+        document.getElementById(
+            "nullRoomName"
+        );
+
+    if (roomName)
+        roomName.textContent =
+            room.toUpperCase();
+
+
+    const navRoom =
+        document.getElementById(
+            "nullNavigationRoom"
+        );
+
+    if (navRoom)
+        navRoom.textContent =
+            room.toUpperCase();
+
+
+    const integrity =
+        document.getElementById(
+            "nullRoomIntegrity"
+        );
+
+    if (integrity) {
+
+        integrity.textContent =
+            nullAnomalyLevel >= 4
+                ? "CRITICAL"
+                : nullAnomalyLevel >= 2
+                    ? "UNSTABLE"
+                    : "UNKNOWN";
+    }
+}
+
+
+function enterDoorRoom() {
+
+    updateNullRoom(
+        nullCurrentRoom === "main"
+            ? "corridor"
+            : "main"
+    );
+
+
+    clearEyes();
+
+    triggerScreenPulse(
+        "room-shift"
+    );
+
+
+    setNullTask(
+        nullCurrentRoom === "corridor"
+            ? "LOCATION CHANGED."
+            : "RETURNED TO MAIN ROOM."
+    );
+
+
+    if (
+        nullCurrentRoom === "corridor" &&
+        Math.random() < 0.45
+    ) {
+
+        setTimeout(() => {
+
+            spawnEyeCluster();
+
+        }, 900);
+    }
 }
 
 
@@ -981,73 +1588,111 @@ function hideDoorBeyond() {
    EYES
 ========================================================== */
 
-function spawnNullEye(behindDoor = false) {
+function spawnNullEye(
+    behindDoor = false
+) {
 
     const field =
         document.querySelector(
             ".nullEyeField"
         );
 
-    if (!field) return;
+    if (!field)
+        return;
+
 
     const eye =
-        document.createElement("button");
+        document.createElement(
+            "button"
+        );
 
-    eye.className = "nullEye";
+
+    eye.className =
+        "nullEye";
+
 
     if (behindDoor)
-        eye.classList.add("behind-door");
+        eye.classList.add(
+            "behind-door"
+        );
+
 
     eye.style.left =
-        `${10 + Math.random() * 80}%`;
+        `${8 + Math.random() * 84}%`;
 
     eye.style.top =
-        `${12 + Math.random() * 65}%`;
+        `${8 + Math.random() * 70}%`;
+
 
     eye.innerHTML = `
+
         <span class="nullEyeOuter">
-            <span class="nullEyePupil"></span>
+
+            <span
+                class="nullEyePupil">
+            </span>
+
         </span>
+
     `;
+
 
     field.appendChild(eye);
 
-    eye.addEventListener("mouseenter", () => {
 
-        if (Math.random() < 0.75) {
+    eye.addEventListener(
+        "mouseenter",
+        () => {
 
-            eye.classList.add(
-                "eye-flee"
+            if (
+                Math.random() < 0.7
+            ) {
+
+                eye.classList.add(
+                    "eye-flee"
+                );
+
+                setTimeout(
+                    () => eye.remove(),
+                    220
+                );
+            }
+        }
+    );
+
+
+    eye.addEventListener(
+        "click",
+        event => {
+
+            event.stopPropagation();
+
+            setNullTask(
+                "IT SAW YOU."
             );
 
-            setTimeout(() => {
-                eye.remove();
-            }, 220);
+            triggerScreenPulse(
+                "eye"
+            );
 
+            eye.classList.add(
+                "eye-destroy"
+            );
+
+            setTimeout(
+                () => eye.remove(),
+                250
+            );
         }
+    );
 
-    });
 
-    eye.addEventListener("click", event => {
+    setTimeout(
+        () => {
 
-        event.stopPropagation();
+            if (!eye.isConnected)
+                return;
 
-        setNullTask("IT SAW YOU.");
-
-        triggerScreenPulse("eye");
-
-        eye.classList.add(
-            "eye-destroy"
-        );
-
-        setTimeout(() => {
-            eye.remove();
-        }, 250);
-    });
-
-    setTimeout(() => {
-
-        if (eye.isConnected) {
             eye.classList.add(
                 "eye-fade"
             );
@@ -1056,23 +1701,43 @@ function spawnNullEye(behindDoor = false) {
                 () => eye.remove(),
                 700
             );
-        }
 
-    }, 2500 + Math.random() * 5000);
+        },
+        2500 +
+        Math.random() * 5000
+    );
 }
 
 
-function spawnEyeCluster(behindDoor = false) {
+function spawnEyeCluster(
+    behindDoor = false
+) {
 
     const count =
-        1 + Math.floor(Math.random() * 4);
+        1 +
+        Math.floor(
+            Math.random() * 4
+        );
 
-    for (let i = 0; i < count; i++) {
 
-        setTimeout(() => {
-            spawnNullEye(behindDoor);
-        }, i * 170);
+    for (
+        let i = 0;
+        i < count;
+        i++
+    ) {
+
+        setTimeout(
+            () => {
+
+                spawnNullEye(
+                    behindDoor
+                );
+
+            },
+            i * 170
+        );
     }
+
 
     setNullTask(
         count === 1
@@ -1085,8 +1750,12 @@ function spawnEyeCluster(behindDoor = false) {
 function clearEyes() {
 
     document
-        .querySelectorAll(".nullEye")
-        .forEach(eye => eye.remove());
+        .querySelectorAll(
+            ".nullEye"
+        )
+        .forEach(
+            eye => eye.remove()
+        );
 }
 
 
@@ -1094,45 +1763,69 @@ function clearEyes() {
    LIGHTS
 ========================================================== */
 
-function flickerNullLights(force = false) {
+function flickerNullLights(
+    force = false
+) {
 
     const lights =
-        [...document.querySelectorAll(
-            ".nullVoidLight"
-        )];
+        [
+            ...document.querySelectorAll(
+                ".nullVoidLight"
+            )
+        ];
 
-    if (!lights.length) return;
+
+    if (!lights.length)
+        return;
+
 
     const selected =
         force
             ? lights
             : lights.filter(
-                () => Math.random() < 0.55
+                () =>
+                    Math.random() < 0.55
             );
 
-    selected.forEach((light, index) => {
 
-        setTimeout(() => {
+    selected.forEach(
+        (light, index) => {
 
-            light.classList.toggle(
-                "is-off"
+            setTimeout(
+                () => {
+
+                    light.classList.toggle(
+                        "is-off"
+                    );
+
+                },
+                index * 120
+            );
+        }
+    );
+
+
+    setNullTask(
+        "LIGHTING INSTABILITY."
+    );
+
+
+    setTimeout(
+        () => {
+
+            selected.forEach(
+                light => {
+
+                    light.classList.remove(
+                        "is-off"
+                    );
+                }
             );
 
-        }, index * 120);
-
-    });
-
-    setNullTask("LIGHTING INSTABILITY.");
-
-    setTimeout(() => {
-
-        selected.forEach(light => {
-            light.classList.remove(
-                "is-off"
-            );
-        });
-
-    }, 900 + Math.random() * 1400);
+        },
+        900 +
+        Math.random() * 1400
+    );
 }
 
 
@@ -1147,27 +1840,35 @@ function triggerDisruption() {
             ".nullWorldDisruption"
         );
 
-    if (!object) return;
+    if (!object)
+        return;
+
 
     object.classList.add(
         "is-active"
     );
 
+
     setNullTask(
         "TEXTURE NOT FOUND."
     );
+
 
     triggerScreenPulse(
         "disruption"
     );
 
-    setTimeout(() => {
 
-        object.classList.remove(
-            "is-active"
-        );
+    setTimeout(
+        () => {
 
-    }, 9000);
+            object.classList.remove(
+                "is-active"
+            );
+
+        },
+        9000
+    );
 }
 
 
@@ -1182,33 +1883,44 @@ function trigger431434() {
             ".nullWorldBlackBlock"
         );
 
-    if (!object) return;
+    if (!object)
+        return;
+
 
     object.classList.add(
         "is-active"
     );
 
+
     setNullTask(
-        "OBJECT 431434 DETECTED."
+        "431434 DETECTED."
     );
+
 
     triggerScreenPulse(
         "blackout"
     );
 
-    setTimeout(() => {
 
-        object.classList.remove(
-            "is-active"
-        );
+    setTimeout(
+        () => {
 
-        if (Math.random() < 0.35) {
-            triggerAnomaly(
-                "outside"
+            object.classList.remove(
+                "is-active"
             );
-        }
 
-    }, 1800);
+            if (
+                Math.random() < 0.45
+            ) {
+
+                triggerAnomaly(
+                    "outside"
+                );
+            }
+
+        },
+        1800
+    );
 }
 
 
@@ -1223,41 +1935,55 @@ function triggerHello() {
             ".nullWorldHello"
         );
 
-    if (!hello) return;
+    if (!hello)
+        return;
+
 
     hello.classList.add(
         "is-broken"
     );
 
+
     setNullTask(
         "HELLO."
     );
 
+
     triggerHeartbeat();
 
-    setTimeout(() => {
 
-        const cross =
-            document.querySelector(
-                ".nullHelloCross"
+    setTimeout(
+        () => {
+
+            const cross =
+                document.querySelector(
+                    ".nullHelloCross"
+                );
+
+            if (cross)
+                cross.classList.add(
+                    "visible"
+                );
+
+
+            setNullTask(
+                "HELLO IS NO LONGER HERE."
             );
 
-        if (cross)
-            cross.classList.add(
-                "visible"
-            );
+        },
+        1300
+    );
 
-        setNullTask(
-            "HELLO IS NO LONGER HERE."
-        );
 
-    }, 1300);
+    setTimeout(
+        () => {
 
-    setTimeout(() => {
+            if (hello.isConnected)
+                hello.remove();
 
-        hello.remove();
-
-    }, 1800);
+        },
+        1800
+    );
 }
 
 
@@ -1272,27 +1998,35 @@ function triggerIt() {
             ".nullWorldIt"
         );
 
-    if (!object) return;
+    if (!object)
+        return;
+
 
     object.classList.add(
         "is-active"
     );
 
-    triggerScreenPulse(
-        "it"
-    );
 
     setNullTask(
         "404 // OBJECT EXISTS."
     );
 
-    setTimeout(() => {
 
-        object.classList.remove(
-            "is-active"
-        );
+    triggerScreenPulse(
+        "it"
+    );
 
-    }, 2500);
+
+    setTimeout(
+        () => {
+
+            object.classList.remove(
+                "is-active"
+            );
+
+        },
+        2500
+    );
 }
 
 
@@ -1306,17 +2040,22 @@ function triggerNullExit() {
         "53135Exit6436 DETECTED."
     );
 
+
     triggerScreenPulse(
         "exit"
     );
 
-    setTimeout(() => {
 
-        setNullTask(
-            "EXIT PATH FOUND."
-        );
+    setTimeout(
+        () => {
 
-    }, 600);
+            setNullTask(
+                "EXIT PATH FOUND."
+            );
+
+        },
+        600
+    );
 }
 
 
@@ -1326,7 +2065,9 @@ function triggerNullExit() {
 
 function executeNullCommand() {
 
-    if (nullBanned) return;
+    if (nullBanned)
+        return;
+
 
     const input =
         document.getElementById(
@@ -1338,106 +2079,145 @@ function executeNullCommand() {
             "nullConsoleOutput"
         );
 
-    if (!input || !output) return;
+
+    if (!input || !output)
+        return;
+
 
     const command =
         input.value.trim();
 
-    if (!command) return;
+
+    if (!command)
+        return;
+
 
     input.value = "";
+
 
     output.innerHTML +=
         `<br>&gt; ${escapeNullHTML(command)}`;
 
+
     const cmd =
         command.toLowerCase();
 
-    setTimeout(() => {
 
-        let response = "";
+    setTimeout(
+        () => {
 
-        if (cmd === "help") {
+            let response = "";
 
-            response =
-                "null<br>" +
-                "omega<br>" +
-                "integrity<br>" +
-                "exit<br>" +
-                "memory<br>" +
-                "431434";
 
-        } else if (cmd === "null") {
+            if (cmd === "help") {
 
-            response = "Outside";
+                response =
+                    "null<br>" +
+                    "omega<br>" +
+                    "integrity<br>" +
+                    "exit<br>" +
+                    "memory<br>" +
+                    "431434<br>" +
+                    "room";
 
-            triggerNullCall(
-                "null"
-            );
 
-        } else if (
-            cmd === "xxram2diexx"
-        ) {
+            } else if (
+                cmd === "null"
+            ) {
 
-            response = "Error";
+                response =
+                    "Outside";
 
-            triggerNullCall(
-                "xxram2diexx"
-            );
+                triggerNullCall(
+                    "null"
+                );
 
-        } else if (
-            cmd === "integrity"
-        ) {
 
-            response =
-                "ERR.NEXTNIGHT";
+            } else if (
+                cmd === "xxram2diexx"
+            ) {
 
-            triggerAnomaly(
-                "integrity"
-            );
+                response =
+                    "Error";
 
-        } else if (
-            cmd === "memory"
-        ) {
+                triggerNullCall(
+                    "xxram2diexx"
+                );
 
-            response =
-                "ACCESS DENIED";
 
-        } else if (
-            cmd === "431434"
-        ) {
+            } else if (
+                cmd === "integrity"
+            ) {
 
-            response =
-                "OBJECT";
+                response =
+                    "ERR.NEXTNIGHT";
 
-            trigger431434();
+                triggerAnomaly(
+                    "integrity"
+                );
 
-        } else if (
-            cmd === "exit" ||
-            cmd === "sv.exit"
-        ) {
 
-            response =
-                "RETURN PATH FOUND";
+            } else if (
+                cmd === "memory"
+            ) {
 
-            setTimeout(
-                () => exitNullSpace(),
-                1400
-            );
+                response =
+                    "ACCESS DENIED";
 
-        } else {
 
-            response =
-                "ERR.UNKNOWN";
-        }
+            } else if (
+                cmd === "431434"
+            ) {
 
-        output.innerHTML +=
-            `<br>${response}`;
+                response =
+                    "OBJECT";
 
-        output.scrollTop =
-            output.scrollHeight;
+                trigger431434();
 
-    }, 250);
+
+            } else if (
+                cmd === "room"
+            ) {
+
+                response =
+                    nullCurrentRoom
+                        .toUpperCase();
+
+                openNullWindow(
+                    "room"
+                );
+
+
+            } else if (
+                cmd === "exit" ||
+                cmd === "sv.exit"
+            ) {
+
+                response =
+                    "RETURN PATH FOUND";
+
+                setTimeout(
+                    () => exitNullSpace(),
+                    1400
+                );
+
+
+            } else {
+
+                response =
+                    "ERR.UNKNOWN";
+            }
+
+
+            output.innerHTML +=
+                `<br>${response}`;
+
+            output.scrollTop =
+                output.scrollHeight;
+
+        },
+        250
+    );
 }
 
 
@@ -1447,32 +2227,48 @@ function executeNullCommand() {
 
 function sendNullMessage() {
 
-    if (nullBanned) return;
+    if (nullBanned)
+        return;
+
 
     const input =
         document.getElementById(
             "nullChatInput"
         );
 
-    if (!input) return;
+
+    if (!input)
+        return;
+
 
     const text =
         input.value.trim();
 
-    if (!text) return;
+
+    if (!text)
+        return;
+
 
     input.value = "";
+
 
     addNullChatMessage(
         "YOU",
         text
     );
 
-    setTimeout(() => {
 
-        respondToNullChat(text);
+    setTimeout(
+        () => {
 
-    }, 600 + Math.random() * 500);
+            respondToNullChat(
+                text
+            );
+
+        },
+        500 +
+        Math.random() * 700
+    );
 }
 
 
@@ -1487,25 +2283,44 @@ function addNullChatMessage(
             "nullChatMessages"
         );
 
-    if (!container) return;
+
+    if (!container)
+        return;
+
 
     const message =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
+
 
     message.className =
         "nullMessage";
+
 
     if (unknown)
         message.classList.add(
             "nullUnknownMessage"
         );
 
+
     message.innerHTML = `
-        <b>${escapeNullHTML(user)}</b>
-        <span>${escapeNullHTML(text)}</span>
+
+        <b>
+            ${escapeNullHTML(user)}
+        </b>
+
+        <span>
+            ${escapeNullHTML(text)}
+        </span>
+
     `;
 
-    container.appendChild(message);
+
+    container.appendChild(
+        message
+    );
+
 
     container.scrollTop =
         container.scrollHeight;
@@ -1513,25 +2328,29 @@ function addNullChatMessage(
 
 
 /* ==========================================================
-   NULL CHAT RESPONSES
+   NULL CHAT
 ========================================================== */
 
 function respondToNullChat(text) {
 
     const lower =
-        text.trim().toLowerCase();
+        text
+            .trim()
+            .toLowerCase();
 
 
-    /* ------------------------------
+    /* ======================================================
        INSULTS
-    ------------------------------ */
+    ====================================================== */
 
     const insults = [
+
         "fuck you",
         "fucker",
         "asshole",
         "ass hole",
         "piece of shit",
+
         "иди нахуй",
         "пошел нахуй",
         "пошёл нахуй",
@@ -1539,7 +2358,9 @@ function respondToNullChat(text) {
         "мудак",
         "дебил",
         "ублюдок"
+
     ];
+
 
     if (
         insults.some(
@@ -1549,20 +2370,24 @@ function respondToNullChat(text) {
     ) {
 
         handleNullInsult();
+
         return;
     }
 
 
-    /* ------------------------------
+    /* ======================================================
        HELLO
-    ------------------------------ */
+    ====================================================== */
 
     if (
+
         lower === "hello" ||
         lower === "hello?" ||
-        lower === "hi?" ||
         lower === "hi" ||
+        lower === "hi?" ||
+        lower === "hey" ||
         lower === "привет"
+
     ) {
 
         addNullChatMessage(
@@ -1574,54 +2399,45 @@ function respondToNullChat(text) {
     }
 
 
-    /* ------------------------------
-       VOID
-    ------------------------------ */
-
-    if (lower === "void") {
-
-        addNullChatMessage(
-            "NULL",
-            "It's me."
-        );
-
-        return;
-    }
-
-
-    /* ------------------------------
+    /* ======================================================
        WHO
-    ------------------------------ */
+    ====================================================== */
 
     if (
+
         lower.includes(
             "who are you"
         ) ||
+
         lower.includes(
             "кто ты"
         )
+
     ) {
 
         addNullChatMessage(
             "NULL",
-            "You know."
+            "err.type=null"
         );
 
         return;
     }
 
 
-    /* ------------------------------
+    /* ======================================================
        WHAT DO YOU WANT
-    ------------------------------ */
+    ====================================================== */
 
     if (
+
         lower.includes(
             "what do you want"
         ) ||
+
         lower.includes(
             "чего ты хочешь"
         )
+
     ) {
 
         addNullChatMessage(
@@ -1633,46 +2449,76 @@ function respondToNullChat(text) {
     }
 
 
-    /* ------------------------------
-       NULL
-    ------------------------------ */
+    /* ======================================================
+       VOID
+    ====================================================== */
 
-    if (lower === "null") {
+    if (
+        lower === "void"
+    ) {
+
+        addNullChatMessage(
+            "NULL",
+            "It's me."
+        );
+
+        return;
+    }
+
+
+    /* ======================================================
+       NULL
+    ====================================================== */
+
+    if (
+        lower === "null"
+    ) {
 
         addNullChatMessage(
             "NULL",
             "The end is nigh."
         );
 
-        setTimeout(() => {
 
-            addNullChatMessage(
-                "NULL",
-                "The end is null."
-            );
+        setTimeout(
+            () => {
 
-        }, 700);
+                addNullChatMessage(
+                    "NULL",
+                    "The end is null."
+                );
 
-        setTimeout(() => {
+            },
+            700
+        );
 
-            triggerNullCall(
-                "null"
-            );
 
-        }, 1200);
+        setTimeout(
+            () => {
+
+                triggerNullCall(
+                    "null"
+                );
+
+            },
+            1200
+        );
 
         return;
     }
 
 
-    /* ------------------------------
+    /* ======================================================
        CAN YOU SEE ME
-    ------------------------------ */
+    ====================================================== */
 
     if (
-        lower === "can you see me?" ||
+
         lower === "can you see me" ||
+        lower === "can you see me?" ||
+        lower === "ты меня видишь" ||
         lower === "ты меня видишь?"
+
     ) {
 
         addNullChatMessage(
@@ -1680,51 +2526,82 @@ function respondToNullChat(text) {
             "Yes."
         );
 
-        setTimeout(() => {
 
-            addNullChatMessage(
-                "NULL",
-                "Hello."
-            );
+        setTimeout(
+            () => {
 
-            triggerEyes();
-            triggerHeartbeat();
+                addNullChatMessage(
+                    "NULL",
+                    "Hello."
+                );
 
-        }, 700);
+
+                triggerEyes();
+
+                triggerHeartbeat();
+
+
+                if (
+                    Math.random() < 0.6
+                ) {
+
+                    triggerNullAppearance();
+                }
+
+            },
+            700
+        );
 
         return;
     }
 
 
-    /* ------------------------------
+    /* ======================================================
        FRIEND
-    ------------------------------ */
+    ====================================================== */
 
     if (
-        lower === "friend?" ||
-        lower === "friend"
+
+        lower === "friend" ||
+        lower === "friend?"
+
     ) {
 
         addNullChatMessage(
             "NULL",
-            "..."
+            "?"
         );
 
-        setTimeout(() => {
 
-            triggerNullCall(
-                "friend"
-            );
+        setTimeout(
+            () => {
 
-        }, 900);
+                if (
+                    nullInsultCount >= 3
+                ) {
+
+                    triggerNullCall(
+                        "friend"
+                    );
+
+                } else {
+
+                    triggerScreenPulse(
+                        "scare"
+                    );
+                }
+
+            },
+            800
+        );
 
         return;
     }
 
 
-    /* ------------------------------
+    /* ======================================================
        FOLLOW
-    ------------------------------ */
+    ====================================================== */
 
     if (
         lower === "follow"
@@ -1735,19 +2612,23 @@ function respondToNullChat(text) {
             "Is behind you."
         );
 
-        setTimeout(() => {
 
-            triggerBehindYou();
+        setTimeout(
+            () => {
 
-        }, 700);
+                triggerBehindYou();
+
+            },
+            700
+        );
 
         return;
     }
 
 
-    /* ------------------------------
-       xXram2dieXx
-    ------------------------------ */
+    /* ======================================================
+       XXRAM
+    ====================================================== */
 
     if (
         lower === "xxram2diexx"
@@ -1758,25 +2639,52 @@ function respondToNullChat(text) {
             "Rot in hell."
         );
 
-        setTimeout(() => {
 
-            triggerNullCall(
-                "xxram2diexx"
-            );
+        setTimeout(
+            () => {
 
-        }, 1000);
+                triggerNullCall(
+                    "xxram2diexx"
+                );
+
+            },
+            1000
+        );
 
         return;
     }
 
 
-    /* ------------------------------
-       NOTHING IS WATCHING
-    ------------------------------ */
+    /* ======================================================
+       INTEGRITY
+    ====================================================== */
 
     if (
+        lower === "integrity"
+    ) {
+
+        addNullChatMessage(
+            "NULL",
+            "Deep down under the bedrock."
+        );
+
+        triggerAnomaly(
+            "integrity"
+        );
+
+        return;
+    }
+
+
+    /* ======================================================
+       NOTHING IS WATCHING
+    ====================================================== */
+
+    if (
+
         lower === "nothingiswatching" ||
         lower === "nothing is watching"
+
     ) {
 
         addNullChatMessage(
@@ -1784,19 +2692,22 @@ function respondToNullChat(text) {
             "A broken promise."
         );
 
+
         triggerEyes();
 
         return;
     }
 
 
-    /* ------------------------------
+    /* ======================================================
        HELP
-    ------------------------------ */
+    ====================================================== */
 
     if (
+
         lower === "help" ||
         lower === "помоги"
+
     ) {
 
         addNullChatMessage(
@@ -1808,9 +2719,9 @@ function respondToNullChat(text) {
     }
 
 
-    /* ------------------------------
+    /* ======================================================
        DEFAULT
-    ------------------------------ */
+    ====================================================== */
 
     addNullChatMessage(
         "NULL",
@@ -1820,19 +2731,13 @@ function respondToNullChat(text) {
 
 
 /* ==========================================================
-   INSULT / BAN
+   INSULT SYSTEM
 ========================================================== */
 
 function handleNullInsult() {
 
     nullInsultCount++;
 
-    saveNullState();
-
-    addNullChatMessage(
-        "NULL",
-        "..."
-    );
 
     nullAnomalyLevel =
         Math.min(
@@ -1840,87 +2745,138 @@ function handleNullInsult() {
             nullInsultCount
         );
 
-    if (nullInsultCount === 1) {
+
+    saveNullState();
+
+
+    addNullChatMessage(
+        "NULL",
+        "..."
+    );
+
+
+    if (
+        nullInsultCount === 1
+    ) {
 
         setNullTask(
             "NULL IS NOT AMUSED."
         );
 
+
         triggerScreenPulse(
             "warning"
         );
 
-        setTimeout(() => {
 
-            addNullChatMessage(
-                "NULL",
-                "Don't."
-            );
+        setTimeout(
+            () => {
 
-        }, 900);
+                addNullChatMessage(
+                    "NULL",
+                    "Don't."
+                );
+
+            },
+            900
+        );
+
 
         return;
     }
 
 
-    if (nullInsultCount === 2) {
+    if (
+        nullInsultCount === 2
+    ) {
 
         setNullTask(
             "WARNING: NULL REPUTATION LOW."
         );
 
+
         flickerNullLights(true);
+
         spawnEyeCluster();
 
-        setTimeout(() => {
 
-            addNullChatMessage(
-                "NULL",
-                "You should stop."
-            );
+        setTimeout(
+            () => {
 
-        }, 700);
+                addNullChatMessage(
+                    "NULL",
+                    "You should stop."
+                );
 
-        return;
-    }
-
-
-    if (nullInsultCount === 3) {
-
-        setNullTask(
-            "NULL INSTANCE ANGRY."
+            },
+            700
         );
 
-        triggerHeartbeat();
-        triggerDisruption();
-        triggerNullAppearance();
-
-        setTimeout(() => {
-
-            addNullChatMessage(
-                "NULL",
-                "You were warned."
-            );
-
-        }, 900);
 
         return;
     }
 
 
-    if (nullInsultCount >= 4) {
+    if (
+        nullInsultCount === 3
+    ) {
 
-        setTimeout(() => {
+        setNullTask(
+            "NULL INSTANCE HOSTILE."
+        );
 
-            banByNull();
 
-        }, 1100);
+        triggerHeartbeat();
 
+        triggerDisruption();
+
+        triggerNullAppearance(
+            "hostile"
+        );
+
+
+        setTimeout(
+            () => {
+
+                addNullChatMessage(
+                    "NULL",
+                    "You were warned."
+                );
+
+            },
+            900
+        );
+
+
+        return;
+    }
+
+
+    if (
+        nullInsultCount >= 4
+    ) {
+
+        setTimeout(
+            () => {
+
+                banByNull();
+
+            },
+            1100
+        );
     }
 }
 
 
+/* ==========================================================
+   BAN
+========================================================== */
+
 function banByNull() {
+
+    if (nullBanned)
+        return;
+
 
     nullBanned = true;
 
@@ -1928,15 +2884,32 @@ function banByNull() {
 
     stopNullEvents();
 
+
+    setNullTask(
+        "CONNECTION TERMINATED."
+    );
+
+
     triggerScreenPulse(
         "ban"
     );
 
-    setTimeout(() => {
 
-        showNullBanScreen();
+    showNullEventText(
+        "NULL"
+    );
 
-    }, 600);
+
+    setTimeout(
+        () => {
+
+            hideNullEventText();
+
+            showNullBanScreen();
+
+        },
+        900
+    );
 }
 
 
@@ -1951,33 +2924,43 @@ function showNullBanScreen() {
             "nullSpaceRoot"
         );
 
-    if (!root) return;
+    if (!root)
+        return;
+
 
     root.innerHTML = `
 
         <div class="nullBanScreen">
 
-            <div class="nullBanNoise"></div>
+            <div
+                class="nullBanNoise">
+            </div>
 
-            <div class="nullBanBox">
+            <div
+                class="nullBanBox">
 
-                <div class="nullBanTitle">
+                <div
+                    class="nullBanTitle">
                     NULL
                 </div>
 
-                <div class="nullBanLine">
+                <div
+                    class="nullBanLine">
                     CONNECTION TERMINATED
                 </div>
 
-                <div class="nullBanReason">
+                <div
+                    class="nullBanReason">
                     YOU HAVE BEEN BANNED
                 </div>
 
-                <div class="nullBanReason">
+                <div
+                    class="nullBanReason">
                     REASON: DISRESPECT
                 </div>
 
-                <div class="nullBanCode">
+                <div
+                    class="nullBanCode">
                     ERR.NULL.BAN
                 </div>
 
@@ -1991,14 +2974,17 @@ function showNullBanScreen() {
         </div>
     `;
 
+
     root.classList.remove(
         "hidden"
     );
+
 
     const button =
         document.getElementById(
             "nullBanReturn"
         );
+
 
     if (button) {
 
@@ -2015,7 +3001,7 @@ function showNullBanScreen() {
 
 
 /* ==========================================================
-   NULL CALLS
+   NULL CALL
 ========================================================== */
 
 function triggerNullCall(type) {
@@ -2024,65 +3010,137 @@ function triggerNullCall(type) {
         "null-call"
     );
 
+
     flickerNullLights(true);
 
     spawnEyeCluster();
 
-    setTimeout(() => {
 
-        triggerNullAppearance();
+    setTimeout(
+        () => {
 
-    }, 900);
+            triggerNullAppearance(
+                type
+            );
+
+        },
+        800
+    );
+
 
     if (
         type === "xxram2diexx"
     ) {
 
-        setTimeout(() => {
+        setTimeout(
+            () => {
 
-            startNullHereEvent();
+                startNullHereEvent();
 
-        }, 1500);
+            },
+            1500
+        );
     }
 }
 
 
 /* ==========================================================
-   NULL ENTITY
+   NULL APPEARANCE
 ========================================================== */
 
-function triggerNullAppearance() {
+function triggerNullAppearance(
+    mode = "watching"
+) {
 
     const entity =
         document.querySelector(
             ".nullEntity"
         );
 
-    if (!entity) return;
+    if (!entity)
+        return;
+
+
+    nullNullVisible = true;
+
+
+    entity.classList.remove(
+        "visible",
+        "is-chasing",
+        "behind-door",
+        "hostile"
+    );
+
 
     entity.classList.add(
         "visible"
     );
 
+
+    if (
+        mode === "behind-door"
+    ) {
+
+        entity.classList.add(
+            "behind-door"
+        );
+    }
+
+
+    if (
+        mode === "hostile"
+    ) {
+
+        entity.classList.add(
+            "hostile"
+        );
+    }
+
+
+    if (
+        mode === "chase"
+    ) {
+
+        entity.classList.add(
+            "is-chasing"
+        );
+    }
+
+
     setNullTask(
-        "NULL INSTANCE ACTIVE."
+        mode === "hostile"
+            ? "NULL INSTANCE HOSTILE."
+            : "NULL INSTANCE ACTIVE."
     );
 
-    setTimeout(() => {
 
-        if (
-            Math.random() < 0.7
-        ) {
+    setTimeout(
+        () => {
 
-            entity.classList.remove(
-                "visible"
-            );
+            if (
+                Math.random() < 0.7
+            ) {
 
-        }
+                entity.classList.remove(
+                    "visible",
+                    "is-chasing",
+                    "behind-door"
+                );
 
-    }, 3200);
+                nullNullVisible = false;
+            }
+
+        },
+        mode === "hostile"
+            ? 5000
+            : 3200
+    );
 }
 
+
+/* ==========================================================
+   NULL IS HERE
+========================================================== */
 
 function startNullHereEvent() {
 
@@ -2091,13 +3149,21 @@ function startNullHereEvent() {
             ".nullEntity"
         );
 
-    if (!entity) return;
+    if (!entity)
+        return;
+
 
     entity.classList.add(
+        "visible",
         "is-chasing"
     );
 
+
+    nullNullVisible = true;
+
+
     const messages = [
+
         "You know nothing",
         "Worship me",
         "Follow me",
@@ -2113,40 +3179,72 @@ function startNullHereEvent() {
         "Nothing can be changed",
         "Close your eyes",
         "One of us"
+
     ];
+
 
     let index = 0;
 
+
     const interval =
-        setInterval(() => {
+        setInterval(
+            () => {
 
-            if (!nullSpaceActive) {
-                clearInterval(interval);
-                return;
-            }
+                if (!nullSpaceActive) {
 
-            showNullEventText(
-                messages[
-                    index %
-                    messages.length
-                ]
-            );
+                    clearInterval(
+                        interval
+                    );
 
-            index++;
+                    return;
+                }
 
-        }, 280);
 
-    setTimeout(() => {
+                showNullEventText(
+                    messages[
+                        index %
+                        messages.length
+                    ]
+                );
 
-        clearInterval(interval);
 
-        entity.classList.remove(
-            "is-chasing"
+                index++;
+
+            },
+            280
         );
 
-        hideNullEventText();
 
-    }, 5000);
+    setTimeout(
+        () => {
+
+            clearInterval(
+                interval
+            );
+
+
+            entity.classList.remove(
+                "is-chasing"
+            );
+
+
+            hideNullEventText();
+
+
+            if (
+                Math.random() < 0.65
+            ) {
+
+                entity.classList.remove(
+                    "visible"
+                );
+
+                nullNullVisible = false;
+            }
+
+        },
+        5000
+    );
 }
 
 
@@ -2160,17 +3258,24 @@ function triggerBehindYou() {
         "BEHIND YOU"
     );
 
+
     triggerScreenPulse(
         "behind"
     );
 
-    setTimeout(() => {
 
-        hideNullEventText();
+    setTimeout(
+        () => {
 
-        triggerNullAppearance();
+            hideNullEventText();
 
-    }, 1300);
+            triggerNullAppearance(
+                "behind-door"
+            );
+
+        },
+        1300
+    );
 }
 
 
@@ -2185,25 +3290,34 @@ function triggerHeartbeat() {
             ".nullHeartbeat"
         );
 
-    if (!heartbeat) return;
+
+    if (!heartbeat)
+        return;
+
 
     heartbeat.classList.remove(
         "active"
     );
 
+
     void heartbeat.offsetWidth;
+
 
     heartbeat.classList.add(
         "active"
     );
 
-    setTimeout(() => {
 
-        heartbeat.classList.remove(
-            "active"
-        );
+    setTimeout(
+        () => {
 
-    }, 3500);
+            heartbeat.classList.remove(
+                "active"
+            );
+
+        },
+        3500
+    );
 }
 
 
@@ -2224,24 +3338,29 @@ function scheduleNextNullEvent() {
     if (!nullSpaceActive)
         return;
 
+
     const delay =
-        9000 +
-        Math.random() * 18000;
+        12000 +
+        Math.random() * 24000;
+
 
     nullEventTimer =
-        setTimeout(() => {
+        setTimeout(
+            () => {
 
-            if (
-                !nullBanned
-            ) {
+                if (
+                    !nullBanned
+                ) {
 
-                runRandomNullEvent();
+                    runRandomNullEvent();
+                }
 
-            }
 
-            scheduleNextNullEvent();
+                scheduleNextNullEvent();
 
-        }, delay);
+            },
+            delay
+        );
 }
 
 
@@ -2250,70 +3369,85 @@ function runRandomNullEvent() {
     const events = [
 
         {
-            weight: 22,
-            fn: () => flickerNullLights()
-        },
-
-        {
             weight: 20,
-            fn: () => spawnEyeCluster()
+            fn: () =>
+                flickerNullLights()
         },
 
         {
-            weight: 14,
+            weight: 17,
+            fn: () =>
+                spawnEyeCluster()
+        },
+
+        {
+            weight: 12,
             fn: () => {
 
                 if (!nullDoorOpen)
-                    toggleNullDoor();
+                    toggleNullDoor(true);
 
             }
         },
 
         {
             weight: 10,
-            fn: () => triggerHeartbeat()
+            fn: () =>
+                triggerHeartbeat()
         },
 
         {
-            weight: 8,
-            fn: () => triggerDisruption()
+            weight: 9,
+            fn: () =>
+                triggerDisruption()
         },
 
         {
             weight: 7,
-            fn: () => triggerIt()
+            fn: () =>
+                triggerIt()
+        },
+
+        {
+            weight: 6,
+            fn: () =>
+                trigger431434()
         },
 
         {
             weight: 5,
-            fn: () => trigger431434()
+            fn: () =>
+                triggerHello()
+        },
+
+        {
+            weight: 5,
+            fn: () =>
+                triggerBehindYou()
         },
 
         {
             weight: 4,
-            fn: () => triggerHello()
-        },
-
-        {
-            weight: 4,
-            fn: () => triggerBehindYou()
+            fn: () =>
+                triggerNullAppearance()
         },
 
         {
             weight: 3,
-            fn: () => triggerNullAppearance()
+            fn: () =>
+                triggerAnomaly(
+                    "integrity"
+                )
         },
 
         {
             weight: 2,
-            fn: () => triggerAnomaly("integrity")
-        },
-
-        {
-            weight: 1,
-            fn: () => triggerMajorAnomaly()
+            fn: () =>
+                triggerMajorAnomaly()
         }
+
     ];
+
 
     const total =
         events.reduce(
@@ -2322,18 +3456,27 @@ function runRandomNullEvent() {
             0
         );
 
+
     let random =
-        Math.random() * total;
+        Math.random() *
+        total;
 
-    for (const event of events) {
 
-        random -= event.weight;
+    for (
+        const event of events
+    ) {
 
-        if (random <= 0) {
+        random -=
+            event.weight;
+
+
+        if (
+            random <= 0
+        ) {
 
             event.fn();
-            break;
 
+            break;
         }
     }
 }
@@ -2345,33 +3488,55 @@ function runRandomNullEvent() {
 
 function triggerMajorAnomaly() {
 
+    if (nullEventRunning)
+        return;
+
+
+    nullEventRunning = true;
+
+
     triggerScreenPulse(
         "major"
     );
 
+
     clearEyes();
 
-    setTimeout(() => {
 
-        showNullEventText(
-            "KEEP PLAYING"
-        );
+    setTimeout(
+        () => {
 
-    }, 300);
+            showNullEventText(
+                "KEEP PLAYING"
+            );
 
-    setTimeout(() => {
+        },
+        300
+    );
 
-        hideNullEventText();
 
-        triggerNullAppearance();
+    setTimeout(
+        () => {
 
-    }, 2200);
+            hideNullEventText();
 
-    setTimeout(() => {
+            triggerNullAppearance();
 
-        flickerNullLights(true);
+        },
+        2200
+    );
 
-    }, 2800);
+
+    setTimeout(
+        () => {
+
+            flickerNullLights(true);
+
+            nullEventRunning = false;
+
+        },
+        2800
+    );
 }
 
 
@@ -2387,35 +3552,80 @@ function triggerAnomaly(type) {
             nullAnomalyLevel + 1
         );
 
-    if (type === "outside") {
+
+    if (
+        type === "outside"
+    ) {
 
         showNullEventText(
             "OUTSIDE"
         );
 
+
         triggerScreenPulse(
             "outside"
         );
 
-        setTimeout(() => {
-            hideNullEventText();
-        }, 1800);
+
+        setTimeout(
+            () => {
+
+                hideNullEventText();
+
+            },
+            1800
+        );
+
 
         return;
     }
 
-    if (type === "integrity") {
+
+    if (
+        type === "integrity"
+    ) {
 
         showNullEventText(
             "ERR.NEXTNIGHT"
         );
 
+
         flickerNullLights(true);
 
-        setTimeout(() => {
-            hideNullEventText();
-        }, 1800);
+
+        setTimeout(
+            () => {
+
+                hideNullEventText();
+
+            },
+            1800
+        );
     }
+
+
+    updateNullIntegrity();
+}
+
+
+function updateNullIntegrity() {
+
+    const integrity =
+        document.getElementById(
+            "nullRoomIntegrity"
+        );
+
+
+    if (!integrity)
+        return;
+
+
+    integrity.textContent =
+        nullAnomalyLevel >= 4
+            ? "CRITICAL"
+            : nullAnomalyLevel >= 2
+                ? "UNSTABLE"
+                : "UNKNOWN";
 }
 
 
@@ -2423,32 +3633,47 @@ function triggerAnomaly(type) {
    SCREEN EFFECTS
 ========================================================== */
 
-function triggerScreenPulse(type = "") {
+function triggerScreenPulse(
+    type = ""
+) {
 
     const overlay =
         document.querySelector(
             ".nullEventOverlay"
         );
 
-    if (!overlay) return;
+
+    if (!overlay)
+        return;
+
 
     overlay.className =
         "nullEventOverlay";
 
+
     void overlay.offsetWidth;
+
 
     overlay.classList.add(
         "active",
         `effect-${type}`
     );
 
-    setTimeout(() => {
 
-        overlay.classList.remove(
-            "active"
-        );
+    setTimeout(
+        () => {
 
-    }, type === "major" ? 1500 : 420);
+            overlay.classList.remove(
+                "active"
+            );
+
+        },
+        type === "major"
+            ? 1500
+            : type === "ban"
+                ? 2200
+                : 420
+    );
 }
 
 
@@ -2459,9 +3684,14 @@ function showNullEventText(text) {
             ".nullEventText"
         );
 
-    if (!element) return;
 
-    element.textContent = text;
+    if (!element)
+        return;
+
+
+    element.textContent =
+        text;
+
 
     element.classList.add(
         "active"
@@ -2475,6 +3705,7 @@ function hideNullEventText() {
         document.querySelector(
             ".nullEventText"
         );
+
 
     if (element)
         element.classList.remove(
@@ -2494,31 +3725,41 @@ function playNullEntry() {
             "nullSpaceRoot"
         );
 
-    if (!root) return;
+
+    if (!root)
+        return;
+
 
     const space =
         root.querySelector(
             ".nullSpace"
         );
 
-    if (!space) return;
+
+    if (!space)
+        return;
+
 
     space.classList.add(
         "nullSpaceEntering"
     );
 
-    setTimeout(() => {
 
-        space.classList.remove(
-            "nullSpaceEntering"
-        );
+    setTimeout(
+        () => {
 
-    }, 1800);
+            space.classList.remove(
+                "nullSpaceEntering"
+            );
+
+        },
+        1800
+    );
 }
 
 
 /* ==========================================================
-   EVENTS
+   EVENT BINDING
 ========================================================== */
 
 function bindNullSpaceEvents() {
@@ -2528,16 +3769,25 @@ function bindNullSpaceEvents() {
             "nullSpaceRoot"
         );
 
-    if (!root) return;
+
+    if (!root)
+        return;
+
 
     root.addEventListener(
         "click",
         event => {
 
+
+            /* ----------------------------------------------
+               WINDOW BUTTON
+            ---------------------------------------------- */
+
             const windowButton =
                 event.target.closest(
                     "[data-null-window]"
                 );
+
 
             if (windowButton) {
 
@@ -2549,6 +3799,10 @@ function bindNullSpaceEvents() {
             }
 
 
+            /* ----------------------------------------------
+               RETURN
+            ---------------------------------------------- */
+
             if (
                 event.target.closest(
                     "#nullReturnButton"
@@ -2556,6 +3810,7 @@ function bindNullSpaceEvents() {
             ) {
 
                 exitNullSpace();
+
                 return;
             }
 
@@ -2567,90 +3822,186 @@ function bindNullSpaceEvents() {
             ) {
 
                 exitNullSpace();
+
                 return;
             }
 
+
+            /* ----------------------------------------------
+               WORLD OBJECT
+            ---------------------------------------------- */
 
             const object =
                 event.target.closest(
                     "[data-null-object]"
                 );
 
-            if (!object) return;
+
+            if (!object)
+                return;
+
 
             const type =
                 object.dataset.nullObject;
 
 
-            if (type === "door") {
+            /* DOOR */
+
+            if (
+                type === "door"
+            ) {
 
                 toggleNullDoor();
+
+                setTimeout(
+                    () => {
+
+                        if (
+                            nullDoorOpen &&
+                            Math.random() < 0.25
+                        ) {
+
+                            enterDoorRoom();
+                        }
+
+                    },
+                    900
+                );
+
                 return;
             }
 
 
-            if (type === "console") {
+            /* CONSOLE */
+
+            if (
+                type === "console"
+            ) {
 
                 openNullWindow(
                     "console"
                 );
 
+
                 triggerScreenPulse(
                     "console"
                 );
 
+
+                setNullTask(
+                    "CONSOLE CONNECTED."
+                );
+
+
                 return;
             }
 
 
-            if (type === "431434") {
+            /* 431434 */
+
+            if (
+                type === "431434"
+            ) {
 
                 trigger431434();
+
                 return;
             }
 
 
-            if (type === "disruption") {
+            /* DISRUPTION */
+
+            if (
+                type === "disruption"
+            ) {
 
                 triggerDisruption();
+
                 return;
             }
 
 
-            if (type === "it") {
+            /* IT */
+
+            if (
+                type === "it"
+            ) {
 
                 triggerIt();
+
                 return;
             }
 
 
-            if (type === "hello") {
+            /* HELLO */
+
+            if (
+                type === "hello"
+            ) {
 
                 triggerHello();
+
                 return;
             }
 
 
-            if (type === "exit") {
+            /* EXIT */
+
+            if (
+                type === "exit"
+            ) {
 
                 triggerNullExit();
+
                 return;
             }
 
+
+            /* NULL */
 
             if (
                 type === "null"
             ) {
 
-                triggerNullAppearance();
+                triggerNullAppearance(
+                    "hostile"
+                );
+
 
                 setNullTask(
                     "NULL SELECTED."
                 );
 
+
                 return;
             }
 
+
+            /* LIGHT */
+
+            if (
+                type === "light"
+            ) {
+
+                object.classList.toggle(
+                    "is-off"
+                );
+
+
+                setNullTask(
+                    object.classList.contains(
+                        "is-off"
+                    )
+                        ? "LIGHT OFF."
+                        : "LIGHT RESTORED."
+                );
+
+
+                return;
+            }
+
+
+            /* OTHER OBJECTS */
 
             setNullTask(
                 `${String(type).toUpperCase()} SELECTED.`
@@ -2659,10 +4010,15 @@ function bindNullSpaceEvents() {
     );
 
 
+    /* ======================================================
+       CHAT
+    ====================================================== */
+
     const send =
         document.getElementById(
             "nullChatSend"
         );
+
 
     if (send) {
 
@@ -2678,6 +4034,7 @@ function bindNullSpaceEvents() {
             "nullChatInput"
         );
 
+
     if (chatInput) {
 
         chatInput.addEventListener(
@@ -2688,19 +4045,24 @@ function bindNullSpaceEvents() {
                     event.key === "Enter"
                 ) {
 
+                    event.preventDefault();
+
                     sendNullMessage();
-
                 }
-
             }
         );
     }
 
 
+    /* ======================================================
+       CONSOLE
+    ====================================================== */
+
     const consoleInput =
         document.getElementById(
             "nullConsoleCommand"
         );
+
 
     if (consoleInput) {
 
@@ -2712,10 +4074,10 @@ function bindNullSpaceEvents() {
                     event.key === "Enter"
                 ) {
 
+                    event.preventDefault();
+
                     executeNullCommand();
-
                 }
-
             }
         );
     }
@@ -2737,21 +4099,54 @@ function stopNullEvents() {
         nullEventTimer = null;
     }
 
-    if (nullEyeTimer) {
+
+    if (nullRoomTimer) {
 
         clearTimeout(
-            nullEyeTimer
+            nullRoomTimer
         );
 
-        nullEyeTimer = null;
+        nullRoomTimer = null;
     }
 
+
     clearEyes();
+
+    hideNullEventText();
+
+
+    const entity =
+        document.querySelector(
+            ".nullEntity"
+        );
+
+
+    if (entity) {
+
+        entity.classList.remove(
+            "visible",
+            "is-chasing",
+            "behind-door",
+            "hostile"
+        );
+    }
+
+
+    document
+        .querySelectorAll(
+            ".nullVoidLight"
+        )
+        .forEach(
+            light =>
+                light.classList.remove(
+                    "is-off"
+                )
+        );
 }
 
 
 /* ==========================================================
-   TASK
+   TASK / STATUS
 ========================================================== */
 
 function setNullTask(text) {
@@ -2761,37 +4156,44 @@ function setNullTask(text) {
             "nullTaskMessage"
         );
 
+
     if (task)
-        task.textContent = text;
+        task.textContent =
+            text;
+
 
     const status =
         document.querySelector(
             ".nullStatusValue"
         );
 
-    if (status) {
 
-        if (
-            nullAnomalyLevel >= 4
-        ) {
+    if (!status)
+        return;
 
-            status.textContent =
-                "ERR0R";
 
-        } else if (
-            nullAnomalyLevel >= 2
-        ) {
+    if (
+        nullAnomalyLevel >= 4
+    ) {
 
-            status.textContent =
-                "0000NULL";
+        status.textContent =
+            "ERR0R";
 
-        } else {
 
-            status.textContent =
-                nullDoorOpen
-                    ? "00000001"
-                    : "00000000";
-        }
+    } else if (
+        nullAnomalyLevel >= 2
+    ) {
+
+        status.textContent =
+            "0000NULL";
+
+
+    } else {
+
+        status.textContent =
+            nullDoorOpen
+                ? "00000001"
+                : "00000000";
     }
 }
 
@@ -2816,12 +4218,143 @@ function capitalize(text) {
 function escapeNullHTML(text) {
 
     return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 }
+
+
+/* ==========================================================
+   DEBUG API
+========================================================== */
+
+window.nullTestEvent =
+    function(type) {
+
+        if (!nullSpaceActive)
+            return;
+
+        switch(type) {
+
+            case "eyes":
+                spawnEyeCluster();
+                break;
+
+            case "door":
+                toggleNullDoor();
+                break;
+
+            case "lights":
+                flickerNullLights(true);
+                break;
+
+            case "heartbeat":
+                triggerHeartbeat();
+                break;
+
+            case "disruption":
+                triggerDisruption();
+                break;
+
+            case "431434":
+                trigger431434();
+                break;
+
+            case "it":
+                triggerIt();
+                break;
+
+            case "hello":
+                triggerHello();
+                break;
+
+            case "null":
+                triggerNullAppearance();
+                break;
+
+            case "behind":
+                triggerBehindYou();
+                break;
+
+            case "major":
+                triggerMajorAnomaly();
+                break;
+
+            default:
+                triggerAnomaly(type);
+        }
+    };
+
+
+window.nullSummon =
+    function() {
+
+        if (nullSpaceActive)
+            triggerNullAppearance();
+    };
+
+
+window.nullEyes =
+    function() {
+
+        if (nullSpaceActive)
+            spawnEyeCluster();
+    };
+
+
+window.nullDoor =
+    function() {
+
+        if (nullSpaceActive)
+            toggleNullDoor();
+    };
+
+
+window.nullBan =
+    function() {
+
+        banByNull();
+    };
+
+
+window.nullReset =
+    function() {
+
+        nullInsultCount = 0;
+        nullAnomalyLevel = 0;
+        nullBanned = false;
+
+        localStorage.removeItem(
+            NULL_STORAGE.reputation
+        );
+
+        localStorage.removeItem(
+            NULL_STORAGE.banned
+        );
+
+        resetNullWorld();
+
+        setNullTask(
+            "NULL STATE RESET."
+        );
+    };
 
 
 /* ==========================================================
