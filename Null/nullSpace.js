@@ -1,36 +1,42 @@
 /* ==========================================================
    NULL SPACE
-   Alternate OMEGA interface controlled by NULL
-
-   VOID ENVIRONMENT
-   ----------------------------------------------------------
-   - Persistent NULL Space
-   - Existing windows preserved
-   - Existing chat preserved
-   - Existing console preserved
-   - Void environment objects
-   - Interactive door
-   - Physical console node
-   - Void lights
-   - Structures / pillars
-   - Anomaly system
-========================================================== */
-
+   MIRROR-INT / OMEGA
+   ========================================================== */
 
 let nullSpaceActive = false;
 let nullSpaceInitialized = false;
-
+let nullSpacePreviousUI = null;
 
 const NULL_STORAGE = {
     active: "null_space_active",
     entered: "null_space_entered",
-    flags: "null_space_flags"
+    flags: "null_space_flags",
+    state: "null_space_state"
 };
+
+const DEFAULT_NULL_STATE = {
+    room: "ROOM_000",
+    visits: 0,
+
+    consoleUsed: false,
+    nullSeen: false,
+    itFound: false,
+    disruptionFound: false,
+    exitFound: false,
+
+    anomalyLevel: 0,
+    lightsOff: false,
+    doorOpened: false,
+
+    lastEvent: "NOTHING IS WRONG."
+};
+
+let nullState = loadNullState();
 
 
 /* ==========================================================
    INITIALIZATION
-========================================================== */
+   ========================================================== */
 
 export function initNullSpace() {
 
@@ -40,1536 +46,1366 @@ export function initNullSpace() {
 
     createNullSpace();
 
-    if (
-        localStorage.getItem(NULL_STORAGE.active) === "1"
-    ) {
+    if (localStorage.getItem(NULL_STORAGE.active) === "1") {
 
         setTimeout(() => {
             enterNullSpace(false);
         }, 300);
-
     }
-
 }
 
 
 /* ==========================================================
-   CREATE ROOT
-========================================================== */
+   STATE
+   ========================================================== */
+
+function loadNullState() {
+
+    try {
+
+        const raw = localStorage.getItem(NULL_STORAGE.state);
+
+        if (!raw) {
+            return { ...DEFAULT_NULL_STATE };
+        }
+
+        return {
+            ...DEFAULT_NULL_STATE,
+            ...JSON.parse(raw)
+        };
+
+    } catch (error) {
+
+        console.warn("[NULL SPACE] State corrupted.");
+
+        return {
+            ...DEFAULT_NULL_STATE
+        };
+    }
+}
+
+
+function saveNullState() {
+
+    try {
+
+        localStorage.setItem(
+            NULL_STORAGE.state,
+            JSON.stringify(nullState)
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "[NULL SPACE] Could not save state.",
+            error
+        );
+    }
+}
+
+
+function increaseAnomaly(amount = 1) {
+
+    nullState.anomalyLevel = Math.min(
+        10,
+        nullState.anomalyLevel + amount
+    );
+
+    saveNullState();
+
+    updateNullStatus();
+}
+
+
+/* ==========================================================
+   CREATE SPACE
+   ========================================================== */
 
 function createNullSpace() {
 
-    let root =
-        document.getElementById("nullSpaceRoot");
-
+    let root = document.getElementById("nullSpaceRoot");
 
     if (!root) {
 
-        root =
-            document.createElement("div");
-
-        root.id =
-            "nullSpaceRoot";
+        root = document.createElement("div");
+        root.id = "nullSpaceRoot";
 
         document.body.appendChild(root);
-
     }
-
 
     root.className = "hidden";
 
-
     root.innerHTML = `
-
         <div class="nullSpace">
 
-
-            <!-- ==================================================
+            <!-- ==========================================
                  VOID ENVIRONMENT
-            =================================================== -->
+            =========================================== -->
 
-            <div
-                class="nullVoidEnvironment"
-                aria-hidden="true">
+            <div class="nullVoidEnvironment">
 
+                <div class="nullVoidCeiling"></div>
 
-                <!-- distant structures -->
+                <div class="nullVoidBackWall"></div>
 
-                <div class="nullVoidStructure structureLeft">
-                    <div class="structureFace"></div>
-                    <div class="structureFace"></div>
-                    <div class="structureFace"></div>
-                </div>
-
-
-                <div class="nullVoidStructure structureRight">
-                    <div class="structureFace"></div>
-                    <div class="structureFace"></div>
-                </div>
-
-
-                <!-- pillars -->
-
-                <div class="nullVoidPillar pillar01"></div>
-
-                <div class="nullVoidPillar pillar02"></div>
-
-                <div class="nullVoidPillar pillar03"></div>
-
-
-                <!-- lights -->
-
-                <div
-                    class="nullVoidLight light01">
-
-                    <span></span>
-
-                </div>
-
-
-                <div
-                    class="nullVoidLight light02">
-
-                    <span></span>
-
-                </div>
-
-
-                <div
-                    class="nullVoidLight light03">
-
-                    <span></span>
-
-                </div>
-
-
-                <!-- floor -->
+                <div class="nullVoidWall nullVoidWallLeft"></div>
+                <div class="nullVoidWall nullVoidWallRight"></div>
 
                 <div class="nullVoidFloor"></div>
 
+                <!-- PILLARS -->
 
-                <!-- ==================================================
-                     VOID DOOR
-                =================================================== -->
+                <div class="nullVoidPillar pillar01"></div>
+                <div class="nullVoidPillar pillar02"></div>
+                <div class="nullVoidPillar pillar03"></div>
+                <div class="nullVoidPillar pillar04"></div>
+                <div class="nullVoidPillar pillar05"></div>
+
+                <!-- UNEVEN VOID LIGHT -->
 
                 <button
-                    id="nullVoidDoor"
-                    class="nullVoidDoor"
+                    class="nullVoidLight light01"
+                    data-null-world="light"
+                    aria-label="Void Light"
                     type="button"
-                    aria-label="Void Door">
+                ></button>
 
-                    <span
-                        class="voidDoorFrame">
-                    </span>
+                <button
+                    class="nullVoidLight light02"
+                    data-null-world="light"
+                    aria-label="Void Light"
+                    type="button"
+                ></button>
 
-                    <span
-                        class="voidDoorSurface">
-                    </span>
+                <button
+                    class="nullVoidLight light03"
+                    data-null-world="light"
+                    aria-label="Void Light"
+                    type="button"
+                ></button>
 
-                    <span
-                        class="voidDoorLight">
-                    </span>
 
-                    <span
-                        class="voidDoorLabel">
+                <!-- VOID DOOR -->
 
-                        VOID_01
+                <button
+                    class="nullWorldObject nullWorldDoor"
+                    data-null-world="door"
+                    type="button"
+                >
 
+                    <span class="voidDoorFrame"></span>
+                    <span class="voidDoorCore"></span>
+
+                    <span class="worldObjectLabel">
+                        VOID DOOR
                     </span>
 
                 </button>
 
 
-                <!-- ==================================================
-                     PHYSICAL CONSOLE
-                =================================================== -->
+                <!-- CONSOLE -->
 
-                <section
-                    id="nullConsoleNode"
-                    class="nullConsoleNode">
+                <button
+                    class="nullWorldObject nullWorldConsole"
+                    data-null-world="console"
+                    type="button"
+                >
 
-                    <div class="nullConsoleTop">
+                    <span class="worldConsoleBase"></span>
+
+                    <span class="worldConsoleScreen">
+                        <span>CONSOLE</span>
+                        <span>READY</span>
+                    </span>
+
+                    <span class="worldConsoleLight"></span>
+
+                    <span class="worldObjectLabel">
+                        CONSOLE_01
+                    </span>
+
+                </button>
+
+
+                <!-- 431434 -->
+
+                <button
+                    class="nullWorldObject nullWorldBlackBlock"
+                    data-null-world="black"
+                    type="button"
+                >
+
+                    <span class="blackBlockCore"></span>
+                    <span class="blackBlockEdge"></span>
+
+                    <span class="worldObjectLabel">
+                        431434
+                    </span>
+
+                </button>
+
+
+                <!-- IT -->
+
+                <button
+                    class="nullWorldObject nullWorldIt"
+                    data-null-world="it"
+                    type="button"
+                >
+
+                    <span class="itGlass"></span>
+
+                    <span class="itScratch scratch01"></span>
+                    <span class="itScratch scratch02"></span>
+                    <span class="itScratch scratch03"></span>
+
+                    <span class="it404">
+                        404
+                    </span>
+
+                    <span class="worldObjectLabel">
+                        IT
+                    </span>
+
+                </button>
+
+
+                <!-- DISRUPTION -->
+
+                <button
+                    class="nullWorldObject nullWorldDisruption"
+                    data-null-world="disruption"
+                    type="button"
+                >
+
+                    <span class="disruptionNoise">
+                        ×
+                    </span>
+
+                    <span class="disruptionNoise">
+                        ?
+                    </span>
+
+                    <span class="disruptionNoise">
+                        #
+                    </span>
+
+                    <span class="worldObjectLabel">
+                        DISRUPTION
+                    </span>
+
+                </button>
+
+
+                <!-- EXIT -->
+
+                <button
+                    class="nullWorldObject nullWorldExit"
+                    data-null-world="exit"
+                    type="button"
+                >
+
+                    <span class="exitCore">
+                        EXIT
+                    </span>
+
+                    <span class="exitGlow"></span>
+
+                    <span class="worldObjectLabel">
+                        53135Exit6436
+                    </span>
+
+                </button>
+
+
+                <!-- SCRATCHED PANEL -->
+
+                <div class="nullVoidScratchPanel">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+
+                <!-- BACKGROUND CODE -->
+
+                <div class="nullWorldCode code01">
+                    000
+                </div>
+
+                <div class="nullWorldCode code02">
+                    null
+                </div>
+
+                <div class="nullWorldCode code03">
+                    431434
+                </div>
+
+                <div class="nullWorldCode code04">
+                    ERR.NULL
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 ATMOSPHERIC NULL
+            =========================================== -->
+
+            <div class="nullPresence">
+
+                <div class="nullPresenceBody"></div>
+
+                <div class="nullPresenceEyes">
+                    <span></span>
+                    <span></span>
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 MAIN INTERFACE
+            =========================================== -->
+
+            <div class="nullInterface">
+
+
+                <!-- TOP -->
+
+                <header class="nullTopBar">
+
+                    <div class="nullBrand">
+
+                        <div class="nullBrandMark">
+                            0
+                        </div>
+
+                        <div class="nullBrandText">
+
+                            <div class="nullBrandTitle">
+                                NULL
+                            </div>
+
+                            <div class="nullBrandSubtitle">
+                                VOID INSTANCE
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="nullTopStatus">
+
+                        <span class="nullStatusLabel">
+                            STATUS
+                        </span>
+
+                        <span
+                            class="nullStatusValue"
+                            id="nullStatusValue"
+                        >
+                            PRESENT
+                        </span>
+
+                    </div>
+
+
+                    <div class="nullCoordinates">
 
                         <span>
-                            CONSOLE
+                            ROOM
                         </span>
 
-                        <span
-                            class="consoleStatus">
-
-                            ●
-
-                        </span>
-
-                    </div>
-
-
-                    <div class="nullConsoleScreen">
-
-                        <div class="consoleLine">
-
-                            <span>
-                                &gt;
-                            </span>
-
-                            <span
-                                id="nullConsoleOutput">
-
-                                READY
-
-                            </span>
-
-                        </div>
-
-
-                        <div class="consoleCursor">
-                            _
-                        </div>
-
-                    </div>
-
-
-                    <div class="nullConsoleBase"></div>
-
-                </section>
-
-
-                <!-- ==================================================
-                     ANOMALIES
-                =================================================== -->
-
-                <div
-                    class="nullVoidAnomaly anomaly01">
-
-                    000
-
-                </div>
-
-
-                <div
-                    class="nullVoidAnomaly anomaly02">
-
-                    null.err
-
-                </div>
-
-
-                <div
-                    class="nullVoidAnomaly anomaly03">
-
-                    []
-
-                </div>
-
-
-                <div
-                    class="nullVoidAnomaly anomaly04">
-
-                    HELP
-
-                </div>
-
-
-                <div
-                    class="nullVoidAnomaly anomaly05">
-
-                    0
-
-                </div>
-
-
-                <div
-                    class="nullVoidAnomaly anomaly06">
-
-                    ...
-
-                </div>
-
-
-            </div>
-
-
-            <!-- ==================================================
-                 NULL MOON
-                 Kept for future use
-            =================================================== -->
-
-            <div
-                class="nullMoonVisual"
-                aria-hidden="true">
-
-                <div class="nullMoonGlow"></div>
-
-                <div class="nullMoonBody">
-
-                    <div class="nullMoonSurface"></div>
-
-                    <div class="nullMoonShadow"></div>
-
-                    <div class="nullMoonVoid">
-
-                        <span
-                            class="nullVoidThread thread1">
-                        </span>
-
-                        <span
-                            class="nullVoidThread thread2">
-                        </span>
-
-                        <span
-                            class="nullVoidThread thread3">
-                        </span>
-
-                        <span
-                            class="nullVoidThread thread4">
-                        </span>
-
-                        <span
-                            class="nullVoidThread thread5">
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- ==================================================
-                 TOP BAR
-            =================================================== -->
-
-            <header class="nullTopBar">
-
-
-                <div class="nullBrand">
-
-
-                    <div class="nullBrandMark">
-                        0
-                    </div>
-
-
-                    <div class="nullBrandText">
-
-                        <div class="nullBrandTitle">
-                            NULL
-                        </div>
-
-
-                        <div class="nullBrandSubtitle">
-                            VOID INSTANCE
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="nullTopStatus">
-
-                    <span class="nullStatusLabel">
-                        STATUS
-                    </span>
-
-
-                    <span
-                        id="nullStatusValue"
-                        class="nullStatusValue">
-
-                        CONNECTED
-
-                    </span>
-
-                </div>
-
-
-            </header>
-
-
-            <!-- ==================================================
-                 MAIN AREA
-            =================================================== -->
-
-            <main class="nullWorkspace">
-
-
-                <!-- ==================================================
-                     NAVIGATION
-                =================================================== -->
-
-                <aside class="nullNavigation">
-
-
-                    <div class="nullNavTitle">
-                        INSTANCE
-                    </div>
-
-
-                    <button
-                        class="nullNavButton"
-                        data-null-window="archive">
-
-                        <span>01</span>
-
-                        ARCHIVE
-
-                    </button>
-
-
-                    <button
-                        class="nullNavButton"
-                        data-null-window="chat">
-
-                        <span>02</span>
-
-                        CHAT
-
-                    </button>
-
-
-                    <button
-                        class="nullNavButton"
-                        data-null-window="memory">
-
-                        <span>03</span>
-
-                        MEMORY
-
-                    </button>
-
-
-                    <button
-                        class="nullNavButton"
-                        data-null-window="console">
-
-                        <span>04</span>
-
-                        CONSOLE
-
-                    </button>
-
-
-                    <button
-                        class="nullNavButton"
-                        data-null-window="objects">
-
-                        <span>05</span>
-
-                        OBJECTS
-
-                    </button>
-
-
-                    <button
-                        class="nullNavButton"
-                        data-null-window="room">
-
-                        <span>06</span>
-
-                        ROOM
-
-                    </button>
-
-
-                    <div class="nullNavDivider"></div>
-
-
-                    <button
-                        class="
-                            nullNavButton
-                            nullUnknownButton
-                        "
-                        data-null-window="unknown">
-
-                        <span>?</span>
-
-                        UNKNOWN
-
-                    </button>
-
-
-                    <div class="nullNavigationBottom">
-
-                        <div>
-                            CONNECTION
-                        </div>
-
-                        <strong>
-                            00000000
+                        <strong id="nullRoomID">
+                            ROOM_000
                         </strong>
 
                     </div>
 
+                </header>
 
-                </aside>
 
+                <!-- WORKSPACE -->
 
-                <!-- ==================================================
-                     CONTENT
-                =================================================== -->
+                <main class="nullWorkspace">
 
-                <section class="nullMain">
 
+                    <!-- ==================================
+                         NAVIGATION
+                    =================================== -->
 
-                    <!-- EMPTY -->
+                    <aside class="nullNavigation">
 
-                    <div
-                        id="nullEmptyState"
-                        class="nullEmptyState">
-
-                        <div class="nullZero">
-                            0
-                        </div>
-
-
-                        <div class="nullEmptyTitle">
-                            VOID INSTANCE
-                        </div>
-
-
-                        <div class="nullEmptyText">
-                            NOTHING HAS BEEN SELECTED
-                        </div>
-
-                    </div>
-
-
-                    <!-- ==================================================
-                         ARCHIVE
-                    =================================================== -->
-
-                    <section
-                        id="nullWindowArchive"
-                        class="
-                            nullInternalWindow
-                            hidden
-                        ">
-
-
-                        <div class="nullWindowHeader">
-
-                            <div>
-                                ARCHIVE
-                            </div>
-
-                            <span>
-                                00 / —
-                            </span>
-
-                        </div>
-
-
-                        <div class="nullArchive">
-
-
-                            <div class="nullArchiveItem">
-
-                                <span>
-                                    FILE_000
-                                </span>
-
-                                <strong>
-                                    ---
-                                </strong>
-
-                            </div>
-
-
-                            <div class="nullArchiveItem">
-
-                                <span>
-                                    FILE_001
-                                </span>
-
-                                <strong>
-                                    ---
-                                </strong>
-
-                            </div>
-
-
-                            <div class="nullArchiveItem">
-
-                                <span>
-                                    FILE_002
-                                </span>
-
-                                <strong>
-                                    ---
-                                </strong>
-
-                            </div>
-
-
-                            <div
-                                class="
-                                    nullArchiveItem
-                                    nullCorrupt
-                                ">
-
-                                <span>
-                                    FILE_003
-                                </span>
-
-                                <strong>
-                                    NULL
-                                </strong>
-
-                            </div>
-
-
-                            <div class="nullArchiveItem">
-
-                                <span>
-                                    FILE_004
-                                </span>
-
-                                <strong>
-                                    ---
-                                </strong>
-
-                            </div>
-
-
-                        </div>
-
-                    </section>
-
-
-                    <!-- ==================================================
-                         CHAT
-                    =================================================== -->
-
-                    <section
-                        id="nullWindowChat"
-                        class="
-                            nullInternalWindow
-                            hidden
-                        ">
-
-
-                        <div class="nullWindowHeader">
-
-                            <div>
-                                CHAT
-                            </div>
-
-                            <span>
-                                PRIVATE
-                            </span>
-
-                        </div>
-
-
-                        <div
-                            id="nullChatMessages"
-                            class="nullChatMessages">
-
-
-                            <div
-                                class="
-                                    nullMessage
-                                    nullSystem
-                                ">
-
-                                <span>
-                                    SYSTEM
-                                </span>
-
-                                CONNECTION ESTABLISHED.
-
-                            </div>
-
-
-                            <div
-                                class="
-                                    nullMessage
-                                    nullUnknownMessage
-                                ">
-
-                                <span>
-                                    NULL
-                                </span>
-
-                                ...
-
-                            </div>
-
-
-                        </div>
-
-
-                        <div class="nullChatInput">
-
-
-                            <input
-                                id="nullChatInput"
-                                type="text"
-                                autocomplete="off"
-                                placeholder="TYPE A MESSAGE">
-
-
-                            <button
-                                id="nullChatSend">
-
-                                →
-
-                            </button>
-
-
-                        </div>
-
-
-                    </section>
-
-
-                    <!-- ==================================================
-                         MEMORY
-                    =================================================== -->
-
-                    <section
-                        id="nullWindowMemory"
-                        class="
-                            nullInternalWindow
-                            hidden
-                        ">
-
-
-                        <div class="nullWindowHeader">
-
-                            <div>
-                                MEMORY
-                            </div>
-
-                            <span>
-                                READ ONLY
-                            </span>
-
-                        </div>
-
-
-                        <div class="nullMemoryContent">
-
-
-                            <div class="nullMemoryLine">
-
-                                <span>
-                                    MEM_000
-                                </span>
-
-                                <b>
-                                    PLAYER
-                                </b>
-
-                            </div>
-
-
-                            <div class="nullMemoryLine">
-
-                                <span>
-                                    MEM_001
-                                </span>
-
-                                <b>
-                                    OMEGA
-                                </b>
-
-                            </div>
-
-
-                            <div class="nullMemoryLine">
-
-                                <span>
-                                    MEM_002
-                                </span>
-
-                                <b>
-                                    MR.SMILE
-                                </b>
-
-                            </div>
-
-
-                            <div class="nullMemoryLine">
-
-                                <span>
-                                    MEM_003
-                                </span>
-
-                                <b>
-                                    NULL
-                                </b>
-
-                            </div>
-
-
-                            <div
-                                class="
-                                    nullMemoryLine
-                                    nullMemoryBroken
-                                ">
-
-                                <span>
-                                    MEM_004
-                                </span>
-
-                                <b>
-                                    ????????
-                                </b>
-
-                            </div>
-
-
-                        </div>
-
-                    </section>
-
-
-                    <!-- ==================================================
-                         CONSOLE
-                    =================================================== -->
-
-                    <section
-                        id="nullWindowConsole"
-                        class="
-                            nullInternalWindow
-                            hidden
-                        ">
-
-
-                        <div class="nullWindowHeader">
-
-                            <div>
-                                CONSOLE
-                            </div>
-
-                            <span>
-                                TERMINAL
-                            </span>
-
-                        </div>
-
-
-                        <pre
-                            id="nullConsoleOutput"
-                            class="nullConsoleOutput">NULL INSTANCE
--------------
-
-type "help"
-
-</pre>
-
-
-                        <div class="nullConsoleInput">
-
-                            <span>
-                                &gt;
-                            </span>
-
-
-                            <input
-                                id="nullConsoleCommand"
-                                type="text"
-                                autocomplete="off">
-
-                        </div>
-
-
-                    </section>
-
-
-                    <!-- ==================================================
-                         OBJECTS
-                    =================================================== -->
-
-                    <section
-                        id="nullWindowObjects"
-                        class="
-                            nullInternalWindow
-                            hidden
-                        ">
-
-
-                        <div class="nullWindowHeader">
-
-                            <div>
-                                OBJECTS
-                            </div>
+                        <div class="nullNavigationHeader">
 
                             <span>
                                 VOID
                             </span>
 
-                        </div>
-
-
-                        <div class="nullObjectsGrid">
-
-
-                            <button class="nullObject">
-
-                                <span>
-                                    01
-                                </span>
-
-                                MIRROR
-
-                            </button>
-
-
-                            <button class="nullObject">
-
-                                <span>
-                                    02
-                                </span>
-
-                                CHAIR
-
-                            </button>
-
-
-                            <button class="nullObject">
-
-                                <span>
-                                    03
-                                </span>
-
-                                DOOR
-
-                            </button>
-
-
-                            <button class="nullObject">
-
-                                <span>
-                                    04
-                                </span>
-
-                                SIGNAL
-
-                            </button>
-
-
-                            <button class="nullObject">
-
-                                <span>
-                                    05
-                                </span>
-
-                                PLAYER
-
-                            </button>
-
-
-                            <button
-                                class="
-                                    nullObject
-                                    nullImpossibleObject
-                                ">
-
-                                <span>
-                                    00
-                                </span>
-
-                                NULL
-
-                            </button>
-
+                            <small>
+                                OBJECTS
+                            </small>
 
                         </div>
 
-                    </section>
 
+                        <button
+                            class="nullNavButton"
+                            data-null-window="archive"
+                            type="button"
+                        >
 
-                    <!-- ==================================================
-                         ROOM
-                    =================================================== -->
-
-                    <section
-                        id="nullWindowRoom"
-                        class="
-                            nullInternalWindow
-                            hidden
-                        ">
-
-
-                        <div class="nullWindowHeader">
-
-                            <div>
-                                ROOM
-                            </div>
-
-                            <span>
-                                LOCATION UNKNOWN
+                            <span class="navNumber">
+                                01
                             </span>
 
+                            <span class="navName">
+                                ARCHIVE
+                            </span>
+
+                        </button>
+
+
+                        <button
+                            class="nullNavButton"
+                            data-null-window="chat"
+                            type="button"
+                        >
+
+                            <span class="navNumber">
+                                02
+                            </span>
+
+                            <span class="navName">
+                                SIGNAL
+                            </span>
+
+                        </button>
+
+
+                        <button
+                            class="nullNavButton"
+                            data-null-window="memory"
+                            type="button"
+                        >
+
+                            <span class="navNumber">
+                                03
+                            </span>
+
+                            <span class="navName">
+                                MEMORY
+                            </span>
+
+                        </button>
+
+
+                        <button
+                            class="nullNavButton"
+                            data-null-window="console"
+                            type="button"
+                        >
+
+                            <span class="navNumber">
+                                04
+                            </span>
+
+                            <span class="navName">
+                                CONSOLE
+                            </span>
+
+                        </button>
+
+
+                        <button
+                            class="nullNavButton"
+                            data-null-window="objects"
+                            type="button"
+                        >
+
+                            <span class="navNumber">
+                                05
+                            </span>
+
+                            <span class="navName">
+                                OBJECTS
+                            </span>
+
+                        </button>
+
+
+                        <button
+                            class="nullNavButton"
+                            data-null-window="room"
+                            type="button"
+                        >
+
+                            <span class="navNumber">
+                                06
+                            </span>
+
+                            <span class="navName">
+                                ROOM
+                            </span>
+
+                        </button>
+
+
+                        <button
+                            class="nullNavButton nullUnknownNav"
+                            data-null-window="unknown"
+                            type="button"
+                        >
+
+                            <span class="navNumber">
+                                ??
+                            </span>
+
+                            <span class="navName">
+                                UNKNOWN
+                            </span>
+
+                        </button>
+
+
+                        <div class="nullConnection">
+
+                            <span>
+                                CONNECTION
+                            </span>
+
+                            <strong>
+                                00000000
+                            </strong>
+
+                        </div>
+
+                    </aside>
+
+
+                    <!-- ==================================
+                         MAIN TERMINAL
+                    =================================== -->
+
+                    <section class="nullMain">
+
+
+                        <!-- EMPTY -->
+
+                        <div
+                            class="nullEmptyState"
+                            id="nullEmptyState"
+                        >
+
+                            <div class="nullEmptyRoom">
+
+                                <div class="emptyLight"></div>
+
+                                <div class="emptyDoor"></div>
+
+                                <div class="emptyText">
+
+                                    <span>
+                                        SELECT A TERMINAL
+                                    </span>
+
+                                    <small>
+                                        THERE IS NO REASON TO BE HERE.
+                                    </small>
+
+                                </div>
+
+                            </div>
+
                         </div>
 
 
-                        <div class="nullRoom">
+                        <!-- ==================================
+                             ARCHIVE
+                        =================================== -->
+
+                        <section
+                            class="nullInternalWindow"
+                            id="nullWindowArchive"
+                        >
+
+                            <div class="nullWindowHeader">
+
+                                <div>
+                                    ARCHIVE
+                                </div>
+
+                                <span>
+                                    STORAGE / VOID
+                                </span>
+
+                            </div>
 
 
-                            <div class="nullRoomWall">
+                            <div class="nullArchiveGrid">
 
-                                <div class="nullRoomDoor">
+                                <button class="nullArchiveItem" type="button">
+
+                                    <strong>
+                                        FILE_000
+                                    </strong>
 
                                     <span>
-                                        EXIT
+                                        ROOM_000
                                     </span>
+
+                                    <small>
+                                        INTEGRITY: OK
+                                    </small>
+
+                                </button>
+
+
+                                <button class="nullArchiveItem" type="button">
+
+                                    <strong>
+                                        FILE_001
+                                    </strong>
+
+                                    <span>
+                                        ROOM_001
+                                    </span>
+
+                                    <small>
+                                        INTEGRITY: OK
+                                    </small>
+
+                                </button>
+
+
+                                <button class="nullArchiveItem" type="button">
+
+                                    <strong>
+                                        FILE_002
+                                    </strong>
+
+                                    <span>
+                                        CONSOLE
+                                    </span>
+
+                                    <small>
+                                        INTEGRITY: UNKNOWN
+                                    </small>
+
+                                </button>
+
+
+                                <button class="nullArchiveItem" type="button">
+
+                                    <strong>
+                                        FILE_003
+                                    </strong>
+
+                                    <span>
+                                        PLAYER
+                                    </span>
+
+                                    <small>
+                                        INTEGRITY: OBSERVED
+                                    </small>
+
+                                </button>
+
+
+                                <button class="nullArchiveItem nullCorruptFile" type="button">
+
+                                    <strong>
+                                        FILE_004
+                                    </strong>
+
+                                    <span>
+                                        NULL
+                                    </span>
+
+                                    <small>
+                                        INTEGRITY: █████
+                                    </small>
+
+                                </button>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- ==================================
+                             SIGNAL / CHAT
+                        =================================== -->
+
+                        <section
+                            class="nullInternalWindow"
+                            id="nullWindowChat"
+                        >
+
+                            <div class="nullWindowHeader">
+
+                                <div>
+                                    SIGNAL
+                                </div>
+
+                                <span>
+                                    LOCAL TRANSMISSION
+                                </span>
+
+                            </div>
+
+
+                            <div
+                                class="nullSignalLog"
+                                id="nullChatMessages"
+                            >
+
+                                <div class="nullSignalMessage system">
+
+                                    <span class="signalTime">
+                                        00:00:00
+                                    </span>
+
+                                    <div>
+
+                                        <strong>
+                                            SYSTEM
+                                        </strong>
+
+                                        <p>
+                                            CHANNEL ESTABLISHED.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="nullSignalMessage null">
+
+                                    <span class="signalTime">
+                                        --:--:--
+                                    </span>
+
+                                    <div>
+
+                                        <strong>
+                                            NULL
+                                        </strong>
+
+                                        <p>
+                                            Hello.
+                                        </p>
+
+                                    </div>
 
                                 </div>
 
                             </div>
 
 
-                            <div class="nullRoomFloor"></div>
+                            <div class="nullSignalInput">
+
+                                <span>
+                                    &gt;
+                                </span>
+
+                                <input
+                                    id="nullChatInput"
+                                    type="text"
+                                    autocomplete="off"
+                                    spellcheck="false"
+                                    placeholder="TRANSMIT..."
+                                >
+
+                                <button
+                                    id="nullChatSend"
+                                    type="button"
+                                >
+                                    SEND
+                                </button>
+
+                            </div>
+
+                        </section>
 
 
-                            <div class="nullRoomObject">
+                        <!-- ==================================
+                             MEMORY
+                        =================================== -->
 
-                                <div class="nullChair"></div>
+                        <section
+                            class="nullInternalWindow"
+                            id="nullWindowMemory"
+                        >
+
+                            <div class="nullWindowHeader">
+
+                                <div>
+                                    MEMORY
+                                </div>
+
+                                <span>
+                                    FRAGMENTS
+                                </span>
 
                             </div>
 
 
-                            <div class="nullRoomText">
+                            <div class="nullMemoryList">
 
-                                THERE IS NO REASON
-                                TO BE HERE.
+                                <div class="nullMemoryEntry">
+
+                                    <strong>
+                                        MEM_000
+                                    </strong>
+
+                                    <span>
+                                        PLAYER
+                                    </span>
+
+                                    <small>
+                                        YOU ENTERED THE SPACE.
+                                    </small>
+
+                                </div>
+
+
+                                <div class="nullMemoryEntry">
+
+                                    <strong>
+                                        MEM_001
+                                    </strong>
+
+                                    <span>
+                                        OMEGA
+                                    </span>
+
+                                    <small>
+                                        THIS IS NOT OMEGA.
+                                    </small>
+
+                                </div>
+
+
+                                <div class="nullMemoryEntry">
+
+                                    <strong>
+                                        MEM_002
+                                    </strong>
+
+                                    <span>
+                                        MR.SMILE
+                                    </span>
+
+                                    <small>
+                                        OBSERVER.
+                                    </small>
+
+                                </div>
+
+
+                                <div class="nullMemoryEntry">
+
+                                    <strong>
+                                        MEM_003
+                                    </strong>
+
+                                    <span>
+                                        NULL
+                                    </span>
+
+                                    <small>
+                                        MEMORY DOES NOT BELONG HERE.
+                                    </small>
+
+                                </div>
+
+
+                                <div class="nullMemoryEntry nullMemoryCorrupt">
+
+                                    <strong>
+                                        MEM_004
+                                    </strong>
+
+                                    <span>
+                                        ????????
+                                    </span>
+
+                                    <small>
+                                        READ FAILURE.
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- ==================================
+                             CONSOLE
+                        =================================== -->
+
+                        <section
+                            class="nullInternalWindow"
+                            id="nullWindowConsole"
+                        >
+
+                            <div class="nullWindowHeader consoleHeader">
+
+                                <div>
+                                    CONSOLE
+                                </div>
+
+                                <span>
+                                    VOID TERMINAL
+                                </span>
 
                             </div>
 
 
-                        </div>
+                            <div
+                                class="nullConsoleOutput"
+                                id="nullConsoleOutput"
+                            >
+                                NULL CONSOLE
+                                ----------------
+
+                                TYPE "help"
+
+                            </div>
+
+
+                            <div class="nullConsoleInput">
+
+                                <span>
+                                    &gt;
+                                </span>
+
+                                <input
+                                    id="nullConsoleCommand"
+                                    type="text"
+                                    autocomplete="off"
+                                    spellcheck="false"
+                                    placeholder="ENTER COMMAND"
+                                >
+
+                            </div>
+
+
+                            <div class="nullConsoleHints">
+
+                                <span>
+                                    help
+                                </span>
+
+                                <span>
+                                    null
+                                </span>
+
+                                <span>
+                                    integrity
+                                </span>
+
+                                <span>
+                                    memory
+                                </span>
+
+                                <span>
+                                    exit
+                                </span>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- ==================================
+                             OBJECTS
+                        =================================== -->
+
+                        <section
+                            class="nullInternalWindow"
+                            id="nullWindowObjects"
+                        >
+
+                            <div class="nullWindowHeader">
+
+                                <div>
+                                    OBJECTS
+                                </div>
+
+                                <span>
+                                    DETECTED STRUCTURES
+                                </span>
+
+                            </div>
+
+
+                            <div class="nullObjectGrid">
+
+
+                                <button
+                                    class="nullObject"
+                                    data-null-object="MIRROR"
+                                    type="button"
+                                >
+
+                                    <span class="objectGlyph mirrorGlyph"></span>
+
+                                    <strong>
+                                        MIRROR
+                                    </strong>
+
+                                    <small>
+                                        REFLECTIVE
+                                    </small>
+
+                                </button>
+
+
+                                <button
+                                    class="nullObject"
+                                    data-null-object="CHAIR"
+                                    type="button"
+                                >
+
+                                    <span class="objectGlyph chairGlyph"></span>
+
+                                    <strong>
+                                        CHAIR
+                                    </strong>
+
+                                    <small>
+                                        STATIC
+                                    </small>
+
+                                </button>
+
+
+                                <button
+                                    class="nullObject"
+                                    data-null-object="DOOR"
+                                    type="button"
+                                >
+
+                                    <span class="objectGlyph doorGlyph"></span>
+
+                                    <strong>
+                                        DOOR
+                                    </strong>
+
+                                    <small>
+                                        OPENABLE
+                                    </small>
+
+                                </button>
+
+
+                                <button
+                                    class="nullObject"
+                                    data-null-object="SIGNAL"
+                                    type="button"
+                                >
+
+                                    <span class="objectGlyph signalGlyph"></span>
+
+                                    <strong>
+                                        SIGNAL
+                                    </strong>
+
+                                    <small>
+                                        UNKNOWN
+                                    </small>
+
+                                </button>
+
+
+                                <button
+                                    class="nullObject"
+                                    data-null-object="PLAYER"
+                                    type="button"
+                                >
+
+                                    <span class="objectGlyph playerGlyph"></span>
+
+                                    <strong>
+                                        PLAYER
+                                    </strong>
+
+                                    <small>
+                                        OBSERVED
+                                    </small>
+
+                                </button>
+
+
+                                <button
+                                    class="nullObject nullImpossibleObject"
+                                    data-null-object="NULL"
+                                    type="button"
+                                >
+
+                                    <span class="objectGlyph nullGlyph"></span>
+
+                                    <strong>
+                                        NULL
+                                    </strong>
+
+                                    <small>
+                                        DOES NOT EXIST
+                                    </small>
+
+                                </button>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- ==================================
+                             ROOM
+                        =================================== -->
+
+                        <section
+                            class="nullInternalWindow"
+                            id="nullWindowRoom"
+                        >
+
+                            <div class="nullWindowHeader">
+
+                                <div>
+                                    ROOM
+                                </div>
+
+                                <span id="nullRoomHeaderID">
+                                    ROOM_000
+                                </span>
+
+                            </div>
+
+
+                            <div class="nullRoom">
+
+                                <div class="roomPerspective">
+
+                                    <div class="roomBackWall"></div>
+
+                                    <div class="roomFloor"></div>
+
+                                    <div class="roomCeiling"></div>
+
+                                    <div class="roomPillar roomPillarA"></div>
+                                    <div class="roomPillar roomPillarB"></div>
+
+                                    <div class="roomDoor">
+                                        <span></span>
+                                    </div>
+
+                                    <div class="roomConsole">
+                                        <span></span>
+                                    </div>
+
+                                    <div class="roomLight"></div>
+
+                                    <div class="roomText">
+                                        THERE IS NO REASON
+                                        <br>
+                                        TO BE HERE.
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- ==================================
+                             UNKNOWN
+                        =================================== -->
+
+                        <section
+                            class="nullInternalWindow"
+                            id="nullWindowUnknown"
+                        >
+
+                            <div class="nullUnknownScreen">
+
+                                <div class="unknownNumber">
+                                    0
+                                </div>
+
+                                <div class="unknownVoid"></div>
+
+                                <div class="unknownText">
+
+                                    <strong>
+                                        YOU ARE NOT SUPPOSED TO SEE THIS.
+                                    </strong>
+
+                                    <span>
+                                        THIS IS NOT PART OF OMEGA.
+                                    </span>
+
+                                    <small>
+                                        ...
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </section>
 
 
                     </section>
 
-
-                    <!-- ==================================================
-                         UNKNOWN
-                    =================================================== -->
-
-                    <section
-                        id="nullWindowUnknown"
-                        class="
-                            nullInternalWindow
-                            hidden
-                        ">
+                </main>
 
 
-                        <div class="nullWindowHeader">
+                <!-- ==================================
+                     FOOTER
+                =================================== -->
 
-                            <div>
-                                UNKNOWN
-                            </div>
+                <footer class="nullTaskbar">
 
-                            <span>
-                                ?
-                            </span>
+                    <div class="nullTaskIdentity">
 
-                        </div>
+                        <span>
+                            NULL
+                        </span>
 
+                        <strong>
+                            INSTANCE_000
+                        </strong>
 
-                        <div class="nullUnknown">
-
-
-                            <div class="nullUnknownNumber">
-                                0
-                            </div>
+                    </div>
 
 
-                            <div class="nullUnknownText">
-
-                                <p>
-                                    YOU ARE NOT SUPPOSED
-                                    TO SEE THIS.
-                                </p>
-
-
-                                <p>
-                                    THIS IS NOT PART OF OMEGA.
-                                </p>
-
-
-                                <p class="nullUnknownFinal">
-                                    ...
-                                </p>
-
-                            </div>
-
-
-                        </div>
-
-
-                    </section>
-
-
-                </section>
-
-
-            </main>
-
-
-            <!-- ==================================================
-                 TASKBAR
-            =================================================== -->
-
-            <footer class="nullTaskbar">
-
-
-                <div class="nullTaskLeft">
-
-                    <span>
-                        NULL
-                    </span>
-
-                    <span>
-                        /
-                    </span>
-
-                    <span>
-                        VOID
-                    </span>
-
-                </div>
-
-
-                <div class="nullTaskCenter">
-
-                    <span id="nullTaskMessage">
+                    <div
+                        id="nullTaskMessage"
+                        class="nullTaskMessage"
+                    >
                         NOTHING IS WRONG.
-                    </span>
-
-                </div>
+                    </div>
 
 
-                <button
-                    id="nullReturnButton"
-                    class="nullReturnButton">
+                    <button
+                        id="nullReturnButton"
+                        type="button"
+                    >
+                        RETURN
+                    </button>
 
-                    RETURN
+                </footer>
 
-                </button>
-
-
-            </footer>
-
-
-            <!-- ==================================================
-                 BACKGROUND DATA
-            =================================================== -->
-
-            <div
-                class="nullBackgroundCode"
-                aria-hidden="true">
-
-                <span>
-                    000000000000000000
-                </span>
-
-                <span>
-                    null
-                </span>
-
-                <span>
-                    undefined
-                </span>
-
-                <span>
-                    0000
-                </span>
-
-                <span>
-                    NULL
-                </span>
 
             </div>
 
 
-        </div>
+            <!-- ==========================================
+                 MOON
+                 KEPT FOR FUTURE EVENTS
+            =========================================== -->
 
+            <div class="nullMoonVisual">
+
+                <div class="nullMoonGlow"></div>
+
+                <div class="nullMoonBody"></div>
+
+                <div class="nullMoonSurface"></div>
+
+                <div class="nullMoonShadow"></div>
+
+                <div class="nullMoonVoid"></div>
+
+                <div class="nullMoonThread"></div>
+
+            </div>
+
+        </div>
     `;
 
-
-    createNullVoidEnvironment(root);
-
     bindNullSpaceEvents();
-
-}
-
-
-/* ==========================================================
-   VOID ENVIRONMENT
-========================================================== */
-
-function createNullVoidEnvironment(root) {
-
-    const environment =
-        root.querySelector(
-            ".nullVoidEnvironment"
-        );
-
-    if (!environment) return;
-
-
-    /* ======================================================
-       DOOR
-    ====================================================== */
-
-    const door =
-        environment.querySelector(
-            "#nullVoidDoor"
-        );
-
-
-    if (door) {
-
-        door.addEventListener(
-            "click",
-            handleVoidDoor
-        );
-
-    }
-
-
-    /* ======================================================
-       PHYSICAL CONSOLE
-    ====================================================== */
-
-    const consoleNode =
-        environment.querySelector(
-            "#nullConsoleNode"
-        );
-
-
-    if (consoleNode) {
-
-        consoleNode.addEventListener(
-            "click",
-            handleVoidConsole
-        );
-
-    }
-
-
-    /* ======================================================
-       VERY SLOW ENVIRONMENT MOTION
-    ====================================================== */
-
-    let time = 0;
-
-
-    function animateVoid() {
-
-        if (!nullSpaceActive) {
-
-            requestAnimationFrame(
-                animateVoid
-            );
-
-            return;
-
-        }
-
-
-        time += 0.00035;
-
-
-        environment.style.setProperty(
-            "--nullVoidOffset",
-            `${Math.sin(time) * 5}px`
-        );
-
-
-        requestAnimationFrame(
-            animateVoid
-        );
-
-    }
-
-
-    animateVoid();
-
-}
-
-
-/* ==========================================================
-   VOID DOOR
-========================================================== */
-
-function handleVoidDoor() {
-
-    const door =
-        document.getElementById(
-            "nullVoidDoor"
-        );
-
-    if (!door) return;
-
-
-    const isOpen =
-        door.classList.toggle("open");
-
-
-    const task =
-        document.getElementById(
-            "nullTaskMessage"
-        );
-
-
-    const output =
-        document.getElementById(
-            "nullConsoleOutput"
-        );
-
-
-    if (isOpen) {
-
-        if (task) {
-
-            task.textContent =
-                "VOID DOOR OPEN.";
-
-        }
-
-        if (output) {
-
-            output.textContent +=
-                "\n> door\nDOOR_OPEN\n";
-
-        }
-
-    }
-    else {
-
-        if (task) {
-
-            task.textContent =
-                "VOID DOOR CLOSED.";
-
-        }
-
-        if (output) {
-
-            output.textContent +=
-                "\n> door\nDOOR_CLOSED\n";
-
-        }
-
-    }
-
-}
-
-
-/* ==========================================================
-   PHYSICAL VOID CONSOLE
-========================================================== */
-
-function handleVoidConsole() {
-
-    const consoleNode =
-        document.getElementById(
-            "nullConsoleNode"
-        );
-
-    const output =
-        document.getElementById(
-            "nullConsoleOutput"
-        );
-
-    const task =
-        document.getElementById(
-            "nullTaskMessage"
-        );
-
-
-    if (!consoleNode) return;
-
-
-    consoleNode.classList.add("active");
-
-
-    const responses = [
-
-        "READY",
-
-        "000",
-
-        "NULL",
-
-        "OUTSIDE",
-
-        "ERR.NULL",
-
-        "INSTANCE",
-
-        "..."
-
-    ];
-
-
-    const response =
-        responses[
-            Math.floor(
-                Math.random() *
-                responses.length
-            )
-        ];
-
-
-    if (output) {
-
-        output.textContent =
-            response;
-
-    }
-
-
-    if (task) {
-
-        task.textContent =
-            `CONSOLE: ${response}`;
-
-    }
-
-
-    setTimeout(() => {
-
-        consoleNode.classList.remove(
-            "active"
-        );
-
-    }, 700);
-
 }
 
 
 /* ==========================================================
    ENTER
-========================================================== */
+   ========================================================== */
 
-export function enterNullSpace(
-    saveState = true
-) {
+export function enterNullSpace(saveState = true) {
 
     if (nullSpaceActive) return;
 
+    const root = document.getElementById("nullSpaceRoot");
 
-    const root =
-        document.getElementById(
-            "nullSpaceRoot"
-        );
-
-
-    const desktop =
-        document.getElementById(
-            "desktop"
-        );
-
-
-    const publicSite =
-        document.getElementById(
-            "publicSite"
-        );
-
-
-    const loginScreen =
-        document.getElementById(
-            "loginScreen"
-        );
-
+    const desktop = document.getElementById("desktop");
+    const publicSite = document.getElementById("publicSite");
+    const loginScreen = document.getElementById("loginScreen");
 
     if (!root) return;
-
 
     nullSpaceActive = true;
 
 
-    /* ======================================================
-       HIDE NORMAL OMEGA
-    ====================================================== */
+    /* ==========================================
+       REMEMBER NORMAL UI
+    =========================================== */
 
-    if (desktop) {
+    nullSpacePreviousUI = [];
 
-        desktop.classList.add("hidden");
+    const uiElements = [
+        desktop,
+        publicSite,
+        loginScreen,
 
-        desktop.style.display =
-            "none";
-
-    }
-
-
-    if (publicSite) {
-
-        publicSite.classList.add("hidden");
-
-        publicSite.style.display =
-            "none";
-
-    }
-
-
-    if (loginScreen) {
-
-        loginScreen.classList.add("hidden");
-
-        loginScreen.style.display =
-            "none";
-
-    }
-
-
-    /* ======================================================
-       HIDE NORMAL OVERLAYS
-    ====================================================== */
-
-    const overlays = [
-
-        "notificationArea",
-
-        "mrsmileEntity",
-
-        "glitchLayer",
-
-        "eyesLayer"
-
+        document.getElementById("notificationArea"),
+        document.getElementById("mrsmileEntity"),
+        document.getElementById("glitchLayer"),
+        document.getElementById("eyesLayer")
     ];
 
+    uiElements.forEach(element => {
 
-    overlays.forEach(id => {
+        if (!element) return;
 
-        const element =
-            document.getElementById(id);
+        nullSpacePreviousUI.push({
+            element,
+            hidden: element.classList.contains("hidden"),
+            display: element.style.display
+        });
 
-
-        if (element) {
-
-            element.style.display =
-                "none";
-
-        }
-
+        element.classList.add("hidden");
+        element.style.display = "none";
     });
 
 
-    /* ======================================================
+    /* ==========================================
        SHOW NULL
-    ====================================================== */
+    =========================================== */
 
-    root.classList.remove(
-        "hidden"
-    );
+    root.classList.remove("hidden");
+    root.style.display = "block";
 
-
-    root.style.display =
-        "block";
+    document.body.classList.add("nullSpaceActive");
 
 
-    /* ======================================================
+    /* ==========================================
        STATE
-    ====================================================== */
+    =========================================== */
+
+    nullState.visits++;
+
+    saveNullState();
 
     if (saveState) {
 
@@ -1578,258 +1414,125 @@ export function enterNullSpace(
             "1"
         );
 
-
         localStorage.setItem(
             NULL_STORAGE.entered,
             "1"
         );
-
     }
 
 
     resetNullWindows();
 
-    resetVoidEnvironment();
+    updateNullRoom();
+
+    updateNullStatus();
 
     playNullEntry();
 
-
-    document.body.classList.add(
-        "nullSpaceActive"
-    );
-
+    maybeTriggerEntryEvent();
 }
 
 
 /* ==========================================================
    EXIT
-========================================================== */
+   ========================================================== */
 
 export function exitNullSpace() {
 
     if (!nullSpaceActive) return;
 
-
-    const root =
-        document.getElementById(
-            "nullSpaceRoot"
-        );
-
-
-    const desktop =
-        document.getElementById(
-            "desktop"
-        );
-
-
-    nullSpaceActive = false;
-
-
-    /* ======================================================
-       HIDE NULL
-    ====================================================== */
+    const root = document.getElementById("nullSpaceRoot");
 
     if (root) {
 
-        root.classList.add(
-            "hidden"
-        );
-
-        root.style.display =
-            "none";
-
+        root.classList.add("hidden");
+        root.style.display = "none";
     }
 
 
-    /* ======================================================
-       RESTORE OMEGA
-    ====================================================== */
+    /* ==========================================
+       RESTORE EXACT PREVIOUS UI
+    =========================================== */
 
-    if (desktop) {
+    if (nullSpacePreviousUI) {
 
-        desktop.classList.remove(
-            "hidden"
-        );
+        nullSpacePreviousUI.forEach(item => {
 
-        desktop.style.display =
-            "";
+            const {
+                element,
+                hidden,
+                display
+            } = item;
 
+            if (!element) return;
+
+            element.classList.toggle(
+                "hidden",
+                hidden
+            );
+
+            element.style.display = display;
+        });
     }
-
-
-    /* ======================================================
-       RESTORE OVERLAYS
-    ====================================================== */
-
-    const overlays = [
-
-        "notificationArea",
-
-        "mrsmileEntity",
-
-        "glitchLayer",
-
-        "eyesLayer"
-
-    ];
-
-
-    overlays.forEach(id => {
-
-        const element =
-            document.getElementById(id);
-
-
-        if (element) {
-
-            element.style.display =
-                "";
-
-        }
-
-    });
 
 
     document.body.classList.remove(
         "nullSpaceActive"
     );
 
+    nullSpaceActive = false;
+
 
     localStorage.removeItem(
         NULL_STORAGE.active
     );
-
 
     localStorage.setItem(
         NULL_STORAGE.flags,
         "returned"
     );
 
+    nullSpacePreviousUI = null;
 }
 
 
 /* ==========================================================
-   RESET VOID
-========================================================== */
+   WINDOW MANAGEMENT
+   ========================================================== */
 
-function resetVoidEnvironment() {
+export function openNullWindow(name) {
 
-    const door =
-        document.getElementById(
-            "nullVoidDoor"
-        );
+    const root = document.getElementById(
+        "nullSpaceRoot"
+    );
 
+    if (!root) return;
 
-    const output =
-        document.getElementById(
-            "nullConsoleOutput"
-        );
-
-
-    const task =
-        document.getElementById(
-            "nullTaskMessage"
-        );
-
-
-    const consoleNode =
-        document.getElementById(
-            "nullConsoleNode"
-        );
-
-
-    if (door) {
-
-        door.classList.remove(
-            "open"
-        );
-
-    }
-
-
-    if (consoleNode) {
-
-        consoleNode.classList.remove(
-            "active"
-        );
-
-    }
-
-
-    if (output) {
-
-        output.textContent =
-            "NULL INSTANCE\n" +
-            "-------------\n\n" +
-            'type "help"\n\n';
-
-    }
-
-
-    if (task) {
-
-        task.textContent =
-            "NOTHING IS WRONG.";
-
-    }
-
-}
-
-
-/* ==========================================================
-   WINDOWS
-========================================================== */
-
-function openNullWindow(name) {
-
-    const windows =
-        document.querySelectorAll(
-            ".nullInternalWindow"
-        );
-
+    const windows = root.querySelectorAll(
+        ".nullInternalWindow"
+    );
 
     windows.forEach(window => {
-
-        window.classList.add(
-            "hidden"
-        );
-
+        window.classList.remove("isOpen");
     });
 
 
-    const empty =
-        document.getElementById(
-            "nullEmptyState"
-        );
-
+    const empty = root.querySelector(
+        "#nullEmptyState"
+    );
 
     if (empty) {
-
-        empty.classList.add(
-            "hidden"
-        );
-
+        empty.classList.add("isHidden");
     }
 
 
-    const target =
-        document.getElementById(
-            `nullWindow${capitalize(name)}`
-        );
-
+    const target = root.querySelector(
+        `#nullWindow${capitalize(name)}`
+    );
 
     if (!target) return;
 
-
-    target.classList.remove(
-        "hidden"
-    );
-
-
-    const taskMessage =
-        document.getElementById(
-            "nullTaskMessage"
-        );
+    target.classList.add("isOpen");
 
 
     const messages = {
@@ -1838,7 +1541,7 @@ function openNullWindow(name) {
             "ARCHIVE OPEN.",
 
         chat:
-            "PRIVATE CHANNEL OPEN.",
+            "CHANNEL OPEN.",
 
         memory:
             "MEMORY ACCESS.",
@@ -1850,77 +1553,836 @@ function openNullWindow(name) {
             "OBJECT DATABASE.",
 
         room:
-            "LOCATION UNKNOWN.",
+            "LOCATION: UNKNOWN.",
 
         unknown:
             "YOU FOUND IT."
-
     };
 
 
-    if (taskMessage) {
+    setNullTask(
+        messages[name] ||
+        "UNKNOWN."
+    );
 
-        taskMessage.textContent =
-            messages[name] || "—";
 
+    if (name === "room") {
+        updateNullRoom();
     }
 
+    if (name === "memory") {
+        updateMemoryState();
+    }
 }
 
 
 /* ==========================================================
-   RESET WINDOWS
-========================================================== */
+   RESET
+   ========================================================== */
 
 function resetNullWindows() {
 
-    document
-        .querySelectorAll(
-            ".nullInternalWindow"
-        )
-        .forEach(window => {
+    const root = document.getElementById(
+        "nullSpaceRoot"
+    );
 
-            window.classList.add(
-                "hidden"
-            );
+    if (!root) return;
 
-        });
+    root.querySelectorAll(
+        ".nullInternalWindow"
+    ).forEach(window => {
 
-
-    const empty =
-        document.getElementById(
-            "nullEmptyState"
+        window.classList.remove(
+            "isOpen"
         );
+    });
 
+
+    const empty = root.querySelector(
+        "#nullEmptyState"
+    );
 
     if (empty) {
 
         empty.classList.remove(
-            "hidden"
+            "isHidden"
         );
-
     }
 
 
-    const task =
+    setNullTask(
+        "NOTHING IS WRONG."
+    );
+}
+
+
+/* ==========================================================
+   TASK MESSAGE
+   ========================================================== */
+
+function setNullTask(
+    message,
+    temporary = false
+) {
+
+    const element = document.getElementById(
+        "nullTaskMessage"
+    );
+
+    if (!element) return;
+
+    element.textContent = message;
+
+    element.classList.remove(
+        "taskPulse"
+    );
+
+    void element.offsetWidth;
+
+    element.classList.add(
+        "taskPulse"
+    );
+
+
+    nullState.lastEvent = message;
+
+    saveNullState();
+
+
+    if (temporary) {
+
+        setTimeout(() => {
+
+            if (!nullSpaceActive) return;
+
+            element.textContent =
+                "NOTHING IS WRONG.";
+
+        }, 2200);
+    }
+}
+
+
+/* ==========================================================
+   STATUS
+   ========================================================== */
+
+function updateNullStatus() {
+
+    const status = document.getElementById(
+        "nullStatusValue"
+    );
+
+    const room = document.getElementById(
+        "nullRoomID"
+    );
+
+    const roomHeader = document.getElementById(
+        "nullRoomHeaderID"
+    );
+
+
+    if (status) {
+
+        let value = "PRESENT";
+
+        if (nullState.anomalyLevel >= 7) {
+            value = "OBSERVED";
+        }
+        else if (nullState.anomalyLevel >= 4) {
+            value = "UNSTABLE";
+        }
+        else if (nullState.nullSeen) {
+            value = "WATCHED";
+        }
+
+        status.textContent = value;
+    }
+
+
+    if (room) {
+        room.textContent =
+            nullState.room;
+    }
+
+    if (roomHeader) {
+        roomHeader.textContent =
+            nullState.room;
+    }
+}
+
+
+/* ==========================================================
+   ROOM SYSTEM
+   ========================================================== */
+
+const NULL_ROOMS = [
+    "ROOM_000",
+    "ROOM_001",
+    "ROOM_002",
+    "ROOM_003",
+    "ROOM_404",
+    "ROOM_NULL"
+];
+
+
+function nextNullRoom() {
+
+    const current =
+        NULL_ROOMS.indexOf(
+            nullState.room
+        );
+
+    const next =
+        (current + 1) %
+        NULL_ROOMS.length;
+
+    nullState.room =
+        NULL_ROOMS[next];
+
+    nullState.doorOpened = true;
+
+    increaseAnomaly(
+        nullState.room === "ROOM_404"
+            ? 2
+            : 1
+    );
+
+    saveNullState();
+
+    updateNullRoom();
+
+    setNullTask(
+        `LOCATION: ${nullState.room}.`,
+        true
+    );
+
+    triggerRoomEvent();
+}
+
+
+function updateNullRoom() {
+
+    updateNullStatus();
+
+    const root = document.getElementById(
+        "nullSpaceRoot"
+    );
+
+    if (!root) return;
+
+    const environment =
+        root.querySelector(
+            ".nullVoidEnvironment"
+        );
+
+    if (!environment) return;
+
+
+    environment.dataset.room =
+        nullState.room;
+
+
+    environment.classList.toggle(
+        "room404",
+        nullState.room === "ROOM_404"
+    );
+
+    environment.classList.toggle(
+        "roomNull",
+        nullState.room === "ROOM_NULL"
+    );
+}
+
+
+/* ==========================================================
+   WORLD OBJECT EVENTS
+   ========================================================== */
+
+function handleWorldObject(type) {
+
+    switch (type) {
+
+        case "console":
+
+            nullState.consoleUsed = true;
+
+            saveNullState();
+
+            increaseAnomaly(1);
+
+            openNullWindow("console");
+
+            setNullTask(
+                "CONSOLE_01 CONNECTED."
+            );
+
+            break;
+
+
+        case "door":
+
+            nextNullRoom();
+
+            break;
+
+
+        case "black":
+
+            nullState.nullSeen = true;
+
+            increaseAnomaly(2);
+
+            saveNullState();
+
+            openNullWindow("unknown");
+
+            setNullTask(
+                "OBJECT 431434 DETECTED.",
+                true
+            );
+
+            triggerBlackBlockEvent();
+
+            break;
+
+
+        case "it":
+
+            nullState.itFound = true;
+
+            increaseAnomaly(1);
+
+            saveNullState();
+
+            openNullWindow("objects");
+
+            setNullTask(
+                "OBJECT: IT.",
+                true
+            );
+
+            triggerItEvent();
+
+            break;
+
+
+        case "disruption":
+
+            nullState.disruptionFound = true;
+
+            increaseAnomaly(2);
+
+            saveNullState();
+
+            setNullTask(
+                "DISRUPTION DETECTED.",
+                true
+            );
+
+            triggerDisruptionEvent();
+
+            break;
+
+
+        case "exit":
+
+            nullState.exitFound = true;
+
+            saveNullState();
+
+            setNullTask(
+                "EXIT PATH FOUND.",
+                true
+            );
+
+            triggerExitEvent();
+
+            break;
+
+
+        case "light":
+
+            toggleVoidLight();
+
+            break;
+    }
+}
+
+
+/* ==========================================================
+   LIGHT
+   ========================================================== */
+
+function toggleVoidLight() {
+
+    const root = document.getElementById(
+        "nullSpaceRoot"
+    );
+
+    if (!root) return;
+
+    const lights = root.querySelectorAll(
+        ".nullVoidLight"
+    );
+
+    nullState.lightsOff =
+        !nullState.lightsOff;
+
+    lights.forEach(light => {
+
+        light.classList.toggle(
+            "lightOff",
+            nullState.lightsOff
+        );
+    });
+
+
+    setNullTask(
+        nullState.lightsOff
+            ? "VOID LIGHT: OFF."
+            : "VOID LIGHT: ON.",
+        true
+    );
+
+
+    if (nullState.lightsOff) {
+
+        increaseAnomaly(1);
+    }
+
+    saveNullState();
+}
+
+
+/* ==========================================================
+   ENTRY EVENT
+   ========================================================== */
+
+function playNullEntry() {
+
+    const root = document.getElementById(
+        "nullSpaceRoot"
+    );
+
+    if (!root) return;
+
+    const space = root.querySelector(
+        ".nullSpace"
+    );
+
+    if (!space) return;
+
+    space.classList.remove(
+        "nullSpaceEntering"
+    );
+
+    void space.offsetWidth;
+
+    space.classList.add(
+        "nullSpaceEntering"
+    );
+
+
+    setTimeout(() => {
+
+        space.classList.remove(
+            "nullSpaceEntering"
+        );
+
+    }, 1800);
+}
+
+
+function maybeTriggerEntryEvent() {
+
+    if (nullState.visits <= 1) {
+
+        setTimeout(() => {
+
+            if (!nullSpaceActive) return;
+
+            setNullTask(
+                "SIGNAL ESTABLISHED."
+            );
+
+        }, 2300);
+
+        return;
+    }
+
+
+    if (
+        nullState.anomalyLevel >= 4 &&
+        Math.random() < 0.35
+    ) {
+
+        setTimeout(() => {
+
+            if (!nullSpaceActive) return;
+
+            triggerObservation();
+
+        }, 1800);
+    }
+}
+
+
+/* ==========================================================
+   NULL OBSERVATION
+   ========================================================== */
+
+function triggerObservation() {
+
+    const root = document.getElementById(
+        "nullSpaceRoot"
+    );
+
+    if (!root) return;
+
+    const presence =
+        root.querySelector(
+            ".nullPresence"
+        );
+
+    if (!presence) return;
+
+
+    nullState.nullSeen = true;
+
+    increaseAnomaly(1);
+
+    saveNullState();
+
+
+    presence.classList.add(
+        "presenceVisible"
+    );
+
+
+    setNullTask(
+        "HERE I AM."
+    );
+
+
+    setTimeout(() => {
+
+        presence.classList.remove(
+            "presenceVisible"
+        );
+
+    }, 1800);
+
+
+    setTimeout(() => {
+
+        if (!nullSpaceActive) return;
+
+        setNullTask(
+            "NOTHING IS WRONG."
+        );
+
+    }, 3000);
+}
+
+
+/* ==========================================================
+   ROOM EVENT
+   ========================================================== */
+
+function triggerRoomEvent() {
+
+    if (!nullSpaceActive) return;
+
+    const room =
+        nullState.room;
+
+
+    if (room === "ROOM_404") {
+
+        const root =
+            document.getElementById(
+                "nullSpaceRoot"
+            );
+
+        if (root) {
+
+            root.classList.add(
+                "nullRoom404Event"
+            );
+
+            setTimeout(() => {
+
+                root.classList.remove(
+                    "nullRoom404Event"
+                );
+
+            }, 900);
+        }
+
+        setNullTask(
+            "ERR.404."
+        );
+
+        return;
+    }
+
+
+    if (room === "ROOM_NULL") {
+
+        setTimeout(() => {
+
+            triggerObservation();
+
+        }, 800);
+
+        return;
+    }
+
+
+    if (
+        nullState.anomalyLevel >= 3 &&
+        Math.random() < 0.3
+    ) {
+
+        setTimeout(() => {
+
+            triggerLightFlicker();
+
+        }, 600);
+    }
+}
+
+
+/* ==========================================================
+   431434 EVENT
+   ========================================================== */
+
+function triggerBlackBlockEvent() {
+
+    const root =
         document.getElementById(
-            "nullTaskMessage"
+            "nullSpaceRoot"
         );
 
+    if (!root) return;
 
-    if (task) {
 
-        task.textContent =
-            "NOTHING IS WRONG.";
+    root.classList.add(
+        "nullBlackBlockEvent"
+    );
 
-    }
 
+    setTimeout(() => {
+
+        root.classList.remove(
+            "nullBlackBlockEvent"
+        );
+
+    }, 700);
+
+
+    setTimeout(() => {
+
+        if (!nullSpaceActive) return;
+
+        setNullTask(
+            "OUTSIDE."
+        );
+
+    }, 900);
+}
+
+
+/* ==========================================================
+   IT EVENT
+   ========================================================== */
+
+function triggerItEvent() {
+
+    const root =
+        document.getElementById(
+            "nullSpaceRoot"
+        );
+
+    if (!root) return;
+
+    const it =
+        root.querySelector(
+            ".nullWorldIt"
+        );
+
+    if (!it) return;
+
+
+    it.classList.add(
+        "itActive"
+    );
+
+
+    setTimeout(() => {
+
+        it.classList.remove(
+            "itActive"
+        );
+
+    }, 1300);
+}
+
+
+/* ==========================================================
+   DISRUPTION EVENT
+   ========================================================== */
+
+function triggerDisruptionEvent() {
+
+    const root =
+        document.getElementById(
+            "nullSpaceRoot"
+        );
+
+    if (!root) return;
+
+
+    const disruption =
+        root.querySelector(
+            ".nullWorldDisruption"
+        );
+
+    if (!disruption) return;
+
+
+    disruption.classList.add(
+        "disruptionActive"
+    );
+
+
+    setTimeout(() => {
+
+        disruption.classList.remove(
+            "disruptionActive"
+        );
+
+        disruption.classList.add(
+            "disruptionGone"
+        );
+
+    }, 2200);
+
+
+    setTimeout(() => {
+
+        disruption.classList.remove(
+            "disruptionGone"
+        );
+
+    }, 6000);
+
+
+    setNullTask(
+        "NAME.NULL",
+        true
+    );
+}
+
+
+/* ==========================================================
+   EXIT EVENT
+   ========================================================== */
+
+function triggerExitEvent() {
+
+    const root =
+        document.getElementById(
+            "nullSpaceRoot"
+        );
+
+    if (!root) return;
+
+
+    const exit =
+        root.querySelector(
+            ".nullWorldExit"
+        );
+
+    if (!exit) return;
+
+
+    exit.classList.add(
+        "exitActive"
+    );
+
+
+    setTimeout(() => {
+
+        exit.classList.remove(
+            "exitActive"
+        );
+
+    }, 1600);
+
+
+    setTimeout(() => {
+
+        if (!nullSpaceActive) return;
+
+        setNullTask(
+            "OUTSIDE NOT FOUND."
+        );
+
+    }, 900);
+}
+
+
+/* ==========================================================
+   LIGHT FLICKER
+   ========================================================== */
+
+function triggerLightFlicker() {
+
+    const root =
+        document.getElementById(
+            "nullSpaceRoot"
+        );
+
+    if (!root) return;
+
+
+    const lights =
+        root.querySelectorAll(
+            ".nullVoidLight"
+        );
+
+    if (!lights.length) return;
+
+
+    const light =
+        lights[
+            Math.floor(
+                Math.random() *
+                lights.length
+            )
+        ];
+
+
+    light.classList.add(
+        "lightFlicker"
+    );
+
+
+    setTimeout(() => {
+
+        light.classList.remove(
+            "lightFlicker"
+        );
+
+    }, 850);
 }
 
 
 /* ==========================================================
    CHAT
-========================================================== */
+   ========================================================== */
 
 function sendNullMessage() {
 
@@ -1929,19 +2391,11 @@ function sendNullMessage() {
             "nullChatInput"
         );
 
-
-    const messages =
-        document.getElementById(
-            "nullChatMessages"
-        );
-
-
-    if (!input || !messages) return;
+    if (!input) return;
 
 
     const text =
         input.value.trim();
-
 
     if (!text) return;
 
@@ -1956,18 +2410,16 @@ function sendNullMessage() {
     input.value = "";
 
 
+    increaseAnomaly(1);
+
+
     setTimeout(() => {
 
         respondToNullChat(text);
 
-    }, 900);
-
+    }, 700);
 }
 
-
-/* ==========================================================
-   ADD CHAT MESSAGE
-========================================================== */
 
 function addNullChatMessage(
     user,
@@ -1975,171 +2427,214 @@ function addNullChatMessage(
     unknown = false
 ) {
 
-    const messages =
+    const container =
         document.getElementById(
             "nullChatMessages"
         );
 
+    if (!container) return;
 
-    if (!messages) return;
+
+    const message =
+        document.createElement("div");
+
+    message.className =
+        "nullSignalMessage";
 
 
-    const element =
-        document.createElement(
-            "div"
+    if (unknown) {
+
+        message.classList.add(
+            "nullUnknownMessage"
         );
+    }
 
 
-    element.className =
-        "nullMessage" +
-        (
-            unknown
-                ? " nullUnknownMessage"
-                : ""
-        );
+    const time =
+        new Date()
+            .toLocaleTimeString(
+                "en-GB",
+                {
+                    hour12: false
+                }
+            );
 
 
-    element.innerHTML = `
-
-        <span>
-            ${escapeNullHTML(user)}
+    message.innerHTML = `
+        <span class="signalTime">
+            ${escapeNullHTML(time)}
         </span>
 
-        ${escapeNullHTML(text)}
+        <div>
 
+            <strong>
+                ${escapeNullHTML(user)}
+            </strong>
+
+            <p>
+                ${escapeNullHTML(text)}
+            </p>
+
+        </div>
     `;
 
 
-    messages.appendChild(
-        element
+    container.appendChild(
+        message
     );
 
 
-    messages.scrollTop =
-        messages.scrollHeight;
-
+    container.scrollTop =
+        container.scrollHeight;
 }
 
 
-/* ==========================================================
-   NULL CHAT RESPONSE
-========================================================== */
-
 function respondToNullChat(text) {
 
-    const message =
-        text.toLowerCase().trim();
+    const normalized =
+        text
+            .toLowerCase()
+            .trim();
 
 
-    let response = "...";
-
-
-    if (
-        message === "hello" ||
-        message === "hi" ||
-        message === "привет"
-    ) {
-
-        response =
-            "Hello.";
-
-    }
-
-
-    else if (
-        message === "null"
-    ) {
-
-        response =
-            "Yes.";
-
-    }
-
-
-    else if (
-        message.includes("who are you") ||
-        message.includes("кто ты")
-    ) {
-
-        response =
-            "You know.";
-
-    }
-
-
-    else if (
-        message.includes("where") ||
-        message.includes("где")
-    ) {
-
-        response =
-            "Here.";
-
-    }
-
-
-    else if (
-        message.includes("omega")
-    ) {
-
-        response =
-            "It was here.";
-
-    }
-
-
-    else if (
-        message.includes("exit") ||
-        message.includes("выход")
-    ) {
-
-        response =
-            "There is one.";
-
-    }
-
-
-    else if (
-        message.includes("help") ||
-        message.includes("помоги")
-    ) {
-
-        response =
-            "I cannot.";
-
-    }
-
-
-    addNullChatMessage(
-        "NULL",
-        response,
-        true
-    );
+    let response =
+        "...";
 
 
     if (
-        message === "exit" ||
-        message === "выход"
+        normalized === "hello" ||
+        normalized === "hi" ||
+        normalized === "привет"
     ) {
+
+        response = "Hello.";
+    }
+
+
+    else if (
+        normalized.includes("null")
+    ) {
+
+        response = "Yes.";
+    }
+
+
+    else if (
+        normalized.includes("who are you") ||
+        normalized.includes("кто ты")
+    ) {
+
+        response = "You know.";
+    }
+
+
+    else if (
+        normalized.includes("where") ||
+        normalized.includes("где")
+    ) {
+
+        response = "Here.";
+    }
+
+
+    else if (
+        normalized.includes("omega")
+    ) {
+
+        response = "It was here.";
+    }
+
+
+    else if (
+        normalized.includes("exit") ||
+        normalized.includes("выход")
+    ) {
+
+        response = "There is one.";
+
+        addNullChatMessage(
+            "NULL",
+            response
+        );
+
 
         setTimeout(() => {
 
             addNullChatMessage(
                 "NULL",
-                "Wrong way.",
-                true
+                "Wrong way."
             );
 
         }, 1300);
 
+        return;
     }
 
+
+    else if (
+        normalized.includes("help") ||
+        normalized.includes("помоги")
+    ) {
+
+        response = "I cannot.";
+    }
+
+
+    else if (
+        normalized.includes("follow") ||
+        normalized.includes("следуй")
+    ) {
+
+        response = "Is behind you.";
+    }
+
+
+    else if (
+        normalized.includes("see me") ||
+        normalized.includes("видишь меня")
+    ) {
+
+        response = "Yes.";
+    }
+
+
+    else if (
+        normalized.includes("void")
+    ) {
+
+        response = "It's me.";
+    }
+
+
+    else {
+
+        response = "...";
+    }
+
+
+    addNullChatMessage(
+        "NULL",
+        response
+    );
+
+
+    if (
+        response === "Yes." ||
+        response === "It's me."
+    ) {
+
+        nullState.nullSeen = true;
+
+        increaseAnomaly(1);
+
+        saveNullState();
+    }
 }
 
 
 /* ==========================================================
    CONSOLE
-========================================================== */
+   ========================================================== */
 
 function executeNullCommand() {
 
@@ -2147,7 +2642,6 @@ function executeNullCommand() {
         document.getElementById(
             "nullConsoleCommand"
         );
-
 
     const output =
         document.getElementById(
@@ -2161,148 +2655,240 @@ function executeNullCommand() {
     const command =
         input.value.trim();
 
-
     if (!command) return;
 
 
     output.textContent +=
-        `> ${command}\n`;
+        `\n\n> ${command}`;
 
 
     input.value = "";
 
 
-    let response = "";
-
-
-    switch (
-        command.toLowerCase()
-    ) {
-
-
-        case "help":
-
-            response =
-                "null\n" +
-                "omega\n" +
-                "integrity\n" +
-                "exit\n" +
-                "memory\n";
-
-            break;
-
-
-        case "null":
-
-            response =
-                "Outside\n";
-
-            break;
-
-
-        case "omega":
-
-            response =
-                "INSTANCE NOT FOUND\n";
-
-            break;
-
-
-        case "integrity":
-
-            response =
-                "ERR.NEXTNIGHT\n";
-
-            break;
-
-
-        case "memory":
-
-            response =
-                "ACCESS DENIED\n";
-
-            break;
-
-
-        case "exit":
-
-            response =
-                "RETURN PATH FOUND\n";
-
-            setTimeout(
-                exitNullSpace,
-                1000
-            );
-
-            break;
-
-
-        default:
-
-            response =
-                "ERR.UNKNOWN\n";
-
-            break;
-
-    }
-
-
     setTimeout(() => {
 
+        const normalized =
+            command.toLowerCase();
+
+
+        let response =
+            "ERR.UNKNOWN";
+
+
+        if (
+            normalized === "help"
+        ) {
+
+            response =
+                "null\nomega\nintegrity\nexit\nmemory";
+        }
+
+
+        else if (
+            normalized === "null"
+        ) {
+
+            response =
+                "Outside";
+        }
+
+
+        else if (
+            normalized === "omega"
+        ) {
+
+            response =
+                "INSTANCE NOT FOUND";
+        }
+
+
+        else if (
+            normalized === "integrity"
+        ) {
+
+            response =
+                "ERR.NEXTNIGHT";
+        }
+
+
+        else if (
+            normalized === "memory"
+        ) {
+
+            response =
+                "ACCESS DENIED";
+        }
+
+
+        else if (
+            normalized === "exit" ||
+            normalized === "sv.exit"
+        ) {
+
+            response =
+                "RETURN PATH FOUND";
+
+
+            nullState.exitFound = true;
+
+            saveNullState();
+
+
+            setTimeout(() => {
+
+                exitNullSpace();
+
+            }, 1100);
+        }
+
+
+        else if (
+            normalized === "room"
+        ) {
+
+            response =
+                nullState.room;
+        }
+
+
+        else if (
+            normalized === "status"
+        ) {
+
+            response =
+                `ANOMALY ${nullState.anomalyLevel}/10`;
+        }
+
+
         output.textContent +=
-            response;
+            `\n${response}`;
 
 
         output.scrollTop =
             output.scrollHeight;
 
-    }, 250);
 
+        if (
+            normalized !== "exit" &&
+            normalized !== "sv.exit"
+        ) {
+
+            increaseAnomaly(1);
+        }
+
+
+    }, 250);
 }
 
 
 /* ==========================================================
-   ENTRY EFFECT
-========================================================== */
+   MEMORY
+   ========================================================== */
 
-function playNullEntry() {
+function updateMemoryState() {
 
     const root =
         document.getElementById(
             "nullSpaceRoot"
         );
 
-
     if (!root) return;
 
 
-    root.classList.remove(
-        "nullSpaceEntering"
-    );
-
-
-    void root.offsetWidth;
-
-
-    root.classList.add(
-        "nullSpaceEntering"
-    );
-
-
-    setTimeout(() => {
-
-        root.classList.remove(
-            "nullSpaceEntering"
+    const entries =
+        root.querySelectorAll(
+            ".nullMemoryEntry"
         );
 
-    }, 1800);
 
+    entries.forEach(entry => {
+
+        entry.classList.remove(
+            "memoryActive"
+        );
+    });
+
+
+    if (nullState.nullSeen) {
+
+        const nullEntry =
+            root.querySelector(
+                ".nullMemoryEntry:nth-child(4)"
+            );
+
+        if (nullEntry) {
+
+            nullEntry.classList.add(
+                "memoryActive"
+            );
+        }
+    }
 }
 
 
 /* ==========================================================
-   EVENTS
-========================================================== */
+   OBJECTS
+   ========================================================== */
+
+function handleNullObject(object) {
+
+    const name =
+        object.dataset.nullObject ||
+        "UNKNOWN";
+
+
+    if (
+        object.classList.contains(
+            "nullImpossibleObject"
+        )
+    ) {
+
+        setNullTask(
+            "OBJECT DOES NOT EXIST."
+        );
+
+
+        setTimeout(() => {
+
+            if (!nullSpaceActive) return;
+
+            setNullTask(
+                "OBJECT EXISTS."
+            );
+
+        }, 1800);
+
+
+        nullState.nullSeen = true;
+
+        increaseAnomaly(2);
+
+        saveNullState();
+
+        return;
+    }
+
+
+    setNullTask(
+        `${name} SELECTED.`,
+        true
+    );
+
+
+    if (name === "PLAYER") {
+
+        nullState.nullSeen = true;
+
+        increaseAnomaly(1);
+
+        saveNullState();
+    }
+}
+
+
+/* ==========================================================
+   EVENT BINDING
+   ========================================================== */
 
 function bindNullSpaceEvents() {
 
@@ -2311,84 +2897,88 @@ function bindNullSpaceEvents() {
             "nullSpaceRoot"
         );
 
-
     if (!root) return;
 
-
-    /* ======================================================
-       NAVIGATION
-    ====================================================== */
 
     root.addEventListener(
         "click",
         event => {
 
-            const button =
+            const nav =
                 event.target.closest(
                     "[data-null-window]"
                 );
 
+            if (nav) {
 
-            if (!button) return;
+                openNullWindow(
+                    nav.dataset.nullWindow
+                );
+
+                return;
+            }
 
 
-            const windowName =
-                button.dataset.nullWindow;
+            const world =
+                event.target.closest(
+                    "[data-null-world]"
+                );
+
+            if (world) {
+
+                handleWorldObject(
+                    world.dataset.nullWorld
+                );
+
+                return;
+            }
 
 
-            openNullWindow(
-                windowName
-            );
+            const object =
+                event.target.closest(
+                    ".nullObject"
+                );
 
+            if (object) {
+
+                handleNullObject(
+                    object
+                );
+
+                return;
+            }
+
+
+            if (
+                event.target.closest(
+                    "#nullReturnButton"
+                )
+            ) {
+
+                exitNullSpace();
+
+                return;
+            }
+
+
+            if (
+                event.target.closest(
+                    "#nullChatSend"
+                )
+            ) {
+
+                sendNullMessage();
+
+                return;
+            }
         }
     );
-
-
-    /* ======================================================
-       RETURN
-    ====================================================== */
-
-    const returnButton =
-        document.getElementById(
-            "nullReturnButton"
-        );
-
-
-    if (returnButton) {
-
-        returnButton.addEventListener(
-            "click",
-            exitNullSpace
-        );
-
-    }
-
-
-    /* ======================================================
-       CHAT
-    ====================================================== */
-
-    const chatSend =
-        document.getElementById(
-            "nullChatSend"
-        );
-
-
-    if (chatSend) {
-
-        chatSend.addEventListener(
-            "click",
-            sendNullMessage
-        );
-
-    }
 
 
     const chatInput =
         document.getElementById(
             "nullChatInput"
         );
-
 
     if (chatInput) {
 
@@ -2400,25 +2990,19 @@ function bindNullSpaceEvents() {
                     event.key === "Enter"
                 ) {
 
+                    event.preventDefault();
+
                     sendNullMessage();
-
                 }
-
             }
         );
-
     }
 
-
-    /* ======================================================
-       CONSOLE
-    ====================================================== */
 
     const consoleInput =
         document.getElementById(
             "nullConsoleCommand"
         );
-
 
     if (consoleInput) {
 
@@ -2430,128 +3014,69 @@ function bindNullSpaceEvents() {
                     event.key === "Enter"
                 ) {
 
+                    event.preventDefault();
+
                     executeNullCommand();
-
                 }
-
             }
         );
-
     }
-
-
-    /* ======================================================
-       OBJECTS
-    ====================================================== */
-
-    root
-        .querySelectorAll(
-            ".nullObject"
-        )
-        .forEach(object => {
-
-            object.addEventListener(
-                "click",
-                () => {
-
-                    const task =
-                        document.getElementById(
-                            "nullTaskMessage"
-                        );
-
-
-                    if (!task) return;
-
-
-                    if (
-                        object.classList.contains(
-                            "nullImpossibleObject"
-                        )
-                    ) {
-
-                        task.textContent =
-                            "OBJECT DOES NOT EXIST.";
-
-
-                        setTimeout(() => {
-
-                            task.textContent =
-                                "OBJECT EXISTS.";
-
-                        }, 1800);
-
-
-                        return;
-
-                    }
-
-
-                    task.textContent =
-                        `${object.textContent.trim()} SELECTED.`;
-
-                }
-            );
-
-        });
-
 }
 
 
 /* ==========================================================
    HELPERS
-========================================================== */
+   ========================================================== */
 
-function capitalize(value) {
+function capitalize(string) {
 
-    return value.charAt(0).toUpperCase() +
-           value.slice(1);
+    if (!string) return "";
 
+    return (
+        string.charAt(0).toUpperCase() +
+        string.slice(1)
+    );
 }
 
 
 function escapeNullHTML(value) {
 
     return String(value)
-
-        .replaceAll(
-            "&",
+        .replace(
+            /&/g,
             "&amp;"
         )
-
-        .replaceAll(
-            "<",
+        .replace(
+            /</g,
             "&lt;"
         )
-
-        .replaceAll(
-            ">",
+        .replace(
+            />/g,
             "&gt;"
         )
-
-        .replaceAll(
-            '"',
+        .replace(
+            /"/g,
             "&quot;"
         )
-
-        .replaceAll(
-            "'",
+        .replace(
+            /'/g,
             "&#039;"
         );
-
 }
 
 
 /* ==========================================================
    GLOBAL API
-========================================================== */
+   ========================================================== */
 
 window.enterNullSpace =
     enterNullSpace;
 
-
 window.exitNullSpace =
     exitNullSpace;
 
-
 window.initNullSpace =
     initNullSpace;
+
+window.openNullWindow =
+    openNullWindow;
