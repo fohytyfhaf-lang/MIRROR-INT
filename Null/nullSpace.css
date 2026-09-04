@@ -65,33 +65,78 @@
 }
 
 
+
 /* ==========================================================
-   DEEP VOID BACKDROP
+   NULL VOID — DARK ROOM BACKGROUND
 ========================================================== */
 
 #nullSpaceRoot .nullVoidBackdrop {
     position: absolute;
-    inset: -15%;
+    inset: -12%;
+    overflow: hidden;
 
     background:
         radial-gradient(
-            ellipse at 50% 48%,
-            rgba(45,45,52,.13) 0%,
-            rgba(14,14,17,.08) 24%,
-            transparent 55%
+            ellipse at 50% 38%,
+            rgba(105, 105, 112, 0.055) 0%,
+            rgba(45, 45, 50, 0.035) 25%,
+            transparent 58%
         ),
-        radial-gradient(
-            ellipse at 50% 100%,
-            rgba(70,70,78,.07),
-            transparent 55%
-        ),
-        #000;
+        linear-gradient(
+            180deg,
+            #000000 0%,
+            #010102 45%,
+            #050507 100%
+        );
 
     transform: scale(1.04);
-
     transition:
-        filter .5s,
-        transform .8s;
+        filter 0.5s ease,
+        transform 0.8s ease;
+}
+
+/* Мягкое затемнение по краям */
+#nullSpaceRoot .nullVoidBackdrop::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 35%,
+            rgba(0, 0, 0, 0.45) 72%,
+            rgba(0, 0, 0, 0.88) 100%
+        );
+
+    pointer-events: none;
+}
+
+/* Очень слабая глубина пространства */
+#nullSpaceRoot .nullVoidBackdrop::after {
+    content: "";
+    position: absolute;
+
+    left: 50%;
+    top: 45%;
+
+    width: 80vw;
+    height: 55vh;
+
+    transform:
+        translate(-50%, -50%)
+        perspective(1000px)
+        rotateX(70deg);
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(150, 150, 155, 0.025),
+            transparent 65%
+        );
+
+    opacity: 0.7;
+    pointer-events: none;
 }
 
 
@@ -169,76 +214,70 @@
 }
 
 
+
 /* ==========================================================
-   FLOOR
+   NULL VOID — FLOOR
 ========================================================== */
 
 #nullSpaceRoot .nullVoidFloor {
     position: absolute;
 
-    left: -8%;
-    right: -8%;
+    left: -10%;
+    right: -10%;
+    bottom: -28%;
 
-    bottom: -27%;
-
-    height: 65%;
+    height: 68%;
 
     transform:
-        perspective(850px)
-        rotateX(64deg);
+        perspective(900px)
+        rotateX(63deg);
 
     transform-origin: center bottom;
 
     background:
-        repeating-linear-gradient(
-            90deg,
-            rgba(255,255,255,.035) 0 1px,
-            transparent 1px 84px
-        ),
-        repeating-linear-gradient(
-            0deg,
-            rgba(255,255,255,.025) 0 1px,
-            transparent 1px 84px
+        radial-gradient(
+            ellipse at 50% 0%,
+            rgba(115, 115, 120, 0.055),
+            transparent 48%
         ),
         linear-gradient(
             180deg,
-            #151619,
-            #090a0c 70%,
-            #030304
+            #111216 0%,
+            #08090b 45%,
+            #020203 100%
         );
 
     border-top:
-        1px solid rgba(255,255,255,.09);
+        1px solid rgba(255, 255, 255, 0.045);
 
     box-shadow:
-        0 -40px 80px rgba(0,0,0,.8);
+        0 -50px 110px rgba(0, 0, 0, 0.95);
 
-    opacity: .92;
+    opacity: 0.95;
 }
 
-
-/* floor seams */
-
+/* Убираем старую яркую сетку */
 #nullSpaceRoot .nullVoidFloor::before {
+    display: none !important;
+}
+
+#nullSpaceRoot .nullVoidFloor::after {
     content: "";
 
     position: absolute;
     inset: 0;
 
     background:
-        linear-gradient(
-            90deg,
-            transparent 0 24%,
-            rgba(0,0,0,.3) 24.1%,
-            transparent 24.3% 51%,
-            rgba(0,0,0,.25) 51.1%,
-            transparent 51.3% 76%,
-            rgba(0,0,0,.25) 76.1%,
-            transparent 76.3%
+        radial-gradient(
+            ellipse at 50% 0%,
+            rgba(255, 255, 255, 0.025),
+            transparent 55%
         );
 
+    opacity: 0.45;
     pointer-events: none;
 }
+
 
 
 /* ==========================================================
