@@ -2256,3 +2256,526 @@
     }
 
 }
+
+
+/* ==========================================================
+   NULL SPACE — MOON
+   Visual only
+========================================================== */
+
+.nullMoonVisual {
+    position: absolute;
+    width: clamp(260px, 31vw, 480px);
+    height: clamp(260px, 31vw, 480px);
+
+    right: 7%;
+    top: 7%;
+
+    pointer-events: none;
+    z-index: 3;
+
+    opacity: .88;
+
+    animation:
+        nullMoonFloat
+        14s
+        ease-in-out
+        infinite;
+}
+
+
+/* ==========================================================
+   ATMOSPHERE
+========================================================== */
+
+.nullMoonAtmosphere {
+    position: absolute;
+    inset: -35px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(220,220,220,.035) 0%,
+            rgba(180,180,180,.018) 38%,
+            transparent 68%
+        );
+
+    filter: blur(12px);
+
+    opacity: .8;
+}
+
+
+/* ==========================================================
+   MOON BODY
+========================================================== */
+
+.nullMoonSurface {
+    position: absolute;
+    inset: 0;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 34% 28%,
+            #d8d8d8 0%,
+            #bdbdbd 24%,
+            #999 48%,
+            #747474 70%,
+            #565656 100%
+        );
+
+    border: 1px solid rgba(255,255,255,.12);
+
+    box-shadow:
+        0 0 35px rgba(255,255,255,.045),
+        0 0 90px rgba(255,255,255,.018);
+
+    transform: translateZ(0);
+}
+
+
+/* ==========================================================
+   MOON TEXTURE
+========================================================== */
+
+.nullMoonSurface::before {
+    content: "";
+
+    position: absolute;
+    inset: -5%;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 18% 24%,
+            rgba(255,255,255,.15) 0 2%,
+            transparent 3%
+        ),
+
+        radial-gradient(
+            circle at 62% 19%,
+            rgba(40,40,40,.25) 0 5%,
+            transparent 6%
+        ),
+
+        radial-gradient(
+            circle at 73% 55%,
+            rgba(255,255,255,.08) 0 4%,
+            transparent 5%
+        ),
+
+        radial-gradient(
+            circle at 27% 69%,
+            rgba(30,30,30,.2) 0 7%,
+            transparent 8%
+        ),
+
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(20,20,20,.13) 0 12%,
+            transparent 13%
+        ),
+
+        radial-gradient(
+            circle at 82% 32%,
+            rgba(20,20,20,.18) 0 4%,
+            transparent 5%
+        );
+
+    opacity: .8;
+
+    mix-blend-mode: multiply;
+}
+
+
+/* ==========================================================
+   CRATERS
+========================================================== */
+
+.nullMoonCrater {
+    position: absolute;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 38% 35%,
+            rgba(210,210,210,.35) 0 12%,
+            rgba(95,95,95,.28) 45%,
+            rgba(35,35,35,.2) 72%,
+            transparent 73%
+        );
+
+    box-shadow:
+        inset 5px 6px 10px rgba(20,20,20,.25),
+        inset -4px -4px 8px rgba(255,255,255,.08);
+
+    opacity: .72;
+}
+
+
+/* crater positions */
+
+.crater1 {
+    width: 70px;
+    height: 70px;
+    left: 17%;
+    top: 18%;
+}
+
+.crater2 {
+    width: 42px;
+    height: 42px;
+    left: 53%;
+    top: 13%;
+}
+
+.crater3 {
+    width: 95px;
+    height: 95px;
+    left: 55%;
+    top: 38%;
+}
+
+.crater4 {
+    width: 48px;
+    height: 48px;
+    left: 21%;
+    top: 53%;
+}
+
+.crater5 {
+    width: 34px;
+    height: 34px;
+    left: 69%;
+    top: 68%;
+}
+
+.crater6 {
+    width: 58px;
+    height: 58px;
+    left: 37%;
+    top: 73%;
+}
+
+.crater7 {
+    width: 27px;
+    height: 27px;
+    left: 78%;
+    top: 22%;
+}
+
+.crater8 {
+    width: 50px;
+    height: 50px;
+    left: 8%;
+    top: 72%;
+}
+
+
+/* ==========================================================
+   MOON SHADOW
+========================================================== */
+
+.nullMoonShadow {
+    position: absolute;
+    inset: 0;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            118deg,
+            transparent 0%,
+            transparent 45%,
+            rgba(0,0,0,.08) 57%,
+            rgba(0,0,0,.25) 78%,
+            rgba(0,0,0,.52) 100%
+        );
+
+    pointer-events: none;
+}
+
+
+/* ==========================================================
+   FIRST CORRUPTION
+========================================================== */
+
+.nullMoonCorruption {
+    position: absolute;
+    inset: 0;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+
+    opacity: .42;
+
+    mix-blend-mode: multiply;
+}
+
+
+.corruptionBlob {
+    position: absolute;
+
+    display: block;
+
+    background:
+        radial-gradient(
+            ellipse,
+            #090909 0%,
+            #020202 58%,
+            transparent 72%
+        );
+
+    filter: blur(1px);
+
+    transform-origin: center;
+}
+
+
+/* main black mass */
+
+.corruptionBlob1 {
+    width: 52%;
+    height: 37%;
+
+    left: 42%;
+    top: 29%;
+
+    transform:
+        rotate(-21deg)
+        scaleY(.85);
+}
+
+
+/* secondary mass */
+
+.corruptionBlob2 {
+    width: 31%;
+    height: 24%;
+
+    left: 58%;
+    top: 54%;
+
+    transform:
+        rotate(32deg);
+}
+
+
+/* small spreading mass */
+
+.corruptionBlob3 {
+    width: 24%;
+    height: 19%;
+
+    left: 31%;
+    top: 46%;
+
+    transform:
+        rotate(-40deg);
+}
+
+
+/* ==========================================================
+   TENDRILS
+========================================================== */
+
+.nullMoonTendrils {
+    position: absolute;
+    inset: -35%;
+
+    pointer-events: none;
+}
+
+
+.moonTendril {
+    position: absolute;
+
+    display: block;
+
+    width: 2px;
+
+    height: 48%;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            #050505 35%,
+            #000 80%,
+            transparent
+        );
+
+    opacity: .32;
+
+    transform-origin: center;
+}
+
+
+/* tendril 1 */
+
+.tendril1 {
+    left: 55%;
+    top: 34%;
+
+    transform:
+        rotate(22deg)
+        scaleY(.75);
+}
+
+
+/* tendril 2 */
+
+.tendril2 {
+    left: 62%;
+    top: 35%;
+
+    transform:
+        rotate(48deg)
+        scaleY(.9);
+}
+
+
+/* tendril 3 */
+
+.tendril3 {
+    left: 49%;
+    top: 38%;
+
+    transform:
+        rotate(-34deg)
+        scaleY(.68);
+}
+
+
+/* tendril 4 */
+
+.tendril4 {
+    left: 68%;
+    top: 42%;
+
+    transform:
+        rotate(73deg)
+        scaleY(.55);
+}
+
+
+/* tendril 5 */
+
+.tendril5 {
+    left: 42%;
+    top: 44%;
+
+    transform:
+        rotate(-65deg)
+        scaleY(.55);
+}
+
+
+/* tendril 6 */
+
+.tendril6 {
+    left: 57%;
+    top: 49%;
+
+    transform:
+        rotate(92deg)
+        scaleY(.45);
+}
+
+
+/* ==========================================================
+   SUBTLE MOVEMENT
+========================================================== */
+
+@keyframes nullMoonFloat {
+
+    0% {
+        transform:
+            translate3d(0,0,0)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            translate3d(-4px,3px,0)
+            scale(1.008);
+    }
+
+    100% {
+        transform:
+            translate3d(0,0,0)
+            scale(1);
+    }
+}
+
+
+/* ==========================================================
+   VERY SUBTLE CORRUPTION MOVEMENT
+========================================================== */
+
+.nullMoonCorruption {
+    animation:
+        nullMoonCorruptionMove
+        11s
+        ease-in-out
+        infinite alternate;
+}
+
+
+@keyframes nullMoonCorruptionMove {
+
+    from {
+        transform:
+            scale(1)
+            translate(0,0);
+    }
+
+    to {
+        transform:
+            scale(1.035)
+            translate(-2px,1px);
+    }
+}
+
+
+/* ==========================================================
+   DESKTOP SCALE
+========================================================== */
+
+@media (max-width: 900px) {
+
+    .nullMoonVisual {
+        width: 280px;
+        height: 280px;
+
+        right: 4%;
+        top: 6%;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .nullMoonVisual {
+        width: 190px;
+        height: 190px;
+
+        right: 3%;
+        top: 5%;
+
+        opacity: .72;
+    }
+
+    .nullMoonCrater {
+        transform: scale(.65);
+    }
+}
