@@ -1821,3 +1821,224 @@ body.mrSmileInterfaceCollapse .window {
         right: 7%;
     }
 }
+
+
+/* ==========================================================
+   MR.SMILE — SYSTEM INTRUSION
+========================================================== */
+
+.mrSmileSystemActivity {
+    position: fixed;
+
+    left: 50%;
+    bottom: 7vh;
+
+    width: 360px;
+
+    transform:
+        translateX(-50%);
+
+    z-index: 2147482997;
+
+    pointer-events: none;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 9px;
+
+    letter-spacing: 1.5px;
+
+    color: rgba(
+        255,
+        255,
+        255,
+        0.34
+    );
+
+    opacity: 0;
+
+    transition:
+        opacity 900ms ease;
+}
+
+
+.mrSmileSystemActivity::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    top: -9px;
+
+    height: 1px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.16
+        );
+
+}
+
+
+.mrSmileSystemActivity::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    bottom: -9px;
+
+    height: 1px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.08
+        );
+
+}
+
+
+.mrSmileActivityText {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    margin: 5px 0;
+
+    white-space: nowrap;
+
+}
+
+
+.activityLabel {
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.25
+        );
+
+}
+
+
+.activityValue {
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.5
+        );
+
+}
+
+
+.mrSmileActivityLine {
+
+    position: absolute;
+
+    left: 0;
+
+    top: 0;
+
+    width: 0;
+
+    height: 100%;
+
+    pointer-events: none;
+
+}
+
+
+.mrSmileInterfaceCollapse
+.mrSmileSystemActivity {
+
+    opacity: 1;
+
+}
+
+
+.mrSmileSystemActivity.activityPulse {
+
+    animation:
+        mrSmileActivityPulse
+        900ms
+        ease;
+}
+
+
+@keyframes mrSmileActivityPulse {
+
+    0% {
+        opacity: 0.2;
+        transform:
+            translateX(-50%)
+            translateY(0);
+    }
+
+    25% {
+        opacity: 1;
+        transform:
+            translateX(-50%)
+            translateY(-1px);
+    }
+
+    50% {
+        opacity: 0.45;
+    }
+
+    100% {
+        opacity: 1;
+        transform:
+            translateX(-50%)
+            translateY(0);
+    }
+
+}
+
+
+.mrSmileSystemActivity.activitySilence {
+
+    opacity: 0;
+
+    transition:
+        opacity 1600ms ease;
+
+}
+
+
+@media (max-width: 700px) {
+
+    .mrSmileSystemActivity {
+
+        width:
+            calc(100vw - 40px);
+
+        bottom: 6vh;
+
+        font-size: 8px;
+
+        letter-spacing: 1px;
+
+    }
+
+}
