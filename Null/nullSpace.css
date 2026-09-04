@@ -3313,3 +3313,726 @@
         opacity: .035;
     }
 }
+
+
+/* ==========================================================
+   NULL SPACE — TEMPORARILY HIDE MOON
+========================================================== */
+
+#nullSpaceRoot .nullMoonVisual {
+    display: none !important;
+}
+
+/* ==========================================================
+   NULL SPACE
+   ATMOSPHERE — COLD / EMPTY / RED
+========================================================== */
+
+
+/* ==========================================================
+   01 — BASE
+========================================================== */
+
+#nullSpaceRoot {
+
+    background: #030404 !important;
+
+    color: #d9dddd !important;
+
+    font-family:
+        "Courier New",
+        "Lucida Console",
+        monospace;
+
+    text-rendering: geometricPrecision;
+
+}
+
+
+/* ==========================================================
+   02 — EMPTY COLD SPACE
+========================================================== */
+
+#nullSpaceRoot .nullSpace {
+
+    position: relative;
+
+    background:
+
+        radial-gradient(
+            ellipse at 50% 45%,
+            rgba(90,100,100,.085) 0%,
+            rgba(40,47,47,.045) 24%,
+            rgba(10,13,13,.35) 57%,
+            #000 100%
+        ),
+
+        linear-gradient(
+            180deg,
+            #080a0a 0%,
+            #040505 42%,
+            #010202 100%
+        ) !important;
+
+    color: #d7dddd !important;
+
+    overflow: hidden;
+
+}
+
+
+/* ==========================================================
+   03 — COLD ATMOSPHERE
+========================================================== */
+
+#nullSpaceRoot .nullSpace::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -20%;
+
+    z-index: 1;
+
+    pointer-events: none;
+
+    background:
+
+        radial-gradient(
+            ellipse at 25% 30%,
+            rgba(120,135,135,.055),
+            transparent 28%
+        ),
+
+        radial-gradient(
+            ellipse at 75% 65%,
+            rgba(80,100,100,.04),
+            transparent 32%
+        ),
+
+        radial-gradient(
+            ellipse at 50% 50%,
+            transparent 35%,
+            rgba(0,0,0,.42) 78%,
+            rgba(0,0,0,.82) 100%
+        );
+
+    filter: blur(12px);
+
+    opacity: .95;
+
+}
+
+
+/* ==========================================================
+   04 — VERY VISIBLE GRAIN
+========================================================== */
+
+#nullSpaceRoot .nullSpace::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -50%;
+
+    z-index: 700;
+
+    pointer-events: none;
+
+    opacity: .12;
+
+    background-image:
+
+        repeating-radial-gradient(
+            circle at 17% 31%,
+            rgba(255,255,255,.25) 0,
+            rgba(255,255,255,.25) 1px,
+            transparent 1px,
+            transparent 4px
+        );
+
+    background-size: 5px 5px;
+
+    mix-blend-mode: screen;
+
+    animation:
+        nullVisibleNoise .18s steps(2) infinite;
+
+}
+
+
+@keyframes nullVisibleNoise {
+
+    0% {
+        transform: translate(0,0);
+    }
+
+    25% {
+        transform: translate(-1.5%,1%);
+    }
+
+    50% {
+        transform: translate(1%,-1.5%);
+    }
+
+    75% {
+        transform: translate(1.5%,1%);
+    }
+
+    100% {
+        transform: translate(-1%,-1%);
+    }
+
+}
+
+
+/* ==========================================================
+   05 — STRONG SCANLINES
+========================================================== */
+
+#nullSpaceRoot .nullWorkspace {
+
+    background-image:
+
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,.025) 0px,
+            rgba(255,255,255,.025) 1px,
+            rgba(0,0,0,.035) 1px,
+            rgba(0,0,0,.035) 3px
+        );
+
+}
+
+
+/* ==========================================================
+   06 — COLD RED AMBIENT LIGHT
+========================================================== */
+
+#nullSpaceRoot .nullWorkspace::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 3;
+
+    background:
+
+        radial-gradient(
+            ellipse at 88% 18%,
+            rgba(150,0,0,.075),
+            transparent 27%
+        ),
+
+        radial-gradient(
+            ellipse at 8% 82%,
+            rgba(110,0,0,.035),
+            transparent 25%
+        );
+
+    opacity: .95;
+
+}
+
+
+/* ==========================================================
+   07 — RED EDGE
+========================================================== */
+
+#nullSpaceRoot .nullWorkspace::after {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+
+    right: 0;
+
+    width: 2px;
+
+    z-index: 500;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(150,0,0,.35) 25%,
+            rgba(190,0,0,.18) 50%,
+            rgba(120,0,0,.32) 75%,
+            transparent
+        );
+
+    box-shadow:
+        0 0 18px rgba(150,0,0,.18);
+
+    opacity: .8;
+
+}
+
+
+/* ==========================================================
+   08 — TEXT: MUCH MORE READABLE
+========================================================== */
+
+#nullSpaceRoot .nullBrandTitle,
+#nullSpaceRoot .nullBrandSubtitle,
+#nullSpaceRoot .nullStatusLabel,
+#nullSpaceRoot .nullStatusValue,
+#nullSpaceRoot .nullNavItem,
+#nullSpaceRoot .nullWindowTitle,
+#nullSpaceRoot .nullWindow,
+#nullSpaceRoot .nullEmptyState,
+#nullSpaceRoot button,
+#nullSpaceRoot input,
+#nullSpaceRoot textarea {
+
+    color: #e4e8e8 !important;
+
+}
+
+
+/* ==========================================================
+   09 — MAIN TEXT
+========================================================== */
+
+#nullSpaceRoot .nullEmptyState {
+
+    color: #e5e8e8 !important;
+
+    text-shadow:
+        0 0 8px rgba(220,230,230,.18);
+
+}
+
+
+/* ==========================================================
+   10 — BRAND
+========================================================== */
+
+#nullSpaceRoot .nullBrandTitle {
+
+    color: #f0f2f2 !important;
+
+    letter-spacing: 3px;
+
+    font-weight: 700;
+
+    text-shadow:
+        0 0 12px rgba(220,230,230,.15);
+}
+
+
+#nullSpaceRoot .nullBrandSubtitle {
+
+    color: #899191 !important;
+
+    letter-spacing: 2px;
+
+}
+
+
+/* ==========================================================
+   11 — STATUS
+========================================================== */
+
+#nullSpaceRoot .nullStatusLabel {
+
+    color: #697272 !important;
+
+}
+
+
+#nullSpaceRoot .nullStatusValue {
+
+    color: #c8cece !important;
+
+}
+
+
+/* ==========================================================
+   12 — NAVIGATION
+========================================================== */
+
+#nullSpaceRoot .nullNavigation {
+
+    background:
+        rgba(2,3,3,.88) !important;
+
+    border-right:
+        1px solid rgba(190,200,200,.10) !important;
+
+}
+
+
+/* Navigation text */
+
+#nullSpaceRoot .nullNavItem {
+
+    color: #aeb5b5 !important;
+
+    opacity: 1 !important;
+
+    text-shadow:
+        0 0 7px rgba(200,210,210,.10);
+
+}
+
+
+/* Hover */
+
+#nullSpaceRoot .nullNavItem:hover {
+
+    color: #ffffff !important;
+
+    background:
+        rgba(170,180,180,.055) !important;
+
+}
+
+
+/* Active */
+
+#nullSpaceRoot .nullNavItem.active {
+
+    color: #ff4444 !important;
+
+    background:
+        rgba(130,0,0,.13) !important;
+
+    border-left:
+        2px solid #b00000 !important;
+
+    text-shadow:
+        0 0 10px rgba(255,0,0,.35);
+
+}
+
+
+/* ==========================================================
+   13 — WINDOWS
+========================================================== */
+
+#nullSpaceRoot .nullWindow {
+
+    background:
+        rgba(3,5,5,.94) !important;
+
+    border:
+        1px solid rgba(190,200,200,.10) !important;
+
+    box-shadow:
+
+        0 20px 70px rgba(0,0,0,.85),
+
+        inset 0 0 35px rgba(150,160,160,.015);
+
+}
+
+
+/* ==========================================================
+   14 — WINDOW TITLES
+========================================================== */
+
+#nullSpaceRoot .nullWindowTitle {
+
+    color: #dce1e1 !important;
+
+    letter-spacing: 1px;
+
+}
+
+
+/* ==========================================================
+   15 — WINDOW CLOSE BUTTON
+========================================================== */
+
+#nullSpaceRoot .nullWindow button {
+
+    color: #9fa6a6 !important;
+
+    background:
+        transparent !important;
+
+    border:
+        1px solid transparent;
+
+}
+
+
+#nullSpaceRoot .nullWindow button:hover {
+
+    color: #ff4444 !important;
+
+    border-color:
+        rgba(180,0,0,.35);
+
+    background:
+        rgba(130,0,0,.12) !important;
+
+}
+
+
+/* ==========================================================
+   16 — INPUTS
+========================================================== */
+
+#nullSpaceRoot input,
+#nullSpaceRoot textarea {
+
+    background:
+        #050707 !important;
+
+    color:
+        #f0f2f2 !important;
+
+    border:
+        1px solid rgba(190,200,200,.13) !important;
+
+    outline: none !important;
+
+}
+
+
+#nullSpaceRoot input:focus,
+#nullSpaceRoot textarea:focus {
+
+    border-color:
+        rgba(170,0,0,.65) !important;
+
+    box-shadow:
+        0 0 12px rgba(130,0,0,.15);
+
+}
+
+
+/* ==========================================================
+   17 — RED CURSOR-LIKE DETAILS
+========================================================== */
+
+#nullSpaceRoot .nullTaskbar {
+
+    border-top:
+        1px solid rgba(180,190,190,.08) !important;
+
+    background:
+        rgba(2,3,3,.95) !important;
+
+}
+
+
+/* ==========================================================
+   18 — TASK MESSAGE
+========================================================== */
+
+#nullSpaceRoot #nullTaskMessage {
+
+    color:
+        #899292 !important;
+
+}
+
+
+/* ==========================================================
+   19 — RETURN BUTTON
+========================================================== */
+
+#nullSpaceRoot #nullReturnButton {
+
+    color:
+        #c6cccc !important;
+
+    background:
+        rgba(100,105,105,.035) !important;
+
+    border:
+        1px solid rgba(180,190,190,.12) !important;
+
+}
+
+
+#nullSpaceRoot #nullReturnButton:hover {
+
+    color:
+        #ff3d3d !important;
+
+    border-color:
+        rgba(190,0,0,.55) !important;
+
+    box-shadow:
+        0 0 14px rgba(150,0,0,.15);
+
+}
+
+
+/* ==========================================================
+   20 — RED SIGNAL
+   Small permanent warning element
+========================================================== */
+
+#nullSpaceRoot .nullTopBar::after {
+
+    content:
+        "NULL";
+
+    position:
+        absolute;
+
+    right:
+        18px;
+
+    top:
+        50%;
+
+    transform:
+        translateY(-50%);
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        3px;
+
+    color:
+        rgba(230,40,40,.65);
+
+    text-shadow:
+        0 0 9px rgba(220,0,0,.35);
+
+}
+
+
+/* ==========================================================
+   21 — OCCASIONAL RED FLICKER
+========================================================== */
+
+#nullSpaceRoot .nullTopBar::before {
+
+    content: "";
+
+    position:
+        absolute;
+
+    left: 0;
+    right: 0;
+
+    bottom: -1px;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(150,0,0,.65),
+            transparent
+        );
+
+    opacity: .35;
+
+    animation:
+        nullRedPulse 6s ease-in-out infinite;
+
+}
+
+
+@keyframes nullRedPulse {
+
+    0%,
+    72%,
+    100% {
+        opacity: .12;
+    }
+
+    74% {
+        opacity: .75;
+    }
+
+    75% {
+        opacity: .22;
+    }
+
+    76% {
+        opacity: .65;
+    }
+
+    77% {
+        opacity: .12;
+    }
+}
+
+
+/* ==========================================================
+   22 — SCREEN VIGNETTE
+========================================================== */
+
+#nullSpaceRoot .nullSpace {
+
+    box-shadow:
+
+        inset 0 0 100px rgba(0,0,0,.85),
+
+        inset 0 0 240px rgba(0,0,0,.65),
+
+        inset 0 0 420px rgba(0,0,0,.42);
+
+}
+
+
+/* ==========================================================
+   23 — SUBTLE RED VIGNETTE
+========================================================== */
+
+#nullSpaceRoot .nullSpace {
+
+    background-blend-mode:
+        normal,
+        normal,
+        normal;
+
+}
+
+
+/* ==========================================================
+   24 — EMPTY SPACE EMPHASIS
+========================================================== */
+
+#nullSpaceRoot .nullWorkspace {
+
+    min-height:
+        100%;
+
+}
+
+
+/* ==========================================================
+   25 — MOBILE
+========================================================== */
+
+@media (max-width: 700px) {
+
+    #nullSpaceRoot .nullSpace {
+
+        box-shadow:
+
+            inset 0 0 70px rgba(0,0,0,.9),
+
+            inset 0 0 160px rgba(0,0,0,.65);
+    }
+
+    #nullSpaceRoot .nullSpace::after {
+
+        opacity: .07;
+    }
+
+}
