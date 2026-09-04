@@ -1,12 +1,7 @@
 /* ==========================================================
    NULL SPACE
-   COMPLETE VISUAL REBUILD
-========================================================== */
-
-
-/* ==========================================================
-   ROOT
-========================================================== */
+   ATMOSPHERE BASE
+   ========================================================== */
 
 #nullSpaceRoot {
     position: fixed;
@@ -15,37 +10,34 @@
     width: 100vw;
     height: 100vh;
 
-    margin: 0;
-    padding: 0;
-
     overflow: hidden;
-
-    z-index: 9990;
 
     background: #000;
 
-    font-family:
-        Consolas,
-        "Courier New",
-        monospace;
+    z-index: 9990;
 
-    color: #bdbdbd;
+    opacity: 0;
+    visibility: hidden;
 
-    box-sizing: border-box;
+    pointer-events: none;
+
+    transition:
+        opacity 0.8s ease,
+        visibility 0.8s ease;
 }
 
-#nullSpaceRoot.hidden {
-    display: none !important;
-}
 
 #nullSpaceRoot.active {
-    display: block !important;
+    opacity: 1;
+    visibility: visible;
+
+    pointer-events: auto;
 }
 
 
 /* ==========================================================
    MAIN SPACE
-========================================================== */
+   ========================================================== */
 
 .nullSpace {
     position: absolute;
@@ -56,60 +48,63 @@
 
     overflow: hidden;
 
-    background: #000;
+    background:
+        radial-gradient(
+            ellipse at center,
+            #101010 0%,
+            #060606 42%,
+            #000 82%
+        );
 
-    isolation: isolate;
+    color: #ddd;
+
+    font-family:
+        "Courier New",
+        Consolas,
+        monospace;
 }
 
 
 /* ==========================================================
    WORLD
-========================================================== */
+   ========================================================== */
 
 .nullWorld {
     position: absolute;
     inset: 0;
 
-    overflow: hidden;
+    perspective: 1100px;
 
-    perspective: 1000px;
+    overflow: hidden;
+}
+
+
+.nullWorldBackground {
+    position: absolute;
+    inset: -20%;
 
     background:
         radial-gradient(
             ellipse at center,
-            #111 0%,
-            #070707 38%,
-            #020202 72%,
-            #000 100%
-        );
-}
+            rgba(255,255,255,0.025),
+            transparent 45%
+        ),
 
-
-/* ==========================================================
-   WORLD BACKGROUND
-========================================================== */
-
-.nullWorldBackground {
-    position: absolute;
-    inset: -10%;
-
-    background:
         radial-gradient(
-            ellipse at 50% 48%,
-            rgba(255,255,255,0.035) 0%,
-            rgba(255,255,255,0.012) 25%,
-            transparent 60%
-        );
+            ellipse at 30% 65%,
+            rgba(255,255,255,0.018),
+            transparent 35%
+        ),
+
+        #000;
 
     pointer-events: none;
-
-    z-index: 0;
 }
 
 
 /* ==========================================================
    ROOM
-========================================================== */
+   ========================================================== */
 
 .nullRoom {
     position: absolute;
@@ -117,265 +112,225 @@
     left: 50%;
     top: 50%;
 
-    width: min(1100px, 78vw);
-    height: min(650px, 68vh);
+    width: 82vw;
+    height: 70vh;
 
     transform:
         translate(-50%, -50%)
-        translateZ(0);
+        perspective(1200px);
 
     transform-style: preserve-3d;
 
-    overflow: hidden;
-
-    background: #050505;
-
-    box-shadow:
-        0 0 80px rgba(0,0,0,0.95),
-        inset 0 0 100px rgba(0,0,0,0.9);
-
-    transition:
-        width 0.7s ease,
-        height 0.7s ease,
-        transform 0.7s ease;
+    overflow: visible;
 }
 
 
 /* ==========================================================
-   ROOM BACK
-========================================================== */
+   WALLS
+   ========================================================== */
+
+.nullRoomBack,
+.nullRoomLeft,
+.nullRoomRight,
+.nullRoomFloor,
+.nullRoomCeiling {
+    position: absolute;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(30,30,30,0.85),
+            rgba(4,4,4,0.96)
+        );
+
+    border:
+        1px solid rgba(255,255,255,0.025);
+
+    box-shadow:
+        inset 0 0 80px rgba(0,0,0,0.85);
+}
+
 
 .nullRoomBack {
-    position: absolute;
     inset: 0;
 
-    background:
-        linear-gradient(
-            180deg,
-            #080808 0%,
-            #0b0b0b 42%,
-            #030303 100%
-        );
-
-    box-shadow:
-        inset 0 0 130px rgba(0,0,0,0.95);
-
-    z-index: 1;
-}
-
-
-/* ==========================================================
-   SUBTLE VOID BLOCK STRUCTURE
-========================================================== */
-
-.nullRoomBack::before {
-    content: "";
-
-    position: absolute;
-    inset: 0;
-
-    opacity: 0.35;
+    transform:
+        translateZ(-350px);
 
     background:
-        linear-gradient(
-            90deg,
-            transparent 0%,
-            rgba(255,255,255,0.015) 49.5%,
-            rgba(255,255,255,0.025) 50%,
-            transparent 50.5%
+        radial-gradient(
+            ellipse at center,
+            rgba(255,255,255,0.055),
+            rgba(15,15,15,0.4) 35%,
+            #020202 80%
         );
-
-    pointer-events: none;
 }
 
-
-/* ==========================================================
-   LEFT WALL
-========================================================== */
 
 .nullRoomLeft {
-    position: absolute;
+    left: -28%;
 
-    left: -12%;
     top: 0;
 
-    width: 25%;
+    width: 55%;
     height: 100%;
 
     transform:
-        perspective(700px)
-        rotateY(18deg);
+        rotateY(58deg)
+        translateZ(-150px);
 
     transform-origin: right center;
-
-    background:
-        linear-gradient(
-            90deg,
-            #000 0%,
-            #050505 60%,
-            #111 100%
-        );
-
-    box-shadow:
-        inset -40px 0 70px rgba(0,0,0,0.9);
-
-    z-index: 3;
 }
 
 
-/* ==========================================================
-   RIGHT WALL
-========================================================== */
-
 .nullRoomRight {
-    position: absolute;
+    right: -28%;
 
-    right: -12%;
     top: 0;
 
-    width: 25%;
+    width: 55%;
     height: 100%;
 
     transform:
-        perspective(700px)
-        rotateY(-18deg);
+        rotateY(-58deg)
+        translateZ(-150px);
 
     transform-origin: left center;
-
-    background:
-        linear-gradient(
-            270deg,
-            #000 0%,
-            #050505 60%,
-            #111 100%
-        );
-
-    box-shadow:
-        inset 40px 0 70px rgba(0,0,0,0.9);
-
-    z-index: 3;
 }
 
 
-/* ==========================================================
-   FLOOR
-========================================================== */
-
 .nullRoomFloor {
-    position: absolute;
-
     left: -10%;
-    bottom: -18%;
+
+    bottom: -25%;
 
     width: 120%;
-    height: 42%;
+    height: 70%;
 
     transform:
-        perspective(700px)
-        rotateX(58deg);
+        rotateX(72deg)
+        translateZ(-80px);
 
     transform-origin: center top;
 
     background:
         linear-gradient(
-            180deg,
-            #090909 0%,
-            #040404 45%,
-            #000 100%
+            90deg,
+            #030303,
+            #121212 48%,
+            #030303
         );
-
-    box-shadow:
-        inset 0 25px 70px rgba(0,0,0,0.8);
-
-    z-index: 5;
 }
 
 
-/* ==========================================================
-   CEILING
-========================================================== */
-
 .nullRoomCeiling {
-    position: absolute;
-
     left: -10%;
-    top: -18%;
+
+    top: -25%;
 
     width: 120%;
-    height: 38%;
+    height: 70%;
 
     transform:
-        perspective(700px)
-        rotateX(-58deg);
+        rotateX(-72deg)
+        translateZ(-80px);
 
     transform-origin: center bottom;
 
     background:
         linear-gradient(
-            180deg,
-            #000 0%,
-            #040404 55%,
-            #090909 100%
+            90deg,
+            #030303,
+            #0b0b0b 48%,
+            #030303
         );
-
-    z-index: 2;
 }
 
 
 /* ==========================================================
-   LIGHT SYSTEM
-========================================================== */
+   VOID LIGHTS
+   ========================================================== */
 
 .nullRoomLights {
     position: absolute;
     inset: 0;
 
-    z-index: 6;
+    z-index: 4;
 
     pointer-events: none;
 }
 
 
-/* ==========================================================
-   INDIVIDUAL VOID LIGHT
-========================================================== */
-
 .nullVoidLight {
     position: absolute;
 
-    width: 7px;
-    height: 7px;
+    left: var(--light-x);
+    top: var(--light-y);
 
-    border-radius: 50%;
+    width: 100px;
+    height: 4px;
 
-    background: #d9d9d9;
+    transform:
+        translate(-50%, -50%)
+        scale(var(--light-scale));
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,0.82),
+            rgba(255,255,255,0.95),
+            rgba(255,255,255,0.82),
+            transparent
+        );
 
     box-shadow:
-        0 0 6px rgba(255,255,255,0.75),
-        0 0 18px rgba(255,255,255,0.2);
+        0 0 8px rgba(255,255,255,0.35),
+        0 0 24px rgba(255,255,255,0.12);
+
+    opacity: 0.62;
 
     animation:
         nullLightFlicker
-        4s infinite ease-in-out;
+        6s
+        infinite
+        ease-in-out;
+
+    animation-delay:
+        var(--light-delay);
 }
 
 
-/* different light timing */
+.nullVoidLight::after {
+    content: "";
 
-.nullVoidLight:nth-child(2) {
-    animation-delay: -1.2s;
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 130px;
+    height: 28px;
+
+    transform: translate(-50%, -50%);
+
+    background:
+        radial-gradient(
+            ellipse,
+            rgba(255,255,255,0.055),
+            transparent 70%
+        );
+
+    filter: blur(8px);
 }
 
-.nullVoidLight:nth-child(3) {
-    animation-delay: -2.4s;
-}
 
-.nullVoidLight:nth-child(4) {
-    animation-delay: -0.7s;
-}
-
-.nullVoidLight:nth-child(5) {
-    animation-delay: -3s;
+.nullVoidLight.disturbed {
+    animation:
+        nullLightDisturbed
+        0.18s
+        steps(2, end)
+        5;
 }
 
 
@@ -383,32 +338,52 @@
 
     0%,
     100% {
-        opacity: 0.55;
+        opacity: 0.58;
+    }
+
+    46% {
+        opacity: 0.64;
     }
 
     48% {
-        opacity: 0.75;
+        opacity: 0.35;
     }
 
     50% {
-        opacity: 0.25;
+        opacity: 0.61;
     }
 
-    52% {
+    78% {
+        opacity: 0.48;
+    }
+}
+
+
+@keyframes nullLightDisturbed {
+
+    0% {
         opacity: 0.7;
+    }
+
+    50% {
+        opacity: 0.05;
+    }
+
+    100% {
+        opacity: 0.6;
     }
 }
 
 
 /* ==========================================================
    VOID BLOCKS
-========================================================== */
+   ========================================================== */
 
 .nullRoomBlocks {
     position: absolute;
     inset: 0;
 
-    z-index: 7;
+    z-index: 5;
 
     pointer-events: none;
 }
@@ -417,145 +392,123 @@
 .nullVoidBlock {
     position: absolute;
 
+    left: var(--block-x);
+    top: var(--block-y);
+
+    width: 34px;
+    height: 34px;
+
+    transform:
+        translate(-50%, -50%)
+        translateZ(var(--block-z))
+        scale(var(--block-scale))
+        rotate(var(--block-rotation));
+
     background:
         linear-gradient(
             135deg,
-            #121212 0%,
-            #080808 48%,
-            #020202 100%
+            #161616,
+            #050505
         );
 
     border:
-        1px solid rgba(255,255,255,0.035);
+        1px solid rgba(255,255,255,0.025);
 
     box-shadow:
         inset 0 0 20px rgba(0,0,0,0.8),
-        0 0 25px rgba(0,0,0,0.6);
+        0 0 18px rgba(0,0,0,0.8);
+
+    opacity: 0.62;
+
+    transition:
+        transform 0.5s ease,
+        opacity 0.5s ease;
+}
+
+
+.nullVoidBlock.disturbed {
+    opacity: 0.18;
 
     transform:
-        translate(-50%, -50%);
-
-    animation:
-        nullBlockDrift
-        12s infinite ease-in-out;
-}
-
-
-.nullVoidBlock:nth-child(2) {
-    animation-delay: -2s;
-}
-
-.nullVoidBlock:nth-child(3) {
-    animation-delay: -5s;
-}
-
-.nullVoidBlock:nth-child(4) {
-    animation-delay: -7s;
-}
-
-.nullVoidBlock:nth-child(5) {
-    animation-delay: -9s;
-}
-
-
-@keyframes nullBlockDrift {
-
-    0%,
-    100% {
-        filter: brightness(0.8);
-    }
-
-    50% {
-        filter: brightness(1.15);
-    }
+        translate(-50%, -50%)
+        translateZ(
+            calc(var(--block-z) + 20px)
+        )
+        scale(var(--block-scale))
+        rotate(
+            calc(var(--block-rotation) + 3deg)
+        );
 }
 
 
 /* ==========================================================
    ENTITY
-========================================================== */
+   ========================================================== */
 
 .nullEntity {
     position: absolute;
 
     left: 50%;
-    top: 47%;
+    top: 58%;
 
-    width: 70px;
-    height: 230px;
+    width: 120px;
+    height: 280px;
 
     transform:
-        translateX(-50%);
+        translate(-50%, -50%)
+        translateZ(-180px);
 
-    z-index: 20;
+    z-index: 8;
 
-    opacity: 0;
+    opacity: 0.07;
 
     pointer-events: none;
 
+    filter:
+        blur(0.2px)
+        contrast(1.3);
+
     transition:
-        opacity 1.8s ease;
+        opacity 0.5s ease,
+        transform 0.8s ease;
 }
 
 
-/* ==========================================================
-   ENTITY HEAD
-========================================================== */
+.nullEntity.noticed {
+    opacity: 0.2;
+
+    transform:
+        translate(-50%, -50%)
+        translateZ(-100px)
+        scale(1.03);
+}
+
 
 .nullEntityHead {
     position: absolute;
 
     left: 50%;
-    top: 0;
+    top: 18px;
 
-    width: 52px;
-    height: 62px;
+    width: 64px;
+    height: 74px;
 
-    transform:
-        translateX(-50%)
-        rotate(2deg);
+    transform: translateX(-50%);
 
     background:
-        #000;
+        radial-gradient(
+            ellipse,
+            #090909,
+            #000 75%
+        );
 
     border-radius:
-        42% 48% 46% 43%;
+        38% 38% 45% 45%;
 
     box-shadow:
-        0 0 25px rgba(0,0,0,0.95);
-
-    overflow: hidden;
+        0 0 35px rgba(0,0,0,0.95);
 }
 
-
-/* ==========================================================
-   ENTITY HEAD DISTORTION
-========================================================== */
-
-.nullEntityHead::before {
-    content: "";
-
-    position: absolute;
-
-    left: 8px;
-    right: 8px;
-    top: 12px;
-
-    height: 2px;
-
-    background:
-        rgba(255,255,255,0.025);
-
-    box-shadow:
-        0 8px rgba(255,255,255,0.02),
-        0 17px rgba(255,255,255,0.018),
-        0 27px rgba(255,255,255,0.012);
-}
-
-
-/* ==========================================================
-   RED EYES
-========================================================== */
 
 .nullEntityHead::after {
     content: "";
@@ -563,88 +516,57 @@
     position: absolute;
 
     left: 50%;
-    top: 29px;
+    top: 50%;
 
-    width: 5px;
-    height: 5px;
+    width: 4px;
+    height: 4px;
 
     transform:
-        translateX(-50%);
+        translate(-50%, -50%);
+
+    background: #b40000;
 
     border-radius: 50%;
 
-    background: #8f0000;
-
     box-shadow:
-        -14px 1px 0 #4d0000,
-        14px -2px 0 #5e0000,
+        -14px -5px 0 #8d0000,
+        14px -5px 0 #8d0000,
+        -9px 9px 0 #650000,
+        9px 9px 0 #650000;
 
-        -8px -10px 0 rgba(120,0,0,0.55),
-        9px 11px 0 rgba(100,0,0,0.4),
+    opacity: 0.85;
 
-        0 0 5px #a00000,
-        0 0 15px rgba(130,0,0,0.45);
-
-    animation:
-        nullEyesPulse
-        3.5s infinite ease-in-out;
+    filter:
+        drop-shadow(0 0 6px rgba(255,0,0,0.7));
 }
 
-
-@keyframes nullEyesPulse {
-
-    0%,
-    100% {
-        opacity: 0.45;
-        filter: brightness(0.7);
-    }
-
-    50% {
-        opacity: 1;
-        filter: brightness(1.35);
-    }
-}
-
-
-/* ==========================================================
-   ENTITY BODY
-========================================================== */
 
 .nullEntityBody {
     position: absolute;
 
     left: 50%;
-    top: 54px;
+    top: 80px;
 
-    width: 38px;
-    height: 170px;
+    width: 72px;
+    height: 175px;
 
     transform:
         translateX(-50%);
 
     background:
         linear-gradient(
-            90deg,
-            transparent 0%,
-            #000 25%,
-            #010101 50%,
-            #000 75%,
-            transparent 100%
+            180deg,
+            #030303,
+            #000
         );
 
     border-radius:
-        48% 52% 20% 20%;
+        42% 42% 18% 18%;
 
-    filter:
-        drop-shadow(
-            0 0 18px rgba(0,0,0,0.95)
-        );
+    box-shadow:
+        0 20px 45px rgba(0,0,0,0.9);
 }
 
-
-/* ==========================================================
-   ENTITY TENDRILS
-========================================================== */
 
 .nullEntityBody::before,
 .nullEntityBody::after {
@@ -652,144 +574,110 @@
 
     position: absolute;
 
-    top: 15px;
+    top: 12px;
 
-    width: 5px;
-    height: 145px;
+    width: 20px;
+    height: 150px;
 
     background: #000;
 
-    border-radius: 100%;
+    border-radius: 50%;
 
-    transform-origin: top center;
+    opacity: 0.95;
 }
 
 
 .nullEntityBody::before {
-    left: -14px;
+    left: -20px;
 
     transform:
-        rotate(12deg);
+        rotate(11deg);
 }
 
 
 .nullEntityBody::after {
-    right: -14px;
+    right: -20px;
 
     transform:
-        rotate(-12deg);
+        rotate(-11deg);
 }
 
 
 /* ==========================================================
-   ANOMALY LAYER
-========================================================== */
+   ANOMALY
+   ========================================================== */
 
 .nullAnomalyLayer {
     position: absolute;
     inset: 0;
 
-    z-index: 40;
+    z-index: 20;
 
     pointer-events: none;
 
     opacity: 0;
-
-    background:
-        radial-gradient(
-            circle at 50% 50%,
-            rgba(100,0,0,0.15),
-            transparent 35%
-        );
 
     mix-blend-mode: screen;
 
-    transition:
-        opacity 0.3s ease;
+    background:
+        linear-gradient(
+            transparent 49%,
+            rgba(255,0,0,0.08) 50%,
+            transparent 51%
+        );
+
+    background-size:
+        100% 7px;
 }
 
 
-/* ==========================================================
-   AMBIENT RED GLITCH
-========================================================== */
-
-.nullAnomalyLayer::before {
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    top: 0;
-
-    width: 100%;
-    height: 2px;
-
-    background:
-        rgba(120,0,0,0.25);
-
-    opacity: 0;
+.nullAnomalyLayer.rareError {
+    opacity: 0.8;
 
     animation:
-        nullRedScan
-        9s infinite;
+        nullRareAnomaly
+        0.9s
+        steps(2, end);
 }
 
 
-@keyframes nullRedScan {
+@keyframes nullRareAnomaly {
 
-    0%,
-    88% {
+    0% {
         opacity: 0;
-        top: 15%;
+        transform: translateX(0);
     }
 
-    89% {
+    20% {
         opacity: 0.5;
+        transform: translateX(-3px);
     }
 
-    90% {
-        opacity: 0;
-        top: 65%;
+    35% {
+        opacity: 0.05;
+        transform: translateX(4px);
     }
 
-    91% {
-        opacity: 0.35;
+    50% {
+        opacity: 0.7;
+        transform: translateX(-2px);
     }
 
-    92%,
+    75% {
+        opacity: 0.2;
+        transform: translateX(2px);
+    }
+
     100% {
         opacity: 0;
+        transform: translateX(0);
     }
-}
-
-
-/* ==========================================================
-   VIGNETTE
-========================================================== */
-
-.nullSpace::after {
-    content: "";
-
-    position: absolute;
-    inset: 0;
-
-    z-index: 60;
-
-    pointer-events: none;
-
-    background:
-        radial-gradient(
-            ellipse at center,
-            transparent 35%,
-            rgba(0,0,0,0.25) 60%,
-            rgba(0,0,0,0.85) 100%
-        );
 }
 
 
 /* ==========================================================
    INTERFACE
-========================================================== */
+   ========================================================== */
 
 .nullInterface {
     position: absolute;
@@ -801,151 +689,112 @@
 }
 
 
-/* ==========================================================
-   TOP BAR
-========================================================== */
-
 .nullTopBar {
     position: absolute;
 
-    top: 18px;
     left: 24px;
     right: 24px;
+    top: 20px;
 
     display: flex;
 
-    justify-content:
-        space-between;
+    justify-content: space-between;
+    align-items: center;
 
-    align-items:
-        center;
+    padding-bottom: 8px;
 
-    pointer-events: none;
+    border-bottom:
+        1px solid rgba(255,255,255,0.08);
+
+    font-size: 11px;
+
+    letter-spacing: 3px;
+
+    color: rgba(255,255,255,0.42);
 }
 
-
-/* ==========================================================
-   TITLE
-========================================================== */
 
 .nullTitle {
-    font-size: 12px;
-
-    letter-spacing: 4px;
-
-    color:
-        rgba(220,220,220,0.6);
-
-    text-shadow:
-        0 0 8px rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.55);
 }
 
 
-/* ==========================================================
-   STATUS
-========================================================== */
-
 .nullStatus {
-    font-size: 10px;
-
-    letter-spacing: 2px;
-
-    color:
-        rgba(170,170,170,0.45);
-
-    transition:
-        color 0.3s ease;
+    color: rgba(255,255,255,0.3);
 }
 
 
 /* ==========================================================
    ROOM INFO
-========================================================== */
+   ========================================================== */
 
 .nullRoomInfo {
     position: absolute;
 
-    left: 24px;
-    bottom: 24px;
+    left: 25px;
+    bottom: 72px;
 
-    pointer-events: none;
+    color: rgba(255,255,255,0.38);
 
-    opacity: 0.6;
-}
-
-
-.nullRoomType {
     font-size: 10px;
 
-    letter-spacing: 3px;
+    line-height: 1.7;
 
-    color:
-        rgba(220,220,220,0.7);
+    letter-spacing: 2px;
 }
 
 
-.nullRoomDescription {
-    margin-top: 5px;
+.nullRoomInfo span {
+    display: block;
 
-    font-size: 8px;
+    color: rgba(255,255,255,0.18);
 
-    letter-spacing: 1.5px;
-
-    color:
-        rgba(150,150,150,0.45);
+    letter-spacing: 1px;
 }
 
 
 /* ==========================================================
    EVENT MESSAGE
-========================================================== */
+   ========================================================== */
 
 .nullEventMessage {
     position: absolute;
 
     left: 50%;
-    top: 82%;
+    bottom: 30%;
 
     transform:
-        translate(-50%, 15px);
+        translateX(-50%);
 
-    font-size: 10px;
+    font-size: 9px;
 
     letter-spacing: 3px;
 
-    color:
-        rgba(150,0,0,0.9);
-
-    text-shadow:
-        0 0 8px rgba(100,0,0,0.5);
+    color: rgba(255,255,255,0.35);
 
     opacity: 0;
 
-    transition:
-        opacity 0.4s ease,
-        transform 0.4s ease;
+    white-space: nowrap;
 
-    pointer-events: none;
+    transition:
+        opacity 0.3s ease;
 }
 
 
-.nullEventMessage.visible {
+.nullEventMessage.active {
     opacity: 1;
-
-    transform:
-        translate(-50%, 0);
 }
 
 
 /* ==========================================================
    NAVIGATION
-========================================================== */
+   ========================================================== */
 
 .nullNavigation {
     position: absolute;
 
     right: 24px;
-    bottom: 22px;
+    bottom: 24px;
 
     display: flex;
 
@@ -955,73 +804,433 @@
 }
 
 
-.nullNavigationButton {
+.nullNavigation button {
     appearance: none;
 
-    border: 1px solid
-        rgba(255,255,255,0.08);
+    border:
+        1px solid rgba(255,255,255,0.12);
 
     background:
         rgba(0,0,0,0.65);
 
     color:
-        rgba(190,190,190,0.55);
+        rgba(255,255,255,0.4);
 
     padding:
-        7px 11px;
+        6px 9px;
 
     font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.nullNavigation button:hover {
+    background:
+        rgba(255,255,255,0.05);
+
+    color:
+        rgba(255,255,255,0.8);
+
+    border-color:
+        rgba(255,255,255,0.25);
+}
+
+
+/* ==========================================================
+   ERROR SYSTEM
+   ========================================================== */
+
+.nullErrorLayer {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 500;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transition:
+        opacity 0.12s ease;
+}
+
+
+.nullErrorLayer.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* ----------------------------------------------------------
+   ERROR TEXT
+   ---------------------------------------------------------- */
+
+.nullErrorText {
+    position: relative;
+
+    max-width: 90vw;
+
+    text-align: center;
+
+    font-family:
+        "Courier New",
         Consolas,
+        monospace;
+
+    font-size:
+        clamp(12px, 1.2vw, 17px);
+
+    font-weight: normal;
+
+    letter-spacing: 4px;
+
+    color: rgba(255,255,255,0.72);
+
+    text-shadow:
+        0 0 8px rgba(255,255,255,0.15);
+
+    white-space: nowrap;
+
+    transform:
+        translateY(2px);
+}
+
+
+.nullErrorSubtext {
+    position: absolute;
+
+    margin-top: 42px;
+
+    font-family:
         "Courier New",
         monospace;
 
     font-size: 8px;
 
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
 
-    cursor: pointer;
+    color:
+        rgba(255,255,255,0.25);
 
-    transition:
-        color 0.2s ease,
-        border-color 0.2s ease,
-        background 0.2s ease;
+    white-space: nowrap;
 }
 
 
-.nullNavigationButton:hover {
-    color:
-        rgba(255,255,255,0.9);
+/* ----------------------------------------------------------
+   ERROR GLITCH
+   ---------------------------------------------------------- */
 
-    border-color:
-        rgba(150,0,0,0.45);
+.nullErrorGlitch {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    top: 50%;
+
+    height: 1px;
 
     background:
-        rgba(40,0,0,0.25);
+        rgba(255,255,255,0.08);
+
+    opacity: 0;
+
+    transform:
+        scaleX(0.2);
 }
 
 
-.nullNavigationButton:active {
-    transform:
-        translateY(1px);
+.nullErrorLayer.active
+.nullErrorGlitch {
+    animation:
+        nullErrorLine
+        0.55s
+        steps(3, end);
+}
+
+
+@keyframes nullErrorLine {
+
+    0% {
+        opacity: 0;
+        transform: scaleX(0.1);
+    }
+
+    30% {
+        opacity: 1;
+        transform: scaleX(0.85);
+    }
+
+    55% {
+        opacity: 0.2;
+        transform: scaleX(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scaleX(0.35);
+    }
+}
+
+
+/* ==========================================================
+   NORMAL ERROR
+   ========================================================== */
+
+.nullErrorLayer.error-normal
+.nullErrorText {
+    animation:
+        nullErrorNormal
+        0.65s
+        steps(2, end);
+}
+
+
+@keyframes nullErrorNormal {
+
+    0% {
+        opacity: 0;
+        transform: translateX(-2px);
+    }
+
+    35% {
+        opacity: 0.9;
+        transform: translateX(1px);
+    }
+
+    70% {
+        opacity: 0.5;
+        transform: translateX(-1px);
+    }
+
+    100% {
+        opacity: 0.7;
+        transform: translateX(0);
+    }
+}
+
+
+/* ==========================================================
+   SYSTEM ERROR
+   ========================================================== */
+
+.nullErrorLayer.error-system
+.nullErrorText {
+    color:
+        rgba(255,255,255,0.78);
+
+    animation:
+        nullSystemError
+        0.8s
+        steps(3, end);
+}
+
+
+@keyframes nullSystemError {
+
+    0% {
+        opacity: 0;
+        transform:
+            translateX(-5px)
+            scaleX(0.98);
+    }
+
+    25% {
+        opacity: 0.95;
+        transform:
+            translateX(3px)
+            scaleX(1);
+    }
+
+    50% {
+        opacity: 0.25;
+        transform:
+            translateX(-2px)
+            scaleX(1.02);
+    }
+
+    75% {
+        opacity: 0.85;
+        transform:
+            translateX(1px)
+            scaleX(0.99);
+    }
+
+    100% {
+        opacity: 0.75;
+        transform:
+            translateX(0)
+            scaleX(1);
+    }
+}
+
+
+/* ==========================================================
+   CORRUPTED ERROR
+   ========================================================== */
+
+.nullErrorLayer.error-corrupted
+.nullErrorText {
+    color:
+        rgba(255,255,255,0.58);
+
+    text-shadow:
+        -2px 0 rgba(255,0,0,0.2),
+        2px 0 rgba(255,255,255,0.08);
+
+    animation:
+        nullCorruptedError
+        0.75s
+        steps(4, end);
+}
+
+
+@keyframes nullCorruptedError {
+
+    0% {
+        opacity: 0;
+        transform:
+            translateX(0)
+            skewX(0);
+    }
+
+    20% {
+        opacity: 0.8;
+        transform:
+            translateX(-5px)
+            skewX(-4deg);
+    }
+
+    40% {
+        opacity: 0.25;
+        transform:
+            translateX(7px)
+            skewX(3deg);
+    }
+
+    60% {
+        opacity: 0.7;
+        transform:
+            translateX(-2px)
+            skewX(-2deg);
+    }
+
+    80% {
+        opacity: 0.35;
+        transform:
+            translateX(3px)
+            skewX(1deg);
+    }
+
+    100% {
+        opacity: 0.65;
+        transform:
+            translateX(0)
+            skewX(0);
+    }
+}
+
+
+/* ==========================================================
+   RARE ERROR
+   ========================================================== */
+
+.nullErrorLayer.error-rare
+.nullErrorText {
+    color:
+        rgba(180,0,0,0.95);
+
+    text-shadow:
+        0 0 7px rgba(150,0,0,0.65),
+        0 0 20px rgba(120,0,0,0.25);
+
+    animation:
+        nullRareError
+        1s
+        steps(5, end);
+}
+
+
+@keyframes nullRareError {
+
+    0% {
+        opacity: 0;
+        transform:
+            translateX(0)
+            scale(0.98);
+    }
+
+    18% {
+        opacity: 1;
+        transform:
+            translateX(-4px)
+            scale(1.01);
+    }
+
+    34% {
+        opacity: 0.15;
+        transform:
+            translateX(6px)
+            scale(1);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform:
+            translateX(-2px)
+            scale(1.01);
+    }
+
+    72% {
+        opacity: 0.35;
+        transform:
+            translateX(3px)
+            scale(1);
+    }
+
+    100% {
+        opacity: 0.9;
+        transform:
+            translateX(0)
+            scale(1);
+    }
 }
 
 
 /* ==========================================================
    WINDOWS
-========================================================== */
+   ========================================================== */
 
 .nullWindows {
     position: absolute;
 
     inset: 0;
 
+    z-index: 300;
+
     pointer-events: none;
 }
 
-
-/* ==========================================================
-   NULL WINDOW
-========================================================== */
 
 .nullWindow {
     position: absolute;
@@ -1029,187 +1238,222 @@
     left: 50%;
     top: 50%;
 
-    width: 360px;
+    min-width: 260px;
 
     transform:
         translate(-50%, -50%);
 
-    border:
-        1px solid
-        rgba(255,255,255,0.1);
-
     background:
-        rgba(2,2,2,0.94);
+        rgba(3,3,3,0.95);
+
+    border:
+        1px solid rgba(255,255,255,0.12);
 
     box-shadow:
-        0 0 40px rgba(0,0,0,0.9);
+        0 0 50px rgba(0,0,0,0.8);
 
     pointer-events: auto;
 }
 
 
 .nullWindowHeader {
-    height: 28px;
-
     display: flex;
 
+    justify-content: space-between;
     align-items: center;
 
-    justify-content:
-        space-between;
-
-    padding:
-        0 8px;
-
-    box-sizing:
-        border-box;
-
-    background:
-        rgba(255,255,255,0.025);
+    padding: 7px 9px;
 
     border-bottom:
-        1px solid
-        rgba(255,255,255,0.06);
-
-    color:
-        rgba(210,210,210,0.65);
+        1px solid rgba(255,255,255,0.08);
 
     font-size: 9px;
 
     letter-spacing: 2px;
-}
-
-
-.nullWindowClose {
-    border: none;
-
-    background: none;
 
     color:
         rgba(255,255,255,0.4);
-
-    cursor: pointer;
-
-    font-size: 16px;
 }
 
 
-.nullWindowContent {
-    min-height: 100px;
+.nullWindowHeader button {
+    border: 0;
 
-    padding: 18px;
+    background: transparent;
 
     color:
-        rgba(170,170,170,0.5);
+        rgba(255,255,255,0.35);
 
-    font-size: 9px;
+    cursor: pointer;
+}
 
-    letter-spacing: 1px;
+
+.nullWindowBody {
+    padding: 20px;
+
+    min-height: 70px;
+
+    font-size: 10px;
+
+    color:
+        rgba(255,255,255,0.3);
+}
+
+
+.nullWindowCursor {
+    animation:
+        nullCursor
+        1s
+        infinite
+        steps(2, end);
+}
+
+
+@keyframes nullCursor {
+
+    0%,
+    49% {
+        opacity: 1;
+    }
+
+    50%,
+    100% {
+        opacity: 0;
+    }
 }
 
 
 /* ==========================================================
    ROOM VARIATIONS
-========================================================== */
+   ========================================================== */
 
-
-/* LARGE ROOM */
-
-.nullRoom[data-room="large"] {
-    width: min(1100px, 78vw);
-    height: min(650px, 68vh);
+.room-large {
+    width: 82vw;
+    height: 70vh;
 }
 
 
-/* HALLWAY */
-
-.nullRoom[data-room="hallway"] {
-    width: min(650px, 52vw);
-    height: min(760px, 82vh);
-
-    transform:
-        translate(-50%, -50%)
-        perspective(900px)
-        rotateY(0deg);
+.room-hallway {
+    width: 48vw;
+    height: 82vh;
 }
 
 
-/* CONSOLE ROOM */
-
-.nullRoom[data-room="console"] {
-    width: min(760px, 60vw);
-    height: min(500px, 58vh);
+.room-console {
+    width: 58vw;
+    height: 58vh;
 }
 
 
-/* PILLAR ROOM */
+.room-pillar {
+    width: 76vw;
+    height: 72vh;
+}
 
-.nullRoom[data-room="pillar"] {
-    width: min(900px, 70vw);
-    height: min(620px, 65vh);
+
+/* ==========================================================
+   VIGNETTE
+   ========================================================== */
+
+.nullSpace::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 900;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 40%,
+            rgba(0,0,0,0.32) 75%,
+            rgba(0,0,0,0.82) 100%
+        );
 }
 
 
 /* ==========================================================
    MOBILE
-========================================================== */
+   ========================================================== */
 
 @media (max-width: 700px) {
 
-    .nullRoom {
-        width: 92vw !important;
-        height: 72vh !important;
-    }
-
-
     .nullTopBar {
-        top: 14px;
-        left: 14px;
-        right: 14px;
+        left: 12px;
+        right: 12px;
+        top: 12px;
+
+        font-size: 8px;
+
+        letter-spacing: 2px;
     }
 
 
-    .nullRoomInfo {
-        left: 14px;
-        bottom: 14px;
+    .nullRoom {
+        width: 94vw;
+        height: 68vh;
     }
 
 
-    .nullNavigation {
-        right: 14px;
-        bottom: 12px;
+    .room-hallway {
+        width: 68vw;
     }
 
 
-    .nullNavigationButton {
-        padding:
-            6px 8px;
+    .room-console {
+        width: 80vw;
+    }
 
+
+    .room-pillar {
+        width: 90vw;
+    }
+
+
+    .nullVoidLight {
+        width: 65px;
+    }
+
+
+    .nullEntity {
+        transform:
+            translate(-50%, -50%)
+            translateZ(-120px)
+            scale(0.75);
+    }
+
+
+    .nullErrorText {
+        font-size: 10px;
+
+        letter-spacing: 2px;
+    }
+
+
+    .nullErrorSubtext {
         font-size: 7px;
     }
 
 
-    .nullTitle {
-        font-size: 10px;
-
-        letter-spacing: 3px;
-    }
-}
-
-
-/* ==========================================================
-   REDUCED MOTION
-========================================================== */
-
-@media (prefers-reduced-motion: reduce) {
-
-    .nullVoidLight,
-    .nullVoidBlock,
-    .nullEntityHead::after {
-        animation: none !important;
+    .nullNavigation {
+        right: 12px;
+        bottom: 12px;
     }
 
-    .nullEventMessage {
-        transition: none;
+
+    .nullNavigation button {
+        padding: 5px 6px;
+
+        font-size: 8px;
+    }
+
+
+    .nullRoomInfo {
+        left: 12px;
+        bottom: 62px;
     }
 }
