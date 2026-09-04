@@ -1457,3 +1457,16 @@
         bottom: 62px;
     }
 }
+
+#nullSpaceRoot.hidden {
+    display: block !important;
+}
+
+#nullSpaceRoot.hidden:not(.active) {
+    display: none !important;
+}
+
+#nullSpaceRoot.hidden.active {
+    display: block !important;
+}
+
