@@ -1,546 +1,684 @@
 /* ==========================================================
    NULL SPACE
-   CLEAN VERSION
-   No external dependencies
-========================================================== */
+   CLEAN REBUILD
+   ========================================================== */
 
-const NullSpace = (() => {
+"use strict";
 
-    // ------------------------------------------------------
-    // STATE
-    // ------------------------------------------------------
+/* ==========================================================
+   STATE
+   ========================================================== */
 
-    const state = {
-        initialized: false,
-        active: false,
+const nullState = {
+    initialized: false,
+    active: false,
 
-        root: null,
-        world: null,
+    root: null,
+    container: null,
+    world: null,
+    room: null,
 
-        animationFrame: null,
-        eventTimer: null,
+    roomType: "large",
 
-        time: 0,
-        roomType: "large",
+    animationFrame: null,
+    eventTimer: null,
 
-        anomaly: 0,
-        darkness: 0,
-
-        windows: new Map()
-    };
+    time: 0,
+    anomaly: 0
+};
 
 
-    // ------------------------------------------------------
-    // ROOM TYPES
-    // ------------------------------------------------------
+/* ==========================================================
+   ROOM TYPES
+   ========================================================== */
 
-    const ROOM_TYPES = {
-        large: {
-            name: "LARGE ROOM",
-            description: "Protected void chamber"
-        },
+const NULL_ROOMS = {
+    large: {
+        name: "LARGE ROOM",
+        description: "PROTECTED VOID CHAMBER"
+    },
 
-        hallway: {
-            name: "HALLWAY",
-            description: "Generated passage"
-        },
+    hallway: {
+        name: "HALLWAY",
+        description: "GENERATED PASSAGE"
+    },
 
-        console: {
-            name: "CONSOLE ROOM",
-            description: "Unknown system chamber"
-        },
+    console: {
+        name: "CONSOLE ROOM",
+        description: "UNKNOWN SYSTEM CHAMBER"
+    },
 
-        pillar: {
-            name: "PILLAR ROOM",
-            description: "Irregular void structure"
-        }
-    };
+    pillar: {
+        name: "PILLAR ROOM",
+        description: "IRREGULAR VOID STRUCTURE"
+    }
+};
 
 
-    // ------------------------------------------------------
-    // UTILITY
-    // ------------------------------------------------------
+/* ==========================================================
+   DOM HELPERS
+   ========================================================== */
 
-    function createElement(tag, className, parent = null) {
+function nullCreate(tag, className, parent = null) {
 
-        const element = document.createElement(tag);
+    const element = document.createElement(tag);
 
-        if (className) {
-            element.className = className;
-        }
-
-        if (parent) {
-            parent.appendChild(element);
-        }
-
-        return element;
+    if (className) {
+        element.className = className;
     }
 
-
-    function clearRoot() {
-
-        if (!state.root) return;
-
-        state.root.innerHTML = "";
+    if (parent) {
+        parent.appendChild(element);
     }
 
-
-    function random(min, max) {
-
-        return Math.random() * (max - min) + min;
-    }
+    return element;
+}
 
 
-    function clamp(value, min, max) {
+/* ==========================================================
+   ROOT
+   ========================================================== */
 
-        return Math.max(min, Math.min(max, value));
-    }
+function nullGetRoot() {
 
+    const root =
+        document.getElementById("nullSpaceRoot");
 
-    // ------------------------------------------------------
-    // BUILD ROOT
-    // ------------------------------------------------------
+    if (!root) {
 
-    function buildRoot() {
-
-        state.root = document.getElementById("nullSpaceRoot");
-
-        if (!state.root) {
-
-            console.error(
-                "[NULL SPACE] #nullSpaceRoot was not found."
-            );
-
-            return false;
-        }
-
-        clearRoot();
-
-        state.root.classList.remove("hidden");
-        state.root.classList.add("nullSpaceRoot");
-
-        return true;
-    }
-
-
-    // ------------------------------------------------------
-    // BUILD WORLD
-    // ------------------------------------------------------
-
-    function buildWorld() {
-
-        if (!state.root) return;
-
-        // Main container
-        const space = createElement(
-            "div",
-            "nullSpace"
+        console.error(
+            "[NULL SPACE] #nullSpaceRoot not found."
         );
 
-        state.world = space;
+        return null;
+    }
+
+    return root;
+}
 
 
-        // --------------------------------------------------
-        // WORLD
-        // --------------------------------------------------
+/* ==========================================================
+   BUILD
+   ========================================================== */
 
-        const world = createElement(
+function nullBuild() {
+
+    const root = nullGetRoot();
+
+    if (!root) {
+        return false;
+    }
+
+    nullState.root = root;
+
+    /*
+        Completely remove anything previously
+        created by NULL SPACE.
+    */
+
+    root.innerHTML = "";
+
+    root.classList.remove("hidden");
+    root.classList.add("nullSpaceRoot");
+
+
+    /* ------------------------------------------------------
+       MAIN CONTAINER
+    ------------------------------------------------------ */
+
+    const container =
+        nullCreate(
+            "div",
+            "nullSpace",
+            root
+        );
+
+    nullState.container = container;
+
+
+    /* ------------------------------------------------------
+       WORLD
+    ------------------------------------------------------ */
+
+    const world =
+        nullCreate(
             "div",
             "nullWorld",
-            space
+            container
         );
 
-
-        // Background
-        createElement(
-            "div",
-            "nullWorldBackground",
-            world
-        );
+    nullState.world = world;
 
 
-        // Room
-        const room = createElement(
+    /* ------------------------------------------------------
+       BACKGROUND
+    ------------------------------------------------------ */
+
+    nullCreate(
+        "div",
+        "nullWorldBackground",
+        world
+    );
+
+
+    /* ------------------------------------------------------
+       ROOM
+    ------------------------------------------------------ */
+
+    const room =
+        nullCreate(
             "div",
             "nullRoom",
             world
         );
 
-        room.dataset.room = state.roomType;
+    nullState.room = room;
+
+    room.dataset.room =
+        nullState.roomType;
 
 
-        // --------------------------------------------------
-        // ROOM SURFACES
-        // --------------------------------------------------
+    /* ------------------------------------------------------
+       ROOM SURFACES
+    ------------------------------------------------------ */
 
-        createElement(
-            "div",
-            "nullRoomBack",
-            room
-        );
+    nullCreate(
+        "div",
+        "nullRoomBack",
+        room
+    );
 
-        createElement(
-            "div",
-            "nullRoomLeft",
-            room
-        );
+    nullCreate(
+        "div",
+        "nullRoomLeft",
+        room
+    );
 
-        createElement(
-            "div",
-            "nullRoomRight",
-            room
-        );
+    nullCreate(
+        "div",
+        "nullRoomRight",
+        room
+    );
 
-        createElement(
-            "div",
-            "nullRoomFloor",
-            room
-        );
+    nullCreate(
+        "div",
+        "nullRoomFloor",
+        room
+    );
 
-        createElement(
-            "div",
-            "nullRoomCeiling",
-            room
-        );
+    nullCreate(
+        "div",
+        "nullRoomCeiling",
+        room
+    );
 
 
-        // --------------------------------------------------
-        // LIGHTS
-        // --------------------------------------------------
+    /* ------------------------------------------------------
+       LIGHTS
+    ------------------------------------------------------ */
 
-        const lights = createElement(
+    const lights =
+        nullCreate(
             "div",
             "nullRoomLights",
             room
         );
 
-        for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 5; i++) {
 
-            const light = createElement(
+        const light =
+            nullCreate(
                 "div",
                 "nullVoidLight",
                 lights
             );
 
-            light.style.left = `${random(10, 90)}%`;
-            light.style.top = `${random(10, 70)}%`;
+        light.style.left =
+            `${10 + Math.random() * 80}%`;
 
-            light.style.opacity =
-                random(0.25, 0.8).toFixed(2);
-        }
+        light.style.top =
+            `${5 + Math.random() * 75}%`;
+
+        light.style.opacity =
+            String(
+                0.25 +
+                Math.random() * 0.55
+            );
+    }
 
 
-        // --------------------------------------------------
-        // RANDOM VOID BLOCKS
-        // --------------------------------------------------
+    /* ------------------------------------------------------
+       VOID BLOCKS
+    ------------------------------------------------------ */
 
-        const blocks = createElement(
+    const blocks =
+        nullCreate(
             "div",
             "nullRoomBlocks",
             room
         );
 
-        for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 8; i++) {
 
-            const block = createElement(
+        const block =
+            nullCreate(
                 "div",
                 "nullVoidBlock",
                 blocks
             );
 
-            block.style.left =
-                `${random(5, 95)}%`;
+        block.style.left =
+            `${5 + Math.random() * 90}%`;
 
-            block.style.top =
-                `${random(15, 85)}%`;
+        block.style.top =
+            `${15 + Math.random() * 70}%`;
 
-            block.style.width =
-                `${random(20, 80)}px`;
+        block.style.width =
+            `${20 + Math.random() * 70}px`;
 
-            block.style.height =
-                `${random(20, 80)}px`;
+        block.style.height =
+            `${20 + Math.random() * 70}px`;
 
-            block.style.opacity =
-                random(0.25, 0.65).toFixed(2);
-        }
+        block.style.opacity =
+            String(
+                0.2 +
+                Math.random() * 0.45
+            );
+    }
 
 
-        // --------------------------------------------------
-        // NULL ENTITY
-        // --------------------------------------------------
+    /* ------------------------------------------------------
+       NULL ENTITY
+    ------------------------------------------------------ */
 
-        const entity = createElement(
+    const entity =
+        nullCreate(
             "div",
             "nullEntity",
             room
         );
 
-        entity.id = "nullEntity";
-
-        createElement(
-            "div",
-            "nullEntityHead",
-            entity
-        );
-
-        createElement(
-            "div",
-            "nullEntityBody",
-            entity
-        );
+    entity.id = "nullEntity";
 
 
-        // --------------------------------------------------
-        // ANOMALY LAYER
-        // --------------------------------------------------
+    nullCreate(
+        "div",
+        "nullEntityHead",
+        entity
+    );
 
-        createElement(
-            "div",
-            "nullAnomalyLayer",
-            space
-        );
-
-
-        // --------------------------------------------------
-        // UI
-        // --------------------------------------------------
-
-        buildInterface(space);
-    }
+    nullCreate(
+        "div",
+        "nullEntityBody",
+        entity
+    );
 
 
-    // ------------------------------------------------------
-    // INTERFACE
-    // ------------------------------------------------------
+    /* ------------------------------------------------------
+       ANOMALY
+    ------------------------------------------------------ */
 
-    function buildInterface(parent) {
+    nullCreate(
+        "div",
+        "nullAnomalyLayer",
+        container
+    );
 
-        const ui = createElement(
+
+    /* ------------------------------------------------------
+       INTERFACE
+    ------------------------------------------------------ */
+
+    nullBuildInterface(container);
+
+
+    console.log(
+        "[NULL SPACE] World created."
+    );
+
+    return true;
+}
+
+
+/* ==========================================================
+   INTERFACE
+   ========================================================== */
+
+function nullBuildInterface(parent) {
+
+    const interfaceRoot =
+        nullCreate(
             "div",
             "nullInterface",
             parent
         );
 
 
-        // --------------------------------------------------
-        // TOP BAR
-        // --------------------------------------------------
+    /* ------------------------------------------------------
+       TOP BAR
+    ------------------------------------------------------ */
 
-        const top = createElement(
+    const topBar =
+        nullCreate(
             "div",
             "nullTopBar",
-            ui
+            interfaceRoot
         );
 
 
-        const title = createElement(
+    const title =
+        nullCreate(
             "div",
             "nullTitle",
-            top
+            topBar
         );
 
-        title.textContent = "NULL SPACE";
+    title.textContent =
+        "NULL SPACE";
 
 
-        const status = createElement(
+    const status =
+        nullCreate(
             "div",
             "nullStatus",
-            top
+            topBar
         );
 
-        status.id = "nullSpaceStatus";
+    status.id =
+        "nullSpaceStatus";
 
-        status.textContent = "DISCONNECTED";
+    status.textContent =
+        "DISCONNECTED";
 
 
-        // --------------------------------------------------
-        // ROOM INFO
-        // --------------------------------------------------
+    /* ------------------------------------------------------
+       ROOM INFO
+    ------------------------------------------------------ */
 
-        const info = createElement(
+    const roomInfo =
+        nullCreate(
             "div",
             "nullRoomInfo",
-            ui
+            interfaceRoot
         );
 
-        info.id = "nullRoomInfo";
+    roomInfo.id =
+        "nullRoomInfo";
 
-        updateRoomInfo(info);
+    nullUpdateRoomInfo(roomInfo);
 
 
-        // --------------------------------------------------
-        // EVENT MESSAGE
-        // --------------------------------------------------
+    /* ------------------------------------------------------
+       EVENT
+    ------------------------------------------------------ */
 
-        const event = createElement(
+    const event =
+        nullCreate(
             "div",
             "nullEventMessage",
-            ui
+            interfaceRoot
         );
 
-        event.id = "nullEventMessage";
+    event.id =
+        "nullEventMessage";
 
 
-        // --------------------------------------------------
-        // NAVIGATION
-        // --------------------------------------------------
+    /* ------------------------------------------------------
+       NAVIGATION
+    ------------------------------------------------------ */
 
-        const navigation = createElement(
+    const navigation =
+        nullCreate(
             "div",
             "nullNavigation",
-            ui
+            interfaceRoot
         );
 
 
-        createNavigationButton(
-            navigation,
-            "ENTER",
-            enterNullSpace
-        );
+    nullCreateButton(
+        navigation,
+        "ENTER",
+        enterNullSpace
+    );
 
 
-        createNavigationButton(
-            navigation,
-            "EXIT",
-            exitNullSpace
-        );
+    nullCreateButton(
+        navigation,
+        "EXIT",
+        exitNullSpace
+    );
 
 
-        createNavigationButton(
-            navigation,
-            "NEXT ROOM",
-            nextRoom
-        );
+    nullCreateButton(
+        navigation,
+        "NEXT ROOM",
+        nextNullRoom
+    );
 
 
-        // --------------------------------------------------
-        // WINDOWS
-        // --------------------------------------------------
+    /* ------------------------------------------------------
+       WINDOWS
+    ------------------------------------------------------ */
 
-        const windows = createElement(
+    const windows =
+        nullCreate(
             "div",
             "nullWindows",
-            ui
+            interfaceRoot
         );
 
-        windows.id = "nullWindows";
-    }
+    windows.id =
+        "nullWindows";
+}
 
 
-    function createNavigationButton(parent, text, callback) {
+/* ==========================================================
+   BUTTON
+   ========================================================== */
 
-        const button = createElement(
+function nullCreateButton(
+    parent,
+    text,
+    callback
+) {
+
+    const button =
+        nullCreate(
             "button",
             "nullNavigationButton",
             parent
         );
 
-        button.type = "button";
-        button.textContent = text;
+    button.type = "button";
 
-        button.addEventListener(
-            "click",
-            callback
-        );
+    button.textContent = text;
 
-        return button;
-    }
+    button.addEventListener(
+        "click",
+        callback
+    );
+
+    return button;
+}
 
 
-    // ------------------------------------------------------
-    // ROOM INFO
-    // ------------------------------------------------------
+/* ==========================================================
+   ROOM INFO
+   ========================================================== */
 
-    function updateRoomInfo(element = null) {
+function nullUpdateRoomInfo(element = null) {
 
-        if (!element) {
+    if (!element) {
 
-            element = document.getElementById(
+        element =
+            document.getElementById(
                 "nullRoomInfo"
             );
-        }
+    }
 
-        if (!element) return;
-
-        const room =
-            ROOM_TYPES[state.roomType] ||
-            ROOM_TYPES.large;
-
-        element.innerHTML = `
-            <div class="nullRoomType">
-                ${room.name}
-            </div>
-
-            <div class="nullRoomDescription">
-                ${room.description}
-            </div>
-        `;
+    if (!element) {
+        return;
     }
 
 
-    // ------------------------------------------------------
-    // ENTER
-    // ------------------------------------------------------
+    const room =
+        NULL_ROOMS[
+            nullState.roomType
+        ];
 
-    function enterNullSpace() {
 
-        if (!state.initialized) {
+    element.innerHTML = `
+        <div class="nullRoomType">
+            ${room.name}
+        </div>
 
-            initNullSpace();
+        <div class="nullRoomDescription">
+            ${room.description}
+        </div>
+    `;
+}
+
+
+/* ==========================================================
+   ENTER
+   ========================================================== */
+
+function enterNullSpace() {
+
+    /*
+        If the world doesn't exist,
+        build it now.
+    */
+
+    if (
+        !nullState.initialized ||
+        !document.querySelector(
+            "#nullSpaceRoot .nullSpace"
+        )
+    ) {
+
+        if (!nullBuild()) {
+
+            return;
         }
 
-        if (!state.root) return;
+        nullState.initialized = true;
+    }
 
-        state.active = true;
 
-        state.root.classList.remove(
+    nullState.active = true;
+
+
+    if (nullState.root) {
+
+        nullState.root.classList.remove(
             "hidden"
         );
 
-        state.root.classList.add(
+        nullState.root.classList.add(
             "active"
-        );
-
-
-        const status =
-            document.getElementById(
-                "nullSpaceStatus"
-            );
-
-        if (status) {
-
-            status.textContent = "CONNECTED";
-        }
-
-
-        startWorldLoop();
-
-        showEvent(
-            "CONNECTION ESTABLISHED"
         );
     }
 
 
-    // ------------------------------------------------------
-    // EXIT
-    // ------------------------------------------------------
+    const status =
+        document.getElementById(
+            "nullSpaceStatus"
+        );
 
-    function exitNullSpace() {
+    if (status) {
 
-        state.active = false;
+        status.textContent =
+            "CONNECTED";
+    }
 
-        stopWorldLoop();
 
-        if (!state.root) return;
+    nullStartLoop();
 
-        state.root.classList.remove(
+
+    nullShowEvent(
+        "CONNECTION ESTABLISHED"
+    );
+
+
+    console.log(
+        "[NULL SPACE] Entered."
+    );
+}
+
+
+/* ==========================================================
+   EXIT
+   ========================================================== */
+
+function exitNullSpace() {
+
+    nullState.active = false;
+
+    nullStopLoop();
+
+
+    if (nullState.root) {
+
+        nullState.root.classList.remove(
             "active"
         );
 
-        state.root.classList.add(
+        nullState.root.classList.add(
             "hidden"
         );
+    }
 
+
+    const status =
+        document.getElementById(
+            "nullSpaceStatus"
+        );
+
+    if (status) {
+
+        status.textContent =
+            "DISCONNECTED";
+    }
+
+
+    console.log(
+        "[NULL SPACE] Exited."
+    );
+}
+
+
+/* ==========================================================
+   NEXT ROOM
+   ========================================================== */
+
+function nextNullRoom() {
+
+    const rooms =
+        Object.keys(NULL_ROOMS);
+
+
+    const current =
+        rooms.indexOf(
+            nullState.roomType
+        );
+
+
+    const next =
+        (current + 1) %
+        rooms.length;
+
+
+    nullState.roomType =
+        rooms[next];
+
+
+    nullBuild();
+
+    nullState.initialized = true;
+
+
+    if (nullState.active) {
 
         const status =
             document.getElementById(
@@ -550,484 +688,469 @@ const NullSpace = (() => {
         if (status) {
 
             status.textContent =
-                "DISCONNECTED";
+                "CONNECTED";
         }
     }
 
 
-    // ------------------------------------------------------
-    // NEXT ROOM
-    // ------------------------------------------------------
-
-    function nextRoom() {
-
-        const types = Object.keys(
-            ROOM_TYPES
-        );
-
-        const currentIndex =
-            types.indexOf(
-                state.roomType
-            );
-
-        const nextIndex =
-            (currentIndex + 1) %
-            types.length;
-
-        state.roomType =
-            types[nextIndex];
+    nullShowEvent(
+        `ROOM: ${NULL_ROOMS[nullState.roomType].name}`
+    );
+}
 
 
-        rebuildRoom();
+/* ==========================================================
+   WORLD LOOP
+   ========================================================== */
 
-        showEvent(
-            `ROOM TYPE: ${ROOM_TYPES[state.roomType].name}`
-        );
-    }
+function nullStartLoop() {
+
+    nullStopLoop();
 
 
-    // ------------------------------------------------------
-    // REBUILD ROOM
-    // ------------------------------------------------------
+    function frame(timestamp) {
 
-    function rebuildRoom() {
+        if (!nullState.active) {
 
-        if (!state.root) return;
+            nullState.animationFrame =
+                null;
 
-        const oldSpace =
-            state.root.querySelector(
-                ".nullSpace"
-            );
-
-        if (!oldSpace) {
-
-            buildWorld();
             return;
         }
 
 
-        oldSpace.remove();
+        nullState.time =
+            timestamp;
 
-        buildWorld();
-    }
 
-
-    // ------------------------------------------------------
-    // WORLD LOOP
-    // ------------------------------------------------------
-
-    function startWorldLoop() {
-
-        stopWorldLoop();
-
-        function loop(timestamp) {
-
-            if (!state.active) {
-
-                state.animationFrame = null;
-
-                return;
-            }
-
-            state.time = timestamp;
-
-            updateWorld(timestamp);
-
-            state.animationFrame =
-                requestAnimationFrame(loop);
-        }
-
-        state.animationFrame =
-            requestAnimationFrame(loop);
-
-
-        startRandomEvents();
-    }
-
-
-    function stopWorldLoop() {
-
-        if (state.animationFrame) {
-
-            cancelAnimationFrame(
-                state.animationFrame
-            );
-
-            state.animationFrame = null;
-        }
-
-
-        if (state.eventTimer) {
-
-            clearTimeout(
-                state.eventTimer
-            );
-
-            state.eventTimer = null;
-        }
-    }
-
-
-    // ------------------------------------------------------
-    // WORLD UPDATE
-    // ------------------------------------------------------
-
-    function updateWorld(timestamp) {
-
-        if (!state.world) return;
-
-
-        const entity =
-            document.getElementById(
-                "nullEntity"
-            );
-
-        if (entity) {
-
-            const movement =
-                Math.sin(
-                    timestamp * 0.0004
-                );
-
-            entity.style.transform =
-                `translateX(${movement * 3}px)`;
-        }
-
-
-        const anomalyLayer =
-            state.world.querySelector(
-                ".nullAnomalyLayer"
-            );
-
-        if (anomalyLayer) {
-
-            const flicker =
-                Math.sin(
-                    timestamp * 0.002
-                ) * 0.5 + 0.5;
-
-            anomalyLayer.style.opacity =
-                (
-                    state.anomaly *
-                    flicker *
-                    0.15
-                ).toFixed(3);
-        }
-    }
-
-
-    // ------------------------------------------------------
-    // RANDOM EVENTS
-    // ------------------------------------------------------
-
-    function startRandomEvents() {
-
-        if (!state.active) return;
-
-
-        const delay =
-            random(7000, 18000);
-
-
-        state.eventTimer =
-            setTimeout(() => {
-
-                if (!state.active) return;
-
-                triggerAnomaly();
-
-                startRandomEvents();
-
-            }, delay);
-    }
-
-
-    function triggerAnomaly() {
-
-        state.anomaly =
-            clamp(
-                state.anomaly +
-                random(0.05, 0.2),
-                0,
-                1
-            );
-
-
-        const events = [
-
-            "LIGHT INSTABILITY",
-
-            "UNKNOWN MOVEMENT",
-
-            "ROOM GEOMETRY SHIFT",
-
-            "SIGNAL INTERRUPTION",
-
-            "UNIDENTIFIED PRESENCE",
-
-            "VOID ACTIVITY",
-
-            "NOISE DETECTED"
-
-        ];
-
-
-        const message =
-            events[
-                Math.floor(
-                    Math.random() *
-                    events.length
-                )
-            ];
-
-
-        showEvent(message);
-    }
-
-
-    // ------------------------------------------------------
-    // EVENT MESSAGE
-    // ------------------------------------------------------
-
-    function showEvent(message) {
-
-        const element =
-            document.getElementById(
-                "nullEventMessage"
-            );
-
-        if (!element) return;
-
-
-        element.textContent = message;
-
-        element.classList.add(
-            "visible"
+        nullUpdateWorld(
+            timestamp
         );
 
 
-        setTimeout(() => {
+        nullState.animationFrame =
+            requestAnimationFrame(
+                frame
+            );
+    }
+
+
+    nullState.animationFrame =
+        requestAnimationFrame(
+            frame
+        );
+
+
+    nullStartEvents();
+}
+
+
+/* ==========================================================
+   STOP LOOP
+   ========================================================== */
+
+function nullStopLoop() {
+
+    if (
+        nullState.animationFrame !== null
+    ) {
+
+        cancelAnimationFrame(
+            nullState.animationFrame
+        );
+
+        nullState.animationFrame =
+            null;
+    }
+
+
+    if (
+        nullState.eventTimer !== null
+    ) {
+
+        clearTimeout(
+            nullState.eventTimer
+        );
+
+        nullState.eventTimer =
+            null;
+    }
+}
+
+
+/* ==========================================================
+   WORLD UPDATE
+   ========================================================== */
+
+function nullUpdateWorld(timestamp) {
+
+    const entity =
+        document.getElementById(
+            "nullEntity"
+        );
+
+
+    if (entity) {
+
+        const movement =
+            Math.sin(
+                timestamp * 0.0004
+            );
+
+
+        entity.style.transform =
+            `translateX(${movement * 3}px)`;
+    }
+
+
+    const anomaly =
+        nullState.container?.querySelector(
+            ".nullAnomalyLayer"
+        );
+
+
+    if (anomaly) {
+
+        const flicker =
+            (
+                Math.sin(
+                    timestamp * 0.002
+                ) + 1
+            ) / 2;
+
+
+        anomaly.style.opacity =
+            String(
+                nullState.anomaly *
+                flicker *
+                0.15
+            );
+    }
+}
+
+
+/* ==========================================================
+   EVENTS
+   ========================================================== */
+
+function nullStartEvents() {
+
+    if (!nullState.active) {
+        return;
+    }
+
+
+    const delay =
+        7000 +
+        Math.random() * 11000;
+
+
+    nullState.eventTimer =
+        setTimeout(
+            () => {
+
+                if (!nullState.active) {
+                    return;
+                }
+
+
+                nullTriggerAnomaly();
+
+                nullStartEvents();
+
+            },
+            delay
+        );
+}
+
+
+/* ==========================================================
+   ANOMALY
+   ========================================================== */
+
+function nullTriggerAnomaly() {
+
+    nullState.anomaly =
+        Math.min(
+            1,
+            nullState.anomaly +
+            0.05 +
+            Math.random() * 0.15
+        );
+
+
+    const events = [
+
+        "LIGHT INSTABILITY",
+
+        "UNKNOWN MOVEMENT",
+
+        "GEOMETRY SHIFT",
+
+        "SIGNAL INTERRUPTION",
+
+        "UNIDENTIFIED PRESENCE",
+
+        "VOID ACTIVITY",
+
+        "NOISE DETECTED"
+
+    ];
+
+
+    const message =
+        events[
+            Math.floor(
+                Math.random() *
+                events.length
+            )
+        ];
+
+
+    nullShowEvent(
+        message
+    );
+}
+
+
+/* ==========================================================
+   EVENT MESSAGE
+   ========================================================== */
+
+function nullShowEvent(message) {
+
+    const element =
+        document.getElementById(
+            "nullEventMessage"
+        );
+
+
+    if (!element) {
+        return;
+    }
+
+
+    element.textContent =
+        message;
+
+
+    element.classList.add(
+        "visible"
+    );
+
+
+    setTimeout(
+        () => {
 
             element.classList.remove(
                 "visible"
             );
 
-        }, 3500);
-    }
+        },
+        3500
+    );
+}
 
 
-    // ------------------------------------------------------
-    // WINDOWS
-    // ------------------------------------------------------
+/* ==========================================================
+   WINDOW
+   ========================================================== */
 
-    function openNullWindow(type = "SYSTEM") {
+function openNullWindow(
+    type = "SYSTEM"
+) {
 
-        const container =
-            document.getElementById(
-                "nullWindows"
-            );
-
-        if (!container) return null;
-
-
-        if (state.windows.has(type)) {
-
-            const existing =
-                state.windows.get(type);
-
-            existing.classList.add(
-                "active"
-            );
-
-            return existing;
-        }
-
-
-        const windowElement =
-            createElement(
-                "div",
-                "nullWindow",
-                container
-            );
-
-
-        const header =
-            createElement(
-                "div",
-                "nullWindowHeader",
-                windowElement
-            );
-
-        header.textContent = type;
-
-
-        const content =
-            createElement(
-                "div",
-                "nullWindowContent",
-                windowElement
-            );
-
-        content.textContent =
-            "NO DATA";
-
-
-        const close =
-            createElement(
-                "button",
-                "nullWindowClose",
-                header
-            );
-
-        close.type = "button";
-        close.textContent = "×";
-
-
-        close.addEventListener(
-            "click",
-            () => {
-
-                windowElement.remove();
-
-                state.windows.delete(
-                    type
-                );
-            }
+    const container =
+        document.getElementById(
+            "nullWindows"
         );
 
 
-        state.windows.set(
-            type,
+    if (!container) {
+
+        console.warn(
+            "[NULL SPACE] Window container not found."
+        );
+
+        return null;
+    }
+
+
+    const windowElement =
+        nullCreate(
+            "div",
+            "nullWindow",
+            container
+        );
+
+
+    const header =
+        nullCreate(
+            "div",
+            "nullWindowHeader",
             windowElement
         );
 
+    header.textContent =
+        type;
 
-        return windowElement;
-    }
+
+    const close =
+        nullCreate(
+            "button",
+            "nullWindowClose",
+            header
+        );
+
+    close.type =
+        "button";
+
+    close.textContent =
+        "×";
 
 
-    // ------------------------------------------------------
-    // INITIALIZATION
-    // ------------------------------------------------------
+    const content =
+        nullCreate(
+            "div",
+            "nullWindowContent",
+            windowElement
+        );
 
-    function initNullSpace() {
+    content.textContent =
+        "NO DATA";
 
-        if (state.initialized) {
 
-            return NullSpace;
+    close.addEventListener(
+        "click",
+        () => {
+
+            windowElement.remove();
+
         }
+    );
 
 
-        if (!buildRoot()) {
-
-            return NullSpace;
-        }
+    return windowElement;
+}
 
 
-        buildWorld();
-
-
-        state.initialized = true;
-        state.active = false;
-
-
-        return NullSpace;
-    }
-
-
-    // ------------------------------------------------------
-    // PUBLIC API
-    // ------------------------------------------------------
-
-    return {
-
-        init: initNullSpace,
-
-        enter: enterNullSpace,
-
-        exit: exitNullSpace,
-
-        nextRoom,
-
-        openWindow: openNullWindow,
-
-        getState() {
-
-            return {
-                initialized:
-                    state.initialized,
-
-                active:
-                    state.active,
-
-                roomType:
-                    state.roomType,
-
-                anomaly:
-                    state.anomaly
-            };
-        }
-    };
-
-})();
-
-
-// ==========================================================
-// GLOBAL ACCESS
-// ==========================================================
-//
-// IMPORTANT:
-// The module itself remains modular,
-// but the public controller is also exposed
-// globally for console/testing.
-//
-
-window.NullSpace = NullSpace;
-
-
-// ==========================================================
-// OPTIONAL GLOBAL SHORTCUTS
-// ==========================================================
-
-window.initNullSpace = () =>
-    NullSpace.init();
-
-window.enterNullSpace = () =>
-    NullSpace.enter();
-
-window.exitNullSpace = () =>
-    NullSpace.exit();
-
-window.openNullWindow = (type) =>
-    NullSpace.openWindow(type);
-
-
-// ==========================================================
-// ES MODULE EXPORT
-// ==========================================================
-//
-// These are REAL top-level functions.
-// No fake exports.
-// No references to functions hidden
-// inside the IIFE.
-//
+/* ==========================================================
+   INIT
+   ========================================================== */
 
 export function initNullSpace() {
 
-    return NullSpace.init();
+    /*
+        Always make sure the root exists.
+    */
+
+    const root =
+        nullGetRoot();
+
+
+    if (!root) {
+
+        return false;
+    }
+
+
+    nullState.root =
+        root;
+
+
+    /*
+        If the DOM is missing,
+        build it.
+    */
+
+    const existing =
+        root.querySelector(
+            ".nullSpace"
+        );
+
+
+    if (!existing) {
+
+        if (!nullBuild()) {
+
+            return false;
+        }
+    }
+
+
+    nullState.initialized =
+        true;
+
+
+    console.log(
+        "[NULL SPACE] Initialized."
+    );
+
+
+    return true;
 }
 
-export function enterNullSpace() {
 
-    return NullSpace.enter();
-}
+/* ==========================================================
+   GLOBAL API
+   ========================================================== */
 
-export function exitNullSpace() {
+const NullSpace = {
 
-    return NullSpace.exit();
-}
+    init: initNullSpace,
 
-export function openNullWindow(type) {
+    enter: enterNullSpace,
 
-    return NullSpace.openWindow(type);
-}
+    exit: exitNullSpace,
+
+    nextRoom: nextNullRoom,
+
+    openWindow: openNullWindow,
+
+    getState() {
+
+        return {
+
+            initialized:
+                nullState.initialized,
+
+            active:
+                nullState.active,
+
+            roomType:
+                nullState.roomType,
+
+            anomaly:
+                nullState.anomaly
+        };
+    }
+};
+
+
+/* ==========================================================
+   GLOBAL EXPOSURE
+   ========================================================== */
+
+window.NullSpace =
+    NullSpace;
+
+window.initNullSpace =
+    initNullSpace;
+
+window.enterNullSpace =
+    enterNullSpace;
+
+window.exitNullSpace =
+    exitNullSpace;
+
+window.openNullWindow =
+    openNullWindow;
+
+
+/* ==========================================================
+   END
+   ========================================================== */
+
+console.log(
+    "[NULL SPACE] Module loaded."
+);
