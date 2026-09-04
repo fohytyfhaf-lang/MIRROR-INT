@@ -1334,3 +1334,11 @@ window.initNullSpace = () => NullSpace.init();
 window.enterNullSpace = () => NullSpace.enter();
 window.exitNullSpace = () => NullSpace.exit();
 window.openNullWindow = (type) => NullSpace.openWindow(type);
+
+
+export {
+    initNullSpace,
+    enterNullSpace,
+    exitNullSpace,
+    openNullWindow
+};
