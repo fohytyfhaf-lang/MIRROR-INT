@@ -57,6 +57,37 @@ function createNullSpace() {
     root.innerHTML = `
 
         <div class="nullSpace">
+            <div class="nullMoonVisual" aria-hidden="true">
+    <div class="nullMoonAtmosphere"></div>
+
+    <div class="nullMoonSurface">
+        <div class="nullMoonCrater crater1"></div>
+        <div class="nullMoonCrater crater2"></div>
+        <div class="nullMoonCrater crater3"></div>
+        <div class="nullMoonCrater crater4"></div>
+        <div class="nullMoonCrater crater5"></div>
+        <div class="nullMoonCrater crater6"></div>
+        <div class="nullMoonCrater crater7"></div>
+        <div class="nullMoonCrater crater8"></div>
+
+        <div class="nullMoonShadow"></div>
+
+        <div class="nullMoonCorruption">
+            <span class="corruptionBlob corruptionBlob1"></span>
+            <span class="corruptionBlob corruptionBlob2"></span>
+            <span class="corruptionBlob corruptionBlob3"></span>
+        </div>
+    </div>
+
+    <div class="nullMoonTendrils">
+        <span class="moonTendril tendril1"></span>
+        <span class="moonTendril tendril2"></span>
+        <span class="moonTendril tendril3"></span>
+        <span class="moonTendril tendril4"></span>
+        <span class="moonTendril tendril5"></span>
+        <span class="moonTendril tendril6"></span>
+    </div>
+</div>
 
             <!-- ==========================================
                          NULL TOP BAR
