@@ -1,10 +1,16 @@
 /* ==========================================================
    NULL SPACE
-   ATMOSPHERE BASE
+   WORLD + FOREST + ROOMS + ENTITY + UI
+   ========================================================== */
+
+
+/* ==========================================================
+   ROOT
    ========================================================== */
 
 #nullSpaceRoot {
     position: fixed;
+
     inset: 0;
 
     width: 100vw;
@@ -14,21 +20,22 @@
 
     background: #000;
 
-    z-index: 9990;
-
     opacity: 0;
     visibility: hidden;
 
     pointer-events: none;
 
+    z-index: 9990;
+
     transition:
-        opacity 0.8s ease,
-        visibility 0.8s ease;
+        opacity 0.45s ease,
+        visibility 0.45s ease;
 }
 
 
 #nullSpaceRoot.active {
     opacity: 1;
+
     visibility: visible;
 
     pointer-events: auto;
@@ -41,6 +48,7 @@
 
 .nullSpace {
     position: absolute;
+
     inset: 0;
 
     width: 100%;
@@ -50,18 +58,26 @@
 
     background:
         radial-gradient(
-            ellipse at center,
-            #101010 0%,
-            #060606 42%,
-            #000 82%
+            ellipse at 50% 63%,
+            rgba(65, 0, 0, 0.16) 0%,
+            rgba(25, 0, 0, 0.08) 28%,
+            transparent 55%
+        ),
+        linear-gradient(
+            180deg,
+            #000000 0%,
+            #000000 45%,
+            #050000 68%,
+            #0b0000 100%
         );
 
-    color: #ddd;
+    color: #d7d7d7;
 
     font-family:
         "Courier New",
-        Consolas,
         monospace;
+
+    isolation: isolate;
 }
 
 
@@ -71,373 +87,527 @@
 
 .nullWorld {
     position: absolute;
+
     inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
 
     perspective: 1100px;
 
-    overflow: hidden;
+    perspective-origin:
+        50% 56%;
+
+    z-index: 0;
 }
 
+
+/* ==========================================================
+   WORLD BACKGROUND
+   ========================================================== */
 
 .nullWorldBackground {
     position: absolute;
-    inset: -20%;
+
+    inset: -10%;
+
+    width: 120%;
+    height: 120%;
 
     background:
         radial-gradient(
-            ellipse at center,
-            rgba(255,255,255,0.025),
-            transparent 45%
+            ellipse at 50% 65%,
+            rgba(75, 0, 0, 0.14) 0%,
+            rgba(30, 0, 0, 0.07) 30%,
+            transparent 55%
         ),
-
-        radial-gradient(
-            ellipse at 30% 65%,
-            rgba(255,255,255,0.018),
-            transparent 35%
-        ),
-
-        #000;
+        linear-gradient(
+            180deg,
+            #000000 0%,
+            #000000 48%,
+            #050000 70%,
+            #0c0000 100%
+        );
 
     pointer-events: none;
+
+    z-index: 0;
 }
 
 
 /* ==========================================================
-   ROOM
+   FOREST ENVIRONMENT
    ========================================================== */
 
-.nullRoom {
+.nullEnvironment {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent 0%,
+            transparent 45%,
+            rgba(12, 0, 0, 0.12) 72%,
+            rgba(15, 0, 0, 0.2) 100%
+        );
+
+    z-index: 1;
+}
+
+
+/* ==========================================================
+   FOREST GROUND
+   ========================================================== */
+
+.nullForestGround {
+    position: absolute;
+
+    left: -12%;
+    right: -12%;
+
+    bottom: -16%;
+
+    width: 124%;
+    height: 62%;
+
+    background:
+        linear-gradient(
+            180deg,
+            #050505 0%,
+            #020202 38%,
+            #010101 72%,
+            #000000 100%
+        );
+
+    transform:
+        perspective(900px)
+        rotateX(63deg);
+
+    transform-origin:
+        center bottom;
+
+    box-shadow:
+        inset 0 35px 90px rgba(0, 0, 0, 0.95);
+
+    pointer-events: none;
+
+    z-index: 3;
+}
+
+
+/* ==========================================================
+   DISTANT TREES CONTAINER
+   ========================================================== */
+
+.nullDistantTrees {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    pointer-events: none;
+
+    z-index: 2;
+}
+
+
+/* ==========================================================
+   MAIN TREES CONTAINER
+   ========================================================== */
+
+.nullTrees {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    pointer-events: none;
+
+    z-index: 6;
+}
+
+
+/* ==========================================================
+   TREE
+   ========================================================== */
+
+.nullTree {
+    position: absolute;
+
+    left: var(--tree-x);
+    top: var(--tree-y);
+
+    width: 120px;
+    height: var(--tree-height);
+
+    transform:
+        translate(-50%, -100%)
+        scale(var(--tree-scale))
+        rotate(var(--tree-rotation));
+
+    transform-origin:
+        bottom center;
+
+    opacity: 0.96;
+
+    pointer-events: none;
+
+    filter:
+        contrast(1.18);
+
+    z-index: 5;
+}
+
+
+/* ==========================================================
+   DISTANT TREE
+   ========================================================== */
+
+.nullTreeDistant {
+    opacity: 0.42;
+
+    filter:
+        blur(1.8px)
+        contrast(1.08);
+
+    z-index: 2;
+}
+
+
+/* ==========================================================
+   TREE TRUNK
+   ========================================================== */
+
+.nullTreeTrunk {
     position: absolute;
 
     left: 50%;
-    top: 50%;
+    bottom: 0;
 
-    width: 82vw;
-    height: 70vh;
+    width: 22px;
+    height: 100%;
 
     transform:
-        translate(-50%, -50%)
-        perspective(1200px);
-
-    transform-style: preserve-3d;
-
-    overflow: visible;
-}
-
-
-/* ==========================================================
-   WALLS
-   ========================================================== */
-
-.nullRoomBack,
-.nullRoomLeft,
-.nullRoomRight,
-.nullRoomFloor,
-.nullRoomCeiling {
-    position: absolute;
+        translateX(-50%);
 
     background:
         linear-gradient(
-            135deg,
-            rgba(30,30,30,0.85),
-            rgba(4,4,4,0.96)
+            90deg,
+            #000000 0%,
+            #050505 48%,
+            #000000 100%
         );
 
-    border:
-        1px solid rgba(255,255,255,0.025);
+    border-radius:
+        55%
+        45%
+        20%
+        20%;
 
     box-shadow:
-        inset 0 0 80px rgba(0,0,0,0.85);
-}
-
-
-.nullRoomBack {
-    inset: 0;
-
-    transform:
-        translateZ(-350px);
-
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(255,255,255,0.055),
-            rgba(15,15,15,0.4) 35%,
-            #020202 80%
-        );
-}
-
-
-.nullRoomLeft {
-    left: -28%;
-
-    top: 0;
-
-    width: 55%;
-    height: 100%;
-
-    transform:
-        rotateY(58deg)
-        translateZ(-150px);
-
-    transform-origin: right center;
-}
-
-
-.nullRoomRight {
-    right: -28%;
-
-    top: 0;
-
-    width: 55%;
-    height: 100%;
-
-    transform:
-        rotateY(-58deg)
-        translateZ(-150px);
-
-    transform-origin: left center;
-}
-
-
-.nullRoomFloor {
-    left: -10%;
-
-    bottom: -25%;
-
-    width: 120%;
-    height: 70%;
-
-    transform:
-        rotateX(72deg)
-        translateZ(-80px);
-
-    transform-origin: center top;
-
-    background:
-        linear-gradient(
-            90deg,
-            #030303,
-            #121212 48%,
-            #030303
-        );
-}
-
-
-.nullRoomCeiling {
-    left: -10%;
-
-    top: -25%;
-
-    width: 120%;
-    height: 70%;
-
-    transform:
-        rotateX(-72deg)
-        translateZ(-80px);
-
-    transform-origin: center bottom;
-
-    background:
-        linear-gradient(
-            90deg,
-            #030303,
-            #0b0b0b 48%,
-            #030303
-        );
+        0 0 24px rgba(0, 0, 0, 0.95);
 }
 
 
 /* ==========================================================
-   VOID LIGHTS
+   TREE BRANCH
    ========================================================== */
 
-.nullRoomLights {
+.nullTreeBranch {
     position: absolute;
-    inset: 0;
 
-    z-index: 4;
+    top: var(--branch-y);
+
+    width: var(--branch-length);
+    height: 13px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #000000,
+            #020202
+        );
+
+    border-radius: 100%;
 
     pointer-events: none;
 }
 
 
-.nullVoidLight {
-    position: absolute;
+/* ----------------------------------------------------------
+   LEFT BRANCH
+   ---------------------------------------------------------- */
 
-    left: var(--light-x);
-    top: var(--light-y);
-
-    width: 100px;
-    height: 4px;
+.nullTreeBranch.branch-left {
+    right: 50%;
 
     transform:
-        translate(-50%, -50%)
-        scale(var(--light-scale));
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255,255,255,0.82),
-            rgba(255,255,255,0.95),
-            rgba(255,255,255,0.82),
-            transparent
+        rotate(
+            calc(
+                var(--branch-angle) * -1
+            )
         );
 
-    box-shadow:
-        0 0 8px rgba(255,255,255,0.35),
-        0 0 24px rgba(255,255,255,0.12);
-
-    opacity: 0.62;
-
-    animation:
-        nullLightFlicker
-        6s
-        infinite
-        ease-in-out;
-
-    animation-delay:
-        var(--light-delay);
+    transform-origin:
+        right center;
 }
 
 
-.nullVoidLight::after {
+/* ----------------------------------------------------------
+   RIGHT BRANCH
+   ---------------------------------------------------------- */
+
+.nullTreeBranch.branch-right {
+    left: 50%;
+
+    transform:
+        rotate(
+            var(--branch-angle)
+        );
+
+    transform-origin:
+        left center;
+}
+
+
+/* ==========================================================
+   SMALL BRANCH END
+   ========================================================== */
+
+.nullTreeBranch::after {
     content: "";
 
     position: absolute;
 
-    left: 50%;
-    top: 50%;
+    left: 65%;
+    top: -8px;
 
-    width: 130px;
-    height: 28px;
+    width: 55%;
+    height: 10px;
 
-    transform: translate(-50%, -50%);
+    background: #000;
 
-    background:
-        radial-gradient(
-            ellipse,
-            rgba(255,255,255,0.055),
-            transparent 70%
-        );
+    border-radius: 100%;
 
-    filter: blur(8px);
-}
-
-
-.nullVoidLight.disturbed {
-    animation:
-        nullLightDisturbed
-        0.18s
-        steps(2, end)
-        5;
-}
-
-
-@keyframes nullLightFlicker {
-
-    0%,
-    100% {
-        opacity: 0.58;
-    }
-
-    46% {
-        opacity: 0.64;
-    }
-
-    48% {
-        opacity: 0.35;
-    }
-
-    50% {
-        opacity: 0.61;
-    }
-
-    78% {
-        opacity: 0.48;
-    }
-}
-
-
-@keyframes nullLightDisturbed {
-
-    0% {
-        opacity: 0.7;
-    }
-
-    50% {
-        opacity: 0.05;
-    }
-
-    100% {
-        opacity: 0.6;
-    }
+    transform:
+        rotate(-28deg);
 }
 
 
 /* ==========================================================
-   VOID BLOCKS
+   RED FOG
    ========================================================== */
 
-.nullRoomBlocks {
+.nullRedFog {
     position: absolute;
-    inset: 0;
 
-    z-index: 5;
+    left: -20%;
+
+    width: 140%;
 
     pointer-events: none;
-}
-
-
-.nullVoidBlock {
-    position: absolute;
-
-    left: var(--block-x);
-    top: var(--block-y);
-
-    width: 34px;
-    height: 34px;
-
-    transform:
-        translate(-50%, -50%)
-        translateZ(var(--block-z))
-        scale(var(--block-scale))
-        rotate(var(--block-rotation));
 
     background:
-        linear-gradient(
-            135deg,
-            #161616,
-            #050505
+        radial-gradient(
+            ellipse at center,
+
+            rgba(105, 0, 0, 0.28)
+                0%,
+
+            rgba(70, 0, 0, 0.19)
+                30%,
+
+            rgba(35, 0, 0, 0.11)
+                55%,
+
+            transparent
+                78%
         );
 
-    border:
-        1px solid rgba(255,255,255,0.025);
+    filter:
+        blur(18px);
 
-    box-shadow:
-        inset 0 0 20px rgba(0,0,0,0.8),
-        0 0 18px rgba(0,0,0,0.8);
+    will-change:
+        transform,
+        opacity;
 
-    opacity: 0.62;
-
-    transition:
-        transform 0.5s ease,
-        opacity 0.5s ease;
+    z-index: 10;
 }
 
 
-.nullVoidBlock.disturbed {
-    opacity: 0.18;
+/* ==========================================================
+   BACK FOG
+   ========================================================== */
+
+.nullRedFogBack {
+    bottom: 42%;
+
+    height: 35%;
+
+    opacity: 0.45;
 
     transform:
-        translate(-50%, -50%)
-        translateZ(
-            calc(var(--block-z) + 20px)
-        )
-        scale(var(--block-scale))
-        rotate(
-            calc(var(--block-rotation) + 3deg)
-        );
+        translateX(-4%);
+
+    animation:
+        nullFogBack
+        26s
+        infinite
+        ease-in-out;
+}
+
+
+/* ==========================================================
+   MIDDLE FOG
+   ========================================================== */
+
+.nullRedFogMiddle {
+    bottom: 19%;
+
+    height: 43%;
+
+    opacity: 0.58;
+
+    transform:
+        translateX(3%);
+
+    animation:
+        nullFogMiddle
+        19s
+        infinite
+        ease-in-out;
+}
+
+
+/* ==========================================================
+   FRONT FOG
+   ========================================================== */
+
+.nullRedFogFront {
+    bottom: -8%;
+
+    height: 43%;
+
+    opacity: 0.68;
+
+    filter:
+        blur(25px);
+
+    animation:
+        nullFogFront
+        15s
+        infinite
+        ease-in-out;
+
+    z-index: 12;
+}
+
+
+/* ==========================================================
+   FOG MOVEMENT
+   ========================================================== */
+
+@keyframes nullFogBack {
+
+    0%,
+    100% {
+        transform:
+            translateX(-5%);
+    }
+
+    50% {
+        transform:
+            translateX(5%);
+    }
+
+}
+
+
+@keyframes nullFogMiddle {
+
+    0%,
+    100% {
+        transform:
+            translateX(4%);
+    }
+
+    50% {
+        transform:
+            translateX(-6%);
+    }
+
+}
+
+
+@keyframes nullFogFront {
+
+    0%,
+    100% {
+        transform:
+            translateX(-7%);
+    }
+
+    50% {
+        transform:
+            translateX(8%);
+    }
+
+}
+
+
+/* ==========================================================
+   LEGACY ROOM
+   ========================================================== */
+
+.nullLegacyRoom {
+    position: absolute;
+
+    pointer-events: none;
+
+    z-index: 15;
+}
+
+
+/* ==========================================================
+   HIDE OLD ROOM GEOMETRY
+   ========================================================== */
+
+.nullLegacyRoom > .nullRoomBack,
+.nullLegacyRoom > .nullRoomLeft,
+.nullLegacyRoom > .nullRoomRight,
+.nullLegacyRoom > .nullRoomFloor,
+.nullLegacyRoom > .nullRoomCeiling,
+.nullLegacyRoom > .nullRoomBlocks,
+.nullLegacyRoom > .nullRoomLights {
+    display: none !important;
+}
+
+
+/* ==========================================================
+   ENTITY
+   ========================================================== */
+
+.nullLegacyRoom > .nullEntity {
+    z-index: 30;
 }
 
 
@@ -455,100 +625,70 @@
     height: 280px;
 
     transform:
-        translate(-50%, -50%)
-        translateZ(-180px);
-
-    z-index: 8;
+        translate(-50%, -50%);
 
     opacity: 0.07;
 
     pointer-events: none;
 
-    filter:
-        blur(0.2px)
-        contrast(1.3);
+    z-index: 30;
 
     transition:
-        opacity 0.5s ease,
-        transform 0.8s ease;
+        opacity 0.35s ease,
+        transform 0.35s ease;
+
+    filter:
+        contrast(1.15);
 }
 
 
-.nullEntity.noticed {
-    opacity: 0.2;
-
-    transform:
-        translate(-50%, -50%)
-        translateZ(-100px)
-        scale(1.03);
-}
-
+/* ==========================================================
+   ENTITY HEAD
+   ========================================================== */
 
 .nullEntityHead {
     position: absolute;
 
     left: 50%;
-    top: 18px;
+    top: 0;
 
-    width: 64px;
-    height: 74px;
+    width: 76px;
+    height: 82px;
 
-    transform: translateX(-50%);
+    transform:
+        translateX(-50%);
 
     background:
         radial-gradient(
-            ellipse,
-            #090909,
-            #000 75%
+            ellipse at 50% 45%,
+            #080808 0%,
+            #020202 65%,
+            #000000 100%
         );
 
     border-radius:
-        38% 38% 45% 45%;
+        48%
+        48%
+        42%
+        42%;
 
     box-shadow:
-        0 0 35px rgba(0,0,0,0.95);
+        0 0 35px rgba(0, 0, 0, 0.95);
 }
 
 
-.nullEntityHead::after {
-    content: "";
-
-    position: absolute;
-
-    left: 50%;
-    top: 50%;
-
-    width: 4px;
-    height: 4px;
-
-    transform:
-        translate(-50%, -50%);
-
-    background: #b40000;
-
-    border-radius: 50%;
-
-    box-shadow:
-        -14px -5px 0 #8d0000,
-        14px -5px 0 #8d0000,
-        -9px 9px 0 #650000,
-        9px 9px 0 #650000;
-
-    opacity: 0.85;
-
-    filter:
-        drop-shadow(0 0 6px rgba(255,0,0,0.7));
-}
-
+/* ==========================================================
+   ENTITY BODY
+   ========================================================== */
 
 .nullEntityBody {
     position: absolute;
 
     left: 50%;
-    top: 80px;
+    top: 65px;
 
-    width: 72px;
-    height: 175px;
+    width: 86px;
+    height: 190px;
 
     transform:
         translateX(-50%);
@@ -556,50 +696,31 @@
     background:
         linear-gradient(
             180deg,
-            #030303,
-            #000
+            #030303 0%,
+            #000000 100%
         );
 
     border-radius:
-        42% 42% 18% 18%;
+        42%
+        42%
+        18%
+        18%;
 
     box-shadow:
-        0 20px 45px rgba(0,0,0,0.9);
+        0 0 35px rgba(0, 0, 0, 0.95);
 }
 
 
-.nullEntityBody::before,
-.nullEntityBody::after {
-    content: "";
+/* ==========================================================
+   ENTITY NOTICED
+   ========================================================== */
 
-    position: absolute;
-
-    top: 12px;
-
-    width: 20px;
-    height: 150px;
-
-    background: #000;
-
-    border-radius: 50%;
-
-    opacity: 0.95;
-}
-
-
-.nullEntityBody::before {
-    left: -20px;
+.nullEntity.noticed {
+    opacity: 0.23;
 
     transform:
-        rotate(11deg);
-}
-
-
-.nullEntityBody::after {
-    right: -20px;
-
-    transform:
-        rotate(-11deg);
+        translate(-50%, -50%)
+        scale(1.025);
 }
 
 
@@ -609,69 +730,75 @@
 
 .nullAnomalyLayer {
     position: absolute;
-    inset: 0;
 
-    z-index: 20;
+    inset: -10%;
 
     pointer-events: none;
 
     opacity: 0;
 
-    mix-blend-mode: screen;
+    z-index: 40;
 
     background:
-        linear-gradient(
-            transparent 49%,
-            rgba(255,0,0,0.08) 50%,
-            transparent 51%
+        repeating-linear-gradient(
+            180deg,
+            transparent 0px,
+            transparent 3px,
+            rgba(120, 0, 0, 0.045) 4px,
+            transparent 5px
         );
 
-    background-size:
-        100% 7px;
+    transition:
+        opacity 0.2s ease;
 }
 
 
+/* ==========================================================
+   RARE ANOMALY
+   ========================================================== */
+
 .nullAnomalyLayer.rareError {
-    opacity: 0.8;
+    opacity: 1;
 
     animation:
-        nullRareAnomaly
+        nullRareGlitch
         0.9s
         steps(2, end);
 }
 
 
-@keyframes nullRareAnomaly {
+@keyframes nullRareGlitch {
 
     0% {
-        opacity: 0;
-        transform: translateX(0);
+        transform:
+            translate(0, 0);
     }
 
     20% {
-        opacity: 0.5;
-        transform: translateX(-3px);
+        transform:
+            translate(-4px, 1px);
     }
 
-    35% {
-        opacity: 0.05;
-        transform: translateX(4px);
+    40% {
+        transform:
+            translate(3px, -2px);
     }
 
-    50% {
-        opacity: 0.7;
-        transform: translateX(-2px);
+    60% {
+        transform:
+            translate(-2px, 2px);
     }
 
-    75% {
-        opacity: 0.2;
-        transform: translateX(2px);
+    80% {
+        transform:
+            translate(4px, 0);
     }
 
     100% {
-        opacity: 0;
-        transform: translateX(0);
+        transform:
+            translate(0, 0);
     }
+
 }
 
 
@@ -681,46 +808,66 @@
 
 .nullInterface {
     position: absolute;
+
     inset: 0;
 
+    pointer-events: none;
+
     z-index: 100;
+}
+
+
+/* ==========================================================
+   TOP BAR
+   ========================================================== */
+
+.nullTopBar {
+    position: absolute;
+
+    top: 22px;
+    left: 26px;
+    right: 26px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
 
     pointer-events: none;
 }
 
 
-.nullTopBar {
-    position: absolute;
-
-    left: 24px;
-    right: 24px;
-    top: 20px;
-
-    display: flex;
-
-    justify-content: space-between;
-    align-items: center;
-
-    padding-bottom: 8px;
-
-    border-bottom:
-        1px solid rgba(255,255,255,0.08);
-
-    font-size: 11px;
-
-    letter-spacing: 3px;
-
-    color: rgba(255,255,255,0.42);
-}
-
+/* ==========================================================
+   TITLE
+   ========================================================== */
 
 .nullTitle {
-    color: rgba(255,255,255,0.55);
+    font-size: 13px;
+
+    letter-spacing:
+        0.24em;
+
+    color:
+        rgba(220, 220, 220, 0.72);
+
+    text-shadow:
+        0 0 10px
+        rgba(255, 255, 255, 0.08);
 }
 
 
+/* ==========================================================
+   STATUS
+   ========================================================== */
+
 .nullStatus {
-    color: rgba(255,255,255,0.3);
+    font-size: 10px;
+
+    letter-spacing:
+        0.18em;
+
+    color:
+        rgba(150, 150, 150, 0.55);
 }
 
 
@@ -731,25 +878,33 @@
 .nullRoomInfo {
     position: absolute;
 
-    left: 25px;
-    bottom: 72px;
+    left: 26px;
+    bottom: 92px;
 
-    color: rgba(255,255,255,0.38);
+    font-size: 11px;
 
-    font-size: 10px;
+    line-height: 1.6;
 
-    line-height: 1.7;
+    letter-spacing:
+        0.12em;
 
-    letter-spacing: 2px;
+    color:
+        rgba(205, 205, 205, 0.6);
+
+    pointer-events: none;
 }
 
 
 .nullRoomInfo span {
     display: block;
 
-    color: rgba(255,255,255,0.18);
+    font-size: 9px;
 
-    letter-spacing: 1px;
+    color:
+        rgba(145, 145, 145, 0.45);
+
+    letter-spacing:
+        0.08em;
 }
 
 
@@ -761,23 +916,25 @@
     position: absolute;
 
     left: 50%;
-    bottom: 30%;
+    top: 82px;
 
     transform:
         translateX(-50%);
 
-    font-size: 9px;
-
-    letter-spacing: 3px;
-
-    color: rgba(255,255,255,0.35);
-
     opacity: 0;
 
-    white-space: nowrap;
+    font-size: 9px;
+
+    letter-spacing:
+        0.16em;
+
+    color:
+        rgba(150, 0, 0, 0.78);
+
+    pointer-events: none;
 
     transition:
-        opacity 0.3s ease;
+        opacity 0.25s ease;
 }
 
 
@@ -793,31 +950,39 @@
 .nullNavigation {
     position: absolute;
 
-    right: 24px;
-    bottom: 24px;
+    left: 26px;
+    bottom: 28px;
 
     display: flex;
 
-    gap: 6px;
+    gap: 8px;
 
     pointer-events: auto;
 }
 
 
+/* ==========================================================
+   BUTTONS
+   ========================================================== */
+
 .nullNavigation button {
     appearance: none;
 
-    border:
-        1px solid rgba(255,255,255,0.12);
-
-    background:
-        rgba(0,0,0,0.65);
-
-    color:
-        rgba(255,255,255,0.4);
+    min-width: 78px;
 
     padding:
-        6px 9px;
+        7px
+        10px;
+
+    border:
+        1px solid
+        rgba(150, 150, 150, 0.18);
+
+    background:
+        rgba(0, 0, 0, 0.55);
+
+    color:
+        rgba(190, 190, 190, 0.65);
 
     font-family:
         "Courier New",
@@ -825,31 +990,38 @@
 
     font-size: 9px;
 
-    letter-spacing: 1px;
+    letter-spacing:
+        0.1em;
 
     cursor: pointer;
 
     transition:
-        background 0.2s ease,
+        border-color 0.2s ease,
         color 0.2s ease,
-        border-color 0.2s ease;
+        background 0.2s ease;
 }
 
 
 .nullNavigation button:hover {
-    background:
-        rgba(255,255,255,0.05);
+    border-color:
+        rgba(130, 0, 0, 0.6);
 
     color:
-        rgba(255,255,255,0.8);
+        rgba(220, 220, 220, 0.9);
 
-    border-color:
-        rgba(255,255,255,0.25);
+    background:
+        rgba(35, 0, 0, 0.45);
+}
+
+
+.nullNavigation button:active {
+    transform:
+        translateY(1px);
 }
 
 
 /* ==========================================================
-   ERROR SYSTEM
+   ERROR LAYER
    ========================================================== */
 
 .nullErrorLayer {
@@ -857,139 +1029,105 @@
 
     inset: 0;
 
-    z-index: 500;
-
     display: flex;
 
     align-items: center;
     justify-content: center;
 
-    pointer-events: none;
+    flex-direction: column;
 
     opacity: 0;
 
     visibility: hidden;
 
+    pointer-events: none;
+
+    z-index: 500;
+
+    background:
+        rgba(0, 0, 0, 0.12);
+
     transition:
-        opacity 0.12s ease;
+        opacity 0.1s ease,
+        visibility 0.1s ease;
 }
 
 
 .nullErrorLayer.active {
     opacity: 1;
+
     visibility: visible;
 }
 
 
-/* ----------------------------------------------------------
+/* ==========================================================
+   ERROR GLITCH
+   ========================================================== */
+
+.nullErrorGlitch {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        repeating-linear-gradient(
+            180deg,
+            transparent 0px,
+            transparent 2px,
+            rgba(255, 255, 255, 0.018) 3px,
+            transparent 4px
+        );
+
+    mix-blend-mode:
+        screen;
+
+    opacity: 0.45;
+}
+
+
+/* ==========================================================
    ERROR TEXT
-   ---------------------------------------------------------- */
+   ========================================================== */
 
 .nullErrorText {
     position: relative;
 
-    max-width: 90vw;
-
-    text-align: center;
-
-    font-family:
-        "Courier New",
-        Consolas,
-        monospace;
-
-    font-size:
-        clamp(12px, 1.2vw, 17px);
+    font-size: 18px;
 
     font-weight: normal;
 
-    letter-spacing: 4px;
+    letter-spacing:
+        0.08em;
 
-    color: rgba(255,255,255,0.72);
+    color:
+        rgba(220, 220, 220, 0.88);
+
+    text-align: center;
 
     text-shadow:
-        0 0 8px rgba(255,255,255,0.15);
-
-    white-space: nowrap;
-
-    transform:
-        translateY(2px);
+        0 0 15px
+        rgba(255, 255, 255, 0.08);
 }
 
 
+/* ==========================================================
+   ERROR SUBTEXT
+   ========================================================== */
+
 .nullErrorSubtext {
-    position: absolute;
+    position: relative;
 
-    margin-top: 42px;
-
-    font-family:
-        "Courier New",
-        monospace;
+    margin-top: 8px;
 
     font-size: 8px;
 
-    letter-spacing: 2px;
+    letter-spacing:
+        0.16em;
 
     color:
-        rgba(255,255,255,0.25);
+        rgba(130, 130, 130, 0.55);
 
-    white-space: nowrap;
-}
-
-
-/* ----------------------------------------------------------
-   ERROR GLITCH
-   ---------------------------------------------------------- */
-
-.nullErrorGlitch {
-    position: absolute;
-
-    left: 0;
-    right: 0;
-
-    top: 50%;
-
-    height: 1px;
-
-    background:
-        rgba(255,255,255,0.08);
-
-    opacity: 0;
-
-    transform:
-        scaleX(0.2);
-}
-
-
-.nullErrorLayer.active
-.nullErrorGlitch {
-    animation:
-        nullErrorLine
-        0.55s
-        steps(3, end);
-}
-
-
-@keyframes nullErrorLine {
-
-    0% {
-        opacity: 0;
-        transform: scaleX(0.1);
-    }
-
-    30% {
-        opacity: 1;
-        transform: scaleX(0.85);
-    }
-
-    55% {
-        opacity: 0.2;
-        transform: scaleX(1);
-    }
-
-    100% {
-        opacity: 0;
-        transform: scaleX(0.35);
-    }
+    text-align: center;
 }
 
 
@@ -999,34 +1137,8 @@
 
 .nullErrorLayer.error-normal
 .nullErrorText {
-    animation:
-        nullErrorNormal
-        0.65s
-        steps(2, end);
-}
-
-
-@keyframes nullErrorNormal {
-
-    0% {
-        opacity: 0;
-        transform: translateX(-2px);
-    }
-
-    35% {
-        opacity: 0.9;
-        transform: translateX(1px);
-    }
-
-    70% {
-        opacity: 0.5;
-        transform: translateX(-1px);
-    }
-
-    100% {
-        opacity: 0.7;
-        transform: translateX(0);
-    }
+    color:
+        rgba(210, 210, 210, 0.82);
 }
 
 
@@ -1037,51 +1149,7 @@
 .nullErrorLayer.error-system
 .nullErrorText {
     color:
-        rgba(255,255,255,0.78);
-
-    animation:
-        nullSystemError
-        0.8s
-        steps(3, end);
-}
-
-
-@keyframes nullSystemError {
-
-    0% {
-        opacity: 0;
-        transform:
-            translateX(-5px)
-            scaleX(0.98);
-    }
-
-    25% {
-        opacity: 0.95;
-        transform:
-            translateX(3px)
-            scaleX(1);
-    }
-
-    50% {
-        opacity: 0.25;
-        transform:
-            translateX(-2px)
-            scaleX(1.02);
-    }
-
-    75% {
-        opacity: 0.85;
-        transform:
-            translateX(1px)
-            scaleX(0.99);
-    }
-
-    100% {
-        opacity: 0.75;
-        transform:
-            translateX(0)
-            scaleX(1);
-    }
+        rgba(180, 190, 190, 0.88);
 }
 
 
@@ -1092,62 +1160,43 @@
 .nullErrorLayer.error-corrupted
 .nullErrorText {
     color:
-        rgba(255,255,255,0.58);
-
-    text-shadow:
-        -2px 0 rgba(255,0,0,0.2),
-        2px 0 rgba(255,255,255,0.08);
+        rgba(150, 20, 20, 0.9);
 
     animation:
-        nullCorruptedError
-        0.75s
-        steps(4, end);
+        nullErrorCorrupted
+        0.18s
+        steps(2, end)
+        infinite;
 }
 
 
-@keyframes nullCorruptedError {
+@keyframes nullErrorCorrupted {
 
     0% {
-        opacity: 0;
         transform:
-            translateX(0)
-            skewX(0);
+            translateX(0);
     }
 
-    20% {
-        opacity: 0.8;
+    25% {
         transform:
-            translateX(-5px)
-            skewX(-4deg);
+            translateX(-2px);
     }
 
-    40% {
-        opacity: 0.25;
+    50% {
         transform:
-            translateX(7px)
-            skewX(3deg);
+            translateX(2px);
     }
 
-    60% {
-        opacity: 0.7;
+    75% {
         transform:
-            translateX(-2px)
-            skewX(-2deg);
-    }
-
-    80% {
-        opacity: 0.35;
-        transform:
-            translateX(3px)
-            skewX(1deg);
+            translateX(-1px);
     }
 
     100% {
-        opacity: 0.65;
         transform:
-            translateX(0)
-            skewX(0);
+            translateX(0);
     }
+
 }
 
 
@@ -1158,62 +1207,11 @@
 .nullErrorLayer.error-rare
 .nullErrorText {
     color:
-        rgba(180,0,0,0.95);
+        rgba(165, 0, 0, 0.92);
 
     text-shadow:
-        0 0 7px rgba(150,0,0,0.65),
-        0 0 20px rgba(120,0,0,0.25);
-
-    animation:
-        nullRareError
-        1s
-        steps(5, end);
-}
-
-
-@keyframes nullRareError {
-
-    0% {
-        opacity: 0;
-        transform:
-            translateX(0)
-            scale(0.98);
-    }
-
-    18% {
-        opacity: 1;
-        transform:
-            translateX(-4px)
-            scale(1.01);
-    }
-
-    34% {
-        opacity: 0.15;
-        transform:
-            translateX(6px)
-            scale(1);
-    }
-
-    50% {
-        opacity: 0.9;
-        transform:
-            translateX(-2px)
-            scale(1.01);
-    }
-
-    72% {
-        opacity: 0.35;
-        transform:
-            translateX(3px)
-            scale(1);
-    }
-
-    100% {
-        opacity: 0.9;
-        transform:
-            translateX(0)
-            scale(1);
-    }
+        0 0 20px
+        rgba(110, 0, 0, 0.35);
 }
 
 
@@ -1226,9 +1224,9 @@
 
     inset: 0;
 
-    z-index: 300;
-
     pointer-events: none;
+
+    z-index: 300;
 }
 
 
@@ -1238,19 +1236,22 @@
     left: 50%;
     top: 50%;
 
-    min-width: 260px;
+    width: 360px;
+    min-height: 180px;
 
     transform:
         translate(-50%, -50%);
 
-    background:
-        rgba(3,3,3,0.95);
-
     border:
-        1px solid rgba(255,255,255,0.12);
+        1px solid
+        rgba(130, 130, 130, 0.2);
+
+    background:
+        rgba(2, 2, 2, 0.94);
 
     box-shadow:
-        0 0 50px rgba(0,0,0,0.8);
+        0 0 40px
+        rgba(0, 0, 0, 0.9);
 
     pointer-events: auto;
 }
@@ -1259,95 +1260,83 @@
 .nullWindowHeader {
     display: flex;
 
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
 
-    padding: 7px 9px;
+    height: 30px;
+
+    padding:
+        0
+        10px;
 
     border-bottom:
-        1px solid rgba(255,255,255,0.08);
+        1px solid
+        rgba(120, 120, 120, 0.14);
+
+    color:
+        rgba(190, 190, 190, 0.65);
 
     font-size: 9px;
 
-    letter-spacing: 2px;
-
-    color:
-        rgba(255,255,255,0.4);
+    letter-spacing:
+        0.12em;
 }
 
 
 .nullWindowHeader button {
+    appearance: none;
+
     border: 0;
 
     background: transparent;
 
     color:
-        rgba(255,255,255,0.35);
+        rgba(170, 170, 170, 0.65);
+
+    font-family:
+        inherit;
+
+    font-size: 15px;
 
     cursor: pointer;
 }
 
 
 .nullWindowBody {
-    padding: 20px;
+    min-height: 145px;
 
-    min-height: 70px;
-
-    font-size: 10px;
+    padding: 15px;
 
     color:
-        rgba(255,255,255,0.3);
+        rgba(160, 160, 160, 0.5);
+
+    font-size: 10px;
 }
 
 
 .nullWindowCursor {
+    opacity: 0.65;
+
     animation:
-        nullCursor
+        nullCursorBlink
         1s
-        infinite
-        steps(2, end);
+        steps(1)
+        infinite;
 }
 
 
-@keyframes nullCursor {
+@keyframes nullCursorBlink {
 
     0%,
-    49% {
-        opacity: 1;
+    50% {
+        opacity: 0.65;
     }
 
-    50%,
+    51%,
     100% {
         opacity: 0;
     }
-}
 
-
-/* ==========================================================
-   ROOM VARIATIONS
-   ========================================================== */
-
-.room-large {
-    width: 82vw;
-    height: 70vh;
-}
-
-
-.room-hallway {
-    width: 48vw;
-    height: 82vh;
-}
-
-
-.room-console {
-    width: 58vw;
-    height: 58vh;
-}
-
-
-.room-pillar {
-    width: 76vw;
-    height: 72vh;
 }
 
 
@@ -1362,17 +1351,49 @@
 
     inset: 0;
 
-    z-index: 900;
-
     pointer-events: none;
+
+    z-index: 90;
 
     background:
         radial-gradient(
             ellipse at center,
-            transparent 40%,
-            rgba(0,0,0,0.32) 75%,
-            rgba(0,0,0,0.82) 100%
+            transparent 38%,
+            rgba(0, 0, 0, 0.22) 68%,
+            rgba(0, 0, 0, 0.72) 100%
         );
+}
+
+
+/* ==========================================================
+   SUBTLE RED HORIZON
+   ========================================================== */
+
+.nullSpace::before {
+    content: "";
+
+    position: absolute;
+
+    left: -10%;
+    right: -10%;
+
+    bottom: 18%;
+
+    height: 25%;
+
+    pointer-events: none;
+
+    z-index: 8;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(70, 0, 0, 0.12),
+            transparent 68%
+        );
+
+    filter:
+        blur(25px);
 }
 
 
@@ -1382,91 +1403,93 @@
 
 @media (max-width: 700px) {
 
-    .nullTopBar {
-        left: 12px;
-        right: 12px;
-        top: 12px;
-
-        font-size: 8px;
-
-        letter-spacing: 2px;
-    }
-
-
-    .nullRoom {
-        width: 94vw;
-        height: 68vh;
-    }
-
-
-    .room-hallway {
-        width: 68vw;
-    }
-
-
-    .room-console {
-        width: 80vw;
-    }
-
-
-    .room-pillar {
-        width: 90vw;
-    }
-
-
-    .nullVoidLight {
-        width: 65px;
-    }
-
-
-    .nullEntity {
+    .nullTree {
         transform:
-            translate(-50%, -50%)
-            translateZ(-120px)
-            scale(0.75);
+            translate(-50%, -100%)
+            scale(
+                calc(
+                    var(--tree-scale) * 0.72
+                )
+            )
+            rotate(
+                var(--tree-rotation)
+            );
     }
 
 
-    .nullErrorText {
-        font-size: 10px;
-
-        letter-spacing: 2px;
+    .nullTreeDistant {
+        filter:
+            blur(2.4px);
     }
 
 
-    .nullErrorSubtext {
-        font-size: 7px;
+    .nullRedFog {
+        filter:
+            blur(15px);
     }
 
 
-    .nullNavigation {
-        right: 12px;
-        bottom: 12px;
+    .nullRedFogFront {
+        filter:
+            blur(21px);
     }
 
 
-    .nullNavigation button {
-        padding: 5px 6px;
+    .nullTopBar {
+        top: 16px;
 
-        font-size: 8px;
+        left: 16px;
+        right: 16px;
     }
 
 
     .nullRoomInfo {
-        left: 12px;
-        bottom: 62px;
+        left: 16px;
+        bottom: 78px;
     }
+
+
+    .nullNavigation {
+        left: 16px;
+        bottom: 18px;
+
+        gap: 5px;
+    }
+
+
+    .nullNavigation button {
+        min-width: 66px;
+
+        padding:
+            7px
+            8px;
+
+        font-size: 8px;
+    }
+
+
+    .nullWindow {
+        width:
+            calc(100vw - 32px);
+    }
+
 }
+
+
+/* ==========================================================
+   HIDDEN STATE
+   ========================================================== */
 
 #nullSpaceRoot.hidden {
     display: block !important;
 }
 
+
 #nullSpaceRoot.hidden:not(.active) {
     display: none !important;
 }
 
+
 #nullSpaceRoot.hidden.active {
     display: block !important;
 }
-
