@@ -1,620 +1,1759 @@
 /* ==========================================================
    NULL SPACE
-   MIRROR-INT / OMEGA
-
-   Visual direction:
-   The Broken Script inspired Void environment
-   ========================================================== */
-
-
-/* ==========================================================
-   ROOT
-   ========================================================== */
+   WORLD + ANOMALY SYSTEM
+========================================================== */
 
 #nullSpaceRoot {
     position: fixed;
     inset: 0;
-
     z-index: 999999;
-
-    width: 100vw;
-    height: 100vh;
-
-    overflow: hidden;
-
-    background:
-        #020303;
-
-    color:
-        #dfe6e5;
-
+    background: #020203;
+    color: #d7d7d7;
     font-family:
-        ui-monospace,
-        SFMono-Regular,
+        "Courier New",
         Consolas,
-        "Liberation Mono",
         monospace;
-
-    isolation: isolate;
 }
-
 
 #nullSpaceRoot.hidden {
     display: none !important;
 }
 
 
-#nullSpaceRoot *,
-#nullSpaceRoot *::before,
-#nullSpaceRoot *::after {
-    box-sizing: border-box;
-}
-
-
-#nullSpaceRoot button,
-#nullSpaceRoot input {
-    font: inherit;
-}
-
-
 /* ==========================================================
-   MAIN SPACE
-   ========================================================== */
+   ROOT
+========================================================== */
 
 #nullSpaceRoot .nullSpace {
-
     position: relative;
-
     width: 100%;
     height: 100%;
-
     overflow: hidden;
-
     background:
-        #020303;
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(80,80,90,.08),
+            transparent 42%
+        ),
+        #020203;
 }
 
 
 /* ==========================================================
-   VOID ENVIRONMENT
-   ========================================================== */
+   WORLD
+========================================================== */
 
-#nullSpaceRoot .nullVoidEnvironment {
-
+#nullSpaceRoot .nullVoidWorld {
     position: absolute;
-
     inset: 0;
-
-    z-index: 0;
-
     overflow: hidden;
-
-    background:
-        #030506;
 }
 
-
-/* ==========================================================
-   BACK WALL
-   ========================================================== */
-
-#nullSpaceRoot .nullVoidBackWall {
-
+#nullSpaceRoot .nullVoidBackdrop {
     position: absolute;
-
-    left: 9%;
-    right: 9%;
-    top: 8%;
-    bottom: 17%;
-
+    inset: 0;
     background:
-        #0b0e0f;
-
-    border:
-        1px solid #202526;
-
-    box-shadow:
-        inset 0 0 0 12px #070909,
-        inset 0 0 0 13px #15191a;
+        linear-gradient(
+            180deg,
+            #020203 0%,
+            #08090b 50%,
+            #030304 100%
+        );
 }
 
 
 /* ==========================================================
-   LEFT / RIGHT WALL
-   ========================================================== */
+   ROOM
+========================================================== */
 
-#nullSpaceRoot .nullVoidWall {
-
+#nullSpaceRoot .nullVoidRoom {
     position: absolute;
-
-    top: 5%;
-    bottom: 14%;
-
-    width: 12%;
-
-    background:
-        #080b0c;
-
-    border:
-        1px solid #191d1e;
+    inset: 0;
+    perspective: 900px;
+    transform-style: preserve-3d;
 }
-
-
-#nullSpaceRoot .nullVoidWallLeft {
-
-    left: 0;
-
-    transform:
-        skewY(-5deg);
-
-    transform-origin:
-        left center;
-}
-
-
-#nullSpaceRoot .nullVoidWallRight {
-
-    right: 0;
-
-    transform:
-        skewY(5deg);
-
-    transform-origin:
-        right center;
-}
-
-
-/* ==========================================================
-   FLOOR
-   ========================================================== */
 
 #nullSpaceRoot .nullVoidFloor {
-
     position: absolute;
-
-    left: 5%;
-    right: 5%;
-
-    bottom: -9%;
-
-    height: 45%;
-
-    background:
-        #0a0d0e;
-
-    border-top:
-        1px solid #252a2b;
-
+    left: 8%;
+    right: 8%;
+    bottom: -8%;
+    height: 55%;
     transform:
         perspective(700px)
-        rotateX(58deg);
-
-    transform-origin:
-        center top;
-
-    box-shadow:
-        inset 0 20px 30px #050707;
-}
-
-
-/* FLOOR BLOCK LINES */
-
-#nullSpaceRoot .nullVoidFloor::before {
-
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
+        rotateX(62deg);
+    transform-origin: center bottom;
 
     background:
         repeating-linear-gradient(
             90deg,
-            transparent 0,
-            transparent 84px,
-            rgba(120, 130, 130, .055) 85px,
-            transparent 86px
-        );
+            rgba(150,150,150,.07) 0 1px,
+            transparent 1px 70px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            rgba(150,150,150,.05) 0 1px,
+            transparent 1px 70px
+        ),
+        #0b0c0e;
 
-    opacity: .7;
+    border-top:
+        1px solid rgba(255,255,255,.08);
 }
-
-
-#nullSpaceRoot .nullVoidFloor::after {
-
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    right: 0;
-
-    top: 20%;
-
-    height: 1px;
-
-    background:
-        rgba(180, 190, 190, .12);
-}
-
-
-/* ==========================================================
-   CEILING
-   ========================================================== */
 
 #nullSpaceRoot .nullVoidCeiling {
-
     position: absolute;
-
-    left: 5%;
-    right: 5%;
-
-    top: -22%;
-
-    height: 35%;
-
-    background:
-        #080a0b;
+    left: 8%;
+    right: 8%;
+    top: -25%;
+    height: 45%;
 
     transform:
         perspective(700px)
-        rotateX(-52deg);
+        rotateX(-55deg);
 
-    transform-origin:
-        center bottom;
-
-    border-bottom:
-        1px solid #202425;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(150,150,150,.05) 0 1px,
+            transparent 1px 100px
+        ),
+        #050506;
 }
 
 
 /* ==========================================================
-   PILLARS
-   ========================================================== */
+   WALLS
+========================================================== */
+
+#nullSpaceRoot .nullVoidWall {
+    position: absolute;
+    background:
+        linear-gradient(
+            90deg,
+            #090a0c,
+            #151619,
+            #08090a
+        );
+    border:
+        1px solid rgba(255,255,255,.06);
+}
+
+#nullSpaceRoot .wall-back {
+    left: 13%;
+    right: 13%;
+    top: 16%;
+    height: 65%;
+}
+
+#nullSpaceRoot .wall-left {
+    left: 0;
+    top: 12%;
+    width: 18%;
+    height: 72%;
+    transform:
+        skewY(14deg);
+}
+
+#nullSpaceRoot .wall-right {
+    right: 0;
+    top: 12%;
+    width: 18%;
+    height: 72%;
+    transform:
+        skewY(-14deg);
+}
+
+
+/* ==========================================================
+   PROTECTED VOID PILLARS
+========================================================== */
 
 #nullSpaceRoot .nullVoidPillar {
-
     position: absolute;
-
-    bottom: 24%;
-
     width: 52px;
-    height: 40%;
+    height: 340px;
 
     background:
         linear-gradient(
             90deg,
-            #111516 0,
-            #2b3031 48%,
-            #161a1b 50%,
-            #080a0b 100%
+            #111216,
+            #24252a,
+            #0d0e10
         );
 
     border:
-        1px solid #353b3c;
+        1px solid rgba(255,255,255,.08);
 
     box-shadow:
-        8px 0 0 #050707,
-        inset -5px 0 0 #090b0c;
+        inset 0 0 0 1px rgba(0,0,0,.5),
+        0 0 25px rgba(0,0,0,.8);
 }
 
-
-#nullSpaceRoot .pillar01 {
-    left: 17%;
-    height: 42%;
+#nullSpaceRoot .pillar-1 {
+    left: 23%;
+    bottom: 20%;
 }
 
-
-#nullSpaceRoot .pillar02 {
-    left: 29%;
-    height: 34%;
+#nullSpaceRoot .pillar-2 {
+    left: 34%;
+    bottom: 18%;
 }
 
-
-#nullSpaceRoot .pillar03 {
-    left: 43%;
-    height: 48%;
+#nullSpaceRoot .pillar-3 {
+    right: 34%;
+    bottom: 18%;
 }
 
-
-#nullSpaceRoot .pillar04 {
-    right: 27%;
-    height: 38%;
-}
-
-
-#nullSpaceRoot .pillar05 {
-    right: 14%;
-    height: 46%;
+#nullSpaceRoot .pillar-4 {
+    right: 23%;
+    bottom: 20%;
 }
 
 
 /* ==========================================================
    VOID LIGHT
-   ========================================================== */
+========================================================== */
 
 #nullSpaceRoot .nullVoidLight {
-
     position: absolute;
-
-    z-index: 3;
-
-    width: 84px;
-    height: 13px;
-
-    padding: 0;
-
-    border:
-        1px solid #9fa9a8;
+    width: 110px;
+    height: 10px;
 
     background:
-        #dce9e7;
+        linear-gradient(
+            90deg,
+            transparent,
+            #e5edf2,
+            transparent
+        );
 
     box-shadow:
-        0 0 18px rgba(220, 240, 238, .22),
-        0 0 42px rgba(220, 240, 238, .08);
-
-    cursor: pointer;
+        0 0 20px rgba(220,230,240,.25),
+        0 0 50px rgba(220,230,240,.08);
 
     transition:
-        opacity .15s,
-        box-shadow .15s;
+        opacity .08s,
+        filter .08s;
 }
 
-
-#nullSpaceRoot .light01 {
-
-    left: 25%;
+#nullSpaceRoot .light-1 {
+    left: 30%;
     top: 18%;
-
-    transform:
-        rotate(-2deg);
 }
 
-
-#nullSpaceRoot .light02 {
-
-    right: 20%;
-    top: 27%;
-
-    transform:
-        rotate(2deg);
+#nullSpaceRoot .light-2 {
+    left: 48%;
+    top: 18%;
 }
 
-
-#nullSpaceRoot .light03 {
-
-    left: 55%;
-    top: 12%;
-
-    width: 58px;
-
-    transform:
-        rotate(-1deg);
+#nullSpaceRoot .light-3 {
+    right: 29%;
+    top: 18%;
 }
 
-
-#nullSpaceRoot .nullVoidLight:hover {
-
-    box-shadow:
-        0 0 24px rgba(230, 250, 248, .32);
-}
-
-
-#nullSpaceRoot .nullVoidLight.lightOff {
-
-    opacity: .04;
-
-    box-shadow:
-        none;
-}
-
-
-#nullSpaceRoot .nullVoidLight.lightFlicker {
-
-    animation:
-        nullLightFlicker
-        .85s steps(2, end);
-}
-
-
-@keyframes nullLightFlicker {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    12% {
-        opacity: .1;
-    }
-
-    25% {
-        opacity: .9;
-    }
-
-    39% {
-        opacity: .04;
-    }
-
-    58% {
-        opacity: .7;
-    }
-
-    72% {
-        opacity: .2;
-    }
-
-    88% {
-        opacity: 1;
-    }
-}
-
-
-/* ==========================================================
-   WORLD OBJECT BASE
-   ========================================================== */
-
-#nullSpaceRoot .nullWorldObject {
-
-    position: absolute;
-
-    z-index: 5;
-
-    padding: 0;
-
-    border: 0;
-
-    background: transparent;
-
-    cursor: pointer;
-
-    color: #dce4e2;
-}
-
-
-#nullSpaceRoot .worldObjectLabel {
-
-    position: absolute;
-
+#nullSpaceRoot .light-4 {
     left: 50%;
-
-    transform:
-        translateX(-50%);
-
-    bottom: -25px;
-
-    white-space: nowrap;
-
-    font-size: 8px;
-
-    letter-spacing: 1px;
-
-    color:
-        rgba(210, 220, 219, .42);
-
-    pointer-events: none;
+    top: 36%;
 }
 
-
-#nullSpaceRoot .nullWorldObject:hover .worldObjectLabel {
-
-    color:
-        rgba(235, 245, 243, .9);
+#nullSpaceRoot .nullVoidLight.is-off {
+    opacity: .02;
+    filter: brightness(0);
 }
 
 
 /* ==========================================================
-   VOID DOOR
-   ========================================================== */
+   DOOR
+========================================================== */
 
 #nullSpaceRoot .nullWorldDoor {
-
-    left: 38%;
-    bottom: 20%;
-
-    width: 105px;
-    height: 185px;
+    position: absolute;
+    left: 50%;
+    top: 22%;
+    width: 150px;
+    height: 310px;
+    transform: translateX(-50%);
+    z-index: 20;
+    cursor: pointer;
 }
 
-
-#nullSpaceRoot .voidDoorFrame {
-
+#nullSpaceRoot .nullDoorFrame {
     position: absolute;
+    inset: -12px;
+    border:
+        8px solid #191a1e;
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,.08),
+        0 0 30px rgba(0,0,0,.9);
+}
 
+#nullSpaceRoot .nullDoorPanel {
+    position: absolute;
     inset: 0;
 
-    border:
-        2px solid #383e3f;
-
     background:
-        #0b0e0f;
-
-    box-shadow:
-        inset 0 0 0 5px #141819,
-        0 0 0 1px #080a0b;
-}
-
-
-#nullSpaceRoot .voidDoorCore {
-
-    position: absolute;
-
-    left: 13%;
-    right: 13%;
-
-    top: 9%;
-    bottom: 9%;
-
-    background:
-        rgba(1, 2, 2, .88);
+        linear-gradient(
+            90deg,
+            #0d0e10,
+            #202126,
+            #0c0d0f
+        );
 
     border:
-        1px solid #4b5152;
-
-    opacity: .9;
+        1px solid rgba(255,255,255,.13);
 
     transition:
-        opacity .2s,
-        transform .2s;
+        transform .7s cubic-bezier(.2,.8,.2,1),
+        opacity .7s;
+}
+
+#nullSpaceRoot .nullDoorPanel span {
+    position: absolute;
+    left: 15%;
+    right: 15%;
+    height: 1px;
+    background:
+        rgba(255,255,255,.09);
+}
+
+#nullSpaceRoot .nullDoorPanel span:nth-child(1) {
+    top: 30%;
+}
+
+#nullSpaceRoot .nullDoorPanel span:nth-child(2) {
+    top: 50%;
+}
+
+#nullSpaceRoot .nullDoorPanel span:nth-child(3) {
+    top: 70%;
+}
+
+#nullSpaceRoot .nullWorldDoor.is-open
+.nullDoorPanel {
+    transform:
+        translateX(105px);
+    opacity: .15;
+}
+
+#nullSpaceRoot .nullDoorStatus {
+    position: absolute;
+    bottom: -32px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    font-size: 9px;
+    letter-spacing: 3px;
+    opacity: .55;
 }
 
 
-#nullSpaceRoot .nullWorldDoor:hover .voidDoorCore {
+/* ==========================================================
+   BEYOND
+========================================================== */
 
-    opacity: .65;
-
+#nullSpaceRoot .nullDoorBeyond {
+    position: absolute;
+    left: 50%;
+    top: 20%;
+    width: 180px;
+    height: 350px;
     transform:
-        translateX(3px);
+        translateX(-50%)
+        translateZ(-50px);
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .7s;
+    overflow: hidden;
+    z-index: 10;
+}
+
+#nullSpaceRoot .nullDoorBeyond.visible {
+    opacity: 1;
+}
+
+#nullSpaceRoot .nullBeyondHall {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            #010101,
+            #111217,
+            #010101
+        );
+}
+
+#nullSpaceRoot .nullBeyondPillar {
+    position: absolute;
+    top: 0;
+    width: 25px;
+    height: 100%;
+    background: #202126;
+}
+
+#nullSpaceRoot .nullBeyondPillar:nth-child(1) {
+    left: 20%;
+}
+
+#nullSpaceRoot .nullBeyondPillar:nth-child(2) {
+    left: 48%;
+}
+
+#nullSpaceRoot .nullBeyondPillar:nth-child(3) {
+    right: 20%;
+}
+
+#nullSpaceRoot .nullBeyondLight {
+    position: absolute;
+    top: 20px;
+    left: 25%;
+    width: 50%;
+    height: 4px;
+    background: #dfe6eb;
+    box-shadow:
+        0 0 30px rgba(255,255,255,.25);
 }
 
 
 /* ==========================================================
    CONSOLE
-   ========================================================== */
+========================================================== */
 
 #nullSpaceRoot .nullWorldConsole {
-
-    left: 56%;
-    bottom: 20%;
-
-    width: 120px;
-    height: 112px;
+    position: absolute;
+    left: 19%;
+    bottom: 25%;
+    width: 145px;
+    height: 105px;
+    cursor: pointer;
+    z-index: 25;
 }
 
-
-#nullSpaceRoot .worldConsoleBase {
-
+#nullSpaceRoot .nullConsoleScreen {
     position: absolute;
+    left: 15px;
+    top: 10px;
+    width: 115px;
+    height: 55px;
 
-    left: 8px;
-    right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 
-    bottom: 0;
-
-    height: 50px;
-
-    background:
-        #202627;
-
+    background: #0a0710;
     border:
-        1px solid #454c4d;
+        1px solid rgba(180,130,255,.35);
+
+    color: #c8a9ff;
+    font-size: 9px;
 
     box-shadow:
-        0 8px 0 #080a0a;
+        0 0 18px rgba(130,70,200,.12);
+}
+
+#nullSpaceRoot .nullConsoleBody {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 40px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #16171a,
+            #28292d,
+            #111214
+        );
+
+    border:
+        1px solid rgba(255,255,255,.08);
+}
+
+#nullSpaceRoot .nullConsoleBody i {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin: 14px 3px;
+    background: #7050a0;
 }
 
 
-#nullSpaceRoot .worldConsoleScreen {
+/* ==========================================================
+   431434
+========================================================== */
 
+#nullSpaceRoot .nullWorldBlackBlock {
+    position: absolute;
+    right: 20%;
+    bottom: 27%;
+
+    width: 85px;
+    height: 85px;
+
+    background: #000;
+
+    box-shadow:
+        0 0 35px rgba(0,0,0,.95);
+
+    cursor: pointer;
+    z-index: 30;
+}
+
+#nullSpaceRoot .nullWorldBlackBlock span {
+    position: absolute;
+    left: 50%;
+    bottom: -20px;
+    transform: translateX(-50%);
+
+    font-size: 8px;
+    opacity: 0;
+}
+
+#nullSpaceRoot .nullWorldBlackBlock:hover span {
+    opacity: .5;
+}
+
+#nullSpaceRoot .nullWorldBlackBlock.is-active {
+    animation:
+        nullBlackPulse .2s infinite alternate;
+}
+
+@keyframes nullBlackPulse {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.05);
+        box-shadow:
+            0 0 80px #000;
+    }
+}
+
+
+/* ==========================================================
+   DISRUPTION
+========================================================== */
+
+#nullSpaceRoot .nullWorldDisruption {
+    position: absolute;
+    left: 40%;
+    bottom: 19%;
+
+    width: 120px;
+    height: 80px;
+
+    display: none;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            #111 0 4px,
+            #777 4px 7px,
+            #222 7px 12px
+        );
+
+    cursor: pointer;
+
+    border:
+        1px solid rgba(255,255,255,.15);
+}
+
+#nullSpaceRoot .nullWorldDisruption.is-active {
+    display: block;
+    animation:
+        disruptionGlitch .12s infinite;
+}
+
+#nullSpaceRoot .nullWorldDisruption span {
+    display: inline-block;
+    margin: 10px;
+    font-size: 8px;
+    mix-blend-mode: difference;
+}
+
+@keyframes disruptionGlitch {
+    0% {
+        transform: translate(0);
+    }
+    25% {
+        transform: translate(5px,-2px);
+    }
+    50% {
+        transform: translate(-4px,3px);
+    }
+    75% {
+        transform: translate(2px,1px);
+    }
+    100% {
+        transform: translate(-2px,-3px);
+    }
+}
+
+
+/* ==========================================================
+   IT
+========================================================== */
+
+#nullSpaceRoot .nullWorldIt {
+    position: absolute;
+    right: 31%;
+    top: 35%;
+
+    width: 80px;
+    height: 120px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: rgba(255,255,255,.2);
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    background:
+        rgba(255,255,255,.015);
+
+    cursor: pointer;
+
+    transform:
+        rotate(-3deg);
+}
+
+#nullSpaceRoot .nullWorldIt span {
+    position: absolute;
+}
+
+#nullSpaceRoot .nullWorldIt span:nth-child(1) {
+    font-size: 28px;
+}
+
+#nullSpaceRoot .nullWorldIt span:nth-child(2) {
+    top: 20px;
+    left: 10px;
+}
+
+#nullSpaceRoot .nullWorldIt span:nth-child(3) {
+    right: 8px;
+    bottom: 10px;
+}
+
+#nullSpaceRoot .nullWorldIt.is-active {
+    animation:
+        itGlitch .15s infinite;
+}
+
+@keyframes itGlitch {
+    0% {
+        filter: none;
+    }
+    50% {
+        filter:
+            contrast(2)
+            brightness(1.8);
+        transform:
+            translateX(7px)
+            rotate(4deg);
+    }
+    100% {
+        filter: none;
+    }
+}
+
+
+/* ==========================================================
+   HELLO
+========================================================== */
+
+#nullSpaceRoot .nullWorldHello {
+    position: absolute;
+    right: 15%;
+    bottom: 21%;
+
+    padding: 20px 28px;
+
+    color: rgba(255,255,255,.45);
+
+    border:
+        1px solid rgba(255,255,255,.1);
+
+    background:
+        rgba(255,255,255,.025);
+
+    cursor: pointer;
+
+    font-size: 12px;
+}
+
+#nullSpaceRoot .nullWorldHello.is-broken {
+    animation:
+        helloBreak .25s infinite;
+}
+
+@keyframes helloBreak {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: .1;
+        transform: translateX(8px);
+    }
+    100% {
+        opacity: .8;
+    }
+}
+
+
+/* ==========================================================
+   CROSS
+========================================================== */
+
+#nullSpaceRoot .nullHelloCross {
+    position: absolute;
+    left: 50%;
+    bottom: 18%;
+
+    width: 120px;
+    height: 130px;
+
+    transform:
+        translateX(-50%)
+        scale(.7);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity .5s;
+}
+
+#nullSpaceRoot .nullHelloCross.visible {
+    opacity: .5;
+}
+
+#nullSpaceRoot .nullHelloCross div {
+    position: absolute;
+    background:
+        #3b3030;
+}
+
+#nullSpaceRoot .nullHelloCross div:nth-child(1) {
+    left: 47px;
+    width: 26px;
+    height: 130px;
+}
+
+#nullSpaceRoot .nullHelloCross div:nth-child(2) {
+    left: 10px;
+    top: 30px;
+    width: 100px;
+    height: 25px;
+}
+
+#nullSpaceRoot .nullHelloCross div:nth-child(3) {
+    left: 47px;
+    top: 80px;
+    width: 26px;
+    height: 45px;
+}
+
+
+/* ==========================================================
+   EXIT
+========================================================== */
+
+#nullSpaceRoot .nullWorldExit {
+    position: absolute;
+    left: 9%;
+    top: 30%;
+
+    width: 75px;
+    height: 120px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        rgba(245,245,245,.9);
+
+    color: #090909;
+
+    box-shadow:
+        0 0 45px rgba(255,255,255,.2);
+
+    cursor: pointer;
+
+    font-size: 9px;
+}
+
+#nullSpaceRoot .nullWorldExit span:first-child {
+    font-size: 7px;
+    opacity: .5;
+}
+
+
+/* ==========================================================
+   EYES
+========================================================== */
+
+#nullSpaceRoot .nullEyeField {
+    position: absolute;
+    inset: 0;
+    z-index: 70;
+    pointer-events: none;
+}
+
+#nullSpaceRoot .nullEye {
     position: absolute;
 
-    left: 22px;
-    right: 22px;
+    width: 30px;
+    height: 20px;
 
-    top: 4px;
+    padding: 0;
+    border: 0;
+    background: transparent;
 
+    pointer-events: auto;
+    cursor: pointer;
+
+    filter:
+        drop-shadow(
+            0 0 10px
+            rgba(255,255,255,.18)
+        );
+}
+
+#nullSpaceRoot .nullEyeOuter {
+    position: absolute;
+    inset: 0;
+
+    display: block;
+
+    background:
+        #d5d5d5;
+
+    border-radius:
+        80% 0 80% 0;
+
+    transform:
+        rotate(45deg);
+}
+
+#nullSpaceRoot .nullEyePupil {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+
+    left: 11px;
+    top: 6px;
+
+    background:
+        #000;
+
+    border-radius: 50%;
+
+    transform:
+        rotate(-45deg);
+}
+
+#nullSpaceRoot .nullEye.eye-flee {
+    animation:
+        eyeFlee .2s forwards;
+}
+
+#nullSpaceRoot .nullEye.eye-destroy {
+    animation:
+        eyeDestroy .25s forwards;
+}
+
+#nullSpaceRoot .nullEye.eye-fade {
+    animation:
+        eyeFade .7s forwards;
+}
+
+@keyframes eyeFlee {
+    to {
+        opacity: 0;
+        transform:
+            translate(
+                25px,
+                -15px
+            )
+            scale(.2);
+    }
+}
+
+@keyframes eyeDestroy {
+    to {
+        opacity: 0;
+        transform:
+            scale(2);
+        filter:
+            brightness(3);
+    }
+}
+
+@keyframes eyeFade {
+    to {
+        opacity: 0;
+    }
+}
+
+
+/* ==========================================================
+   NULL ENTITY
+========================================================== */
+
+#nullSpaceRoot .nullEntity {
+    position: absolute;
+
+    left: 50%;
+    top: 20%;
+
+    width: 60px;
+    height: 180px;
+
+    transform:
+        translateX(-50%)
+        scale(.85);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity .35s,
+        transform .35s;
+
+    z-index: 80;
+}
+
+#nullSpaceRoot .nullEntity.visible {
+    opacity: 1;
+    transform:
+        translateX(-50%)
+        scale(1);
+}
+
+#nullSpaceRoot .nullEntityHead {
+    position: absolute;
+
+    left: 10px;
+    top: 0;
+
+    width: 40px;
     height: 55px;
+
+    background:
+        #000;
+
+    border-radius:
+        50% 50% 45% 45%;
+
+    box-shadow:
+        0 0 30px rgba(0,0,0,.9);
+}
+
+#nullSpaceRoot .nullEntityBody {
+    position: absolute;
+
+    left: 17px;
+    top: 50px;
+
+    width: 27px;
+    height: 115px;
+
+    background:
+        #000;
+
+    clip-path:
+        polygon(
+            25% 0,
+            75% 0,
+            100% 100%,
+            0 100%
+        );
+}
+
+#nullSpaceRoot .nullEntityGlow {
+    position: absolute;
+    inset: -30px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(0,0,0,.5),
+            transparent 65%
+        );
+
+    z-index: -1;
+}
+
+#nullSpaceRoot .nullEntity.is-chasing {
+    animation:
+        nullChase .22s infinite alternate;
+}
+
+@keyframes nullChase {
+    from {
+        transform:
+            translateX(-50%)
+            translateY(0)
+            scale(1);
+    }
+    to {
+        transform:
+            translateX(-50%)
+            translateY(20px)
+            scale(1.1);
+    }
+}
+
+
+/* ==========================================================
+   WORLD CODE
+========================================================== */
+
+#nullSpaceRoot .nullWorldCode {
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    color:
+        rgba(180,180,180,.035);
+
+    font-size: 10px;
+}
+
+#nullSpaceRoot .nullWorldCode span {
+    position: absolute;
+}
+
+#nullSpaceRoot .nullWorldCode span:nth-child(1) {
+    left: 8%;
+    top: 15%;
+}
+
+#nullSpaceRoot .nullWorldCode span:nth-child(2) {
+    right: 12%;
+    top: 28%;
+}
+
+#nullSpaceRoot .nullWorldCode span:nth-child(3) {
+    left: 17%;
+    bottom: 14%;
+}
+
+#nullSpaceRoot .nullWorldCode span:nth-child(4) {
+    right: 18%;
+    bottom: 19%;
+}
+
+#nullSpaceRoot .nullWorldCode span:nth-child(5) {
+    left: 47%;
+    top: 11%;
+}
+
+
+/* ==========================================================
+   EVENT EFFECTS
+========================================================== */
+
+#nullSpaceRoot .nullEventOverlay {
+    position: absolute;
+    inset: 0;
+
+    z-index: 500;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    background:
+        rgba(255,255,255,.05);
+}
+
+#nullSpaceRoot .nullEventOverlay.active {
+    animation:
+        eventPulse .42s steps(3);
+}
+
+#nullSpaceRoot .nullEventOverlay.effect-blackout {
+    background:
+        #000;
+}
+
+#nullSpaceRoot .nullEventOverlay.effect-major {
+    background:
+        rgba(255,255,255,.2);
+}
+
+#nullSpaceRoot .nullEventOverlay.effect-ban {
+    background:
+        rgba(255,255,255,.8);
+}
+
+@keyframes eventPulse {
+    0% {
+        opacity: 0;
+    }
+    30% {
+        opacity: 1;
+    }
+    55% {
+        opacity: .1;
+    }
+    80% {
+        opacity: .7;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+
+/* ==========================================================
+   EVENT TEXT
+========================================================== */
+
+#nullSpaceRoot .nullEventText {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    z-index: 600;
+
+    color: #fff;
+
+    font-size: 24px;
+    letter-spacing: 5px;
+
+    text-align: center;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    text-shadow:
+        0 0 15px rgba(255,255,255,.5);
+}
+
+#nullSpaceRoot .nullEventText.active {
+    opacity: 1;
+
+    animation:
+        nullTextGlitch .16s infinite;
+}
+
+@keyframes nullTextGlitch {
+    0% {
+        transform:
+            translate(-50%,-50%);
+    }
+    50% {
+        transform:
+            translate(
+                calc(-50% + 4px),
+                calc(-50% - 2px)
+            );
+    }
+    100% {
+        transform:
+            translate(
+                calc(-50% - 3px),
+                calc(-50% + 2px)
+            );
+    }
+}
+
+
+/* ==========================================================
+   HEARTBEAT
+========================================================== */
+
+#nullSpaceRoot .nullHeartbeat {
+    position: absolute;
+    inset: 0;
+
+    z-index: 450;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    box-shadow:
+        inset 0 0 0 0
+        rgba(255,255,255,0);
+}
+
+#nullSpaceRoot .nullHeartbeat.active {
+    animation:
+        heartbeatFlash .6s
+        5;
+}
+
+@keyframes heartbeatFlash {
+    0% {
+        opacity: 0;
+        box-shadow:
+            inset 0 0 0 0
+            rgba(255,255,255,0);
+    }
+
+    50% {
+        opacity: .25;
+        box-shadow:
+            inset 0 0 100px
+            rgba(255,255,255,.12);
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+
+/* ==========================================================
+   INTERFACE
+========================================================== */
+
+#nullSpaceRoot .nullInterface {
+    position: absolute;
+    inset: 0;
+
+    z-index: 200;
+
+    display: flex;
+    flex-direction: column;
+
+    pointer-events: none;
+}
+
+#nullSpaceRoot .nullInterface
+> * {
+    pointer-events: auto;
+}
+
+
+/* ==========================================================
+   TOP BAR
+========================================================== */
+
+#nullSpaceRoot .nullTopBar {
+    height: 58px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 24px;
+
+    background:
+        rgba(4,5,7,.88);
+
+    border-bottom:
+        1px solid rgba(255,255,255,.08);
+
+    backdrop-filter:
+        blur(8px);
+}
+
+#nullSpaceRoot .nullBrand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#nullSpaceRoot .nullBrandMark {
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border:
+        1px solid rgba(255,255,255,.25);
+
+    font-size: 14px;
+}
+
+#nullSpaceRoot .nullBrandTitle {
+    font-size: 13px;
+    letter-spacing: 4px;
+}
+
+#nullSpaceRoot .nullBrandSubtitle {
+    margin-top: 3px;
+
+    font-size: 8px;
+    opacity: .35;
+    letter-spacing: 2px;
+}
+
+#nullSpaceRoot .nullStatus {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+#nullSpaceRoot .nullStatusLabel {
+    font-size: 8px;
+    opacity: .35;
+}
+
+#nullSpaceRoot .nullStatusValue {
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+
+/* ==========================================================
+   WORKSPACE
+========================================================== */
+
+#nullSpaceRoot .nullWorkspace {
+    flex: 1;
+
+    display: flex;
+
+    min-height: 0;
+}
+
+
+/* ==========================================================
+   NAV
+========================================================== */
+
+#nullSpaceRoot .nullNavigation {
+    width: 220px;
+
+    flex-shrink: 0;
+
+    padding: 24px 14px;
+
+    background:
+        rgba(3,4,5,.82);
+
+    border-right:
+        1px solid rgba(255,255,255,.07);
+
+    backdrop-filter:
+        blur(8px);
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#nullSpaceRoot .nullNavigationTitle {
+    margin: 0 8px 12px;
+
+    font-size: 8px;
+    letter-spacing: 3px;
+    opacity: .3;
+}
+
+#nullSpaceRoot .nullNavButton {
+    width: 100%;
+
+    padding: 11px 9px;
+
+    text-align: left;
+
+    border: 1px solid transparent;
+
+    background:
+        transparent;
+
+    color: #aaa;
+
+    font:
+        inherit;
+
+    font-size: 10px;
+
+    cursor: pointer;
+}
+
+#nullSpaceRoot .nullNavButton:hover {
+    background:
+        rgba(255,255,255,.035);
+
+    border-color:
+        rgba(255,255,255,.08);
+
+    color: #eee;
+}
+
+#nullSpaceRoot .nullNavigationBottom {
+    margin-top: auto;
+
+    padding:
+        15px 9px;
+
+    border-top:
+        1px solid rgba(255,255,255,.06);
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#nullSpaceRoot .nullNavigationBottom span {
+    font-size: 7px;
+    opacity: .25;
+}
+
+#nullSpaceRoot .nullNavigationBottom strong {
+    font-size: 10px;
+    font-weight: normal;
+}
+
+
+/* ==========================================================
+   MAIN
+========================================================== */
+
+#nullSpaceRoot .nullMain {
+    position: relative;
+
+    flex: 1;
+
+    min-width: 0;
+
+    overflow: hidden;
+}
+
+#nullSpaceRoot .nullEmptyState {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 15px;
+
+    color: rgba(255,255,255,.3);
+
+    font-size: 9px;
+    letter-spacing: 3px;
+}
+
+#nullSpaceRoot .nullEmptyState.hidden {
+    display: none;
+}
+
+#nullSpaceRoot .nullEmptyZero {
+    font-size: 42px;
+    opacity: .08;
+}
+
+
+/* ==========================================================
+   INTERNAL WINDOWS
+========================================================== */
+
+#nullSpaceRoot .nullInternalWindow {
+    position: absolute;
+
+    inset: 28px;
+
+    display: none;
+
+    flex-direction: column;
+
+    background:
+        rgba(3,4,5,.9);
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    box-shadow:
+        0 20px 80px rgba(0,0,0,.45);
+
+    backdrop-filter:
+        blur(10px);
+}
+
+#nullSpaceRoot .nullInternalWindow.active {
+    display: flex;
+}
+
+#nullSpaceRoot .nullWindowHeader {
+    padding: 13px 16px;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.07);
+
+    font-size: 9px;
+    letter-spacing: 3px;
+
+    color: #aaa;
+}
+
+
+/* ==========================================================
+   ARCHIVE
+========================================================== */
+
+#nullSpaceRoot .nullArchiveList {
+    padding: 20px;
+}
+
+#nullSpaceRoot .nullArchiveList div {
+    padding: 13px;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.04);
+
+    font-size: 10px;
+}
+
+#nullSpaceRoot .nullArchiveList .corrupt {
+    color: #aaa;
+}
+
+#nullSpaceRoot .nullArchiveList small {
+    margin-left: 20px;
+    opacity: .4;
+}
+
+
+/* ==========================================================
+   CHAT
+========================================================== */
+
+#nullSpaceRoot .nullChatMessages {
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 20px;
+}
+
+#nullSpaceRoot .nullMessage {
+    display: flex;
+    gap: 15px;
+
+    margin-bottom: 12px;
+
+    font-size: 10px;
+}
+
+#nullSpaceRoot .nullMessage b {
+    min-width: 45px;
+
+    font-size: 8px;
+    opacity: .35;
+}
+
+#nullSpaceRoot .nullMessage span {
+    color: #bbb;
+}
+
+#nullSpaceRoot .nullUnknownMessage {
+    animation:
+        messageGlitch .2s infinite;
+}
+
+@keyframes messageGlitch {
+    0% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(3px);
+    }
+    100% {
+        transform: translateX(-2px);
+    }
+}
+
+#nullSpaceRoot .nullChatInputRow {
+    display: flex;
+
+    border-top:
+        1px solid rgba(255,255,255,.07);
+}
+
+#nullSpaceRoot .nullChatInputRow input {
+    flex: 1;
+
+    padding: 14px;
+
+    border: 0;
+    outline: none;
+
+    background:
+        rgba(0,0,0,.3);
+
+    color: #ddd;
+
+    font:
+        inherit;
+    font-size: 10px;
+}
+
+#nullSpaceRoot .nullChatInputRow button {
+    width: 80px;
+
+    border: 0;
+
+    background:
+        rgba(255,255,255,.04);
+
+    color: #aaa;
+
+    font:
+        inherit;
+
+    cursor: pointer;
+}
+
+
+/* ==========================================================
+   MEMORY / OBJECTS / ROOM
+========================================================== */
+
+#nullSpaceRoot .nullMemoryList {
+    padding: 20px;
+}
+
+#nullSpaceRoot .nullMemoryList div {
+    padding: 14px;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.04);
+
+    font-size: 10px;
+}
+
+#nullSpaceRoot .nullObjectGrid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 8px;
+
+    padding: 20px;
+}
+
+#nullSpaceRoot .nullObject {
+    min-height: 80px;
+
+    border:
+        1px solid rgba(255,255,255,.07);
+
+    background:
+        rgba(255,255,255,.015);
+
+    color: #aaa;
+
+    font:
+        inherit;
+
+    font-size: 9px;
+
+    cursor: pointer;
+}
+
+#nullSpaceRoot .nullObject:hover {
+    background:
+        rgba(255,255,255,.045);
+
+    color: #eee;
+}
+
+#nullSpaceRoot .nullImpossibleObject {
+    border-color:
+        rgba(100,70,130,.2);
+}
+
+#nullSpaceRoot .nullRoomData {
+    padding: 25px;
+
+    font-size: 10px;
+    line-height: 2.5;
+}
+
+#nullSpaceRoot .nullRoomData strong {
+    font-weight: normal;
+    opacity: .5;
+}
+
+
+/* ==========================================================
+   CONSOLE
+========================================================== */
+
+#nullSpaceRoot .nullConsoleOutput {
+    flex: 1;
+
+    padding: 20px;
+
+    overflow-y: auto;
+
+    color: #a9a9a9;
+
+    font-size: 10px;
+    line-height: 1.8;
+}
+
+#nullSpaceRoot .nullConsoleInputRow {
+    display: flex;
+
+    gap: 8px;
+
+    padding: 13px 15px;
+
+    border-top:
+        1px solid rgba(255,255,255,.07);
+}
+
+#nullSpaceRoot .nullConsoleInputRow span {
+    opacity: .4;
+}
+
+#nullSpaceRoot .nullConsoleInputRow input {
+    flex: 1;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+
+    color: #ddd;
+
+    font:
+        inherit;
+}
+
+
+/* ==========================================================
+   UNKNOWN
+========================================================== */
+
+#nullSpaceRoot .nullUnknownContent {
+    flex: 1;
 
     display: flex;
 
@@ -623,3089 +1762,284 @@
     align-items: center;
     justify-content: center;
 
-    gap: 4px;
+    gap: 15px;
 
-    background:
-        #111719;
-
-    border:
-        1px solid #4a5051;
-
-    color:
-        #cbd7d5;
-
-    font-size: 8px;
-
-    letter-spacing: 1px;
-
-    box-shadow:
-        inset 0 0 15px rgba(180, 200, 198, .05);
-}
-
-
-#nullSpaceRoot .worldConsoleLight {
-
-    position: absolute;
-
-    right: 17px;
-    bottom: 14px;
-
-    width: 5px;
-    height: 5px;
-
-    border-radius: 50%;
-
-    background:
-        #dcebea;
-
-    box-shadow:
-        0 0 9px rgba(220, 240, 238, .5);
-}
-
-
-/* ==========================================================
-   431434
-   ========================================================== */
-
-#nullSpaceRoot .nullWorldBlackBlock {
-
-    left: 11%;
-    bottom: 25%;
-
-    width: 95px;
-    height: 95px;
-}
-
-
-#nullSpaceRoot .blackBlockCore {
-
-    position: absolute;
-
-    inset: 5px;
-
-    background:
-        #000;
-
-    border:
-        1px solid #101314;
-
-    box-shadow:
-        0 0 35px rgba(0, 0, 0, .9);
-
-    transition:
-        transform .3s,
-        box-shadow .3s;
-}
-
-
-#nullSpaceRoot .blackBlockEdge {
-
-    position: absolute;
-
-    inset: -4px;
-
-    border:
-        1px solid rgba(75, 80, 80, .25);
-
-    pointer-events: none;
-}
-
-
-#nullSpaceRoot .nullWorldBlackBlock:hover .blackBlockCore {
-
-    transform:
-        scale(1.04);
-
-    box-shadow:
-        0 0 55px #000,
-        0 0 80px rgba(0, 0, 0, .8);
-}
-
-
-/* ==========================================================
-   IT
-   ========================================================== */
-
-#nullSpaceRoot .nullWorldIt {
-
-    right: 10%;
-    bottom: 25%;
-
-    width: 72px;
-    height: 115px;
-}
-
-
-#nullSpaceRoot .itGlass {
-
-    position: absolute;
-
-    inset: 0;
-
-    background:
-        rgba(190, 205, 205, .025);
-
-    border:
-        1px solid rgba(170, 185, 184, .3);
-
-    backdrop-filter:
-        blur(1px);
-}
-
-
-#nullSpaceRoot .itScratch {
-
-    position: absolute;
-
-    height: 1px;
-
-    background:
-        rgba(230, 240, 238, .55);
-
-    transform-origin:
-        left center;
-}
-
-
-#nullSpaceRoot .scratch01 {
-
-    left: 5px;
-    top: 25px;
-
-    width: 66px;
-
-    transform:
-        rotate(38deg);
-}
-
-
-#nullSpaceRoot .scratch02 {
-
-    left: 2px;
-    top: 65px;
-
-    width: 55px;
-
-    transform:
-        rotate(-24deg);
-}
-
-
-#nullSpaceRoot .scratch03 {
-
-    left: 15px;
-    top: 90px;
-
-    width: 47px;
-
-    transform:
-        rotate(52deg);
-}
-
-
-#nullSpaceRoot .it404 {
-
-    position: absolute;
-
-    inset: 0;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    font-size: 18px;
-
-    color:
-        rgba(210, 220, 220, .25);
-
-    letter-spacing: -2px;
-}
-
-
-#nullSpaceRoot .nullWorldIt.itActive {
-
-    animation:
-        itDistortion
-        1.3s steps(2, end);
-}
-
-
-@keyframes itDistortion {
-
-    0% {
-        transform: translateX(0);
-        opacity: .5;
-    }
-
-    20% {
-        transform: translateX(-5px);
-        opacity: .8;
-    }
-
-    40% {
-        transform: translateX(4px);
-        opacity: .25;
-    }
-
-    60% {
-        transform: translateX(-2px);
-        opacity: .9;
-    }
-
-    100% {
-        transform: translateX(0);
-        opacity: .55;
-    }
-}
-
-
-/* ==========================================================
-   DISRUPTION
-   ========================================================== */
-
-#nullSpaceRoot .nullWorldDisruption {
-
-    left: 47%;
-    bottom: 34%;
-
-    width: 68px;
-    height: 68px;
-
-    border:
-        1px dashed #555b5b;
-
-    background:
-        #111;
-
-    overflow: hidden;
-
-    opacity: .75;
-}
-
-
-#nullSpaceRoot .disruptionNoise {
-
-    position: absolute;
-
-    font-size: 18px;
-
-    color:
-        rgba(220, 225, 224, .45);
-}
-
-
-#nullSpaceRoot .disruptionNoise:nth-child(1) {
-    left: 7px;
-    top: 5px;
-}
-
-
-#nullSpaceRoot .disruptionNoise:nth-child(2) {
-    right: 9px;
-    top: 25px;
-}
-
-
-#nullSpaceRoot .disruptionNoise:nth-child(3) {
-    left: 26px;
-    bottom: 6px;
-}
-
-
-#nullSpaceRoot .nullWorldDisruption.disruptionActive {
-
-    animation:
-        disruptionGlitch
-        .35s
-        steps(2, end)
-        infinite;
-}
-
-
-#nullSpaceRoot .nullWorldDisruption.disruptionGone {
-
-    opacity: 0;
-
-    transform:
-        scale(.7);
-
-    pointer-events: none;
-}
-
-
-@keyframes disruptionGlitch {
-
-    0% {
-        transform: translate(0);
-    }
-
-    30% {
-        transform: translate(4px, -2px);
-    }
-
-    60% {
-        transform: translate(-3px, 3px);
-    }
-
-    100% {
-        transform: translate(0);
-    }
-}
-
-
-/* ==========================================================
-   EXIT
-   ========================================================== */
-
-#nullSpaceRoot .nullWorldExit {
-
-    right: 29%;
-    top: 20%;
-
-    width: 70px;
-    height: 125px;
-
-    border:
-        1px solid rgba(235, 245, 243, .55);
-
-    background:
-        rgba(235, 245, 243, .08);
-
-    box-shadow:
-        0 0 25px rgba(235, 245, 243, .12);
-}
-
-
-#nullSpaceRoot .exitCore {
-
-    position: absolute;
-
-    inset: 8px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    color:
-        #eef9f7;
+    text-align: center;
 
     font-size: 9px;
-
-    letter-spacing: 2px;
-
-    background:
-        rgba(235, 245, 243, .06);
-}
-
-
-#nullSpaceRoot .exitGlow {
-
-    position: absolute;
-
-    inset: -5px;
-
-    border:
-        1px solid rgba(240, 250, 248, .15);
-
-    opacity: .5;
-}
-
-
-#nullSpaceRoot .nullWorldExit.exitActive {
-
-    animation:
-        exitPulse
-        1.6s
-        ease-in-out;
-}
-
-
-@keyframes exitPulse {
-
-    0%,
-    100% {
-        opacity: .6;
-        box-shadow:
-            0 0 25px rgba(235, 245, 243, .12);
-    }
-
-    50% {
-        opacity: 1;
-        box-shadow:
-            0 0 70px rgba(235, 245, 243, .38);
-    }
-}
-
-
-/* ==========================================================
-   SCRATCH PANEL
-   ========================================================== */
-
-#nullSpaceRoot .nullVoidScratchPanel {
-
-    position: absolute;
-
-    left: 72%;
-    top: 40%;
-
-    width: 80px;
-    height: 125px;
-
-    border:
-        1px solid rgba(150, 160, 160, .18);
-
-    opacity: .3;
-}
-
-
-#nullSpaceRoot .nullVoidScratchPanel span {
-
-    position: absolute;
-
-    width: 80px;
-    height: 1px;
-
-    background:
-        rgba(210, 220, 219, .4);
-}
-
-
-#nullSpaceRoot .nullVoidScratchPanel span:nth-child(1) {
-    top: 20%;
-    transform: rotate(25deg);
-}
-
-
-#nullSpaceRoot .nullVoidScratchPanel span:nth-child(2) {
-    top: 45%;
-    transform: rotate(-18deg);
-}
-
-
-#nullSpaceRoot .nullVoidScratchPanel span:nth-child(3) {
-    top: 65%;
-    transform: rotate(42deg);
-}
-
-
-#nullSpaceRoot .nullVoidScratchPanel span:nth-child(4) {
-    top: 80%;
-    transform: rotate(-30deg);
-}
-
-
-/* ==========================================================
-   WORLD CODE
-   ========================================================== */
-
-#nullSpaceRoot .nullWorldCode {
-
-    position: absolute;
-
-    z-index: 1;
-
-    color:
-        rgba(160, 175, 173, .055);
-
-    font-size:
-        clamp(28px, 4vw, 64px);
-
-    pointer-events: none;
-
-    user-select: none;
-}
-
-
-#nullSpaceRoot .code01 {
-    left: 12%;
-    top: 14%;
-}
-
-
-#nullSpaceRoot .code02 {
-    right: 8%;
-    bottom: 15%;
-}
-
-
-#nullSpaceRoot .code03 {
-    left: 39%;
-    top: 7%;
-}
-
-
-#nullSpaceRoot .code04 {
-    right: 34%;
-    top: 38%;
-}
-
-
-/* ==========================================================
-   NULL PRESENCE
-   ========================================================== */
-
-#nullSpaceRoot .nullPresence {
-
-    position: absolute;
-
-    z-index: 7;
-
-    right: 8%;
-    bottom: 17%;
-
-    width: 90px;
-    height: 220px;
-
-    opacity: 0;
-
-    pointer-events: none;
-
-    transition:
-        opacity .2s;
-}
-
-
-#nullSpaceRoot .nullPresenceBody {
-
-    position: absolute;
-
-    left: 20px;
-    right: 20px;
-
-    top: 25px;
-    bottom: 0;
-
-    background:
-        #000;
-
-    clip-path:
-        polygon(
-            35% 0,
-            65% 0,
-            82% 18%,
-            100% 100%,
-            0 100%,
-            18% 18%
-        );
-
-    box-shadow:
-        0 0 25px #000;
-}
-
-
-#nullSpaceRoot .nullPresenceEyes {
-
-    position: absolute;
-
-    top: 53px;
-    left: 26px;
-    right: 26px;
-
-    display: flex;
-
-    justify-content:
-        space-between;
-}
-
-
-#nullSpaceRoot .nullPresenceEyes span {
-
-    width: 9px;
-    height: 3px;
-
-    background:
-        #dfeae8;
-
-    box-shadow:
-        0 0 9px rgba(225, 240, 238, .6);
-}
-
-
-#nullSpaceRoot .nullPresence.presenceVisible {
-
-    opacity: .92;
-
-    animation:
-        nullPresenceIn
-        1.8s
-        ease-in-out;
-}
-
-
-@keyframes nullPresenceIn {
-
-    0% {
-        opacity: 0;
-        transform: translateX(25px);
-    }
-
-    25% {
-        opacity: .85;
-    }
-
-    65% {
-        opacity: .95;
-    }
-
-    100% {
-        opacity: 0;
-        transform: translateX(0);
-    }
-}
-
-
-/* ==========================================================
-   INTERFACE
-   ========================================================== */
-
-#nullSpaceRoot .nullInterface {
-
-    position: absolute;
-
-    z-index: 20;
-
-    inset: 4% 4% 3% 4%;
-
-    display:
-        grid;
-
-    grid-template-rows:
-        58px minmax(0, 1fr) 43px;
-
-    border:
-        1px solid rgba(130, 140, 139, .22);
-
-    background:
-        rgba(3, 5, 5, .82);
-
-    box-shadow:
-        0 0 80px rgba(0, 0, 0, .75);
-
-    backdrop-filter:
-        blur(3px);
-}
-
-
-/* ==========================================================
-   TOP BAR
-   ========================================================== */
-
-#nullSpaceRoot .nullTopBar {
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        space-between;
-
-    padding:
-        0 18px;
-
-    border-bottom:
-        1px solid rgba(135, 145, 144, .18);
-
-    background:
-        rgba(6, 8, 8, .9);
-}
-
-
-#nullSpaceRoot .nullBrand {
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    gap: 12px;
-}
-
-
-#nullSpaceRoot .nullBrandMark {
-
-    width: 27px;
-    height: 27px;
-
-    display:
-        flex;
-
-    align-items:
-        center;
-    justify-content:
-        center;
-
-    border:
-        1px solid #566060;
-
-    color:
-        #e2ebe9;
-
-    font-size: 15px;
-
-    background:
-        #0b0e0e;
-}
-
-
-#nullSpaceRoot .nullBrandTitle {
-
-    font-size: 13px;
-
-    letter-spacing:
-        5px;
-
-    color:
-        #e4ecea;
-}
-
-
-#nullSpaceRoot .nullBrandSubtitle {
-
-    margin-top: 2px;
-
-    font-size: 7px;
-
-    letter-spacing:
-        2px;
-
-    color:
-        #65706f;
-}
-
-
-#nullSpaceRoot .nullTopStatus {
-
-    display:
-        flex;
-
-    gap: 10px;
-
-    align-items:
-        center;
-}
-
-
-#nullSpaceRoot .nullStatusLabel {
-
-    font-size: 7px;
-
-    color:
-        #5d6867;
-
-    letter-spacing:
-        2px;
-}
-
-
-#nullSpaceRoot .nullStatusValue {
-
-    min-width: 75px;
-
-    padding:
-        4px 7px;
-
-    border:
-        1px solid rgba(170, 180, 178, .22);
-
-    text-align:
-        center;
-
-    font-size: 8px;
-
-    color:
-        #dbe5e3;
-
-    background:
-        #0b0e0e;
-}
-
-
-#nullSpaceRoot .nullCoordinates {
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    gap: 9px;
-
-    font-size: 7px;
-
-    letter-spacing:
-        1px;
-
-    color:
-        #566160;
-}
-
-
-#nullSpaceRoot .nullCoordinates strong {
-
-    color:
-        #b5c0be;
-
-    font-weight:
-        normal;
-}
-
-
-/* ==========================================================
-   WORKSPACE
-   ========================================================== */
-
-#nullSpaceRoot .nullWorkspace {
-
-    min-height: 0;
-
-    display:
-        grid;
-
-    grid-template-columns:
-        190px minmax(0, 1fr);
-}
-
-
-/* ==========================================================
-   NAVIGATION
-   ========================================================== */
-
-#nullSpaceRoot .nullNavigation {
-
-    min-height: 0;
-
-    display:
-        flex;
-
-    flex-direction:
-        column;
-
-    border-right:
-        1px solid rgba(130, 140, 139, .18);
-
-    background:
-        rgba(5, 7, 7, .82);
-}
-
-
-#nullSpaceRoot .nullNavigationHeader {
-
-    height: 62px;
-
-    padding:
-        15px 15px 10px;
-
-    border-bottom:
-        1px solid rgba(130, 140, 139, .14);
-}
-
-
-#nullSpaceRoot .nullNavigationHeader span {
-
-    display:
-        block;
-
-    font-size: 10px;
-
-    letter-spacing:
-        4px;
-}
-
-
-#nullSpaceRoot .nullNavigationHeader small {
-
-    display:
-        block;
-
-    margin-top: 5px;
-
-    font-size: 7px;
-
-    letter-spacing:
-        2px;
-
-    color:
-        #586261;
-}
-
-
-#nullSpaceRoot .nullNavButton {
-
-    position: relative;
-
-    min-height: 44px;
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    gap: 12px;
-
-    padding:
-        0 14px;
-
-    border: 0;
-    border-bottom:
-        1px solid rgba(125, 135, 134, .08);
-
-    background:
-        transparent;
-
-    color:
-        #8c9795;
-
-    text-align:
-        left;
-
-    cursor:
-        pointer;
-
-    transition:
-        background .15s,
-        color .15s;
-}
-
-
-#nullSpaceRoot .nullNavButton::before {
-
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    top: 0;
-    bottom: 0;
-
-    width: 2px;
-
-    background:
-        transparent;
-}
-
-
-#nullSpaceRoot .nullNavButton:hover {
-
-    color:
-        #e0e9e7;
-
-    background:
-        rgba(220, 230, 228, .035);
-}
-
-
-#nullSpaceRoot .nullNavButton:hover::before {
-
-    background:
-        #aebbb9;
-}
-
-
-#nullSpaceRoot .navNumber {
-
-    width: 22px;
-
-    color:
-        #4d5756;
-
-    font-size: 8px;
-}
-
-
-#nullSpaceRoot .navName {
-
-    font-size: 8px;
-
-    letter-spacing:
-        1.5px;
-}
-
-
-#nullSpaceRoot .nullUnknownNav {
-
-    margin-top: 8px;
-
-    color:
-        #666;
-}
-
-
-#nullSpaceRoot .nullConnection {
-
-    margin-top: auto;
-
-    padding:
-        14px;
-
-    border-top:
-        1px solid rgba(130, 140, 139, .14);
-}
-
-
-#nullSpaceRoot .nullConnection span {
-
-    display:
-        block;
-
-    font-size: 6px;
-
-    letter-spacing:
-        2px;
-
-    color:
-        #4f5958;
-}
-
-
-#nullSpaceRoot .nullConnection strong {
-
-    display:
-        block;
-
-    margin-top: 5px;
-
-    font-size: 8px;
-
-    font-weight:
-        normal;
-
-    color:
-        #7e8987;
-
-    letter-spacing:
-        2px;
-}
-
-
-/* ==========================================================
-   MAIN
-   ========================================================== */
-
-#nullSpaceRoot .nullMain {
-
-    min-width: 0;
-    min-height: 0;
-
-    position: relative;
-
-    overflow: hidden;
-
-    background:
-        rgba(3, 5, 5, .55);
-}
-
-
-/* ==========================================================
-   EMPTY STATE
-   ========================================================== */
-
-#nullSpaceRoot .nullEmptyState {
-
-    position: absolute;
-
-    inset: 0;
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
-
-    opacity: 1;
-
-    transition:
-        opacity .2s;
-}
-
-
-#nullSpaceRoot .nullEmptyState.isHidden {
-
-    opacity: 0;
-
-    pointer-events:
-        none;
-}
-
-
-#nullSpaceRoot .nullEmptyRoom {
-
-    position: relative;
-
-    width: 80%;
-    height: 72%;
-
-    border:
-        1px solid rgba(130, 140, 139, .12);
-
-    background:
-        #050707;
-
-    overflow:
-        hidden;
-}
-
-
-#nullSpaceRoot .emptyLight {
-
-    position: absolute;
-
-    top: 18%;
-    left: 28%;
-
-    width: 90px;
-    height: 9px;
-
-    background:
-        #cbd8d6;
-
-    box-shadow:
-        0 0 35px rgba(220, 240, 238, .16);
-}
-
-
-#nullSpaceRoot .emptyDoor {
-
-    position: absolute;
-
-    right: 17%;
-    bottom: 13%;
-
-    width: 90px;
-    height: 170px;
-
-    border:
-        1px solid #303637;
-
-    background:
-        #080b0c;
-}
-
-
-#nullSpaceRoot .emptyText {
-
-    position: absolute;
-
-    left: 50%;
-    bottom: 17%;
-
-    transform:
-        translateX(-50%);
-
-    text-align:
-        center;
-}
-
-
-#nullSpaceRoot .emptyText span {
-
-    display:
-        block;
-
-    font-size: 9px;
-
-    letter-spacing:
-        3px;
-
-    color:
-        #a8b2b0;
-}
-
-
-#nullSpaceRoot .emptyText small {
-
-    display:
-        block;
-
-    margin-top: 8px;
-
-    font-size: 7px;
-
-    color:
-        #4f5958;
-
-    letter-spacing:
-        1px;
-}
-
-
-/* ==========================================================
-   INTERNAL WINDOWS
-   ========================================================== */
-
-#nullSpaceRoot .nullInternalWindow {
-
-    position: absolute;
-
-    inset: 24px;
-
-    display:
-        flex;
-
-    flex-direction:
-        column;
-
-    min-width: 0;
-    min-height: 0;
-
-    border:
-        1px solid rgba(150, 160, 159, .19);
-
-    background:
-        rgba(5, 7, 7, .96);
-
-    opacity: 0;
-
-    transform:
-        translateY(5px);
-
-    pointer-events:
-        none;
-
-    transition:
-        opacity .16s,
-        transform .16s;
-}
-
-
-#nullSpaceRoot .nullInternalWindow.isOpen {
-
-    opacity: 1;
-
-    transform:
-        translateY(0);
-
-    pointer-events:
-        auto;
-}
-
-
-/* ==========================================================
-   WINDOW HEADER
-   ========================================================== */
-
-#nullSpaceRoot .nullWindowHeader {
-
-    flex:
-        0 0 47px;
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        space-between;
-
-    padding:
-        0 14px;
-
-    border-bottom:
-        1px solid rgba(140, 150, 149, .15);
-
-    background:
-        #080b0c;
-}
-
-
-#nullSpaceRoot .nullWindowHeader div {
-
-    font-size:
-        9px;
-
-    letter-spacing:
-        3px;
-
-    color:
-        #d9e3e1;
-}
-
-
-#nullSpaceRoot .nullWindowHeader span {
-
-    font-size:
-        7px;
-
-    letter-spacing:
-        1px;
-
-    color:
-        #566160;
-}
-
-
-/* ==========================================================
-   ARCHIVE
-   ========================================================== */
-
-#nullSpaceRoot .nullArchiveGrid {
-
-    padding:
-        16px;
-
-    display:
-        grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(170px, 1fr)
-        );
-
-    gap:
-        10px;
-
-    overflow:
-        auto;
-}
-
-
-#nullSpaceRoot .nullArchiveItem {
-
-    min-height:
-        105px;
-
-    padding:
-        13px;
-
-    border:
-        1px solid rgba(140, 150, 149, .14);
-
-    background:
-        #090c0d;
-
-    color:
-        #aab5b3;
-
-    text-align:
-        left;
-
-    cursor:
-        pointer;
-}
-
-
-#nullSpaceRoot .nullArchiveItem:hover {
-
-    border-color:
-        rgba(190, 200, 198, .32);
-
-    background:
-        #0c1011;
-}
-
-
-#nullSpaceRoot .nullArchiveItem strong {
-
-    display:
-        block;
-
-    font-size:
-        9px;
-
-    letter-spacing:
-        2px;
-
-    color:
-        #d9e3e1;
-}
-
-
-#nullSpaceRoot .nullArchiveItem span {
-
-    display:
-        block;
-
-    margin-top:
-        12px;
-
-    font-size:
-        8px;
-
-    color:
-        #737e7c;
-}
-
-
-#nullSpaceRoot .nullArchiveItem small {
-
-    display:
-        block;
-
-    margin-top:
-        7px;
-
-    font-size:
-        6px;
-
-    color:
-        #4f5958;
-}
-
-
-#nullSpaceRoot .nullCorruptFile {
-
-    border-color:
-        rgba(130, 35, 39, .3);
-}
-
-
-/* ==========================================================
-   SIGNAL
-   ========================================================== */
-
-#nullSpaceRoot .nullSignalLog {
-
-    flex:
-        1;
-
-    min-height:
-        0;
-
-    overflow:
-        auto;
-
-    padding:
-        12px 14px;
-}
-
-
-#nullSpaceRoot .nullSignalMessage {
-
-    display:
-        grid;
-
-    grid-template-columns:
-        75px minmax(0, 1fr);
-
-    gap:
-        12px;
-
-    padding:
-        13px 5px;
-
-    border-bottom:
-        1px solid rgba(130, 140, 139, .08);
-}
-
-
-#nullSpaceRoot .signalTime {
-
-    font-size:
-        7px;
-
-    color:
-        #454e4d;
-
-    padding-top:
-        2px;
-}
-
-
-#nullSpaceRoot .nullSignalMessage strong {
-
-    display:
-        block;
-
-    font-size:
-        8px;
-
-    letter-spacing:
-        2px;
-
-    color:
-        #9ca8a6;
-}
-
-
-#nullSpaceRoot .nullSignalMessage p {
-
-    margin:
-        7px 0 0;
-
-    font-size:
-        9px;
-
-    line-height:
-        1.6;
-
-    color:
-        #c7d0ce;
-}
-
-
-#nullSpaceRoot .nullSignalMessage.null strong {
-
-    color:
-        #e1ebe8;
-}
-
-
-#nullSpaceRoot .nullUnknownMessage {
-
-    border-color:
-        rgba(150, 40, 43, .3);
-}
-
-
-#nullSpaceRoot .nullSignalInput {
-
-    flex:
-        0 0 50px;
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    gap:
-        8px;
-
-    padding:
-        0 10px;
-
-    border-top:
-        1px solid rgba(130, 140, 139, .14);
-}
-
-
-#nullSpaceRoot .nullSignalInput > span {
-
-    color:
-        #606b69;
-}
-
-
-#nullSpaceRoot .nullSignalInput input {
-
-    flex:
-        1;
-
-    min-width:
-        0;
-
-    border:
-        0;
-
-    outline:
-        none;
-
-    background:
-        transparent;
-
-    color:
-        #dbe5e3;
-
-    font-size:
-        9px;
-}
-
-
-#nullSpaceRoot .nullSignalInput button {
-
-    border:
-        1px solid rgba(150, 160, 159, .18);
-
-    padding:
-        6px 10px;
-
-    background:
-        #0b0e0e;
-
-    color:
-        #8e9997;
-
-    cursor:
-        pointer;
-}
-
-
-#nullSpaceRoot .nullSignalInput button:hover {
-
-    color:
-        #e0e9e7;
-
-    border-color:
-        rgba(210, 220, 218, .35);
-}
-
-
-/* ==========================================================
-   MEMORY
-   ========================================================== */
-
-#nullSpaceRoot .nullMemoryList {
-
-    overflow:
-        auto;
-
-    padding:
-        10px 15px;
-}
-
-
-#nullSpaceRoot .nullMemoryEntry {
-
-    display:
-        grid;
-
-    grid-template-columns:
-        75px 130px minmax(0, 1fr);
-
-    align-items:
-        center;
-
-    gap:
-        15px;
-
-    min-height:
-        56px;
-
-    border-bottom:
-        1px solid rgba(130, 140, 139, .09);
-}
-
-
-#nullSpaceRoot .nullMemoryEntry strong {
-
-    font-size:
-        8px;
-
-    color:
-        #596361;
-}
-
-
-#nullSpaceRoot .nullMemoryEntry span {
-
-    font-size:
-        8px;
-
-    color:
-        #aeb9b7;
-
-    letter-spacing:
-        1px;
-}
-
-
-#nullSpaceRoot .nullMemoryEntry small {
-
-    font-size:
-        7px;
-
-    color:
-        #596361;
-}
-
-
-#nullSpaceRoot .nullMemoryEntry.memoryActive {
-
-    background:
-        rgba(200, 210, 208, .035);
-}
-
-
-#nullSpaceRoot .nullMemoryCorrupt {
-
-    color:
-        #777;
-}
-
-
-/* ==========================================================
-   CONSOLE
-   ========================================================== */
-
-#nullSpaceRoot #nullWindowConsole {
-
-    background:
-        #09070b;
-}
-
-
-#nullSpaceRoot .consoleHeader {
-
-    border-bottom-color:
-        rgba(125, 104, 150, .25);
-}
-
-
-#nullSpaceRoot .nullConsoleOutput {
-
-    flex:
-        1;
-
-    min-height:
-        0;
-
-    padding:
-        18px;
-
-    overflow:
-        auto;
-
-    white-space:
-        pre-wrap;
-
-    color:
-        #b9b1c6;
-
-    font-size:
-        9px;
-
-    line-height:
-        1.8;
-
-    background:
-        #08060a;
-}
-
-
-#nullSpaceRoot .nullConsoleInput {
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    gap:
-        9px;
-
-    min-height:
-        46px;
-
-    padding:
-        0 15px;
-
-    border-top:
-        1px solid rgba(130, 110, 150, .2);
-}
-
-
-#nullSpaceRoot .nullConsoleInput > span {
-
-    color:
-        #76627f;
-}
-
-
-#nullSpaceRoot .nullConsoleInput input {
-
-    flex:
-        1;
-
-    min-width:
-        0;
-
-    border:
-        0;
-
-    outline:
-        none;
-
-    background:
-        transparent;
-
-    color:
-        #d8cedf;
-
-    font-size:
-        9px;
-}
-
-
-#nullSpaceRoot .nullConsoleHints {
-
-    display:
-        flex;
-
-    flex-wrap:
-        wrap;
-
-    gap:
-        8px;
-
-    padding:
-        9px 15px;
-
-    border-top:
-        1px solid rgba(130, 110, 150, .1);
-}
-
-
-#nullSpaceRoot .nullConsoleHints span {
-
-    padding:
-        4px 7px;
-
-    border:
-        1px solid rgba(130, 110, 150, .14);
-
-    color:
-        #70657a;
-
-    font-size:
-        7px;
-}
-
-
-/* ==========================================================
-   OBJECT DATABASE
-   ========================================================== */
-
-#nullSpaceRoot .nullObjectGrid {
-
-    display:
-        grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(140px, 1fr)
-        );
-
-    gap:
-        10px;
-
-    overflow:
-        auto;
-
-    padding:
-        15px;
-}
-
-
-#nullSpaceRoot .nullObject {
-
-    position:
-        relative;
-
-    min-height:
-        130px;
-
-    display:
-        flex;
-
-    flex-direction:
-        column;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
-
-    gap:
-        8px;
-
-    border:
-        1px solid rgba(140, 150, 149, .14);
-
-    background:
-        #080b0c;
-
-    color:
-        #aeb8b6;
-
-    cursor:
-        pointer;
-}
-
-
-#nullSpaceRoot .nullObject:hover {
-
-    background:
-        #0c1011;
-
-    border-color:
-        rgba(205, 215, 213, .3);
-}
-
-
-#nullSpaceRoot .nullObject strong {
-
-    font-size:
-        8px;
-
-    letter-spacing:
-        2px;
-}
-
-
-#nullSpaceRoot .nullObject small {
-
-    font-size:
-        6px;
-
-    color:
-        #535e5c;
-}
-
-
-/* OBJECT GLYPHS */
-
-#nullSpaceRoot .objectGlyph {
-
-    position:
-        relative;
-
-    width:
-        43px;
-
-    height:
-        43px;
-
-    border:
-        1px solid #424949;
-}
-
-
-/* MIRROR */
-
-#nullSpaceRoot .mirrorGlyph {
-
-    transform:
-        skewY(-12deg);
-}
-
-
-#nullSpaceRoot .mirrorGlyph::after {
-
-    content:
-        "";
-
-    position:
-        absolute;
-
-    left:
-        8px;
-
-    top:
-        7px;
-
-    width:
-        25px;
-
-    height:
-        25px;
-
-    border:
-        1px solid #697271;
-}
-
-
-/* CHAIR */
-
-#nullSpaceRoot .chairGlyph {
-
-    border:
-        0;
-}
-
-
-#nullSpaceRoot .chairGlyph::before {
-
-    content:
-        "";
-
-    position:
-        absolute;
-
-    left:
-        8px;
-
-    top:
-        7px;
-
-    width:
-        27px;
-
-    height:
-        16px;
-
-    border:
-        1px solid #59615f;
-}
-
-
-#nullSpaceRoot .chairGlyph::after {
-
-    content:
-        "";
-
-    position:
-        absolute;
-
-    left:
-        12px;
-
-    top:
-        23px;
-
-    width:
-        20px;
-
-    height:
-        15px;
-
-    border-left:
-        1px solid #59615f;
-
-    border-right:
-        1px solid #59615f;
-}
-
-
-/* DOOR */
-
-#nullSpaceRoot .doorGlyph {
-
-    width:
-        29px;
-
-    border:
-        2px solid #59615f;
-
-    border-bottom:
-        0;
-}
-
-
-/* SIGNAL */
-
-#nullSpaceRoot .signalGlyph::after {
-
-    content:
-        ")))";
-
-    position:
-        absolute;
-
-    right:
-        -17px;
-
-    top:
-        11px;
-
-    color:
-        #727c7a;
-
-    font-size:
-        10px;
-}
-
-
-/* PLAYER */
-
-#nullSpaceRoot .playerGlyph {
-
-    border:
-        0;
-}
-
-
-#nullSpaceRoot .playerGlyph::before {
-
-    content:
-        "";
-
-    position:
-        absolute;
-
-    left:
-        13px;
-
-    top:
-        4px;
-
-    width:
-        15px;
-
-    height:
-        15px;
-
-    border:
-        1px solid #697371;
-
-    border-radius:
-        50%;
-}
-
-
-#nullSpaceRoot .playerGlyph::after {
-
-    content:
-        "";
-
-    position:
-        absolute;
-
-    left:
-        7px;
-
-    bottom:
-        3px;
-
-    width:
-        28px;
-
-    height:
-        20px;
-
-    border:
-        1px solid #697371;
-
-}
-
-
-/* NULL */
-
-#nullSpaceRoot .nullGlyph {
-
-    border:
-        1px solid #050505;
-
-    background:
-        #000;
-
-    box-shadow:
-        0 0 20px #000;
-}
-
-
-#nullSpaceRoot .nullImpossibleObject {
-
-    border-color:
-        rgba(100, 25, 28, .3);
-}
-
-
-#nullSpaceRoot .nullImpossibleObject:hover {
-
-    border-color:
-        rgba(180, 40, 44, .55);
-}
-
-
-/* ==========================================================
-   ROOM WINDOW
-   ========================================================== */
-
-#nullSpaceRoot .nullRoom {
-
-    flex:
-        1;
-
-    min-height:
-        0;
-
-    padding:
-        18px;
-
-    overflow:
-        hidden;
-}
-
-
-#nullSpaceRoot .roomPerspective {
-
-    position:
-        relative;
-
-    width:
-        100%;
-
-    height:
-        100%;
-
-    overflow:
-        hidden;
-
-    background:
-        #050707;
-
-    border:
-        1px solid rgba(130, 140, 139, .14);
-}
-
-
-#nullSpaceRoot .roomBackWall {
-
-    position:
-        absolute;
-
-    inset:
-        7% 9% 30%;
-
-    background:
-        #0c0f10;
-
-    border:
-        1px solid #202526;
-}
-
-
-#nullSpaceRoot .roomFloor {
-
-    position:
-        absolute;
-
-    left:
-        3%;
-
-    right:
-        3%;
-
-    bottom:
-        -18%;
-
-    height:
-        50%;
-
-    background:
-        #090c0d;
-
-    transform:
-        perspective(500px)
-        rotateX(58deg);
-
-    border-top:
-        1px solid #272c2d;
-}
-
-
-#nullSpaceRoot .roomCeiling {
-
-    position:
-        absolute;
-
-    left:
-        3%;
-
-    right:
-        3%;
-
-    top:
-        -25%;
-
-    height:
-        35%;
-
-    background:
-        #090c0d;
-
-    transform:
-        perspective(500px)
-        rotateX(-58deg);
-}
-
-
-#nullSpaceRoot .roomPillar {
-
-    position:
-        absolute;
-
-    bottom:
-        29%;
-
-    width:
-        28px;
-
-    height:
-        55%;
-
-    background:
-        #171b1c;
-
-    border:
-        1px solid #343a3b;
-}
-
-
-#nullSpaceRoot .roomPillarA {
-    left:
-        17%;
-}
-
-
-#nullSpaceRoot .roomPillarB {
-    right:
-        17%;
-}
-
-
-#nullSpaceRoot .roomDoor {
-
-    position:
-        absolute;
-
-    right:
-        31%;
-
-    bottom:
-        29%;
-
-    width:
-        72px;
-
-    height:
-        145px;
-
-    border:
-        1px solid #454b4c;
-
-    background:
-        #070a0b;
-}
-
-
-#nullSpaceRoot .roomDoor span {
-
-    position:
-        absolute;
-
-    inset:
-        8px;
-
-    border:
-        1px solid #202526;
-}
-
-
-#nullSpaceRoot .roomConsole {
-
-    position:
-        absolute;
-
-    left:
-        31%;
-
-    bottom:
-        29%;
-
-    width:
-        90px;
-
-    height:
-        70px;
-
-    border:
-        1px solid #444b4c;
-
-    background:
-        #161a1b;
-}
-
-
-#nullSpaceRoot .roomConsole span {
-
-    position:
-        absolute;
-
-    left:
-        15px;
-
-    right:
-        15px;
-
-    top:
-        9px;
-
-    height:
-        30px;
-
-    border:
-        1px solid #535b5b;
-
-    background:
-        #0b0e0f;
-}
-
-
-#nullSpaceRoot .roomLight {
-
-    position:
-        absolute;
-
-    left:
-        25%;
-
-    top:
-        13%;
-
-    width:
-        72px;
-
-    height:
-        8px;
-
-    background:
-        #d6e2e0;
-
-    box-shadow:
-        0 0 25px rgba(220, 240, 238, .17);
-}
-
-
-#nullSpaceRoot .roomText {
-
-    position:
-        absolute;
-
-    right:
-        8%;
-
-    bottom:
-        10%;
-
-    font-size:
-        8px;
-
-    line-height:
-        1.7;
-
-    color:
-        #535d5b;
-
-    letter-spacing:
-        1px;
-}
-
-
-/* ==========================================================
-   UNKNOWN
-   ========================================================== */
-
-#nullSpaceRoot .nullUnknownScreen {
-
-    position:
-        absolute;
-
-    inset:
-        0;
-
-    display:
-        flex;
-
-    flex-direction:
-        column;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
-
-    background:
-        #020303;
-}
-
-
-#nullSpaceRoot .unknownNumber {
-
-    position:
-        absolute;
-
-    left:
-        7%;
-
-    top:
-        6%;
-
-    font-size:
-        clamp(80px, 15vw, 240px);
-
-    color:
-        rgba(180, 190, 188, .025);
-
-    line-height:
-        1;
-}
-
-
-#nullSpaceRoot .unknownVoid {
-
-    width:
-        130px;
-
-    height:
-        130px;
-
-    background:
-        #000;
-
-    border:
-        1px solid #111;
-
-    box-shadow:
-        0 0 70px #000;
-}
-
-
-#nullSpaceRoot .unknownText {
-
-    margin-top:
-        28px;
-
-    display:
-        flex;
-
-    flex-direction:
-        column;
-
-    align-items:
-        center;
-
-    gap:
-        9px;
-
-    text-align:
-        center;
-}
-
-
-#nullSpaceRoot .unknownText strong {
-
-    font-size:
-        9px;
-
-    letter-spacing:
-        2px;
-
-    color:
-        #cbd5d3;
-}
-
-
-#nullSpaceRoot .unknownText span {
-
-    font-size:
-        7px;
-
-    color:
-        #626d6b;
 }
-
-
-#nullSpaceRoot .unknownText small {
-
-    font-size:
-        12px;
 
-    color:
-        #3e4746;
+#nullSpaceRoot .nullUnknownBig {
+    font-size: 100px;
+    opacity: .035;
 }
 
 
 /* ==========================================================
    TASKBAR
-   ========================================================== */
+========================================================== */
 
 #nullSpaceRoot .nullTaskbar {
+    height: 38px;
 
-    display:
-        grid;
+    flex-shrink: 0;
 
-    grid-template-columns:
-        190px minmax(0, 1fr) 90px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-    align-items:
-        center;
+    padding: 0 15px;
+
+    background:
+        rgba(3,4,5,.95);
 
     border-top:
-        1px solid rgba(130, 140, 139, .18);
+        1px solid rgba(255,255,255,.07);
 
-    background:
-        rgba(5, 7, 7, .94);
+    font-size: 8px;
+
+    letter-spacing: 1px;
 }
 
-
-#nullSpaceRoot .nullTaskIdentity {
-
-    height:
-        100%;
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    gap:
-        8px;
-
-    padding:
-        0 14px;
-
-    border-right:
-        1px solid rgba(130, 140, 139, .14);
+#nullSpaceRoot #nullTaskMessage {
+    opacity: .45;
 }
-
-
-#nullSpaceRoot .nullTaskIdentity span {
-
-    font-size:
-        8px;
-
-    color:
-        #7c8785;
-
-    letter-spacing:
-        2px;
-}
-
-
-#nullSpaceRoot .nullTaskIdentity strong {
-
-    font-size:
-        7px;
-
-    font-weight:
-        normal;
-
-    color:
-        #4c5655;
-}
-
-
-#nullSpaceRoot .nullTaskMessage {
-
-    padding:
-        0 15px;
-
-    font-size:
-        7px;
-
-    color:
-        #737e7c;
-
-    letter-spacing:
-        1px;
-}
-
-
-#nullSpaceRoot .nullTaskMessage.taskPulse {
-
-    animation:
-        taskPulse
-        .35s
-        ease-out;
-}
-
-
-@keyframes taskPulse {
-
-    0% {
-        opacity:
-            .3;
-    }
-
-    50% {
-        opacity:
-            1;
-    }
-
-    100% {
-        opacity:
-            1;
-    }
-}
-
 
 #nullSpaceRoot #nullReturnButton {
+    border: 0;
 
-    height:
-        100%;
+    background: transparent;
 
-    border:
-        0;
+    color: #888;
 
-    border-left:
-        1px solid rgba(130, 140, 139, .14);
+    font:
+        inherit;
 
-    background:
-        transparent;
-
-    color:
-        #687371;
-
-    font-size:
-        7px;
-
-    letter-spacing:
-        2px;
-
-    cursor:
-        pointer;
+    cursor: pointer;
 }
-
 
 #nullSpaceRoot #nullReturnButton:hover {
-
-    color:
-        #e0e9e7;
-
-    background:
-        rgba(220, 230, 228, .035);
+    color: #fff;
 }
 
 
 /* ==========================================================
-   MOON
-   ========================================================== */
+   ENTRY
+========================================================== */
 
-#nullSpaceRoot .nullMoonVisual {
-
-    display:
-        none;
-
-    position:
-        absolute;
-
-    z-index:
-        2;
-
-    width:
-        300px;
-
-    height:
-        300px;
-
-    right:
-        7%;
-
-    top:
-        8%;
-
-    pointer-events:
-        none;
-}
-
-
-/* ==========================================================
-   ENTER ANIMATION
-   ========================================================== */
-
-#nullSpaceRoot .nullSpace.nullSpaceEntering {
-
+#nullSpaceRoot .nullSpaceEntering {
     animation:
-        nullEntry
-        1.8s
-        ease-out;
+        nullEntry 1.8s steps(8);
 }
-
 
 @keyframes nullEntry {
-
     0% {
-        opacity:
-            0;
-
         filter:
-            brightness(0);
-    }
-
-    15% {
-        opacity:
-            .3;
-    }
-
-    35% {
-        opacity:
-            1;
-
-        filter:
-            brightness(.55);
-    }
-
-    50% {
-        opacity:
-            .65;
-    }
-
-    62% {
-        opacity:
-            1;
-    }
-
-    100% {
-        opacity:
-            1;
-
-        filter:
-            brightness(1);
-    }
-}
-
-
-/* ==========================================================
-   GLOBAL ANOMALY EVENTS
-   ========================================================== */
-
-#nullSpaceRoot.nullBlackBlockEvent {
-
-    animation:
-        blackBlockEvent
-        .7s
-        steps(2, end);
-}
-
-
-@keyframes blackBlockEvent {
-
-    0%,
-    100% {
-        filter:
-            none;
+            brightness(0)
+            contrast(2);
+        transform:
+            scale(1.02);
     }
 
     30% {
         filter:
-            brightness(.15);
+            brightness(1.3)
+            contrast(1.5);
     }
 
     55% {
         filter:
-            brightness(1.6);
+            brightness(.4)
+            contrast(2);
     }
-}
 
-
-#nullSpaceRoot.nullRoom404Event {
-
-    animation:
-        room404Event
-        .9s
-        steps(3, end);
-}
-
-
-@keyframes room404Event {
-
-    0%,
     100% {
-        transform:
-            none;
-    }
-
-    20% {
-        transform:
-            translateX(-2px);
-    }
-
-    45% {
-        transform:
-            translateX(3px);
-    }
-
-    65% {
-        transform:
-            translateX(-1px);
+        filter: none;
+        transform: scale(1);
     }
 }
 
 
 /* ==========================================================
-   ROOM STATES
-   ========================================================== */
+   BAN SCREEN
+========================================================== */
 
-#nullSpaceRoot .nullVoidEnvironment.room404 {
+#nullSpaceRoot .nullBanScreen {
+    position: absolute;
+    inset: 0;
 
-    background:
-        #070304;
-}
-
-
-#nullSpaceRoot .nullVoidEnvironment.room404
-.nullWorldCode {
-
-    color:
-        rgba(170, 35, 40, .14);
-}
-
-
-#nullSpaceRoot .nullVoidEnvironment.roomNull {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     background:
-        #000;
+        #010101;
+
+    color: #ddd;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    overflow: hidden;
 }
 
+#nullSpaceRoot .nullBanNoise {
+    position: absolute;
+    inset: 0;
 
-#nullSpaceRoot .nullVoidEnvironment.roomNull
-.nullVoidBackWall {
+    opacity: .08;
 
+    background:
+        repeating-linear-gradient(
+            0deg,
+            #fff 0 1px,
+            transparent 1px 4px
+        );
+
+    animation:
+        banNoise .12s infinite;
+}
+
+@keyframes banNoise {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(5px);
+    }
+}
+
+#nullSpaceRoot .nullBanBox {
+    position: relative;
+
+    width: min(520px, 80vw);
+
+    padding: 45px;
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    background:
+        rgba(5,5,6,.92);
+
+    text-align: center;
+
+    box-shadow:
+        0 0 100px rgba(0,0,0,.9);
+}
+
+#nullSpaceRoot .nullBanTitle {
+    font-size: 32px;
+    letter-spacing: 12px;
+
+    margin-bottom: 25px;
+}
+
+#nullSpaceRoot .nullBanLine {
+    font-size: 10px;
+    opacity: .45;
+}
+
+#nullSpaceRoot .nullBanReason {
+    margin-top: 18px;
+
+    font-size: 11px;
+    letter-spacing: 2px;
+}
+
+#nullSpaceRoot .nullBanCode {
+    margin-top: 30px;
+
+    font-size: 9px;
+    opacity: .3;
+}
+
+#nullSpaceRoot #nullBanReturn {
+    margin-top: 35px;
+
+    padding: 10px 30px;
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    background:
+        transparent;
+
+    color: #aaa;
+
+    font:
+        inherit;
+
+    cursor: pointer;
+}
+
+#nullSpaceRoot #nullBanReturn:hover {
+    color: #fff;
     border-color:
-        #050505;
-
-    background:
-        #000;
+        rgba(255,255,255,.3);
 }
 
 
 /* ==========================================================
    RESPONSIVE
-   ========================================================== */
+========================================================== */
 
-@media (max-width: 900px) {
+@media (max-width: 800px) {
 
-    #nullSpaceRoot .nullInterface {
-
-        inset:
-            2% 2% 2% 2%;
+    #nullSpaceRoot .nullNavigation {
+        width: 150px;
     }
-
-
-    #nullSpaceRoot .nullWorkspace {
-
-        grid-template-columns:
-            145px minmax(0, 1fr);
-    }
-
-
-    #nullSpaceRoot .nullTaskbar {
-
-        grid-template-columns:
-            145px minmax(0, 1fr) 75px;
-    }
-
-
-    #nullSpaceRoot .nullVoidPillar {
-
-        width:
-            36px;
-    }
-
-
-    #nullSpaceRoot .nullWorldIt,
-    #nullSpaceRoot .nullWorldDisruption {
-
-        display:
-            none;
-    }
-}
-
-
-@media (max-width: 650px) {
-
-    #nullSpaceRoot .nullTopBar {
-
-        padding:
-            0 10px;
-    }
-
-
-    #nullSpaceRoot .nullCoordinates {
-
-        display:
-            none;
-    }
-
-
-    #nullSpaceRoot .nullWorkspace {
-
-        grid-template-columns:
-            105px minmax(0, 1fr);
-    }
-
-
-    #nullSpaceRoot .nullTaskbar {
-
-        grid-template-columns:
-            105px minmax(0, 1fr) 65px;
-    }
-
-
-    #nullSpaceRoot .nullNavigationHeader {
-
-        padding-left:
-            9px;
-    }
-
-
-    #nullSpaceRoot .nullNavButton {
-
-        padding:
-            0 9px;
-    }
-
-
-    #nullSpaceRoot .navName {
-
-        font-size:
-            7px;
-    }
-
 
     #nullSpaceRoot .nullInternalWindow {
-
-        inset:
-            10px;
+        inset: 14px;
     }
-
-
-    #nullSpaceRoot .nullTopStatus {
-
-        display:
-            none;
-    }
-
-
-    #nullSpaceRoot .nullWorldBlackBlock {
-
-        left:
-            8%;
-
-        width:
-            65px;
-
-        height:
-            65px;
-    }
-
 
     #nullSpaceRoot .nullWorldConsole {
+        left: 10%;
+    }
 
-        left:
-            54%;
+    #nullSpaceRoot .nullWorldBlackBlock {
+        right: 8%;
+    }
 
-        transform:
-            scale(.8);
-
-        transform-origin:
-            bottom center;
+    #nullSpaceRoot .nullWorldHello {
+        right: 5%;
     }
 }
 
+@media (max-width: 560px) {
 
-/* ==========================================================
-   REDUCED MOTION
-   ========================================================== */
+    #nullSpaceRoot .nullNavigation {
+        width: 105px;
+        padding: 10px 6px;
+    }
 
-@media (prefers-reduced-motion: reduce) {
+    #nullSpaceRoot .nullNavButton {
+        font-size: 8px;
+    }
 
-    #nullSpaceRoot *,
-    #nullSpaceRoot *::before,
-    #nullSpaceRoot *::after {
+    #nullSpaceRoot .nullNavigationBottom {
+        display: none;
+    }
 
-        animation-duration:
-            .001ms !important;
+    #nullSpaceRoot .nullBrandSubtitle {
+        display: none;
+    }
 
-        animation-iteration-count:
-            1 !important;
+    #nullSpaceRoot .nullWorldDoor {
+        transform:
+            translateX(-50%)
+            scale(.75);
+    }
 
-        transition-duration:
-            .001ms !important;
+    #nullSpaceRoot .nullVoidPillar {
+        transform: scale(.7);
+        transform-origin: bottom;
+    }
+
+    #nullSpaceRoot .nullEventText {
+        font-size: 15px;
+        letter-spacing: 3px;
     }
 }
