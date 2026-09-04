@@ -1,6 +1,7 @@
 /* ==========================================================
-   NULL SPACE
-   Completely separate OMEGA instance
+   NULL SPACE — BROKEN INSTANCE
+   Visual layer only.
+   Does NOT modify normal OMEGA.
 ========================================================== */
 
 #nullSpaceRoot {
@@ -9,12 +10,22 @@
     z-index: 999999;
     display: none;
     overflow: hidden;
-    background: #050505;
-    color: #d8d8d8;
+
+    background: #000;
+    color: #cfcfcf;
+
     font-family:
         "Courier New",
         Consolas,
         monospace;
+
+    user-select: none;
+
+    isolation: isolate;
+}
+
+#nullSpaceRoot:not(.hidden) {
+    display: block;
 }
 
 #nullSpaceRoot.hidden {
@@ -27,24 +38,23 @@
 ========================================================== */
 
 .nullSpace {
+
     position: relative;
+
     width: 100%;
     height: 100%;
-    min-width: 900px;
-    min-height: 600px;
+
     overflow: hidden;
+
     background:
-        radial-gradient(
-            circle at 50% 45%,
-            #111 0%,
-            #080808 38%,
-            #030303 100%
-        );
+        #000;
+
+    color: #bdbdbd;
 }
 
 
 /* ==========================================================
-   SUBTLE GRID
+   VERY WEAK SCREEN TEXTURE
 ========================================================== */
 
 .nullSpace::before {
@@ -57,27 +67,52 @@
 
     pointer-events: none;
 
-    opacity: .12;
+    z-index: 50;
 
-    background-image:
-        linear-gradient(
-            rgba(255,255,255,.025) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            90deg,
-            rgba(255,255,255,.025) 1px,
-            transparent 1px
+    opacity: .045;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            transparent 2px,
+            rgba(255,255,255,.025) 3px,
+            transparent 4px
         );
 
-    background-size:
-        32px 32px;
+    mix-blend-mode: screen;
+}
 
+
+/* ==========================================================
+   VERY WEAK VIGNETTE
+========================================================== */
+
+.nullSpace::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 49;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 40%,
+            rgba(0,0,0,.25) 72%,
+            rgba(0,0,0,.72) 100%
+        );
 }
 
 
 /* ==========================================================
    TOP BAR
+   NOT A NORMAL APP HEADER
 ========================================================== */
 
 .nullTopBar {
@@ -88,7 +123,7 @@
     left: 0;
     right: 0;
 
-    height: 58px;
+    height: 38px;
 
     display: flex;
 
@@ -96,21 +131,24 @@
 
     justify-content: space-between;
 
-    padding:
-        0 22px;
+    padding: 0 18px;
 
     box-sizing: border-box;
 
     border-bottom:
-        1px solid #222;
+        1px solid #111;
 
     background:
-        rgba(5,5,5,.94);
+        rgba(0,0,0,.82);
 
-    z-index: 10;
+    z-index: 100;
 
 }
 
+
+/* ==========================================================
+   BRAND
+========================================================== */
 
 .nullBrand {
 
@@ -118,15 +156,15 @@
 
     align-items: center;
 
-    gap: 12px;
+    gap: 9px;
 
 }
 
 
 .nullBrandMark {
 
-    width: 31px;
-    height: 31px;
+    width: 19px;
+    height: 19px;
 
     display: flex;
 
@@ -134,48 +172,54 @@
     justify-content: center;
 
     border:
-        1px solid #777;
+        1px solid #3a3a3a;
 
-    color: #eee;
+    color: #aaa;
 
-    font-size: 17px;
+    font-size: 9px;
+
+    line-height: 1;
 
 }
 
 
 .nullBrandTitle {
 
-    font-size: 13px;
+    font-size: 10px;
 
     letter-spacing:
-        4px;
+        3px;
 
-    color: #ddd;
+    color: #aaa;
 
 }
 
 
 .nullBrandSubtitle {
 
-    margin-top: 3px;
+    margin-top: 1px;
 
-    font-size: 9px;
+    font-size: 7px;
 
     letter-spacing:
         2px;
 
-    color: #555;
+    color: #292929;
 
 }
 
+
+/* ==========================================================
+   STATUS
+========================================================== */
 
 .nullTopStatus {
 
     display: flex;
 
-    gap: 12px;
+    gap: 8px;
 
-    font-size: 9px;
+    font-size: 7px;
 
     letter-spacing:
         2px;
@@ -185,14 +229,14 @@
 
 .nullStatusLabel {
 
-    color: #555;
+    color: #292929;
 
 }
 
 
 .nullStatusValue {
 
-    color: #aaa;
+    color: #777;
 
 }
 
@@ -205,40 +249,43 @@
 
     position: absolute;
 
-    top: 58px;
-    bottom: 42px;
-
-    left: 0;
-    right: 0;
+    inset:
+        38px 0 28px 0;
 
     display: flex;
+
+    background:
+        #000;
 
 }
 
 
 /* ==========================================================
    NAVIGATION
+   INTENTIONALLY VERY THIN
 ========================================================== */
 
 .nullNavigation {
 
     position: relative;
 
-    width: 210px;
+    width: 145px;
 
     flex:
-        0 0 210px;
-
-    border-right:
-        1px solid #1c1c1c;
-
-    background:
-        rgba(3,3,3,.88);
+        0 0 145px;
 
     padding:
-        20px 12px;
+        18px 0;
 
     box-sizing: border-box;
+
+    border-right:
+        1px solid #101010;
+
+    background:
+        #000;
+
+    z-index: 20;
 
 }
 
@@ -246,46 +293,57 @@
 .nullNavTitle {
 
     padding:
-        0 9px 13px;
+        0 15px 13px;
 
-    font-size: 9px;
+    font-size: 7px;
 
     letter-spacing:
         3px;
 
-    color: #4d4d4d;
+    color: #292929;
 
 }
 
 
+/* ==========================================================
+   NAV BUTTON
+========================================================== */
+
 .nullNavButton {
+
+    position: relative;
 
     width: 100%;
 
-    height: 40px;
+    height: 32px;
 
     display: flex;
 
     align-items: center;
 
-    gap: 13px;
+    gap: 8px;
+
+    padding:
+        0 15px;
+
+    box-sizing: border-box;
 
     border: 0;
 
     border-bottom:
-        1px solid #151515;
+        1px solid #090909;
 
     background:
         transparent;
 
-    color: #777;
+    color: #454545;
 
     text-align: left;
 
     font-family:
         inherit;
 
-    font-size: 10px;
+    font-size: 8px;
 
     letter-spacing:
         1.5px;
@@ -293,17 +351,19 @@
     cursor: pointer;
 
     transition:
-        background .15s,
-        color .15s;
+        color .25s ease,
+        background .25s ease;
 
 }
 
 
 .nullNavButton span {
 
-    width: 25px;
+    width: 16px;
 
-    color: #3d3d3d;
+    color: #252525;
+
+    font-size: 7px;
 
 }
 
@@ -311,48 +371,103 @@
 .nullNavButton:hover {
 
     background:
-        #101010;
-
-    color: #eee;
-
-}
-
-
-.nullNavButton:hover span {
+        #050505;
 
     color: #aaa;
 
 }
 
 
-.nullUnknownButton {
+.nullNavButton:hover span {
 
-    margin-top: 3px;
+    color: #666;
 
 }
 
+
+/* ==========================================================
+   ACTIVE-LIKE EFFECT
+========================================================== */
+
+.nullNavButton:focus {
+
+    outline: none;
+
+}
+
+
+.nullNavButton:focus::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    top: 9px;
+
+    width: 2px;
+
+    height: 14px;
+
+    background:
+        #777;
+
+}
+
+
+/* ==========================================================
+   UNKNOWN
+========================================================== */
+
+.nullUnknownButton {
+
+    margin-top: 10px;
+
+    color: #555;
+
+}
+
+
+.nullUnknownButton:hover {
+
+    color: #d0d0d0;
+
+}
+
+
+/* ==========================================================
+   DIVIDER
+========================================================== */
 
 .nullNavDivider {
 
-    height: 35px;
+    height: 45px;
 
 }
 
+
+/* ==========================================================
+   NAV BOTTOM
+========================================================== */
 
 .nullNavigationBottom {
 
     position: absolute;
 
-    left: 21px;
-    right: 21px;
-    bottom: 18px;
+    left: 15px;
+    right: 15px;
 
-    font-size: 8px;
+    bottom: 14px;
+
+    font-size: 6px;
 
     letter-spacing:
         2px;
 
-    color: #363636;
+    line-height: 1.8;
+
+    color: #181818;
 
 }
 
@@ -361,11 +476,12 @@
 
     display: block;
 
-    margin-top: 5px;
+    margin-top: 3px;
 
-    color: #555;
+    color: #303030;
 
-    font-weight: normal;
+    font-weight:
+        normal;
 
 }
 
@@ -382,11 +498,15 @@
 
     overflow: hidden;
 
+    background:
+        #000;
+
 }
 
 
 /* ==========================================================
    EMPTY STATE
+   THIS IS THE IMPORTANT PART
 ========================================================== */
 
 .nullEmptyState {
@@ -398,87 +518,194 @@
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     flex-direction: column;
 
+    background:
+        #000;
+
 }
 
+
+/* ==========================================================
+   THE ZERO
+========================================================== */
 
 .nullZero {
 
-    font-size: 110px;
+    position: relative;
 
-    font-weight: 300;
+    font-size: clamp(90px, 14vw, 210px);
 
-    line-height: 1;
+    font-weight:
+        normal;
 
-    color: #171717;
+    line-height: .8;
+
+    letter-spacing:
+        -12px;
+
+    color: #090909;
+
+    text-shadow:
+        0 0 25px rgba(255,255,255,.015);
 
 }
 
 
+/* tiny imperfection */
+
+.nullZero::after {
+
+    content: "0";
+
+    position: absolute;
+
+    left: 2px;
+    top: 1px;
+
+    color: #0d0d0d;
+
+    opacity: .7;
+
+}
+
+
+/* ==========================================================
+   EMPTY TITLE
+========================================================== */
+
 .nullEmptyTitle {
 
-    margin-top: 20px;
+    margin-top: 28px;
 
-    font-size: 11px;
+    font-size: 8px;
 
     letter-spacing:
-        5px;
+        7px;
 
-    color: #555;
+    color: #3a3a3a;
 
 }
 
 
 .nullEmptyText {
 
-    margin-top: 8px;
+    margin-top: 10px;
 
-    font-size: 8px;
+    font-size: 6px;
 
     letter-spacing:
         3px;
 
-    color: #303030;
+    color: #181818;
+
+}
+
+
+/* ==========================================================
+   RANDOM EMPTY-SPACE MARKER
+========================================================== */
+
+.nullEmptyState::before {
+
+    content: "+";
+
+    position: absolute;
+
+    top: 22%;
+
+    right: 24%;
+
+    font-size: 8px;
+
+    color: #191919;
+
+}
+
+
+.nullEmptyState::after {
+
+    content: ".";
+
+    position: absolute;
+
+    bottom: 18%;
+
+    left: 19%;
+
+    font-size: 14px;
+
+    color: #202020;
 
 }
 
 
 /* ==========================================================
    INTERNAL WINDOWS
+   NOT WINDOWS ANYMORE — OBSERVATION AREAS
 ========================================================== */
 
 .nullInternalWindow {
 
     position: absolute;
 
-    inset: 35px;
+    inset:
+        24px 26px;
 
     border:
-        1px solid #262626;
+        1px solid #151515;
 
     background:
-        rgba(4,4,4,.94);
+        rgba(0,0,0,.96);
 
     box-shadow:
-        0 25px 80px rgba(0,0,0,.7);
+        none;
+
+    overflow: hidden;
+
+}
+
+
+/* subtle broken border */
+
+.nullInternalWindow::after {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    right: 0;
+
+    width: 30px;
+    height: 1px;
+
+    background:
+        #555;
+
+    opacity: .25;
+
+    pointer-events: none;
 
 }
 
 
 .nullInternalWindow.hidden {
 
-    display: none;
+    display: none !important;
 
 }
 
 
+/* ==========================================================
+   WINDOW HEADER
+========================================================== */
+
 .nullWindowHeader {
 
-    height: 45px;
+    height: 34px;
 
     display: flex;
 
@@ -487,28 +714,28 @@
     justify-content: space-between;
 
     padding:
-        0 16px;
-
-    border-bottom:
-        1px solid #222;
+        0 12px;
 
     box-sizing: border-box;
 
-    font-size: 10px;
+    border-bottom:
+        1px solid #111;
+
+    font-size: 8px;
 
     letter-spacing:
         3px;
 
-    color: #bbb;
+    color: #777;
 
 }
 
 
 .nullWindowHeader span {
 
-    font-size: 8px;
+    font-size: 6px;
 
-    color: #444;
+    color: #272727;
 
     letter-spacing:
         2px;
@@ -522,12 +749,15 @@
 
 .nullArchive {
 
-    padding: 20px;
+    padding:
+        10px 0;
 
 }
 
 
 .nullArchiveItem {
+
+    position: relative;
 
     display: flex;
 
@@ -535,24 +765,33 @@
 
     justify-content: space-between;
 
+    min-height: 39px;
+
     padding:
-        15px 12px;
+        0 14px;
+
+    box-sizing: border-box;
 
     border-bottom:
-        1px solid #151515;
+        1px solid #090909;
 
-    font-size: 10px;
+    font-size: 8px;
 
-    color: #555;
+    color: #333;
+
+    transition:
+        background .2s,
+        color .2s;
 
 }
 
 
 .nullArchiveItem strong {
 
-    font-weight: normal;
+    font-weight:
+        normal;
 
-    color: #777;
+    color: #555;
 
 }
 
@@ -560,9 +799,23 @@
 .nullArchiveItem:hover {
 
     background:
-        #0b0b0b;
+        #050505;
 
     color: #aaa;
+
+}
+
+
+.nullArchiveItem:hover strong {
+
+    color: #aaa;
+
+}
+
+
+.nullArchiveItem.nullCorrupt {
+
+    color: #666;
 
 }
 
@@ -576,21 +829,23 @@
 
 /* ==========================================================
    CHAT
+   STILL EXISTS — JUST VISUALLY QUIET
 ========================================================== */
 
 .nullChatMessages {
 
     position: absolute;
 
-    top: 45px;
-    bottom: 58px;
+    top: 34px;
+    bottom: 45px;
 
     left: 0;
     right: 0;
 
     overflow-y: auto;
 
-    padding: 22px;
+    padding:
+        20px 18px;
 
     box-sizing: border-box;
 
@@ -599,15 +854,16 @@
 
 .nullMessage {
 
-    max-width: 80%;
+    max-width: 72%;
 
-    margin-bottom: 18px;
+    margin-bottom: 17px;
 
-    font-size: 11px;
+    font-size: 9px;
 
-    line-height: 1.7;
+    line-height:
+        1.8;
 
-    color: #888;
+    color: #5a5a5a;
 
 }
 
@@ -616,11 +872,11 @@
 
     display: inline-block;
 
-    width: 70px;
+    width: 60px;
 
-    color: #3e3e3e;
+    color: #242424;
 
-    font-size: 8px;
+    font-size: 6px;
 
     letter-spacing:
         2px;
@@ -630,24 +886,28 @@
 
 .nullSystem {
 
-    color: #555;
+    color: #353535;
 
 }
 
 
 .nullUnknownMessage {
 
-    color: #bbb;
+    color: #b0b0b0;
 
 }
 
 
 .nullUnknownMessage span {
 
-    color: #aaa;
+    color: #777;
 
 }
 
+
+/* ==========================================================
+   CHAT INPUT
+========================================================== */
 
 .nullChatInput {
 
@@ -657,12 +917,15 @@
     right: 0;
     bottom: 0;
 
-    height: 58px;
+    height: 45px;
 
     display: flex;
 
     border-top:
-        1px solid #222;
+        1px solid #111;
+
+    background:
+        #000;
 
 }
 
@@ -676,37 +939,46 @@
     outline: 0;
 
     background:
-        #070707;
+        transparent;
 
-    color: #ddd;
+    color: #aaa;
 
     padding:
-        0 18px;
+        0 14px;
 
     font-family:
         inherit;
 
-    font-size: 11px;
+    font-size: 8px;
+
+}
+
+
+.nullChatInput input::placeholder {
+
+    color: #222;
 
 }
 
 
 .nullChatInput button {
 
-    width: 60px;
+    width: 48px;
 
     border: 0;
 
     border-left:
-        1px solid #222;
+        1px solid #111;
 
     background:
-        #0b0b0b;
+        transparent;
 
-    color: #777;
+    color: #333;
 
     font-family:
         inherit;
+
+    font-size: 7px;
 
     cursor: pointer;
 
@@ -715,10 +987,10 @@
 
 .nullChatInput button:hover {
 
-    color: white;
+    color: #aaa;
 
     background:
-        #151515;
+        #050505;
 
 }
 
@@ -729,7 +1001,8 @@
 
 .nullMemoryContent {
 
-    padding: 20px;
+    padding:
+        8px 0;
 
 }
 
@@ -740,31 +1013,45 @@
 
     justify-content: space-between;
 
+    gap: 30px;
+
+    min-height: 40px;
+
     padding:
-        16px 12px;
+        0 14px;
+
+    align-items: center;
 
     border-bottom:
-        1px solid #151515;
+        1px solid #090909;
 
-    font-size: 10px;
+    font-size: 8px;
 
-    color: #444;
+    color: #2d2d2d;
 
 }
 
 
 .nullMemoryLine b {
 
-    font-weight: normal;
+    font-weight:
+        normal;
 
-    color: #777;
+    color: #555;
+
+}
+
+
+.nullMemoryBroken {
+
+    color: #555;
 
 }
 
 
 .nullMemoryBroken b {
 
-    color: #aaa;
+    color: #999;
 
 }
 
@@ -777,30 +1064,32 @@
 
     position: absolute;
 
-    top: 45px;
+    top: 34px;
     left: 0;
     right: 0;
-    bottom: 55px;
+    bottom: 45px;
 
     margin: 0;
 
-    padding: 20px;
+    padding:
+        18px;
 
     box-sizing: border-box;
 
     overflow: auto;
 
-    color: #888;
-
     background:
-        #030303;
+        #000;
+
+    color: #555;
 
     font-family:
         inherit;
 
-    font-size: 10px;
+    font-size: 8px;
 
-    line-height: 1.8;
+    line-height:
+        1.9;
 
 }
 
@@ -813,23 +1102,25 @@
     right: 0;
     bottom: 0;
 
-    height: 55px;
+    height: 45px;
 
     display: flex;
 
     align-items: center;
 
-    gap: 10px;
+    gap: 7px;
 
     padding:
-        0 18px;
+        0 14px;
 
     border-top:
-        1px solid #222;
+        1px solid #111;
 
     box-sizing: border-box;
 
-    color: #555;
+    color: #333;
+
+    font-size: 8px;
 
 }
 
@@ -845,18 +1136,19 @@
     background:
         transparent;
 
-    color: #bbb;
+    color: #aaa;
 
     font-family:
         inherit;
 
-    font-size: 10px;
+    font-size: 8px;
 
 }
 
 
 /* ==========================================================
    OBJECTS
+   NO CARD UI
 ========================================================== */
 
 .nullObjectsGrid {
@@ -868,24 +1160,26 @@
 
     gap: 1px;
 
-    background:
-        #202020;
+    margin: 12px;
 
-    margin: 20px;
+    background:
+        #0b0b0b;
 
 }
 
 
 .nullObject {
 
-    min-height: 130px;
+    position: relative;
+
+    min-height: 125px;
 
     border: 0;
 
     background:
-        #070707;
+        #000;
 
-    color: #555;
+    color: #393939;
 
     font-family:
         inherit;
@@ -900,25 +1194,48 @@
 
     justify-content: flex-end;
 
-    padding: 18px;
+    padding:
+        14px;
 
-    font-size: 10px;
+    font-size: 8px;
 
     letter-spacing:
         2px;
 
     text-align: left;
 
+    transition:
+        background .3s,
+        color .3s;
+
+}
+
+
+.nullObject::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 12px;
+    right: 12px;
+
+    width: 3px;
+    height: 3px;
+
+    background:
+        #171717;
+
 }
 
 
 .nullObject span {
 
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 
-    font-size: 8px;
+    font-size: 6px;
 
-    color: #333;
+    color: #202020;
 
 }
 
@@ -926,7 +1243,7 @@
 .nullObject:hover {
 
     background:
-        #111;
+        #050505;
 
     color: #aaa;
 
@@ -935,21 +1252,47 @@
 
 .nullObject:hover span {
 
+    color: #555;
+
+}
+
+
+.nullObject:hover::before {
+
+    background:
+        #555;
+
+}
+
+
+/* ==========================================================
+   IMPOSSIBLE OBJECT
+========================================================== */
+
+.nullImpossibleObject {
+
     color: #666;
 
 }
 
 
-.nullImpossibleObject {
+.nullImpossibleObject::before {
 
-    color: #777;
+    width: 5px;
+    height: 5px;
+
+    background:
+        #5a0000;
+
+    box-shadow:
+        0 0 8px rgba(150,0,0,.25);
 
 }
 
 
 .nullImpossibleObject:hover {
 
-    color: white;
+    color: #eee;
 
 }
 
@@ -962,32 +1305,75 @@
 
     position: absolute;
 
-    inset: 45px 0 0;
+    inset:
+        34px 0 0;
 
     overflow: hidden;
 
     background:
-        #060606;
+        #000;
 
 }
 
+
+/* ==========================================================
+   ROOM WALL
+========================================================== */
 
 .nullRoomWall {
 
     position: absolute;
 
-    inset: 0 0 90px;
+    inset:
+        0 0 70px;
 
     background:
-        linear-gradient(
-            90deg,
-            #070707,
-            #0c0c0c 50%,
-            #070707
-        );
+        #020202;
 
 }
 
+
+/* almost invisible perspective */
+
+.nullRoomWall::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 0;
+    bottom: 0;
+
+    width: 1px;
+
+    background:
+        #080808;
+
+}
+
+
+.nullRoomWall::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 12%;
+    right: 12%;
+    top: 44%;
+
+    height: 1px;
+
+    background:
+        #080808;
+
+}
+
+
+/* ==========================================================
+   ROOM FLOOR
+========================================================== */
 
 .nullRoomFloor {
 
@@ -995,50 +1381,53 @@
 
     left: 0;
     right: 0;
+
     bottom: 0;
 
-    height: 90px;
+    height: 70px;
 
     border-top:
-        1px solid #151515;
+        1px solid #0b0b0b;
 
     background:
-        #050505;
+        #010101;
 
 }
 
+
+/* ==========================================================
+   ROOM DOOR
+========================================================== */
 
 .nullRoomDoor {
 
     position: absolute;
 
     left: 50%;
-
     top: 50%;
 
-    width: 90px;
-
-    height: 180px;
+    width: 64px;
+    height: 150px;
 
     transform:
         translate(-50%, -50%);
 
     border:
-        1px solid #242424;
+        1px solid #151515;
 
     display: flex;
 
     align-items: flex-end;
-
     justify-content: center;
 
-    padding-bottom: 12px;
+    padding-bottom:
+        10px;
 
     box-sizing: border-box;
 
-    color: #303030;
+    color: #252525;
 
-    font-size: 7px;
+    font-size: 6px;
 
     letter-spacing:
         3px;
@@ -1046,35 +1435,58 @@
 }
 
 
+.nullRoomDoor::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 50%;
+    right: 6px;
+
+    width: 2px;
+    height: 2px;
+
+    background:
+        #333;
+
+}
+
+
+/* ==========================================================
+   ROOM OBJECT
+========================================================== */
+
 .nullRoomObject {
 
     position: absolute;
 
     left: 17%;
 
-    bottom: 90px;
+    bottom: 70px;
 
-    width: 90px;
-
-    height: 90px;
+    width: 80px;
+    height: 80px;
 
 }
 
+
+/* ==========================================================
+   CHAIR
+========================================================== */
 
 .nullChair {
 
     position: absolute;
 
     bottom: 0;
-
     left: 25px;
 
-    width: 40px;
-
-    height: 50px;
+    width: 34px;
+    height: 43px;
 
     border:
-        1px solid #202020;
+        1px solid #171717;
 
 }
 
@@ -1087,33 +1499,37 @@
 
     left: 5px;
 
-    bottom: 48px;
+    bottom: 41px;
 
-    width: 28px;
-
-    height: 35px;
+    width: 22px;
+    height: 30px;
 
     border:
-        1px solid #202020;
+        1px solid #171717;
 
 }
 
+
+/* ==========================================================
+   ROOM TEXT
+========================================================== */
 
 .nullRoomText {
 
     position: absolute;
 
-    right: 8%;
+    right: 7%;
 
-    bottom: 110px;
+    bottom: 87px;
 
-    width: 180px;
+    width: 170px;
 
-    color: #252525;
+    color: #1c1c1c;
 
-    font-size: 8px;
+    font-size: 6px;
 
-    line-height: 2;
+    line-height:
+        2.5;
 
     letter-spacing:
         2px;
@@ -1129,41 +1545,63 @@
 
     position: absolute;
 
-    inset: 45px 0 0;
+    inset:
+        34px 0 0;
 
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     flex-direction: column;
 
+    background:
+        #000;
+
 }
 
+
+/* ==========================================================
+   UNKNOWN NUMBER
+========================================================== */
 
 .nullUnknownNumber {
 
-    font-size: 150px;
+    font-size:
+        clamp(110px, 18vw, 260px);
 
-    color: #0d0d0d;
+    font-weight:
+        normal;
+
+    color:
+        #060606;
+
+    line-height:
+        .8;
+
+    letter-spacing:
+        -14px;
 
 }
 
+
+/* ==========================================================
+   UNKNOWN TEXT
+========================================================== */
 
 .nullUnknownText {
 
     position: absolute;
 
-    bottom: 50px;
+    bottom: 32px;
+    left: 32px;
 
-    left: 50px;
+    color: #252525;
 
-    color: #3c3c3c;
+    font-size: 7px;
 
-    font-size: 9px;
-
-    line-height: 2.4;
+    line-height:
+        2.7;
 
 }
 
@@ -1187,7 +1625,7 @@
     right: 0;
     bottom: 0;
 
-    height: 42px;
+    height: 28px;
 
     display: flex;
 
@@ -1196,19 +1634,19 @@
     justify-content: space-between;
 
     padding:
-        0 15px;
+        0 12px;
 
     box-sizing: border-box;
 
     border-top:
-        1px solid #1d1d1d;
+        1px solid #101010;
 
     background:
-        #040404;
+        #000;
 
-    z-index: 20;
+    z-index: 100;
 
-    font-size: 8px;
+    font-size: 6px;
 
     letter-spacing:
         2px;
@@ -1220,9 +1658,9 @@
 
     display: flex;
 
-    gap: 9px;
+    gap: 8px;
 
-    color: #444;
+    color: #242424;
 
 }
 
@@ -1236,7 +1674,7 @@
     transform:
         translateX(-50%);
 
-    color: #555;
+    color: #282828;
 
 }
 
@@ -1248,12 +1686,12 @@
     background:
         transparent;
 
-    color: #555;
+    color: #333;
 
     font-family:
         inherit;
 
-    font-size: 8px;
+    font-size: 6px;
 
     letter-spacing:
         2px;
@@ -1265,45 +1703,362 @@
 
 .nullReturnButton:hover {
 
-    color: white;
+    color: #aaa;
 
 }
 
 
 /* ==========================================================
    BACKGROUND CODE
+   ALMOST INVISIBLE
 ========================================================== */
 
 .nullBackgroundCode {
 
     position: absolute;
 
-    inset: 0;
+    inset:
+        -20%;
 
     pointer-events: none;
 
     overflow: hidden;
 
-    opacity: .035;
+    opacity: .018;
 
-    font-size: 80px;
+    font-size:
+        72px;
 
-    color: #fff;
+    color:
+        #fff;
 
-    line-height: 1.8;
+    line-height:
+        1.7;
 
-    word-break: break-all;
+    word-break:
+        break-all;
 
     transform:
-        rotate(-8deg)
-        scale(1.3);
+        rotate(-7deg)
+        scale(1.2);
+
+    z-index: 1;
 
 }
 
 
 .nullBackgroundCode span {
 
-    margin-right: 90px;
+    margin-right:
+        70px;
+
+}
+
+
+/* ==========================================================
+   EYE / ANOMALY PREPARATION
+   These classes can be used later by JS.
+========================================================== */
+
+.nullEye {
+
+    position: absolute;
+
+    width: 7px;
+    height: 7px;
+
+    border-radius:
+        50%;
+
+    background:
+        #b00000;
+
+    box-shadow:
+        0 0 7px rgba(180,0,0,.35);
+
+    pointer-events:
+        none;
+
+    opacity:
+        0;
+
+    transition:
+        opacity .5s ease;
+
+    z-index:
+        40;
+
+}
+
+
+.nullEye.visible {
+
+    opacity:
+        1;
+
+}
+
+
+.nullEye::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 2px;
+
+    border-radius:
+        50%;
+
+    background:
+        #000;
+
+}
+
+
+/* ==========================================================
+   MOON
+   VISUAL PLACEHOLDER
+========================================================== */
+
+.nullMoon {
+
+    position: absolute;
+
+    width:
+        min(34vw, 420px);
+
+    height:
+        min(34vw, 420px);
+
+    border-radius:
+        50%;
+
+    right:
+        7%;
+
+    top:
+        10%;
+
+    background:
+        #050505;
+
+    border:
+        1px solid #101010;
+
+    box-shadow:
+        0 0 60px rgba(255,255,255,.015);
+
+    opacity:
+        .5;
+
+    pointer-events:
+        none;
+
+    z-index:
+        2;
+
+}
+
+
+/* dark lunar irregularity */
+
+.nullMoon::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset:
+        10%;
+
+    border-radius:
+        50%;
+
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            #111 0 3%,
+            transparent 3.5%
+        ),
+        radial-gradient(
+            circle at 65% 63%,
+            #101010 0 6%,
+            transparent 6.5%
+        ),
+        radial-gradient(
+            circle at 28% 70%,
+            #0b0b0b 0 4%,
+            transparent 4.5%
+        );
+
+    opacity:
+        .7;
+
+}
+
+
+/* ==========================================================
+   RED MOON STATE
+========================================================== */
+
+.nullMoon.nullMoonRed {
+
+    border-color:
+        #300000;
+
+    box-shadow:
+        0 0 80px rgba(100,0,0,.08);
+
+}
+
+
+.nullMoon.nullMoonRed::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 10px;
+    height: 10px;
+
+    left: 50%;
+    top: 45%;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius:
+        50%;
+
+    background:
+        #720000;
+
+    box-shadow:
+        0 0 15px rgba(160,0,0,.45);
+
+}
+
+
+/* ==========================================================
+   RED ANOMALY TEXT
+========================================================== */
+
+.nullRed {
+
+    color:
+        #7b0000 !important;
+
+}
+
+
+.nullError {
+
+    color:
+        #8a0000;
+
+    font-size:
+        7px;
+
+    letter-spacing:
+        2px;
+
+}
+
+
+.nullError::before {
+
+    content:
+        "ERR.";
+
+    color:
+        #350000;
+
+}
+
+
+/* ==========================================================
+   BROKEN TEXT
+========================================================== */
+
+.nullBrokenText {
+
+    position: relative;
+
+    color:
+        #777;
+
+}
+
+
+.nullBrokenText::before {
+
+    content:
+        attr(data-text);
+
+    position: absolute;
+
+    left:
+        1px;
+
+    top:
+        0;
+
+    color:
+        #1b1b1b;
+
+    opacity:
+        .8;
+
+}
+
+
+/* ==========================================================
+   VERY RARE FLICKER
+========================================================== */
+
+.nullFlicker {
+
+    animation:
+        nullRareFlicker
+        5s
+        steps(1,end)
+        infinite;
+
+}
+
+
+@keyframes nullRareFlicker {
+
+    0%,
+    93%,
+    100% {
+
+        opacity:
+            1;
+
+    }
+
+    94% {
+
+        opacity:
+            .35;
+
+    }
+
+    95% {
+
+        opacity:
+            1;
+
+    }
+
+    96% {
+
+        opacity:
+            .7;
+
+    }
 
 }
 
@@ -1316,8 +2071,8 @@
 
     animation:
         nullSpaceEntry
-        1.8s
-        ease
+        1.7s
+        steps(12, end)
         both;
 
 }
@@ -1327,37 +2082,51 @@
 
     0% {
 
-        opacity: 0;
+        opacity:
+            0;
 
         filter:
             brightness(0);
-
-        transform:
-            scale(1.02);
 
     }
 
     35% {
 
-        opacity: .4;
+        opacity:
+            .3;
+
+        filter:
+            brightness(.25);
 
     }
 
     60% {
 
-        opacity: .85;
+        opacity:
+            .75;
+
+        filter:
+            brightness(.65);
+
+    }
+
+    82% {
+
+        opacity:
+            .9;
+
+        filter:
+            brightness(.9);
 
     }
 
     100% {
 
-        opacity: 1;
+        opacity:
+            1;
 
         filter:
             brightness(1);
-
-        transform:
-            scale(1);
 
     }
 
@@ -1370,8 +2139,11 @@
 
 #nullSpaceRoot *::-webkit-scrollbar {
 
-    width: 6px;
-    height: 6px;
+    width:
+        3px;
+
+    height:
+        3px;
 
 }
 
@@ -1379,7 +2151,7 @@
 #nullSpaceRoot *::-webkit-scrollbar-track {
 
     background:
-        #050505;
+        #000;
 
 }
 
@@ -1387,7 +2159,7 @@
 #nullSpaceRoot *::-webkit-scrollbar-thumb {
 
     background:
-        #242424;
+        #171717;
 
 }
 
@@ -1395,7 +2167,7 @@
 #nullSpaceRoot *::-webkit-scrollbar-thumb:hover {
 
     background:
-        #444;
+        #333;
 
 }
 
@@ -1408,15 +2180,18 @@
 
     .nullNavigation {
 
-        width: 160px;
+        width:
+            110px;
 
-        flex-basis: 160px;
+        flex-basis:
+            110px;
 
     }
 
     .nullBrandSubtitle {
 
-        display: none;
+        display:
+            none;
 
     }
 
@@ -1424,6 +2199,59 @@
 
         grid-template-columns:
             repeat(2, 1fr);
+
+    }
+
+}
+
+
+@media(max-width:600px) {
+
+    .nullNavigation {
+
+        width:
+            80px;
+
+        flex-basis:
+            80px;
+
+    }
+
+    .nullNavButton {
+
+        padding:
+            0 8px;
+
+        font-size:
+            6px;
+
+    }
+
+    .nullNavButton span {
+
+        display:
+            none;
+
+    }
+
+    .nullNavTitle {
+
+        padding-left:
+            8px;
+
+    }
+
+    .nullTopStatus {
+
+        display:
+            none;
+
+    }
+
+    .nullObjectsGrid {
+
+        grid-template-columns:
+            1fr;
 
     }
 
