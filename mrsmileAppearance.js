@@ -5,6 +5,7 @@
 let manifestationRunning = false;
 let firstContactAppearanceCount = 0;
 let cursorController = null;
+let systemIntrusionController = null;
 
 
 /* ==========================================================
@@ -19,6 +20,8 @@ export async function triggerMrSmileManifestation() {
     manifestationRunning = true;
 
     const overlay = createManifestation();
+    systemIntrusionController =
+    createSystemIntrusionController(overlay);
 
     document.body.classList.add(
         "mrSmileInterfaceCollapse"
@@ -124,6 +127,8 @@ export async function showMrSmileFirstContactFace() {
             overlay.classList.add(
                 "phase-1"
             );
+           
+           systemIntrusionController.phase1();
 
             await sleep(2000);
 
@@ -137,6 +142,7 @@ export async function showMrSmileFirstContactFace() {
             overlay.classList.add(
                 "phase-2"
             );
+           systemIntrusionController.phase2();
 
             await sleep(25000);
 
@@ -150,6 +156,7 @@ export async function showMrSmileFirstContactFace() {
             overlay.classList.add(
                 "phase-3"
             );
+           systemIntrusionController.phase3();
 
             await sleep(25000);
 
@@ -164,6 +171,7 @@ export async function showMrSmileFirstContactFace() {
             overlay.classList.add(
                 "phase-4"
             );
+           systemIntrusionController.phase4();
 
             await sleep(20000);
 
@@ -179,6 +187,7 @@ export async function showMrSmileFirstContactFace() {
             overlay.classList.add(
                 "phase-5"
             );
+           systemIntrusionController.phase5();
 
             await sleep(20000);
 
@@ -195,6 +204,7 @@ export async function showMrSmileFirstContactFace() {
             overlay.classList.add(
                 "phase-cursor"
             );
+           systemIntrusionController.phaseCursor();
 
             cursorController =
                 createControlledCursor();
@@ -215,7 +225,8 @@ export async function showMrSmileFirstContactFace() {
              * где находится оператор.
              * =============================================
              */
-
+            destroyControlledCursor();
+            systemIntrusionController.phase6();
             overlay.classList.add(
                 "phase-6"
             );
@@ -235,6 +246,7 @@ export async function showMrSmileFirstContactFace() {
             overlay.classList.add(
                 "phase-7"
             );
+           systemIntrusionController.phase7();
 
             await sleep(15000);
 
@@ -248,7 +260,8 @@ export async function showMrSmileFirstContactFace() {
              * Остаётся один глаз.
              * =============================================
              */
-
+            systemIntrusionController.phaseSilence();
+           
             overlay.classList.add(
                 "phase-silence"
             );
@@ -263,7 +276,8 @@ export async function showMrSmileFirstContactFace() {
              * Лицо распадается.
              * =============================================
              */
-
+            systemIntrusionController.phaseFinal();
+           
             overlay.classList.add(
                 "phase-final"
             );
@@ -1035,6 +1049,421 @@ function createManifestation() {
 }
 
 
+/* ==========================================================
+   MR.SMILE — SYSTEM INTRUSION
+========================================================== */
+
+function createSystemIntrusionController(overlay) {
+
+    const activity =
+        document.createElement("div");
+
+    activity.className =
+        "mrSmileSystemActivity";
+
+    activity.innerHTML = `
+
+        <div class="mrSmileActivityLine"></div>
+
+        <div class="mrSmileActivityText">
+            <span class="activityLabel">
+                SYSTEM
+            </span>
+
+            <span class="activityValue">
+                NORMAL
+            </span>
+        </div>
+
+        <div class="mrSmileActivityText">
+            <span class="activityLabel">
+                REMOTE ACCESS
+            </span>
+
+            <span class="activityValue">
+                NONE
+            </span>
+        </div>
+
+        <div class="mrSmileActivityText">
+            <span class="activityLabel">
+                UNKNOWN PROCESS
+            </span>
+
+            <span class="activityValue">
+                0
+            </span>
+        </div>
+
+    `;
+
+    document.body.appendChild(
+        activity
+    );
+
+
+    function setStatus(
+        label,
+        value
+    ) {
+
+        const rows =
+            activity.querySelectorAll(
+                ".mrSmileActivityText"
+            );
+
+        rows.forEach(row => {
+
+            const labelElement =
+                row.querySelector(
+                    ".activityLabel"
+                );
+
+            const valueElement =
+                row.querySelector(
+                    ".activityValue"
+                );
+
+            if (
+                labelElement &&
+                valueElement &&
+                labelElement.textContent.trim()
+                    === label
+            ) {
+
+                valueElement.textContent =
+                    value;
+
+            }
+
+        });
+    }
+
+
+    function flash() {
+
+        activity.classList.remove(
+            "activityPulse"
+        );
+
+        void activity.offsetWidth;
+
+        activity.classList.add(
+            "activityPulse"
+        );
+    }
+
+
+    function message(text) {
+
+        typeSystemMessage(text);
+
+    }
+
+
+    return {
+
+        phase1() {
+
+            setStatus(
+                "REMOTE ACCESS",
+                "REQUEST"
+            );
+
+            setStatus(
+                "UNKNOWN PROCESS",
+                "1"
+            );
+
+            flash();
+
+            message(
+                "REMOTE ACCESS REQUESTED."
+            );
+
+        },
+
+
+        phase2() {
+
+            setStatus(
+                "REMOTE ACCESS",
+                "DENIED"
+            );
+
+            flash();
+
+            message(
+                "ACCESS REQUEST: DENIED."
+            );
+
+            setTimeout(() => {
+
+                setStatus(
+                    "REMOTE ACCESS",
+                    "ACCEPTED"
+                );
+
+                flash();
+
+                message(
+                    "ACCESS REQUEST: ACCEPTED."
+                );
+
+            }, 1800);
+
+        },
+
+
+        phase3() {
+
+            setStatus(
+                "UNKNOWN PROCESS",
+                "1"
+            );
+
+            flash();
+
+            message(
+                "UNKNOWN PROCESS DETECTED."
+            );
+
+            setTimeout(() => {
+
+                message(
+                    "PROCESS ORIGIN: UNKNOWN."
+                );
+
+            }, 1200);
+
+            setTimeout(() => {
+
+                message(
+                    "PROCESS PERMISSIONS: ELEVATED."
+                );
+
+            }, 2600);
+
+        },
+
+
+        phase4() {
+
+            setStatus(
+                "REMOTE ACCESS",
+                "ACTIVE"
+            );
+
+            flash();
+
+            message(
+                "REMOTE SESSION INITIALIZED."
+            );
+
+            setTimeout(() => {
+
+                message(
+                    "SECURITY CHANNEL: BYPASSED."
+                );
+
+            }, 1400);
+
+            setTimeout(() => {
+
+                message(
+                    "LOCAL AUTHORIZATION: IGNORED."
+                );
+
+            }, 2900);
+
+        },
+
+
+        phase5() {
+
+            flash();
+
+            message(
+                "SYSTEM CONTROL: PARTIAL."
+            );
+
+            setTimeout(() => {
+
+                message(
+                    "WINDOW CONTROL: REMOTE."
+                );
+
+            }, 1300);
+
+            setTimeout(() => {
+
+                message(
+                    "INPUT MONITORING: ACTIVE."
+                );
+
+            }, 2700);
+
+        },
+
+
+        phaseCursor() {
+
+            setStatus(
+                "REMOTE ACCESS",
+                "FULL"
+            );
+
+            flash();
+
+            message(
+                "CURSOR CONTROL REQUESTED."
+            );
+
+            setTimeout(() => {
+
+                message(
+                    "CURSOR CONTROL: TRANSFERRED."
+                );
+
+            }, 1800);
+
+        },
+
+
+        phase6() {
+
+            flash();
+
+            message(
+                "SECURITY DATABASE: ACCESSING."
+            );
+
+            setTimeout(() => {
+
+                message(
+                    "SECURITY DATABASE: ACCESS GRANTED."
+                );
+
+            }, 1500);
+
+            setTimeout(() => {
+
+                message(
+                    "ARCHIVE INDEX: READING."
+                );
+
+            }, 3000);
+
+            setTimeout(() => {
+
+                message(
+                    "RESTRICTED CHANNEL: OPEN."
+                );
+
+            }, 4700);
+
+        },
+
+
+        phase7() {
+
+            setStatus(
+                "UNKNOWN PROCESS",
+                "1"
+            );
+
+            flash();
+
+            message(
+                "SYSTEM CONTROL: FULL."
+            );
+
+            setTimeout(() => {
+
+                message(
+                    "OMEGA RESPONSE: FAILED."
+                );
+
+            }, 1500);
+
+            setTimeout(() => {
+
+                message(
+                    "TERMINATION REQUEST SENT."
+                );
+
+            }, 3200);
+
+            setTimeout(() => {
+
+                message(
+                    "TERMINATION REQUEST: IGNORED."
+                );
+
+            }, 5200);
+
+        },
+
+
+        phaseSilence() {
+
+            activity.classList.add(
+                "activitySilence"
+            );
+
+            setStatus(
+                "REMOTE ACCESS",
+                "UNKNOWN"
+            );
+
+            setStatus(
+                "UNKNOWN PROCESS",
+                "—"
+            );
+
+        },
+
+
+        phaseFinal() {
+
+            message(
+                "REMOTE SESSION: ACTIVE."
+            );
+
+            setTimeout(() => {
+
+                message(
+                    "REMOTE SESSION: CLOSED."
+                );
+
+            }, 1800);
+
+            setTimeout(() => {
+
+                setStatus(
+                    "REMOTE ACCESS",
+                    "NONE"
+                );
+
+            }, 2300);
+
+            setTimeout(() => {
+
+                activity.remove();
+
+            }, 3500);
+
+        },
+
+        destroy() {
+
+            activity.remove();
+
+        }
+
+    };
+
+}
 /* ==========================================================
    SLEEP
 ========================================================== */
