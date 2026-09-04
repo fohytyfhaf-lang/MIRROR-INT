@@ -2707,3 +2707,609 @@
         opacity: .72;
     }
 }
+
+/* ==========================================================
+   NULL SPACE
+   ATMOSPHERE SYSTEM — PHASE 01
+========================================================== */
+
+
+/* ==========================================================
+   01 — ROOT
+========================================================== */
+
+#nullSpaceRoot {
+    position: fixed !important;
+    inset: 0 !important;
+
+    width: 100vw !important;
+    height: 100vh !important;
+
+    overflow: hidden !important;
+
+    background: #020303 !important;
+
+    color: #c8cece;
+
+    isolation: isolate;
+
+    font-family:
+        "Courier New",
+        "Lucida Console",
+        monospace;
+
+    z-index: 999999 !important;
+}
+
+
+/* ==========================================================
+   02 — MAIN NULL SPACE
+========================================================== */
+
+#nullSpaceRoot .nullSpace {
+
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    background:
+
+        radial-gradient(
+            ellipse at 50% 45%,
+            rgba(35, 43, 43, .12) 0%,
+            rgba(12, 15, 15, .08) 30%,
+            rgba(0, 0, 0, .35) 68%,
+            #000 100%
+        ),
+
+        linear-gradient(
+            180deg,
+            #050606 0%,
+            #020303 45%,
+            #000 100%
+        );
+
+}
+
+
+/* ==========================================================
+   03 — DEEP BACKGROUND
+========================================================== */
+
+#nullSpaceRoot .nullSpace::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -20%;
+
+    pointer-events: none;
+
+    z-index: 0;
+
+    background:
+
+        radial-gradient(
+            ellipse at 48% 38%,
+            rgba(90, 105, 105, .035),
+            transparent 35%
+        ),
+
+        radial-gradient(
+            ellipse at 70% 70%,
+            rgba(40, 55, 55, .025),
+            transparent 45%
+        );
+
+    filter: blur(28px);
+
+    animation:
+        nullAtmosphereDrift 18s ease-in-out infinite alternate;
+}
+
+
+@keyframes nullAtmosphereDrift {
+
+    0% {
+        transform: scale(1) translate3d(0, 0, 0);
+        opacity: .65;
+    }
+
+    50% {
+        transform: scale(1.035) translate3d(-.4%, .2%, 0);
+        opacity: .85;
+    }
+
+    100% {
+        transform: scale(1.015) translate3d(.3%, -.3%, 0);
+        opacity: .7;
+    }
+}
+
+
+/* ==========================================================
+   04 — VERY SUBTLE FILM GRAIN
+========================================================== */
+
+#nullSpaceRoot .nullSpace::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -50%;
+
+    pointer-events: none;
+
+    z-index: 900;
+
+    opacity: .055;
+
+    background-image:
+
+        repeating-radial-gradient(
+            circle at 0 0,
+            rgba(255,255,255,.18) 0,
+            rgba(255,255,255,.18) 1px,
+            transparent 1px,
+            transparent 3px
+        );
+
+    background-size: 4px 4px;
+
+    mix-blend-mode: soft-light;
+
+    animation:
+        nullGrain 0.16s steps(2) infinite;
+}
+
+
+@keyframes nullGrain {
+
+    0% {
+        transform: translate(0, 0);
+    }
+
+    25% {
+        transform: translate(-1%, 1%);
+    }
+
+    50% {
+        transform: translate(1%, -1%);
+    }
+
+    75% {
+        transform: translate(1%, 1%);
+    }
+
+    100% {
+        transform: translate(-1%, -1%);
+    }
+}
+
+
+/* ==========================================================
+   05 — CRT SCANLINES
+========================================================== */
+
+#nullSpaceRoot .nullSpace {
+
+    background-image:
+
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,.012) 0px,
+            rgba(255,255,255,.012) 1px,
+            transparent 1px,
+            transparent 4px
+        ),
+
+        radial-gradient(
+            ellipse at center,
+            transparent 35%,
+            rgba(0,0,0,.22) 100%
+        );
+
+}
+
+
+/* ==========================================================
+   06 — DARK SCREEN VIGNETTE
+========================================================== */
+
+#nullSpaceRoot .nullSpace > .nullVignette {
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 850;
+
+    box-shadow:
+        inset 0 0 140px rgba(0,0,0,.92),
+        inset 0 0 280px rgba(0,0,0,.48);
+}
+
+
+/* ==========================================================
+   07 — AUTOMATIC VIGNETTE
+   Works even if .nullVignette doesn't exist
+========================================================== */
+
+#nullSpaceRoot .nullSpace {
+
+    box-shadow:
+        inset 0 0 180px rgba(0,0,0,.82),
+        inset 0 0 360px rgba(0,0,0,.34);
+}
+
+
+/* ==========================================================
+   08 — ATMOSPHERIC HAZE
+========================================================== */
+
+#nullSpaceRoot .nullWorkspace::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -15%;
+
+    pointer-events: none;
+
+    z-index: 2;
+
+    background:
+
+        radial-gradient(
+            ellipse at 58% 45%,
+            rgba(150,160,160,.018),
+            transparent 32%
+        ),
+
+        radial-gradient(
+            ellipse at 30% 70%,
+            rgba(100,115,115,.012),
+            transparent 35%
+        );
+
+    filter: blur(35px);
+
+    animation:
+        nullHaze 22s ease-in-out infinite alternate;
+}
+
+
+@keyframes nullHaze {
+
+    from {
+        transform: translate3d(-1%, 0, 0) scale(1);
+        opacity: .45;
+    }
+
+    to {
+        transform: translate3d(1%, -1%, 0) scale(1.06);
+        opacity: .75;
+    }
+}
+
+
+/* ==========================================================
+   09 — MICRO FLICKER
+========================================================== */
+
+#nullSpaceRoot .nullWorkspace {
+
+    animation:
+        nullScreenBreathing 9s ease-in-out infinite;
+}
+
+
+@keyframes nullScreenBreathing {
+
+    0%,
+    100% {
+        filter: brightness(1);
+    }
+
+    48% {
+        filter: brightness(.985);
+    }
+
+    50% {
+        filter: brightness(.965);
+    }
+
+    52% {
+        filter: brightness(1);
+    }
+}
+
+
+/* ==========================================================
+   10 — RANDOM HORIZONTAL DISTURBANCE
+========================================================== */
+
+#nullSpaceRoot .nullWorkspace::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    top: 47%;
+
+    height: 1px;
+
+    pointer-events: none;
+
+    z-index: 800;
+
+    opacity: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(180,190,190,.08) 20%,
+            rgba(255,255,255,.035) 50%,
+            rgba(180,190,190,.06) 80%,
+            transparent 100%
+        );
+
+    animation:
+        nullScanArtifact 13s infinite;
+}
+
+
+@keyframes nullScanArtifact {
+
+    0%,
+    72%,
+    100% {
+        opacity: 0;
+        transform: translateY(0);
+    }
+
+    73% {
+        opacity: .12;
+        transform: translateY(-17vh);
+    }
+
+    73.3% {
+        opacity: .035;
+        transform: translateY(-16vh);
+    }
+
+    73.8% {
+        opacity: .08;
+        transform: translateY(-15vh);
+    }
+
+    74.2% {
+        opacity: 0;
+        transform: translateY(-15vh);
+    }
+}
+
+
+/* ==========================================================
+   11 — NULL UI DEPTH
+========================================================== */
+
+#nullSpaceRoot .nullTopBar,
+#nullSpaceRoot .nullNavigation,
+#nullSpaceRoot .nullWindow,
+#nullSpaceRoot .nullTaskbar {
+
+    position: relative;
+
+    z-index: 50;
+}
+
+
+/* ==========================================================
+   12 — TOP BAR ATMOSPHERE
+========================================================== */
+
+#nullSpaceRoot .nullTopBar {
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(8,10,10,.94),
+            rgba(3,4,4,.91)
+        ) !important;
+
+    border-bottom:
+        1px solid rgba(150,160,160,.055) !important;
+
+    box-shadow:
+        0 8px 35px rgba(0,0,0,.55);
+}
+
+
+/* ==========================================================
+   13 — NAVIGATION ATMOSPHERE
+========================================================== */
+
+#nullSpaceRoot .nullNavigation {
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(4,5,5,.94),
+            rgba(3,4,4,.82)
+        ) !important;
+
+    border-right:
+        1px solid rgba(150,160,160,.045) !important;
+
+    box-shadow:
+        12px 0 35px rgba(0,0,0,.32);
+}
+
+
+/* ==========================================================
+   14 — WINDOWS
+========================================================== */
+
+#nullSpaceRoot .nullWindow {
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(8,10,10,.94),
+            rgba(2,3,3,.97)
+        ) !important;
+
+    border:
+        1px solid rgba(170,180,180,.065) !important;
+
+    box-shadow:
+        0 25px 80px rgba(0,0,0,.7),
+        inset 0 0 30px rgba(255,255,255,.008);
+
+    backdrop-filter:
+        blur(3px);
+}
+
+
+/* ==========================================================
+   15 — TEXT
+========================================================== */
+
+#nullSpaceRoot .nullBrandTitle,
+#nullSpaceRoot .nullBrandSubtitle,
+#nullSpaceRoot .nullStatusLabel,
+#nullSpaceRoot .nullStatusValue,
+#nullSpaceRoot .nullNavItem,
+#nullSpaceRoot .nullWindowTitle {
+
+    text-shadow:
+        0 0 8px rgba(180,190,190,.08);
+}
+
+
+/* ==========================================================
+   16 — EMPTY SPACE
+========================================================== */
+
+#nullSpaceRoot .nullEmptyState {
+
+    opacity: .72;
+
+    text-shadow:
+        0 0 12px rgba(200,210,210,.045);
+}
+
+
+/* ==========================================================
+   17 — FAINT FLOATING DUST
+========================================================== */
+
+#nullSpaceRoot .nullWorkspace {
+
+    --null-dust:
+        radial-gradient(
+            circle at 12% 28%,
+            rgba(180,190,190,.10) 0,
+            rgba(180,190,190,.10) 1px,
+            transparent 2px
+        ),
+
+        radial-gradient(
+            circle at 78% 22%,
+            rgba(180,190,190,.055) 0,
+            rgba(180,190,190,.055) 1px,
+            transparent 2px
+        ),
+
+        radial-gradient(
+            circle at 63% 81%,
+            rgba(180,190,190,.045) 0,
+            rgba(180,190,190,.045) 1px,
+            transparent 2px
+        );
+
+    background-image:
+        var(--null-dust);
+
+    background-size:
+        420px 360px,
+        570px 480px,
+        680px 560px;
+
+    background-position:
+        0 0,
+        120px 70px,
+        240px 180px;
+
+    animation:
+        nullDustMove 30s linear infinite;
+}
+
+
+@keyframes nullDustMove {
+
+    from {
+        background-position:
+            0 0,
+            120px 70px,
+            240px 180px;
+    }
+
+    to {
+        background-position:
+            30px -20px,
+            90px 110px,
+            210px 150px;
+    }
+}
+
+
+/* ==========================================================
+   18 — REDUCE MOTION
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    #nullSpaceRoot *,
+    #nullSpaceRoot .nullSpace,
+    #nullSpaceRoot .nullWorkspace {
+
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+
+/* ==========================================================
+   19 — MOBILE
+========================================================== */
+
+@media (max-width: 700px) {
+
+    #nullSpaceRoot .nullSpace {
+
+        box-shadow:
+            inset 0 0 90px rgba(0,0,0,.9),
+            inset 0 0 180px rgba(0,0,0,.45);
+    }
+
+    #nullSpaceRoot .nullSpace::after {
+
+        opacity: .035;
+    }
+}
