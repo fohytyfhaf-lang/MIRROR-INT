@@ -1,62 +1,55 @@
-/* ============================================================
+/* ==========================================================
    NULL SPACE
-   THE BROKEN SCRIPT INSPIRED ENVIRONMENT
-   COMPLETE REBUILD
-============================================================ */
+   COMPLETE VISUAL REBUILD
+========================================================== */
+
+
+/* ==========================================================
+   ROOT
+========================================================== */
 
 #nullSpaceRoot {
-    --ns-void-0: #020202;
-    --ns-void-1: #070707;
-    --ns-void-2: #0b0b0b;
-    --ns-void-3: #111111;
-
-    --ns-block: #0d0d0d;
-    --ns-block-light: #151515;
-    --ns-block-dark: #050505;
-
-    --ns-white: #d4d4d4;
-    --ns-gray: #858585;
-    --ns-dark-gray: #3d3d3d;
-
-    --ns-red: #681414;
-    --ns-red-bright: #9b2020;
-
-    --ns-border: rgba(255, 255, 255, 0.09);
-
     position: fixed;
     inset: 0;
-    z-index: 9000;
 
     width: 100vw;
     height: 100vh;
 
+    margin: 0;
+    padding: 0;
+
     overflow: hidden;
+
+    z-index: 9990;
 
     background: #000;
 
-    color: var(--ns-white);
-
     font-family:
-        "Courier New",
         Consolas,
+        "Courier New",
         monospace;
 
+    color: #bdbdbd;
+
     box-sizing: border-box;
 }
 
-#nullSpaceRoot *,
-#nullSpaceRoot *::before,
-#nullSpaceRoot *::after {
-    box-sizing: border-box;
+#nullSpaceRoot.hidden {
+    display: none !important;
+}
+
+#nullSpaceRoot.active {
+    display: block !important;
 }
 
 
-/* ============================================================
-   MAIN NULL SPACE
-============================================================ */
+/* ==========================================================
+   MAIN SPACE
+========================================================== */
 
 .nullSpace {
-    position: relative;
+    position: absolute;
+    inset: 0;
 
     width: 100%;
     height: 100%;
@@ -64,1558 +57,1159 @@
     overflow: hidden;
 
     background: #000;
+
+    isolation: isolate;
 }
 
 
-/* ============================================================
+/* ==========================================================
    WORLD
-============================================================ */
+========================================================== */
 
-.nullVoidWorld {
+.nullWorld {
     position: absolute;
     inset: 0;
 
     overflow: hidden;
 
+    perspective: 1000px;
+
     background:
         radial-gradient(
-            ellipse at 50% 48%,
-            #161616 0%,
-            #0a0a0a 38%,
-            #030303 72%,
+            ellipse at center,
+            #111 0%,
+            #070707 38%,
+            #020202 72%,
             #000 100%
         );
 }
 
 
-/* ============================================================
-   BACKGROUND / VOID
-============================================================ */
+/* ==========================================================
+   WORLD BACKGROUND
+========================================================== */
 
-.nullVoidBackdrop {
+.nullWorldBackground {
     position: absolute;
-    inset: 0;
-
-    overflow: hidden;
-
-    background:
-        linear-gradient(
-            to bottom,
-            #020202 0%,
-            #070707 45%,
-            #020202 100%
-        );
-
-    pointer-events: none;
-}
-
-
-/*
-    Extremely subtle depth.
-    No grid.
-    No waves.
-    No glowing sci-fi patterns.
-*/
-
-.nullVoidBackdrop::after {
-    content: "";
-
-    position: absolute;
-    inset: 0;
+    inset: -10%;
 
     background:
         radial-gradient(
-            ellipse at 50% 50%,
-            transparent 25%,
-            rgba(0, 0, 0, 0.32) 72%,
-            rgba(0, 0, 0, 0.78) 100%
+            ellipse at 50% 48%,
+            rgba(255,255,255,0.035) 0%,
+            rgba(255,255,255,0.012) 25%,
+            transparent 60%
         );
 
     pointer-events: none;
+
+    z-index: 0;
 }
 
 
-/* ============================================================
+/* ==========================================================
    ROOM
-============================================================ */
+========================================================== */
 
-.nullVoidRoom {
-    position: absolute;
-
-    left: 50%;
-    top: 48%;
-
-    width: min(82vw, 1180px);
-    height: min(66vh, 720px);
-
-    transform:
-        translate(-50%, -50%)
-        perspective(900px);
-
-    transform-style: preserve-3d;
-
-    pointer-events: none;
-}
-
-
-/* ============================================================
-   FLOOR
-============================================================ */
-
-.nullVoidFloor {
-    position: absolute;
-
-    left: 7%;
-    right: 7%;
-
-    bottom: 3%;
-
-    height: 43%;
-
-    transform:
-        rotateX(58deg)
-        translateZ(-30px);
-
-    transform-origin: center bottom;
-
-    background:
-        linear-gradient(
-            to bottom,
-            #111 0%,
-            #0c0c0c 45%,
-            #070707 100%
-        );
-
-    border-top: 1px solid rgba(255, 255, 255, 0.07);
-
-    box-shadow:
-        inset 0 18px 35px rgba(255, 255, 255, 0.015),
-        inset 0 -80px 100px rgba(0, 0, 0, 0.55);
-
-    overflow: hidden;
-}
-
-
-/*
-    Minecraft-like block divisions.
-    Sparse instead of a giant sci-fi grid.
-*/
-
-.nullVoidFloor::before {
-    content: "";
-
-    position: absolute;
-    inset: 0;
-
-    background:
-        linear-gradient(
-            to bottom,
-            transparent 0 31%,
-            rgba(255,255,255,.035) 31.1%,
-            transparent 31.4% 63%,
-            rgba(255,255,255,.025) 63.1%,
-            transparent 63.4%
-        );
-
-    opacity: .7;
-}
-
-
-/* ============================================================
-   CEILING
-============================================================ */
-
-.nullVoidCeiling {
-    position: absolute;
-
-    left: 7%;
-    right: 7%;
-
-    top: 3%;
-
-    height: 30%;
-
-    transform:
-        rotateX(-58deg)
-        translateZ(-15px);
-
-    transform-origin: center top;
-
-    background:
-        linear-gradient(
-            to bottom,
-            #101010,
-            #080808
-        );
-
-    border-bottom: 1px solid rgba(255,255,255,.055);
-
-    box-shadow:
-        inset 0 -35px 60px rgba(0,0,0,.5);
-}
-
-
-/* ============================================================
-   WALLS
-============================================================ */
-
-.nullVoidWall {
-    position: absolute;
-
-    background:
-        linear-gradient(
-            to bottom,
-            #101010,
-            #0a0a0a 55%,
-            #050505
-        );
-
-    border: 1px solid rgba(255,255,255,.06);
-
-    box-shadow:
-        inset 0 0 45px rgba(0,0,0,.35);
-}
-
-
-/* BACK WALL */
-
-.wall-back {
-    left: 7%;
-    right: 7%;
-
-    top: 3%;
-
-    height: 57%;
-}
-
-
-/* LEFT WALL */
-
-.wall-left {
-    left: 7%;
-
-    top: 3%;
-    bottom: 18%;
-
-    width: 22%;
-
-    transform:
-        skewY(17deg);
-
-    transform-origin: left center;
-}
-
-
-/* RIGHT WALL */
-
-.wall-right {
-    right: 7%;
-
-    top: 3%;
-    bottom: 18%;
-
-    width: 22%;
-
-    transform:
-        skewY(-17deg);
-
-    transform-origin: right center;
-}
-
-
-/* ============================================================
-   BLOCK SEAMS
-============================================================ */
-
-.nullVoidWall::after {
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    right: 0;
-
-    top: 33%;
-
-    height: 1px;
-
-    background: rgba(255,255,255,.025);
-}
-
-
-/*
-    Only a few seams.
-    The room must remain visually empty.
-*/
-
-.wall-back::before {
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    right: 0;
-
-    top: 66%;
-
-    height: 1px;
-
-    background: rgba(255,255,255,.02);
-}
-
-
-/* ============================================================
-   VOID LIGHT
-============================================================ */
-
-.nullVoidLight {
-    position: absolute;
-
-    width: 52px;
-    height: 7px;
-
-    background: #bdbdbd;
-
-    border: 1px solid #777;
-
-    box-shadow:
-        0 0 12px rgba(210,210,210,.22),
-        0 0 42px rgba(210,210,210,.08);
-
-    transform: translateZ(10px);
-
-    opacity: .72;
-
-    pointer-events: none;
-}
-
-
-/*
-    Uneven placement.
-*/
-
-.light-1 {
-    left: 25%;
-    top: 17%;
-
-    transform:
-        translateZ(20px)
-        rotate(-1deg);
-
-    opacity: .88;
-}
-
-.light-2 {
-    right: 23%;
-    top: 28%;
-
-    opacity: .38;
-}
-
-.light-3 {
-    left: 48%;
-    top: 8%;
-
-    opacity: .22;
-}
-
-.light-4 {
-    right: 12%;
-    bottom: 38%;
-
-    opacity: .12;
-}
-
-
-/* ============================================================
-   NO GLOBAL PILLARS
-============================================================ */
-
-/*
-    Pillars belong to the specific Pillar Room in Day B.
-    They are NOT part of the default NULL SPACE scene.
-*/
-
-.nullVoidPillar {
-    display: none;
-}
-
-
-/* ============================================================
-   DOOR
-============================================================ */
-
-/*
-    There is intentionally no door in the new base scene.
-
-    If old HTML still contains the old door,
-    it is completely removed visually.
-*/
-
-.nullWorldDoor,
-.nullDoorFrame,
-.nullDoorPanel,
-.nullDoorStatus,
-.nullDoorBeyond {
-    display: none !important;
-}
-
-
-/* ============================================================
-   CONSOLE
-============================================================ */
-
-/*
-    Console is temporarily removed from the main environment.
-    It can later be reintroduced as an actual Day B room element.
-*/
-
-.nullWorldConsole,
-.nullConsoleScreen,
-.nullConsoleBody {
-    display: none !important;
-}
-
-
-/* ============================================================
-   OLD CODE / DECORATIVE UI
-============================================================ */
-
-.nullWorldCode {
-    display: none !important;
-}
-
-
-/* ============================================================
-   BROKEN SCRIPT OBJECTS
-============================================================ */
-
-/*
-    These objects are intentionally extremely subtle.
-    They should feel like Minecraft blocks inside the world,
-    not UI decorations.
-*/
-
-.nullWorldBlackBlock,
-.nullWorldDisruption,
-.nullWorldIt,
-.nullWorldHello,
-.nullWorldExit {
-    position: absolute;
-
-    pointer-events: auto;
-}
-
-
-/* 431434 / black void block */
-
-.nullWorldBlackBlock {
-    width: 42px;
-    height: 42px;
-
-    background: #000;
-
-    border: 1px solid rgba(255,255,255,.025);
-
-    box-shadow:
-        8px 8px 0 rgba(0,0,0,.45);
-
-    opacity: .72;
-}
-
-
-/* Disruption */
-
-.nullWorldDisruption {
-    width: 44px;
-    height: 44px;
-
-    background:
-        repeating-linear-gradient(
-            45deg,
-            #171717 0 6px,
-            #4b4b4b 6px 10px,
-            #090909 10px 15px
-        );
-
-    border: 1px solid rgba(255,255,255,.14);
-
-    opacity: .8;
-}
-
-
-/* It */
-
-.nullWorldIt {
-    width: 40px;
-    height: 40px;
-
-    background: transparent;
-
-    border: 1px solid rgba(255,255,255,.025);
-
-    opacity: .18;
-}
-
-
-/* Hello */
-
-.nullWorldHello {
-    width: 36px;
-    height: 36px;
-
-    background: transparent;
-
-    border: 1px solid rgba(255,255,255,.025);
-
-    opacity: .3;
-}
-
-
-/* Exit block */
-
-.nullWorldExit {
-    width: 32px;
-    height: 32px;
-
-    background: #ddd;
-
-    box-shadow:
-        0 0 18px rgba(255,255,255,.35);
-
-    opacity: .75;
-}
-
-
-/* ============================================================
-   HELLO CROSS
-============================================================ */
-
-.nullHelloCross {
-    display: none;
-}
-
-
-/* ============================================================
-   NULL ENTITY
-============================================================ */
-
-/*
-    Null is player-like and pitch black.
-    No monster face.
-    No glowing eyes by default.
-*/
-
-.nullEntity {
-    position: absolute;
-
-    width: 34px;
-    height: 92px;
-
-    pointer-events: none;
-
-    opacity: 0;
-
-    filter: none;
-
-    transition:
-        opacity .25s ease,
-        transform .25s ease;
-}
-
-
-/* head */
-
-.nullEntityHead {
-    position: absolute;
-
-    left: 3px;
-    top: 0;
-
-    width: 28px;
-    height: 28px;
-
-    background: #000;
-
-    border: 1px solid rgba(255,255,255,.025);
-}
-
-
-/* body */
-
-.nullEntityBody {
-    position: absolute;
-
-    left: 7px;
-    top: 31px;
-
-    width: 20px;
-    height: 38px;
-
-    background: #000;
-}
-
-
-/*
-    Make Null visible only when JS explicitly activates it.
-*/
-
-.nullEntity.is-visible,
-.nullEntity.visible {
-    opacity: .92;
-}
-
-
-/* ============================================================
-   EYES
-============================================================ */
-
-/*
-    No random horror eyes in the default environment.
-*/
-
-.nullEyeField,
-.nullEye,
-.nullEyeOuter,
-.nullEyePupil {
-    opacity: 0;
-    display: none;
-}
-
-
-/* ============================================================
-   INTERFACE
-============================================================ */
-
-.nullInterface {
-    position: absolute;
-    inset: 0;
-
-    z-index: 50;
-
-    pointer-events: none;
-}
-
-
-/* ============================================================
-   TOP BAR
-============================================================ */
-
-.nullTopBar {
-    position: absolute;
-
-    top: 0;
-    left: 0;
-    right: 0;
-
-    height: 42px;
-
-    display: flex;
-    align-items: center;
-
-    padding: 0 18px;
-
-    background: rgba(0,0,0,.72);
-
-    border-bottom: 1px solid rgba(255,255,255,.06);
-
-    pointer-events: auto;
-}
-
-
-/* branding */
-
-.nullBrand {
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    min-width: 190px;
-}
-
-
-.nullBrandMark {
-    width: 7px;
-    height: 7px;
-
-    background: #777;
-
-    opacity: .7;
-}
-
-
-.nullBrandTitle {
-    font-size: 12px;
-
-    letter-spacing: 3px;
-
-    color: #aaa;
-
-    text-transform: uppercase;
-}
-
-
-.nullBrandSubtitle {
-    font-size: 9px;
-
-    letter-spacing: 1px;
-
-    color: #4e4e4e;
-}
-
-
-/* ============================================================
-   STATUS
-============================================================ */
-
-.nullStatus {
-    margin-left: auto;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    font-size: 9px;
-
-    letter-spacing: 1px;
-
-    text-transform: uppercase;
-}
-
-
-.nullStatusLabel {
-    color: #444;
-}
-
-
-.nullStatusValue {
-    color: #888;
-}
-
-
-/* ============================================================
-   WORKSPACE
-============================================================ */
-
-.nullWorkspace {
-    position: absolute;
-
-    top: 42px;
-    left: 0;
-    right: 0;
-    bottom: 28px;
-
-    display: flex;
-
-    pointer-events: none;
-}
-
-
-/* ============================================================
-   NAVIGATION
-============================================================ */
-
-.nullNavigation {
-    width: 170px;
-
-    padding: 24px 12px;
-
-    background: rgba(0,0,0,.55);
-
-    border-right: 1px solid rgba(255,255,255,.045);
-
-    pointer-events: auto;
-}
-
-
-.nullNavigationTitle {
-    margin: 0 0 15px 6px;
-
-    font-size: 8px;
-
-    color: #444;
-
-    letter-spacing: 2px;
-
-    text-transform: uppercase;
-}
-
-
-.nullNavButton {
-    position: relative;
-
-    width: 100%;
-
-    min-height: 31px;
-
-    padding: 7px 9px;
-
-    margin-bottom: 3px;
-
-    border: 0;
-
-    background: transparent;
-
-    color: #666;
-
-    text-align: left;
-
-    font-family: inherit;
-
-    font-size: 10px;
-
-    cursor: pointer;
-
-    transition:
-        color .15s ease,
-        background .15s ease;
-}
-
-
-.nullNavButton:hover {
-    color: #aaa;
-
-    background: rgba(255,255,255,.025);
-}
-
-
-.nullNavButton.active {
-    color: #bdbdbd;
-
-    background: rgba(255,255,255,.035);
-}
-
-
-.nullNavButton.active::before {
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    top: 7px;
-    bottom: 7px;
-
-    width: 2px;
-
-    background: #777;
-}
-
-
-/* ============================================================
-   MAIN
-============================================================ */
-
-.nullMain {
-    position: relative;
-
-    flex: 1;
-
-    min-width: 0;
-
-    padding: 18px;
-
-    pointer-events: auto;
-}
-
-
-/* ============================================================
-   EMPTY STATE
-============================================================ */
-
-.nullEmptyState {
+.nullRoom {
     position: absolute;
 
     left: 50%;
     top: 50%;
 
-    transform: translate(-50%, -50%);
+    width: min(1100px, 78vw);
+    height: min(650px, 68vh);
 
-    text-align: center;
+    transform:
+        translate(-50%, -50%)
+        translateZ(0);
 
-    pointer-events: none;
-}
-
-
-.nullEmptyZero {
-    font-size: 44px;
-
-    line-height: 1;
-
-    font-weight: normal;
-
-    color: rgba(255,255,255,.045);
-
-    letter-spacing: 5px;
-}
-
-
-.nullEmptyState p {
-    margin: 10px 0 0;
-
-    font-size: 9px;
-
-    color: #3d3d3d;
-
-    letter-spacing: 2px;
-
-    text-transform: uppercase;
-}
-
-
-/* ============================================================
-   INTERNAL WINDOWS
-============================================================ */
-
-.nullInternalWindow {
-    position: absolute;
-
-    inset: 18px;
-
-    background: rgba(3,3,3,.94);
-
-    border: 1px solid rgba(255,255,255,.08);
-
-    box-shadow:
-        0 20px 60px rgba(0,0,0,.5);
+    transform-style: preserve-3d;
 
     overflow: hidden;
-}
 
+    background: #050505;
 
-.nullWindowHeader {
-    height: 34px;
-
-    display: flex;
-
-    align-items: center;
-
-    padding: 0 11px;
-
-    background: #090909;
-
-    border-bottom: 1px solid rgba(255,255,255,.055);
-
-    color: #777;
-
-    font-size: 9px;
-
-    letter-spacing: 1px;
-
-    text-transform: uppercase;
-}
-
-
-/* ============================================================
-   ARCHIVE
-============================================================ */
-
-.nullArchiveList,
-.nullMemoryList {
-    padding: 12px;
-
-    overflow-y: auto;
-
-    height: calc(100% - 34px);
-}
-
-
-.nullArchiveList > *,
-.nullMemoryList > * {
-    border-bottom: 1px solid rgba(255,255,255,.035);
-
-    padding: 9px 4px;
-}
-
-
-/* ============================================================
-   CHAT
-============================================================ */
-
-.nullChatMessages {
-    height: calc(100% - 75px);
-
-    padding: 12px;
-
-    overflow-y: auto;
-}
-
-
-.nullMessage {
-    margin-bottom: 10px;
-
-    padding: 8px 10px;
-
-    background: rgba(255,255,255,.018);
-
-    border-left: 2px solid #444;
-
-    font-size: 11px;
-
-    line-height: 1.5;
-
-    color: #888;
-}
-
-
-.nullUnknownMessage {
-    border-left-color: #671515;
-
-    color: #777;
-}
-
-
-.nullChatInputRow {
-    position: absolute;
-
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    height: 41px;
-
-    display: flex;
-
-    padding: 6px;
-
-    border-top: 1px solid rgba(255,255,255,.05);
-
-    background: #070707;
-}
-
-
-/* ============================================================
-   OBJECTS
-============================================================ */
-
-.nullObjectGrid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(auto-fill, minmax(150px, 1fr));
-
-    gap: 6px;
-
-    padding: 12px;
-
-    overflow-y: auto;
-
-    height: calc(100% - 34px);
-}
-
-
-.nullObject {
-    min-height: 74px;
-
-    padding: 10px;
-
-    background: #090909;
-
-    border: 1px solid rgba(255,255,255,.055);
-
-    color: #777;
-
-    cursor: pointer;
+    box-shadow:
+        0 0 80px rgba(0,0,0,0.95),
+        inset 0 0 100px rgba(0,0,0,0.9);
 
     transition:
-        background .15s ease,
-        border-color .15s ease,
-        color .15s ease;
+        width 0.7s ease,
+        height 0.7s ease,
+        transform 0.7s ease;
 }
 
 
-.nullObject:hover {
-    background: #0e0e0e;
+/* ==========================================================
+   ROOM BACK
+========================================================== */
 
-    border-color: rgba(255,255,255,.12);
-
-    color: #aaa;
-}
-
-
-.nullImpossibleObject {
-    border-color: rgba(105,20,20,.35);
-
-    color: #633;
-}
-
-
-/* ============================================================
-   ROOM DATA
-============================================================ */
-
-.nullRoomData {
-    padding: 14px;
-
-    font-size: 10px;
-
-    line-height: 1.7;
-
-    color: #666;
-}
-
-
-/* ============================================================
-   UNKNOWN CONTENT
-============================================================ */
-
-.nullUnknownContent {
+.nullRoomBack {
     position: absolute;
-
-    inset: 0;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    text-align: center;
-}
-
-
-.nullUnknownBig {
-    font-size: clamp(32px, 6vw, 80px);
-
-    color: rgba(255,255,255,.035);
-
-    letter-spacing: 8px;
-}
-
-
-/* ============================================================
-   TASKBAR
-============================================================ */
-
-.nullTaskbar {
-    position: absolute;
-
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    height: 28px;
-
-    display: flex;
-
-    align-items: center;
-
-    padding: 0 10px;
-
-    background: rgba(0,0,0,.88);
-
-    border-top: 1px solid rgba(255,255,255,.055);
-
-    pointer-events: auto;
-}
-
-
-#taskMessage,
-#nullTaskMessage {
-    font-size: 9px;
-
-    color: #4c4c4c;
-
-    letter-spacing: .5px;
-}
-
-
-#nullReturnButton {
-    margin-left: auto;
-
-    padding: 3px 8px;
-
-    border: 0;
-
-    background: transparent;
-
-    color: #555;
-
-    font-family: inherit;
-
-    font-size: 9px;
-
-    cursor: pointer;
-}
-
-
-#nullReturnButton:hover {
-    color: #aaa;
-}
-
-
-/* ============================================================
-   EVENTS
-============================================================ */
-
-.nullEventOverlay {
-    position: absolute;
-
-    inset: 0;
-
-    z-index: 200;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    background: transparent;
-
-    pointer-events: none;
-
-    opacity: 0;
-}
-
-
-.nullEventText {
-    max-width: 80%;
-
-    font-family: monospace;
-
-    font-size: clamp(14px, 2vw, 26px);
-
-    letter-spacing: 3px;
-
-    text-align: center;
-
-    color: #aaa;
-
-    text-shadow:
-        1px 0 #450909,
-        -1px 0 #111;
-}
-
-
-/* ============================================================
-   HEARTBEAT
-============================================================ */
-
-.nullHeartbeat {
-    position: absolute;
-
-    inset: 0;
-
-    background: transparent;
-
-    pointer-events: none;
-
-    opacity: 0;
-}
-
-
-/* ============================================================
-   ANOMALIES
-============================================================ */
-
-/*
-    Normal world = clean.
-
-    Anomaly states modify the existing world,
-    instead of making the entire website permanently scary.
-*/
-
-.nullSpace.anomaly-blackout .nullVoidWorld {
-    filter: brightness(.18);
-}
-
-
-.nullSpace.anomaly-dark .nullVoidLight {
-    opacity: .08;
-}
-
-
-.nullSpace.anomaly-distort .nullVoidRoom {
-    animation: nullRoomDistort .18s steps(2, end) infinite;
-}
-
-
-@keyframes nullRoomDistort {
-    0% {
-        transform:
-            translate(-50%, -50%)
-            perspective(900px)
-            translateX(0);
-    }
-
-    50% {
-        transform:
-            translate(-50%, -50%)
-            perspective(900px)
-            translateX(2px);
-    }
-
-    100% {
-        transform:
-            translate(-50%, -50%)
-            perspective(900px)
-            translateX(-1px);
-    }
-}
-
-
-/* ============================================================
-   RED EVENT STATE
-============================================================ */
-
-.nullSpace.anomaly-red .nullEventOverlay {
-    opacity: 1;
-
-    background:
-        rgba(35,0,0,.16);
-}
-
-
-.nullSpace.anomaly-red .nullEventText {
-    color: #8b3030;
-}
-
-
-.nullSpace.anomaly-red .nullBrandMark {
-    background: #8b1b1b;
-}
-
-
-.nullSpace.anomaly-red .nullStatusValue {
-    color: #8b3030;
-}
-
-
-/* ============================================================
-   BAN SCREEN
-============================================================ */
-
-.nullBanScreen {
-    position: absolute;
-
-    inset: 0;
-
-    z-index: 999;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    background: #000;
-
-    color: #aaa;
-}
-
-
-.nullBanNoise {
-    position: absolute;
-
     inset: 0;
 
     background:
-        repeating-linear-gradient(
-            0deg,
-            transparent 0 3px,
-            rgba(255,255,255,.018) 4px
+        linear-gradient(
+            180deg,
+            #080808 0%,
+            #0b0b0b 42%,
+            #030303 100%
+        );
+
+    box-shadow:
+        inset 0 0 130px rgba(0,0,0,0.95);
+
+    z-index: 1;
+}
+
+
+/* ==========================================================
+   SUBTLE VOID BLOCK STRUCTURE
+========================================================== */
+
+.nullRoomBack::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    opacity: 0.35;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255,255,255,0.015) 49.5%,
+            rgba(255,255,255,0.025) 50%,
+            transparent 50.5%
         );
 
     pointer-events: none;
 }
 
 
-.nullBanBox {
-    width: min(540px, 90vw);
+/* ==========================================================
+   LEFT WALL
+========================================================== */
 
-    padding: 30px;
+.nullRoomLeft {
+    position: absolute;
 
-    border: 1px solid rgba(255,255,255,.08);
+    left: -12%;
+    top: 0;
 
-    background: #050505;
+    width: 25%;
+    height: 100%;
+
+    transform:
+        perspective(700px)
+        rotateY(18deg);
+
+    transform-origin: right center;
+
+    background:
+        linear-gradient(
+            90deg,
+            #000 0%,
+            #050505 60%,
+            #111 100%
+        );
+
+    box-shadow:
+        inset -40px 0 70px rgba(0,0,0,0.9);
+
+    z-index: 3;
 }
 
 
-.nullBanTitle {
-    margin-bottom: 22px;
+/* ==========================================================
+   RIGHT WALL
+========================================================== */
 
-    font-size: 14px;
+.nullRoomRight {
+    position: absolute;
+
+    right: -12%;
+    top: 0;
+
+    width: 25%;
+    height: 100%;
+
+    transform:
+        perspective(700px)
+        rotateY(-18deg);
+
+    transform-origin: left center;
+
+    background:
+        linear-gradient(
+            270deg,
+            #000 0%,
+            #050505 60%,
+            #111 100%
+        );
+
+    box-shadow:
+        inset 40px 0 70px rgba(0,0,0,0.9);
+
+    z-index: 3;
+}
+
+
+/* ==========================================================
+   FLOOR
+========================================================== */
+
+.nullRoomFloor {
+    position: absolute;
+
+    left: -10%;
+    bottom: -18%;
+
+    width: 120%;
+    height: 42%;
+
+    transform:
+        perspective(700px)
+        rotateX(58deg);
+
+    transform-origin: center top;
+
+    background:
+        linear-gradient(
+            180deg,
+            #090909 0%,
+            #040404 45%,
+            #000 100%
+        );
+
+    box-shadow:
+        inset 0 25px 70px rgba(0,0,0,0.8);
+
+    z-index: 5;
+}
+
+
+/* ==========================================================
+   CEILING
+========================================================== */
+
+.nullRoomCeiling {
+    position: absolute;
+
+    left: -10%;
+    top: -18%;
+
+    width: 120%;
+    height: 38%;
+
+    transform:
+        perspective(700px)
+        rotateX(-58deg);
+
+    transform-origin: center bottom;
+
+    background:
+        linear-gradient(
+            180deg,
+            #000 0%,
+            #040404 55%,
+            #090909 100%
+        );
+
+    z-index: 2;
+}
+
+
+/* ==========================================================
+   LIGHT SYSTEM
+========================================================== */
+
+.nullRoomLights {
+    position: absolute;
+    inset: 0;
+
+    z-index: 6;
+
+    pointer-events: none;
+}
+
+
+/* ==========================================================
+   INDIVIDUAL VOID LIGHT
+========================================================== */
+
+.nullVoidLight {
+    position: absolute;
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #d9d9d9;
+
+    box-shadow:
+        0 0 6px rgba(255,255,255,0.75),
+        0 0 18px rgba(255,255,255,0.2);
+
+    animation:
+        nullLightFlicker
+        4s infinite ease-in-out;
+}
+
+
+/* different light timing */
+
+.nullVoidLight:nth-child(2) {
+    animation-delay: -1.2s;
+}
+
+.nullVoidLight:nth-child(3) {
+    animation-delay: -2.4s;
+}
+
+.nullVoidLight:nth-child(4) {
+    animation-delay: -0.7s;
+}
+
+.nullVoidLight:nth-child(5) {
+    animation-delay: -3s;
+}
+
+
+@keyframes nullLightFlicker {
+
+    0%,
+    100% {
+        opacity: 0.55;
+    }
+
+    48% {
+        opacity: 0.75;
+    }
+
+    50% {
+        opacity: 0.25;
+    }
+
+    52% {
+        opacity: 0.7;
+    }
+}
+
+
+/* ==========================================================
+   VOID BLOCKS
+========================================================== */
+
+.nullRoomBlocks {
+    position: absolute;
+    inset: 0;
+
+    z-index: 7;
+
+    pointer-events: none;
+}
+
+
+.nullVoidBlock {
+    position: absolute;
+
+    background:
+        linear-gradient(
+            135deg,
+            #121212 0%,
+            #080808 48%,
+            #020202 100%
+        );
+
+    border:
+        1px solid rgba(255,255,255,0.035);
+
+    box-shadow:
+        inset 0 0 20px rgba(0,0,0,0.8),
+        0 0 25px rgba(0,0,0,0.6);
+
+    transform:
+        translate(-50%, -50%);
+
+    animation:
+        nullBlockDrift
+        12s infinite ease-in-out;
+}
+
+
+.nullVoidBlock:nth-child(2) {
+    animation-delay: -2s;
+}
+
+.nullVoidBlock:nth-child(3) {
+    animation-delay: -5s;
+}
+
+.nullVoidBlock:nth-child(4) {
+    animation-delay: -7s;
+}
+
+.nullVoidBlock:nth-child(5) {
+    animation-delay: -9s;
+}
+
+
+@keyframes nullBlockDrift {
+
+    0%,
+    100% {
+        filter: brightness(0.8);
+    }
+
+    50% {
+        filter: brightness(1.15);
+    }
+}
+
+
+/* ==========================================================
+   ENTITY
+========================================================== */
+
+.nullEntity {
+    position: absolute;
+
+    left: 50%;
+    top: 47%;
+
+    width: 70px;
+    height: 230px;
+
+    transform:
+        translateX(-50%);
+
+    z-index: 20;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity 1.8s ease;
+}
+
+
+/* ==========================================================
+   ENTITY HEAD
+========================================================== */
+
+.nullEntityHead {
+    position: absolute;
+
+    left: 50%;
+    top: 0;
+
+    width: 52px;
+    height: 62px;
+
+    transform:
+        translateX(-50%)
+        rotate(2deg);
+
+    background:
+        #000;
+
+    border-radius:
+        42% 48% 46% 43%;
+
+    box-shadow:
+        0 0 25px rgba(0,0,0,0.95);
+
+    overflow: hidden;
+}
+
+
+/* ==========================================================
+   ENTITY HEAD DISTORTION
+========================================================== */
+
+.nullEntityHead::before {
+    content: "";
+
+    position: absolute;
+
+    left: 8px;
+    right: 8px;
+    top: 12px;
+
+    height: 2px;
+
+    background:
+        rgba(255,255,255,0.025);
+
+    box-shadow:
+        0 8px rgba(255,255,255,0.02),
+        0 17px rgba(255,255,255,0.018),
+        0 27px rgba(255,255,255,0.012);
+}
+
+
+/* ==========================================================
+   RED EYES
+========================================================== */
+
+.nullEntityHead::after {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 29px;
+
+    width: 5px;
+    height: 5px;
+
+    transform:
+        translateX(-50%);
+
+    border-radius: 50%;
+
+    background: #8f0000;
+
+    box-shadow:
+        -14px 1px 0 #4d0000,
+        14px -2px 0 #5e0000,
+
+        -8px -10px 0 rgba(120,0,0,0.55),
+        9px 11px 0 rgba(100,0,0,0.4),
+
+        0 0 5px #a00000,
+        0 0 15px rgba(130,0,0,0.45);
+
+    animation:
+        nullEyesPulse
+        3.5s infinite ease-in-out;
+}
+
+
+@keyframes nullEyesPulse {
+
+    0%,
+    100% {
+        opacity: 0.45;
+        filter: brightness(0.7);
+    }
+
+    50% {
+        opacity: 1;
+        filter: brightness(1.35);
+    }
+}
+
+
+/* ==========================================================
+   ENTITY BODY
+========================================================== */
+
+.nullEntityBody {
+    position: absolute;
+
+    left: 50%;
+    top: 54px;
+
+    width: 38px;
+    height: 170px;
+
+    transform:
+        translateX(-50%);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0%,
+            #000 25%,
+            #010101 50%,
+            #000 75%,
+            transparent 100%
+        );
+
+    border-radius:
+        48% 52% 20% 20%;
+
+    filter:
+        drop-shadow(
+            0 0 18px rgba(0,0,0,0.95)
+        );
+}
+
+
+/* ==========================================================
+   ENTITY TENDRILS
+========================================================== */
+
+.nullEntityBody::before,
+.nullEntityBody::after {
+    content: "";
+
+    position: absolute;
+
+    top: 15px;
+
+    width: 5px;
+    height: 145px;
+
+    background: #000;
+
+    border-radius: 100%;
+
+    transform-origin: top center;
+}
+
+
+.nullEntityBody::before {
+    left: -14px;
+
+    transform:
+        rotate(12deg);
+}
+
+
+.nullEntityBody::after {
+    right: -14px;
+
+    transform:
+        rotate(-12deg);
+}
+
+
+/* ==========================================================
+   ANOMALY LAYER
+========================================================== */
+
+.nullAnomalyLayer {
+    position: absolute;
+    inset: 0;
+
+    z-index: 40;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(100,0,0,0.15),
+            transparent 35%
+        );
+
+    mix-blend-mode: screen;
+
+    transition:
+        opacity 0.3s ease;
+}
+
+
+/* ==========================================================
+   AMBIENT RED GLITCH
+========================================================== */
+
+.nullAnomalyLayer::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 2px;
+
+    background:
+        rgba(120,0,0,0.25);
+
+    opacity: 0;
+
+    animation:
+        nullRedScan
+        9s infinite;
+}
+
+
+@keyframes nullRedScan {
+
+    0%,
+    88% {
+        opacity: 0;
+        top: 15%;
+    }
+
+    89% {
+        opacity: 0.5;
+    }
+
+    90% {
+        opacity: 0;
+        top: 65%;
+    }
+
+    91% {
+        opacity: 0.35;
+    }
+
+    92%,
+    100% {
+        opacity: 0;
+    }
+}
+
+
+/* ==========================================================
+   VIGNETTE
+========================================================== */
+
+.nullSpace::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    z-index: 60;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 35%,
+            rgba(0,0,0,0.25) 60%,
+            rgba(0,0,0,0.85) 100%
+        );
+}
+
+
+/* ==========================================================
+   INTERFACE
+========================================================== */
+
+.nullInterface {
+    position: absolute;
+    inset: 0;
+
+    z-index: 100;
+
+    pointer-events: none;
+}
+
+
+/* ==========================================================
+   TOP BAR
+========================================================== */
+
+.nullTopBar {
+    position: absolute;
+
+    top: 18px;
+    left: 24px;
+    right: 24px;
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+    pointer-events: none;
+}
+
+
+/* ==========================================================
+   TITLE
+========================================================== */
+
+.nullTitle {
+    font-size: 12px;
 
     letter-spacing: 4px;
 
-    color: #aaa;
+    color:
+        rgba(220,220,220,0.6);
 
-    text-transform: uppercase;
+    text-shadow:
+        0 0 8px rgba(255,255,255,0.1);
 }
 
 
-.nullBanLine {
-    height: 1px;
+/* ==========================================================
+   STATUS
+========================================================== */
 
-    margin: 12px 0;
-
-    background: rgba(255,255,255,.06);
-}
-
-
-.nullBanReason {
+.nullStatus {
     font-size: 10px;
 
-    line-height: 1.7;
+    letter-spacing: 2px;
 
-    color: #666;
+    color:
+        rgba(170,170,170,0.45);
+
+    transition:
+        color 0.3s ease;
 }
 
 
-.nullBanCode {
-    margin-top: 18px;
+/* ==========================================================
+   ROOM INFO
+========================================================== */
 
-    padding: 10px;
+.nullRoomInfo {
+    position: absolute;
 
-    background: #090909;
+    left: 24px;
+    bottom: 24px;
 
-    color: #555;
+    pointer-events: none;
+
+    opacity: 0.6;
+}
+
+
+.nullRoomType {
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+    color:
+        rgba(220,220,220,0.7);
+}
+
+
+.nullRoomDescription {
+    margin-top: 5px;
+
+    font-size: 8px;
+
+    letter-spacing: 1.5px;
+
+    color:
+        rgba(150,150,150,0.45);
+}
+
+
+/* ==========================================================
+   EVENT MESSAGE
+========================================================== */
+
+.nullEventMessage {
+    position: absolute;
+
+    left: 50%;
+    top: 82%;
+
+    transform:
+        translate(-50%, 15px);
 
     font-size: 10px;
+
+    letter-spacing: 3px;
+
+    color:
+        rgba(150,0,0,0.9);
+
+    text-shadow:
+        0 0 8px rgba(100,0,0,0.5);
+
+    opacity: 0;
+
+    transition:
+        opacity 0.4s ease,
+        transform 0.4s ease;
+
+    pointer-events: none;
 }
 
 
-/* ============================================================
-   ENTRY
-============================================================ */
+.nullEventMessage.visible {
+    opacity: 1;
 
-.nullSpaceEntering {
-    animation: nullEnter .8s ease both;
+    transform:
+        translate(-50%, 0);
 }
 
 
-@keyframes nullEnter {
-    from {
-        opacity: 0;
+/* ==========================================================
+   NAVIGATION
+========================================================== */
 
-        filter: brightness(.25);
-    }
+.nullNavigation {
+    position: absolute;
 
-    to {
-        opacity: 1;
+    right: 24px;
+    bottom: 22px;
 
-        filter: brightness(1);
-    }
+    display: flex;
+
+    gap: 6px;
+
+    pointer-events: auto;
 }
 
 
-/* ============================================================
-   SCROLLBARS
-============================================================ */
+.nullNavigationButton {
+    appearance: none;
 
-#nullSpaceRoot ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    border: 1px solid
+        rgba(255,255,255,0.08);
+
+    background:
+        rgba(0,0,0,0.65);
+
+    color:
+        rgba(190,190,190,0.55);
+
+    padding:
+        7px 11px;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size: 8px;
+
+    letter-spacing: 1.5px;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
 }
 
 
-#nullSpaceRoot ::-webkit-scrollbar-track {
-    background: #030303;
+.nullNavigationButton:hover {
+    color:
+        rgba(255,255,255,0.9);
+
+    border-color:
+        rgba(150,0,0,0.45);
+
+    background:
+        rgba(40,0,0,0.25);
 }
 
 
-#nullSpaceRoot ::-webkit-scrollbar-thumb {
-    background: #292929;
+.nullNavigationButton:active {
+    transform:
+        translateY(1px);
 }
 
 
-#nullSpaceRoot ::-webkit-scrollbar-thumb:hover {
-    background: #3d3d3d;
+/* ==========================================================
+   WINDOWS
+========================================================== */
+
+.nullWindows {
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
 }
 
 
-/* ============================================================
+/* ==========================================================
+   NULL WINDOW
+========================================================== */
+
+.nullWindow {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 360px;
+
+    transform:
+        translate(-50%, -50%);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.1);
+
+    background:
+        rgba(2,2,2,0.94);
+
+    box-shadow:
+        0 0 40px rgba(0,0,0,0.9);
+
+    pointer-events: auto;
+}
+
+
+.nullWindowHeader {
+    height: 28px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content:
+        space-between;
+
+    padding:
+        0 8px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        rgba(255,255,255,0.025);
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,0.06);
+
+    color:
+        rgba(210,210,210,0.65);
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+}
+
+
+.nullWindowClose {
+    border: none;
+
+    background: none;
+
+    color:
+        rgba(255,255,255,0.4);
+
+    cursor: pointer;
+
+    font-size: 16px;
+}
+
+
+.nullWindowContent {
+    min-height: 100px;
+
+    padding: 18px;
+
+    color:
+        rgba(170,170,170,0.5);
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+}
+
+
+/* ==========================================================
+   ROOM VARIATIONS
+========================================================== */
+
+
+/* LARGE ROOM */
+
+.nullRoom[data-room="large"] {
+    width: min(1100px, 78vw);
+    height: min(650px, 68vh);
+}
+
+
+/* HALLWAY */
+
+.nullRoom[data-room="hallway"] {
+    width: min(650px, 52vw);
+    height: min(760px, 82vh);
+
+    transform:
+        translate(-50%, -50%)
+        perspective(900px)
+        rotateY(0deg);
+}
+
+
+/* CONSOLE ROOM */
+
+.nullRoom[data-room="console"] {
+    width: min(760px, 60vw);
+    height: min(500px, 58vh);
+}
+
+
+/* PILLAR ROOM */
+
+.nullRoom[data-room="pillar"] {
+    width: min(900px, 70vw);
+    height: min(620px, 65vh);
+}
+
+
+/* ==========================================================
    MOBILE
-============================================================ */
+========================================================== */
 
-@media (max-width: 800px) {
+@media (max-width: 700px) {
 
-    .nullNavigation {
-        width: 52px;
-
-        padding: 12px 5px;
+    .nullRoom {
+        width: 92vw !important;
+        height: 72vh !important;
     }
 
-    .nullNavigationTitle,
-    .nullBrandSubtitle {
-        display: none;
-    }
-
-    .nullNavButton {
-        font-size: 0;
-
-        text-align: center;
-    }
-
-    .nullNavButton::after {
-        content: "•";
-
-        font-size: 14px;
-
-        color: #555;
-    }
-
-    .nullBrand {
-        min-width: auto;
-    }
-
-    .nullBrandTitle {
-        font-size: 10px;
-    }
-
-    .nullStatus {
-        display: none;
-    }
-
-    .nullVoidRoom {
-        width: 120vw;
-        height: 75vh;
-    }
-
-    .nullVoidFloor {
-        left: 2%;
-        right: 2%;
-    }
-
-    .nullVoidCeiling {
-        left: 2%;
-        right: 2%;
-    }
-
-    .wall-back {
-        left: 2%;
-        right: 2%;
-    }
-
-    .wall-left {
-        left: 2%;
-    }
-
-    .wall-right {
-        right: 2%;
-    }
-}
-
-
-@media (max-width: 520px) {
 
     .nullTopBar {
-        height: 38px;
-
-        padding: 0 10px;
+        top: 14px;
+        left: 14px;
+        right: 14px;
     }
 
-    .nullWorkspace {
-        top: 38px;
+
+    .nullRoomInfo {
+        left: 14px;
+        bottom: 14px;
     }
 
-    .nullVoidLight {
-        width: 35px;
-        height: 5px;
+
+    .nullNavigation {
+        right: 14px;
+        bottom: 12px;
     }
 
-    .nullEmptyZero {
-        font-size: 30px;
+
+    .nullNavigationButton {
+        padding:
+            6px 8px;
+
+        font-size: 7px;
+    }
+
+
+    .nullTitle {
+        font-size: 10px;
+
+        letter-spacing: 3px;
+    }
+}
+
+
+/* ==========================================================
+   REDUCED MOTION
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .nullVoidLight,
+    .nullVoidBlock,
+    .nullEntityHead::after {
+        animation: none !important;
+    }
+
+    .nullEventMessage {
+        transition: none;
     }
 }
