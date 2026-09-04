@@ -1,16 +1,17 @@
 /* ==========================================================
-   MR.SMILE — OMEGA INTERFACE MANIFESTATION
-   FINAL FACE VISUAL SYSTEM
+   MR.SMILE — OMEGA MANIFESTATION
+   DARK INTERFACE / COLD HUMAN FACE
 ========================================================== */
 
 
 /* ==========================================================
-   MAIN OVERLAY
+   MAIN MANIFESTATION
 ========================================================== */
 
 #mrSmileManifestation {
     position: fixed;
     inset: 0;
+
     width: 100vw;
     height: 100vh;
 
@@ -21,18 +22,20 @@
 
     background: #000;
 
-    color: #aaa;
+    color: #777;
 
     font-family:
         "Courier New",
         monospace;
 
     opacity: 1;
+
+    isolation: isolate;
 }
 
 
 /* ==========================================================
-   SUBTLE OMEGA REMAINS
+   VERY SUBTLE SCREEN STRUCTURE
 ========================================================== */
 
 #mrSmileManifestation::before {
@@ -44,21 +47,23 @@
     background:
         linear-gradient(
             90deg,
-            transparent 49.8%,
-            rgba(255,255,255,.025) 50%,
-            transparent 50.2%
+            transparent 49.9%,
+            rgba(255,255,255,.018) 50%,
+            transparent 50.1%
         ),
         linear-gradient(
             0deg,
-            transparent 49.8%,
-            rgba(255,255,255,.018) 50%,
-            transparent 50.2%
+            transparent 49.9%,
+            rgba(255,255,255,.012) 50%,
+            transparent 50.1%
         );
 
     opacity: 0;
 
     transition:
-        opacity 2s ease;
+        opacity 2.5s ease;
+
+    pointer-events: none;
 }
 
 
@@ -71,19 +76,23 @@
     background:
         repeating-linear-gradient(
             0deg,
-            transparent 0px,
-            transparent 3px,
-            rgba(255,255,255,.012) 4px
+            rgba(255,255,255,.008) 0px,
+            rgba(255,255,255,.008) 1px,
+            transparent 1px,
+            transparent 4px
         );
 
     opacity: 0;
 
     pointer-events: none;
+
+    transition:
+        opacity 2s ease;
 }
 
 
 /* ==========================================================
-   INTERFACE FRAGMENTS
+   OMEGA CODE FIELD
 ========================================================== */
 
 .mrSmileUIFragments {
@@ -94,132 +103,165 @@
     height: 100%;
 
     pointer-events: none;
+
+    z-index: 1;
+
+    overflow: hidden;
 }
 
+
+/* ==========================================================
+   CODE FRAGMENTS
+========================================================== */
 
 .mrSmileFragment {
     position: absolute;
 
     box-sizing: border-box;
 
-    color: #777;
+    margin: 0;
+    padding: 0;
+
+    color:
+        rgba(145,145,145,.34);
 
     opacity: 0;
 
-    white-space: nowrap;
+    white-space: pre;
 
-    font-size: 12px;
-    letter-spacing: 2px;
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 11px;
+
+    line-height: 1.55;
+
+    letter-spacing: .4px;
+
+    text-shadow:
+        0 0 4px rgba(255,255,255,.025);
 
     transition:
-        opacity 1.5s ease,
-        transform 3s cubic-bezier(.22,1,.36,1);
+        opacity 1.8s ease,
+        transform 3s cubic-bezier(.22,1,.36,1),
+        filter 1.5s ease;
+
+    user-select: none;
 }
 
 
 /* ==========================================================
-   MAIN FRAGMENTS
+   CODE POSITIONING
 ========================================================== */
 
 .fragment-top {
-    top: 14%;
+    top: 11%;
     left: 50%;
 
     transform:
-        translateX(-50%)
-        translateY(40px);
+        translate(-50%, -30px);
+
+    text-align: left;
 }
 
 
 .fragment-left {
-    left: 13%;
-    top: 50%;
+    left: 8%;
+    top: 43%;
 
     transform:
-        translateX(-70px)
-        translateY(-50%);
+        translateX(-70px);
+
+    text-align: left;
 }
 
 
 .fragment-right {
-    right: 13%;
-    top: 50%;
+    right: 7%;
+    top: 48%;
 
     transform:
-        translateX(70px)
-        translateY(-50%);
+        translateX(70px);
+
+    text-align: left;
 }
 
 
 .fragment-bottom {
-    bottom: 14%;
     left: 50%;
+    bottom: 11%;
 
     transform:
-        translateX(-50%)
-        translateY(-40px);
+        translate(-50%, 30px);
+
+    text-align: left;
 }
 
 
 /* ==========================================================
-   CODE
+   SMALL CODE PIECES
 ========================================================== */
 
 .fragment-code {
-    font-size: 10px;
-    letter-spacing: 1px;
+    color:
+        rgba(125,125,125,.30);
 
-    color: #555;
+    font-size: 10px;
+
+    letter-spacing: .2px;
+
+    line-height: 1.5;
 }
 
 
 .code-1 {
-    top: 26%;
-    left: 22%;
-
-    transform:
-        translateX(-100px);
-}
-
-
-.code-2 {
-    top: 31%;
-    right: 20%;
-
-    transform:
-        translateX(100px);
-}
-
-
-.code-3 {
-    bottom: 31%;
-    left: 21%;
+    top: 22%;
+    left: 17%;
 
     transform:
         translateX(-80px);
 }
 
 
-.code-4 {
-    bottom: 25%;
-    right: 18%;
+.code-2 {
+    top: 27%;
+    right: 16%;
 
     transform:
-        translateX(100px);
+        translateX(80px);
+}
+
+
+.code-3 {
+    bottom: 27%;
+    left: 16%;
+
+    transform:
+        translateX(-70px);
+}
+
+
+.code-4 {
+    bottom: 21%;
+    right: 14%;
+
+    transform:
+        translateX(80px);
 }
 
 
 .code-5 {
-    top: 18%;
-    right: 31%;
+    top: 17%;
+    right: 29%;
 
     transform:
-        translateY(-50px);
+        translateY(-45px);
 }
 
 
 /* ==========================================================
-   INTERFACE LINES
+   CODE LINES
 ========================================================== */
 
 .fragment-line {
@@ -227,17 +269,23 @@
 
     height: 1px;
 
-    background: #555;
+    background:
+        rgba(150,150,150,.13);
 
     opacity: 0;
+
+    transition:
+        opacity 1.5s ease,
+        transform 2s ease,
+        width 2s ease;
 }
 
 
 .line-1 {
-    width: 28vw;
+    width: 24vw;
 
-    top: 35%;
     left: 0;
+    top: 34%;
 
     transform:
         translateX(-100%);
@@ -247,8 +295,8 @@
 .line-2 {
     width: 22vw;
 
-    top: 65%;
     right: 0;
+    top: 67%;
 
     transform:
         translateX(100%);
@@ -257,10 +305,10 @@
 
 .line-3 {
     width: 1px;
-    height: 30vh;
+    height: 22vh;
 
+    left: 31%;
     top: 0;
-    left: 35%;
 
     transform:
         translateY(-100%);
@@ -269,10 +317,10 @@
 
 .line-4 {
     width: 1px;
-    height: 25vh;
+    height: 20vh;
 
+    right: 30%;
     bottom: 0;
-    right: 34%;
 
     transform:
         translateY(100%);
@@ -280,19 +328,74 @@
 
 
 .line-5 {
-    width: 46vw;
+    width: 38vw;
 
     left: 50%;
     top: 50%;
 
     transform:
-        translateX(-50%)
+        translate(-50%, 0)
         scaleX(0);
+
+    transform-origin:
+        center;
 }
 
 
 /* ==========================================================
-   FACE
+   CODE CORRUPTION
+========================================================== */
+
+#mrSmileManifestation.phase-2 .mrSmileFragment {
+    filter:
+        blur(.05px);
+
+    text-shadow:
+        1px 0 rgba(255,255,255,.04),
+        -1px 0 rgba(255,255,255,.025);
+}
+
+
+#mrSmileManifestation.phase-7 .fragment-code {
+    animation:
+        mrSmileCodeCorruption
+        1.15s
+        steps(2)
+        infinite;
+}
+
+
+@keyframes mrSmileCodeCorruption {
+
+    0% {
+        opacity: .16;
+        transform: translateX(0);
+    }
+
+    20% {
+        opacity: .55;
+        transform: translateX(-1px);
+    }
+
+    45% {
+        opacity: .22;
+        transform: translateX(1px);
+    }
+
+    70% {
+        opacity: .48;
+        transform: translateX(0);
+    }
+
+    100% {
+        opacity: .14;
+        transform: translateX(-1px);
+    }
+}
+
+
+/* ==========================================================
+   FACE CONTAINER
 ========================================================== */
 
 .mrSmileFace {
@@ -309,16 +412,22 @@
 
     opacity: 0;
 
+    z-index: 5;
+
     transition:
-        transform 2s ease,
-        opacity 2s ease;
+        opacity 2.2s ease,
+        transform 2s cubic-bezier(.22,1,.36,1);
+
+    /*
+       IMPORTANT:
+       The face itself does NOT have a visible box.
+    */
 }
 
 
 /* ==========================================================
    FACE FRAME
-   Очень слабый.
-   Не должен выглядеть как маска.
+   ALMOST INVISIBLE
 ========================================================== */
 
 .mrSmileFaceFrame {
@@ -327,17 +436,28 @@
     left: 50%;
     top: 50%;
 
-    width: 100%;
-    height: 100%;
+    width: 76%;
+    height: 70%;
 
     transform:
         translate(-50%, -50%);
 
     border:
-        1px solid
-        rgba(150,150,150,.11);
+        none;
 
     opacity: 0;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(255,255,255,.012),
+            transparent 62%
+        );
+
+    filter:
+        blur(16px);
+
+    pointer-events: none;
 }
 
 
@@ -348,7 +468,8 @@
 .mrSmileEye {
     position: absolute;
 
-    background: #050505;
+    background:
+        #020202;
 
     overflow: hidden;
 
@@ -356,60 +477,66 @@
 
     border:
         1px solid
-        rgba(210,210,210,.62);
+        rgba(125,125,125,.38);
+
+    border-radius:
+        46% 52% 48% 50%;
 
     box-shadow:
-        0 0 0 1px rgba(255,255,255,.025),
-        inset 0 0 18px rgba(255,255,255,.025);
+        inset 0 0 22px rgba(255,255,255,.018),
+        0 0 12px rgba(0,0,0,.8);
 
     transition:
-        transform 1.5s cubic-bezier(.22,1,.36,1),
-        opacity 1.5s ease,
+        opacity 1.8s ease,
+        transform 1.6s cubic-bezier(.22,1,.36,1),
         width 1.5s ease,
         height 1.5s ease;
+
+    /*
+       No white square.
+       No bright mechanical eye.
+    */
 }
 
 
 /* ==========================================================
    LEFT EYE
-   Большой и немного неправильный
 ========================================================== */
 
 .eye-left {
-    left: 12%;
+    left: 15%;
     top: 27%;
 
-    width: 124px;
-    height: 82px;
+    width: 125px;
+    height: 79px;
 
     transform:
-        translateX(-35px)
-        scale(.55)
+        translateX(-38px)
+        scale(.60)
         rotate(-5deg);
 }
 
 
 /* ==========================================================
    RIGHT EYE
-   Намеренно отличается от левого
 ========================================================== */
 
 .eye-right {
-    right: 10%;
-    top: 31%;
+    right: 13%;
+    top: 30%;
 
-    width: 108px;
-    height: 91px;
+    width: 109px;
+    height: 87px;
 
     transform:
-        translateX(35px)
-        scale(.55)
+        translateX(38px)
+        scale(.60)
         rotate(6deg);
 }
 
 
 /* ==========================================================
-   EYE INTERNAL LINE
+   VERY SUBTLE EYE INNER SHADOW
 ========================================================== */
 
 .mrSmileEye::before {
@@ -417,23 +544,24 @@
 
     position: absolute;
 
-    left: 7%;
-    right: 7%;
+    inset: 5px;
 
-    top: 50%;
-
-    height: 1px;
+    border-radius:
+        inherit;
 
     background:
-        rgba(190,190,190,.42);
+        radial-gradient(
+            ellipse at center,
+            rgba(255,255,255,.018),
+            transparent 65%
+        );
 
-    transform:
-        translateY(-50%);
+    pointer-events: none;
 }
 
 
 /* ==========================================================
-   INNER EYE FRAME
+   EYE INNER BORDER
 ========================================================== */
 
 .mrSmileEye::after {
@@ -441,16 +569,20 @@
 
     position: absolute;
 
-    inset: 11px;
+    inset: 10px;
 
     border:
         1px solid
-        rgba(130,130,130,.20);
+        rgba(130,130,130,.08);
+
+    border-radius:
+        inherit;
 }
 
 
 /* ==========================================================
    EYE CORE
+   SMALL / COLD / EMPTY
 ========================================================== */
 
 .eyeCore {
@@ -459,20 +591,27 @@
     left: 50%;
     top: 50%;
 
-    width: 29px;
-    height: 29px;
+    width: 15px;
+    height: 15px;
 
     transform:
         translate(-50%, -50%);
 
-    background: #ddd;
+    background:
+        #777;
+
+    border-radius:
+        50%;
+
+    opacity: .65;
 
     box-shadow:
-        0 0 12px rgba(255,255,255,.25),
-        0 0 25px rgba(255,255,255,.10);
+        0 0 8px rgba(190,190,190,.08);
 
     transition:
-        transform 1s ease;
+        transform 1s ease,
+        background 1s ease,
+        opacity 1s ease;
 }
 
 
@@ -488,386 +627,22 @@
     left: 50%;
     top: 50%;
 
-    width: 8px;
-    height: 8px;
+    width: 5px;
+    height: 5px;
 
     transform:
         translate(-50%, -50%);
 
-    background: #000;
-}
-
-
-/* ==========================================================
-   MOUTH
-   Человеческая улыбка.
-   Не пасть.
-========================================================== */
-
-.mrSmileMouth {
-    position: absolute;
-
-    left: 50%;
-    top: 65%;
-
-    width: 18px;
-    height: 26px;
-
-    transform:
-        translateX(-50%)
-        scaleX(.03);
-
-    opacity: 0;
-
-    transition:
-        width 10s cubic-bezier(.22,1,.36,1),
-        height 5s ease,
-        transform 6s ease,
-        opacity 3s ease;
-}
-
-
-/* ==========================================================
-   OUTER SMILE
-========================================================== */
-
-.mouthOuter {
-    position: absolute;
-
-    left: 50%;
-    top: 50%;
-
-    width: 100%;
-    height: 100%;
-
-    transform:
-        translate(-50%, -50%);
-
-    border:
-        2px solid
-        rgba(205,205,205,.86);
-
-    border-top: 0;
+    background:
+        #000;
 
     border-radius:
-        0 0 50% 50% / 0 0 100% 100%;
-
-    box-shadow:
-        0 2px 8px rgba(255,255,255,.08);
+        50%;
 }
 
 
 /* ==========================================================
-   MOUTH INNER
-========================================================== */
-
-.mouthInner {
-    position: absolute;
-
-    left: 50%;
-    top: 55%;
-
-    width: 88%;
-    height: 58%;
-
-    transform:
-        translate(-50%, -50%);
-
-    background:
-        #020202;
-
-    border:
-        1px solid
-        rgba(130,130,130,.35);
-
-    border-radius:
-        0 0 48% 48% / 0 0 75% 75%;
-
-    opacity: 0;
-
-    transition:
-        opacity 2s ease;
-}
-
-
-/* ==========================================================
-   TEETH
-   Добавляем через CSS.
-========================================================== */
-
-.mouthInner::before {
-    content:
-        "▾ ▾ ▾ ▾ ▾ ▾ ▾ ▾ ▾ ▾ ▾ ▾ ▾";
-
-    position: absolute;
-
-    left: 50%;
-    top: 8px;
-
-    transform:
-        translateX(-50%);
-
-    width: 92%;
-
-    color: #ddd;
-
-    font-family:
-        Arial,
-        sans-serif;
-
-    font-size: 22px;
-
-    letter-spacing: 1px;
-
-    line-height: 1;
-
-    white-space: nowrap;
-
-    text-align: center;
-
-    opacity: 0;
-
-    transition:
-        opacity 2s ease;
-}
-
-
-/* ==========================================================
-   SECOND TOOTH ROW
-========================================================== */
-
-.mouthInner::after {
-    content:
-        "⌄  ⌄  ⌄  ⌄  ⌄  ⌄  ⌄  ⌄  ⌄";
-
-    position: absolute;
-
-    left: 50%;
-    bottom: 6px;
-
-    transform:
-        translateX(-50%);
-
-    width: 82%;
-
-    color: #aaa;
-
-    font-family:
-        Arial,
-        sans-serif;
-
-    font-size: 15px;
-
-    letter-spacing: 2px;
-
-    white-space: nowrap;
-
-    text-align: center;
-
-    opacity: 0;
-
-    transition:
-        opacity 2s ease;
-}
-
-
-/* ==========================================================
-   MOUTH BREAKS
-   Маленькие линии по краям.
-========================================================== */
-
-.mouthBreak {
-    position: absolute;
-
-    width: 18px;
-    height: 1px;
-
-    top: 50%;
-
-    background:
-        rgba(170,170,170,.65);
-
-    opacity: .8;
-}
-
-
-.mouthBreak-1 {
-    left: -23px;
-}
-
-
-.mouthBreak-2 {
-    right: -23px;
-}
-
-
-/* ==========================================================
-   FACE SCAN
-========================================================== */
-
-.mrSmileFaceScan {
-    position: absolute;
-
-    left: 0;
-    right: 0;
-
-    top: -20%;
-
-    height: 1px;
-
-    background:
-        rgba(255,255,255,.25);
-
-    box-shadow:
-        0 0 12px rgba(255,255,255,.20);
-
-    opacity: 0;
-}
-
-
-/* ==========================================================
-   SIGNAL
-========================================================== */
-
-.mrSmileSignal {
-    position: absolute;
-
-    left: 50%;
-    bottom: 8%;
-
-    transform:
-        translateX(-50%);
-
-    font-size: 10px;
-
-    letter-spacing: 2px;
-
-    color: #555;
-
-    opacity: 0;
-}
-
-
-.signalControl {
-    display: none;
-}
-
-
-/* ==========================================================
-   PHASE 1
-========================================================== */
-
-#mrSmileManifestation.phase-1::before {
-    opacity: 1;
-}
-
-
-#mrSmileManifestation.phase-1 .mrSmileFragment {
-    opacity: .25;
-}
-
-
-#mrSmileManifestation.phase-1 .fragment-top {
-    transform:
-        translateX(-50%)
-        translateY(0);
-}
-
-
-#mrSmileManifestation.phase-1 .fragment-bottom {
-    transform:
-        translateX(-50%)
-        translateY(0);
-}
-
-
-#mrSmileManifestation.phase-1 .fragment-left {
-    transform:
-        translateX(0)
-        translateY(-50%);
-}
-
-
-#mrSmileManifestation.phase-1 .fragment-right {
-    transform:
-        translateX(0)
-        translateY(-50%);
-}
-
-
-/* ==========================================================
-   PHASE 2
-========================================================== */
-
-#mrSmileManifestation.phase-2 .mrSmileFragment {
-    opacity: .65;
-}
-
-
-#mrSmileManifestation.phase-2 .fragment-top {
-    transform:
-        translateX(-50%)
-        translateY(100px);
-}
-
-
-#mrSmileManifestation.phase-2 .fragment-bottom {
-    transform:
-        translateX(-50%)
-        translateY(-100px);
-}
-
-
-#mrSmileManifestation.phase-2 .fragment-left {
-    transform:
-        translateX(140px)
-        translateY(-50%);
-}
-
-
-#mrSmileManifestation.phase-2 .fragment-right {
-    transform:
-        translateX(-140px)
-        translateY(-50%);
-}
-
-
-#mrSmileManifestation.phase-2 .fragment-code {
-    opacity: .75;
-}
-
-
-#mrSmileManifestation.phase-2 .fragment-line {
-    opacity: .45;
-}
-
-
-#mrSmileManifestation.phase-2 .line-1,
-#mrSmileManifestation.phase-2 .line-2 {
-    transform:
-        translateX(0);
-}
-
-
-#mrSmileManifestation.phase-2 .line-3,
-#mrSmileManifestation.phase-2 .line-4 {
-    transform:
-        translateY(0);
-}
-
-
-#mrSmileManifestation.phase-2 .line-5 {
-    opacity: .6;
-
-    transform:
-        translateX(-50%)
-        scaleX(1);
-}
-
-
-/* ==========================================================
-   PHASE 3
-   EYES APPEAR
+   FACE APPEARANCE
 ========================================================== */
 
 #mrSmileManifestation.phase-3 .mrSmileFace {
@@ -876,7 +651,7 @@
 
 
 #mrSmileManifestation.phase-3 .mrSmileFaceFrame {
-    opacity: .15;
+    opacity: .35;
 }
 
 
@@ -885,8 +660,7 @@
 
     transform:
         translateX(0)
-        scale(1)
-        rotate(0);
+        scale(1);
 }
 
 
@@ -906,35 +680,26 @@
 }
 
 
-#mrSmileManifestation.phase-3 .mrSmileFaceScan {
-    opacity: .25;
-
-    animation:
-        mrSmileScan 4s linear infinite;
-}
-
-
 /* ==========================================================
-   PHASE 4
-   FACE BECOMES RECOGNIZABLE
+   RECOGNIZABLE FACE
 ========================================================== */
 
 #mrSmileManifestation.phase-4 .mrSmileFaceFrame {
-    opacity: .30;
+    opacity: .22;
 }
 
 
 #mrSmileManifestation.phase-4 .eye-left {
     transform:
-        translate(-10px, 3px)
-        scale(1.13)
+        translate(-8px, 2px)
+        scale(1.08)
         rotate(-6deg);
 }
 
 
 #mrSmileManifestation.phase-4 .eye-right {
     transform:
-        translate(10px, -4px)
+        translate(8px, -3px)
         scale(.94)
         rotate(7deg);
 }
@@ -942,20 +707,262 @@
 
 #mrSmileManifestation.phase-4 .eyeCore {
     animation:
-        mrSmileEyeWatch 3.8s ease-in-out infinite;
+        mrSmileColdWatch
+        4.5s
+        ease-in-out
+        infinite;
+}
+
+
+@keyframes mrSmileColdWatch {
+
+    0% {
+        transform:
+            translate(-50%, -50%);
+    }
+
+    23% {
+        transform:
+            translate(-35%, -48%);
+    }
+
+    51% {
+        transform:
+            translate(-63%, -50%);
+    }
+
+    78% {
+        transform:
+            translate(-42%, -54%);
+    }
+
+    100% {
+        transform:
+            translate(-50%, -50%);
+    }
 }
 
 
 /* ==========================================================
-   PHASE 5
-   THE SMILE
+   MOUTH
+========================================================== */
+
+.mrSmileMouth {
+    position: absolute;
+
+    left: 50%;
+    top: 65%;
+
+    width: 20px;
+    height: 26px;
+
+    transform:
+        translateX(-50%)
+        scaleX(.02);
+
+    opacity: 0;
+
+    transition:
+        width 5s cubic-bezier(.22,1,.36,1),
+        height 3s ease,
+        transform 4s cubic-bezier(.22,1,.36,1),
+        opacity 2s ease;
+}
+
+
+/* ==========================================================
+   HUMAN SMILE OUTLINE
+========================================================== */
+
+.mouthOuter {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 100%;
+    height: 100%;
+
+    transform:
+        translate(-50%, -50%);
+
+    border:
+        1px solid
+        rgba(155,155,155,.62);
+
+    border-top:
+        none;
+
+    border-radius:
+        0 0 50% 50% / 0 0 100% 100%;
+
+    box-shadow:
+        0 1px 5px rgba(255,255,255,.035);
+}
+
+
+/* ==========================================================
+   MOUTH INTERIOR
+========================================================== */
+
+.mouthInner {
+    position: absolute;
+
+    left: 50%;
+    top: 53%;
+
+    width: 91%;
+    height: 58%;
+
+    transform:
+        translate(-50%, -50%);
+
+    background:
+        #010101;
+
+    border:
+        1px solid
+        rgba(100,100,100,.18);
+
+    border-radius:
+        0 0 48% 48% / 0 0 76% 76%;
+
+    opacity: 0;
+
+    transition:
+        opacity 2s ease;
+}
+
+
+/* ==========================================================
+   TEETH
+========================================================== */
+
+.mouthInner::before {
+    content:
+        "▌ ▌▌ ▌ ▌▌▌ ▌ ▌▌ ▌▌ ▌";
+
+    position: absolute;
+
+    left: 50%;
+    top: 7px;
+
+    width: 91%;
+
+    transform:
+        translateX(-50%);
+
+    color:
+        rgba(205,205,205,.78);
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-size:
+        18px;
+
+    line-height:
+        1;
+
+    letter-spacing:
+        1px;
+
+    white-space:
+        nowrap;
+
+    text-align:
+        center;
+
+    opacity: 0;
+
+    transition:
+        opacity 2s ease;
+}
+
+
+/* ==========================================================
+   SECOND TEETH SHADOW
+========================================================== */
+
+.mouthInner::after {
+    content:
+        "⌄  ⌄ ⌄  ⌄  ⌄⌄  ⌄  ⌄";
+
+    position: absolute;
+
+    left: 50%;
+    bottom: 5px;
+
+    width: 82%;
+
+    transform:
+        translateX(-50%);
+
+    color:
+        rgba(135,135,135,.48);
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-size:
+        11px;
+
+    letter-spacing:
+        2px;
+
+    white-space:
+        nowrap;
+
+    text-align:
+        center;
+
+    opacity: 0;
+
+    transition:
+        opacity 2s ease;
+}
+
+
+/* ==========================================================
+   MOUTH SIDE BREAKS
+========================================================== */
+
+.mouthBreak {
+    position: absolute;
+
+    top: 50%;
+
+    width: 14px;
+    height: 1px;
+
+    background:
+        rgba(145,145,145,.32);
+
+    opacity: .5;
+}
+
+
+.mouthBreak-1 {
+    left: -18px;
+}
+
+
+.mouthBreak-2 {
+    right: -18px;
+}
+
+
+/* ==========================================================
+   SMILE APPEARS
 ========================================================== */
 
 #mrSmileManifestation.phase-5 .mrSmileMouth {
     opacity: 1;
 
-    width: 265px;
-    height: 70px;
+    width: 250px;
+    height: 62px;
 
     transform:
         translateX(-50%)
@@ -964,33 +971,134 @@
 
 
 #mrSmileManifestation.phase-5 .mouthInner {
-    opacity: 1;
+    opacity: .92;
 }
 
 
-#mrSmileManifestation.phase-5 .mouthInner::before {
-    opacity: .0;
-}
-
-
-#mrSmileManifestation.phase-5 .mouthInner::after {
-    opacity: .0;
-}
-
+/* ==========================================================
+   FACE GETS CALMER — NOT MORE MONSTROUS
+========================================================== */
 
 #mrSmileManifestation.phase-5 .eye-left {
     transform:
-        translate(-15px, 4px)
-        scale(1.18)
-        rotate(-7deg);
+        translate(-13px, 3px)
+        scale(1.08)
+        rotate(-6deg);
 }
 
 
 #mrSmileManifestation.phase-5 .eye-right {
     transform:
-        translate(13px, -5px)
-        scale(.91)
+        translate(11px, -4px)
+        scale(.92)
+        rotate(7deg);
+}
+
+
+/* ==========================================================
+   OBSERVATION
+========================================================== */
+
+#mrSmileManifestation.phase-6 .mrSmileFace {
+    transform:
+        translate(-50%, -50%)
+        scale(1.025);
+}
+
+
+#mrSmileManifestation.phase-6 .eye-left {
+    transform:
+        translate(-18px, 4px)
+        scale(1.12)
+        rotate(-7deg);
+}
+
+
+#mrSmileManifestation.phase-6 .eye-right {
+    transform:
+        translate(16px, -5px)
+        scale(.88)
         rotate(8deg);
+}
+
+
+#mrSmileManifestation.phase-6 .mrSmileMouth {
+    width: 315px;
+    height: 72px;
+}
+
+
+/* ==========================================================
+   TEETH BECOME VISIBLE
+========================================================== */
+
+#mrSmileManifestation.phase-6 .mouthInner::before {
+    opacity: .82;
+}
+
+
+#mrSmileManifestation.phase-6 .mouthInner::after {
+    opacity: .16;
+}
+
+
+/* ==========================================================
+   FACE / SYSTEM MERGE
+========================================================== */
+
+#mrSmileManifestation.phase-7 .mrSmileFace {
+    transform:
+        translate(-50%, -50%)
+        skewX(-1.5deg);
+}
+
+
+#mrSmileManifestation.phase-7 .eye-left {
+    transform:
+        translate(-21px, 5px)
+        scale(1.11)
+        rotate(-7deg);
+}
+
+
+#mrSmileManifestation.phase-7 .eye-right {
+    transform:
+        translate(18px, -6px)
+        scale(.85)
+        rotate(9deg);
+}
+
+
+#mrSmileManifestation.phase-7 .mrSmileMouth {
+    width: 330px;
+    height: 74px;
+
+    transform:
+        translateX(-50%)
+        skewX(-1.5deg);
+}
+
+
+#mrSmileManifestation.phase-7 .mouthInner::before {
+    opacity: .94;
+}
+
+
+#mrSmileManifestation.phase-7 .mouthInner::after {
+    opacity: .22;
+
+
+/* ==========================================================
+   CODE REMAINS VISIBLE
+========================================================== */
+
+#mrSmileManifestation.phase-7 .mrSmileFragment {
+    opacity: .48;
+}
+
+
+#mrSmileManifestation.phase-7 .fragment-line {
+    opacity: .35;
 }
 
 
@@ -998,8 +1106,15 @@
    CURSOR PHASE
 ========================================================== */
 
+#mrSmileManifestation.phase-cursor .mrSmileFace {
+    transform:
+        translate(-50%, -50%)
+        scale(1.015);
+}
+
+
 #mrSmileManifestation.phase-cursor .mrSmileSignal {
-    opacity: .7;
+    opacity: .45;
 }
 
 
@@ -1013,21 +1128,21 @@
 }
 
 
-#mrSmileManifestation.phase-cursor .mrSmileFace {
+/* ==========================================================
+   CURSOR TRANSFER
+========================================================== */
+
+#mrSmileManifestation.cursor-transfer .mrSmileFace {
     transform:
         translate(-50%, -50%)
         scale(1.02);
 }
 
 
-/* ==========================================================
-   CURSOR TRANSFER
-========================================================== */
-
 #mrSmileManifestation.cursor-transfer .eye-left {
     transform:
-        translate(-5px, 2px)
-        scale(1.16)
+        translate(-7px, 2px)
+        scale(1.10)
         rotate(-7deg);
 }
 
@@ -1035,7 +1150,7 @@
 #mrSmileManifestation.cursor-transfer .eye-right {
     transform:
         translate(8px, -3px)
-        scale(.94)
+        scale(.91)
         rotate(7deg);
 }
 
@@ -1046,84 +1161,117 @@
 
 #mrSmileManifestation.cursor-locked .mrSmileFace {
     animation:
-        mrSmileObserve 2.2s ease-in-out;
+        mrSmileStillObserve
+        3s
+        ease-in-out;
 }
 
 
-#mrSmileManifestation.cursor-locked .mrSmileEye {
-    box-shadow:
-        0 0 18px rgba(255,255,255,.12);
+#mrSmileManifestation.cursor-locked .eyeCore {
+    opacity: .82;
+}
+
+
+@keyframes mrSmileStillObserve {
+
+    0% {
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            translate(-50%, -50%)
+            scale(1.018);
+    }
+
+    100% {
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
 }
 
 
 /* ==========================================================
-   CURSOR SELF MOVE
+   CURSOR MOVING BY ITSELF
 ========================================================== */
 
 #mrSmileManifestation.cursor-self-move .mrSmileFace {
     transform:
         translate(-50%, -50%)
-        scale(1.02);
+        scale(1.025);
 }
 
 
 #mrSmileManifestation.cursor-self-move .eye-left {
     transform:
-        translate(-18px, 2px)
-        rotate(-8deg)
-        scale(1.18);
+        translate(-17px, 3px)
+        scale(1.13)
+        rotate(-8deg);
 }
 
 
 #mrSmileManifestation.cursor-self-move .eye-right {
     transform:
-        translate(16px, -3px)
-        rotate(8deg)
-        scale(.90);
+        translate(15px, -4px)
+        scale(.87)
+        rotate(9deg);
 }
 
 
 /* ==========================================================
-   CURSOR AT EYE
+   CURSOR REACHES EYE
 ========================================================== */
 
 #mrSmileManifestation.cursor-at-eye .eye-left {
     transform:
         translate(-5px, 0)
-        scale(1.25)
+        scale(1.19)
         rotate(-6deg);
 }
 
 
 #mrSmileManifestation.cursor-at-eye .eye-left .eyeCore {
     animation:
-        mrSmilePupilNotice 2.4s ease-in-out infinite;
+        mrSmilePupilNotice
+        2.4s
+        ease-in-out
+        infinite;
 }
 
 
 /* ==========================================================
-   CURSOR NOTICED
+   MR.SMILE NOTICES THE CURSOR
 ========================================================== */
+
+#mrSmileManifestation.cursor-noticed .mrSmileFace {
+    transform:
+        translate(-50%, -50%)
+        scale(1.03);
+}
+
 
 #mrSmileManifestation.cursor-noticed .eye-left {
     transform:
         translate(-2px, 0)
-        scale(1.37)
+        scale(1.25)
         rotate(-6deg);
 }
 
 
 #mrSmileManifestation.cursor-noticed .eye-right {
     transform:
-        translate(18px, -3px)
+        translate(16px, -3px)
         scale(.82)
         rotate(9deg);
 }
 
 
 #mrSmileManifestation.cursor-noticed .mrSmileMouth {
-    width: 320px;
-    height: 78px;
+    width: 345px;
+    height: 77px;
 }
 
 
@@ -1137,152 +1285,29 @@
 
 
 /* ==========================================================
-   PHASE 6
-   OBSERVATION
+   AFTER CONTROL — CODE STARTS DISAPPEARING
 ========================================================== */
 
-#mrSmileManifestation.phase-6 .mrSmileFace {
-    transform:
-        translate(-50%, -50%)
-        scale(1.035);
+#mrSmileManifestation.cursor-locked .mrSmileFragment {
+    opacity: .32;
 }
 
 
-#mrSmileManifestation.phase-6 .eye-left {
-    transform:
-        translate(-24px, 5px)
-        scale(1.24)
-        rotate(-8deg);
-}
-
-
-#mrSmileManifestation.phase-6 .eye-right {
-    transform:
-        translate(20px, -7px)
-        scale(.86)
-        rotate(9deg);
-}
-
-
-#mrSmileManifestation.phase-6 .mrSmileMouth {
-    width: 340px;
-    height: 82px;
-}
-
-
-#mrSmileManifestation.phase-6 .eye-left .eyeCore {
-    animation:
-        mrSmileIndependentEye 5s ease-in-out infinite;
-}
-
-
-/* ==========================================================
-   PHASE 6 — TEETH BECOME VISIBLE
-========================================================== */
-
-#mrSmileManifestation.phase-6 .mouthInner::before {
-    opacity: .95;
-}
-
-
-#mrSmileManifestation.phase-6 .mouthInner::after {
+#mrSmileManifestation.cursor-self-move .mrSmileFragment {
     opacity: .25;
 }
 
 
-/* ==========================================================
-   PHASE 7
-   FACE AND INTERFACE MERGE
-========================================================== */
-
-#mrSmileManifestation.phase-7 .fragment-line {
-    opacity: .75;
+#mrSmileManifestation.cursor-at-eye .mrSmileFragment {
+    opacity: .16;
 }
 
 
-#mrSmileManifestation.phase-7 .line-1 {
-    width: 60vw;
+#mrSmileManifestation.cursor-noticed .mrSmileFragment {
+    opacity: .08;
 
-    top: 43%;
-    left: 50%;
-
-    transform:
-        translateX(-50%);
-}
-
-
-#mrSmileManifestation.phase-7 .line-2 {
-    width: 55vw;
-
-    top: 58%;
-
-    left: 50%;
-    right: auto;
-
-    transform:
-        translateX(-50%);
-}
-
-
-#mrSmileManifestation.phase-7 .line-5 {
-    transform:
-        translateX(-50%)
-        scaleX(1.18);
-}
-
-
-#mrSmileManifestation.phase-7 .mrSmileFace {
-    transform:
-        translate(-50%, -50%)
-        skewX(-3deg);
-}
-
-
-#mrSmileManifestation.phase-7 .eye-left {
-    transform:
-        translate(-29px, 7px)
-        scale(1.18)
-        rotate(-9deg);
-}
-
-
-#mrSmileManifestation.phase-7 .eye-right {
-    transform:
-        translate(25px, -8px)
-        scale(.79)
-        rotate(11deg);
-}
-
-
-/* ==========================================================
-   PHASE 7 — SMILE BECOMES WRONG
-========================================================== */
-
-#mrSmileManifestation.phase-7 .mrSmileMouth {
-    width: 365px;
-    height: 86px;
-
-    transform:
-        translateX(-50%)
-        skewX(-3deg);
-}
-
-
-#mrSmileManifestation.phase-7 .mouthInner::before {
-    opacity: 1;
-}
-
-
-#mrSmileManifestation.phase-7 .mouthInner::after {
-    opacity: .35;
-}
-
-
-#mrSmileManifestation.phase-7 .fragment-code {
-    opacity: .65;
-
-    animation:
-        mrSmileCodeFlicker 1.2s steps(2) infinite;
+    filter:
+        blur(.25px);
 }
 
 
@@ -1290,10 +1315,20 @@
    SILENCE
 ========================================================== */
 
+#mrSmileManifestation.phase-silence .mrSmileFragment {
+    opacity: 0;
+}
+
+
+#mrSmileManifestation.phase-silence .fragment-line {
+    opacity: 0;
+}
+
+
 #mrSmileManifestation.phase-silence .mrSmileFace {
     transform:
         translate(-50%, -50%)
-        scale(1.02);
+        scale(1.015);
 }
 
 
@@ -1307,8 +1342,8 @@
 
     transform:
         translateX(-50%)
-        scale(1.28)
-        rotate(-8deg);
+        scale(1.18)
+        rotate(-7deg);
 }
 
 
@@ -1317,25 +1352,101 @@
 }
 
 
-#mrSmileManifestation.phase-silence .mrSmileFragment {
-    opacity: 0;
-}
-
-
 #mrSmileManifestation.phase-silence .mrSmileFaceFrame {
-    opacity: .07;
-}
-
-
-#mrSmileManifestation.phase-silence .mrSmileFaceScan {
-    opacity: .10;
-
-    animation: none;
+    opacity: .08;
 }
 
 
 /* ==========================================================
-   FINAL
+   FACE SCAN
+========================================================== */
+
+.mrSmileFaceScan {
+    position: absolute;
+
+    left: 15%;
+    right: 15%;
+
+    top: -20%;
+
+    height: 1px;
+
+    background:
+        rgba(170,170,170,.11);
+
+    box-shadow:
+        0 0 8px rgba(255,255,255,.06);
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+#mrSmileManifestation.phase-3 .mrSmileFaceScan,
+#mrSmileManifestation.phase-4 .mrSmileFaceScan {
+    opacity: .12;
+
+    animation:
+        mrSmileScan
+        6s
+        linear
+        infinite;
+}
+
+
+@keyframes mrSmileScan {
+
+    0% {
+        top: -15%;
+    }
+
+    100% {
+        top: 115%;
+    }
+}
+
+
+/* ==========================================================
+   SIGNAL
+========================================================== */
+
+.mrSmileSignal {
+    position: absolute;
+
+    left: 50%;
+    bottom: 7%;
+
+    transform:
+        translateX(-50%);
+
+    z-index: 8;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 9px;
+
+    letter-spacing: 1.8px;
+
+    color:
+        rgba(145,145,145,.30);
+
+    opacity: 0;
+
+    transition:
+        opacity 1.5s ease;
+}
+
+
+.signalControl {
+    display: none;
+}
+
+
+/* ==========================================================
+   FINAL DISAPPEARANCE
 ========================================================== */
 
 #mrSmileManifestation.phase-final .mrSmileFace {
@@ -1343,7 +1454,7 @@
 
     transform:
         translate(-50%, -50%)
-        scale(.85);
+        scale(.94);
 
     transition:
         opacity 4s ease,
@@ -1356,10 +1467,6 @@
     opacity: 0;
 }
 
-
-/* ==========================================================
-   RELEASE
-========================================================== */
 
 #mrSmileManifestation.phase-release {
     opacity: 0;
@@ -1385,15 +1492,15 @@
 
 #mrSmileManifestation.phase-echo .eye-left {
     transform:
-        translateX(-25px)
-        scale(1.1)
+        translateX(-22px)
+        scale(1.06)
         rotate(-7deg);
 }
 
 
 #mrSmileManifestation.phase-echo .eye-right {
     transform:
-        translateX(20px)
+        translateX(18px)
         scale(.88)
         rotate(8deg);
 }
@@ -1401,16 +1508,16 @@
 
 #mrSmileManifestation.phase-echo-look .eye-left {
     transform:
-        translate(-40px, 8px)
-        scale(1.2)
-        rotate(-9deg);
+        translate(-35px, 7px)
+        scale(1.14)
+        rotate(-8deg);
 }
 
 
 #mrSmileManifestation.phase-echo-look .eye-right {
     transform:
-        translate(35px, -6px)
-        scale(.8)
+        translate(31px, -5px)
+        scale(.81)
         rotate(10deg);
 }
 
@@ -1422,8 +1529,8 @@
 #mrSmileManifestation.phase-echo-smile .mrSmileMouth {
     opacity: 1;
 
-    width: 300px;
-    height: 72px;
+    width: 285px;
+    height: 67px;
 
     transform:
         translateX(-50%)
@@ -1432,17 +1539,17 @@
 
 
 #mrSmileManifestation.phase-echo-smile .mouthInner {
-    opacity: 1;
+    opacity: .92;
 }
 
 
 #mrSmileManifestation.phase-echo-smile .mouthInner::before {
-    opacity: .95;
+    opacity: .88;
 }
 
 
 #mrSmileManifestation.phase-echo-smile .mouthInner::after {
-    opacity: .2;
+    opacity: .16;
 }
 
 
@@ -1462,7 +1569,7 @@
 
     transform:
         translateX(-50%)
-        scale(1.15);
+        scale(1.08);
 }
 
 
@@ -1479,18 +1586,18 @@
 #mrSmileManifestation.phase-last-eye-look .eye-left {
     transform:
         translate(-50%, -50%)
-        scale(1.3)
-        rotate(-10deg);
+        scale(1.2)
+        rotate(-9deg);
 }
 
 
 #mrSmileManifestation.phase-last-eye-close .eye-left {
-    opacity: .15;
+    opacity: .12;
 
     transform:
         translateX(-50%)
         scaleY(.05)
-        scaleX(1.4);
+        scaleX(1.3);
 }
 
 
@@ -1526,6 +1633,10 @@ body.mrSmileCursorControlled * {
 }
 
 
+/* ==========================================================
+   CURSOR ARROW
+========================================================== */
+
 .mrCursorArrow {
     position: absolute;
 
@@ -1542,15 +1653,15 @@ body.mrSmileCursorControlled * {
         13px solid transparent;
 
     border-left:
-        19px solid #aaa;
+        19px solid rgba(150,150,150,.72);
 
     transform:
         rotate(-20deg);
 
     filter:
         drop-shadow(
-            0 0 5px
-            rgba(255,255,255,.35)
+            0 0 4px
+            rgba(255,255,255,.18)
         );
 }
 
@@ -1564,7 +1675,8 @@ body.mrSmileCursorControlled * {
     width: 4px;
     height: 4px;
 
-    background: #000;
+    background:
+        #000;
 }
 
 
@@ -1578,150 +1690,181 @@ body.mrSmileInterfaceCollapse #desktop {
         transform .8s ease;
 
     filter:
-        brightness(.25)
-        contrast(1.25);
+        brightness(.20)
+        contrast(1.20);
 }
 
 
 body.mrSmileInterfaceCollapse #topBar,
 body.mrSmileInterfaceCollapse #sidebar {
-    opacity: .15;
+    opacity: .10;
 }
 
 
 body.mrSmileInterfaceCollapse .window {
     filter:
-        brightness(.35);
+        brightness(.28);
 }
 
 
 /* ==========================================================
-   ANIMATIONS
+   SYSTEM INTRUSION
 ========================================================== */
 
-@keyframes mrSmileScan {
-    0% {
-        top: -20%;
-    }
+.mrSmileSystemActivity {
+    position: fixed;
 
-    100% {
-        top: 120%;
-    }
+    left: 50%;
+    bottom: 7vh;
+
+    width: 360px;
+
+    transform:
+        translateX(-50%);
+
+    z-index: 2147482997;
+
+    pointer-events: none;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 9px;
+
+    letter-spacing: 1.5px;
+
+    color:
+        rgba(190,190,190,.28);
+
+    opacity: 0;
+
+    transition:
+        opacity 900ms ease;
 }
 
 
-@keyframes mrSmileEyeWatch {
+.mrSmileSystemActivity::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    top: -9px;
+
+    height: 1px;
+
+    background:
+        rgba(170,170,170,.12);
+}
+
+
+.mrSmileSystemActivity::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    bottom: -9px;
+
+    height: 1px;
+
+    background:
+        rgba(170,170,170,.06);
+}
+
+
+.mrSmileActivityText {
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    margin:
+        5px 0;
+
+    white-space:
+        nowrap;
+}
+
+
+.activityLabel {
+    color:
+        rgba(170,170,170,.20);
+}
+
+
+.activityValue {
+    color:
+        rgba(190,190,190,.38);
+}
+
+
+.mrSmileActivityLine {
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 0;
+    height: 100%;
+}
+
+
+body.mrSmileInterfaceCollapse .mrSmileSystemActivity {
+    opacity: 1;
+}
+
+
+.mrSmileSystemActivity.activityPulse {
+    animation:
+        mrSmileActivityPulse
+        900ms
+        ease;
+}
+
+
+@keyframes mrSmileActivityPulse {
+
     0% {
+        opacity: .15;
+
         transform:
-            translate(-10px,-2px);
+            translateX(-50%)
+            translateY(0);
     }
 
     25% {
+        opacity: .85;
+
         transform:
-            translate(7px,3px);
-    }
-
-    55% {
-        transform:
-            translate(-5px,6px);
-    }
-
-    80% {
-        transform:
-            translate(10px,-4px);
-    }
-
-    100% {
-        transform:
-            translate(-10px,-2px);
-    }
-}
-
-
-@keyframes mrSmilePupilNotice {
-    0% {
-        transform:
-            translate(-50%,-50%);
-    }
-
-    45% {
-        transform:
-            translate(-15%,-50%);
-    }
-
-    70% {
-        transform:
-            translate(-70%,-50%);
-    }
-
-    100% {
-        transform:
-            translate(-50%,-50%);
-    }
-}
-
-
-@keyframes mrSmileIndependentEye {
-    0% {
-        transform:
-            translate(-50%,-50%);
-    }
-
-    20% {
-        transform:
-            translate(-25%,-65%);
-    }
-
-    40% {
-        transform:
-            translate(-75%,-35%);
-    }
-
-    70% {
-        transform:
-            translate(-35%,-45%);
-    }
-
-    100% {
-        transform:
-            translate(-50%,-50%);
-    }
-}
-
-
-@keyframes mrSmileObserve {
-    0% {
-        transform:
-            translate(-50%,-50%)
-            scale(1);
-    }
-
-    45% {
-        transform:
-            translate(-50%,-50%)
-            scale(1.035);
-    }
-
-    100% {
-        transform:
-            translate(-50%,-50%)
-            scale(1);
-    }
-}
-
-
-@keyframes mrSmileCodeFlicker {
-    0% {
-        opacity: .15;
+            translateX(-50%)
+            translateY(-1px);
     }
 
     50% {
-        opacity: .7;
+        opacity: .35;
     }
 
     100% {
-        opacity: .25;
+        opacity: 1;
+
+        transform:
+            translateX(-50%)
+            translateY(0);
     }
+}
+
+
+.mrSmileSystemActivity.activitySilence {
+    opacity: 0;
+
+    transition:
+        opacity 1600ms ease;
 }
 
 
@@ -1756,289 +1899,83 @@ body.mrSmileInterfaceCollapse .window {
 
 
     .eyeCore {
-        width: 22px;
-        height: 22px;
+        width: 13px;
+        height: 13px;
     }
 
 
     .eyeCore::before {
-        width: 6px;
-        height: 6px;
+        width: 4px;
+        height: 4px;
     }
 
 
     #mrSmileManifestation.phase-5 .mrSmileMouth {
-        width: 185px;
-        height: 52px;
+        width: 180px;
+        height: 50px;
     }
 
 
     #mrSmileManifestation.phase-6 .mrSmileMouth {
-        width: 225px;
-        height: 62px;
+        width: 215px;
+        height: 58px;
     }
 
 
     #mrSmileManifestation.phase-7 .mrSmileMouth {
-        width: 260px;
-        height: 68px;
+        width: 245px;
+        height: 63px;
     }
 
 
     .mouthInner::before {
-        font-size: 15px;
+        font-size: 13px;
     }
 
 
     .mouthInner::after {
-        font-size: 10px;
-    }
-
-
-    .mrSmileFragment {
         font-size: 9px;
     }
 
 
+    .mrSmileFragment {
+        font-size: 8px;
+    }
+
+
     .fragment-left {
-        left: 4%;
+        left: 3%;
     }
 
 
     .fragment-right {
-        right: 4%;
+        right: 3%;
     }
 
 
     .code-1,
     .code-3 {
-        left: 7%;
+        left: 5%;
     }
 
 
     .code-2,
     .code-4 {
-        right: 7%;
-    }
-}
-
-
-/* ==========================================================
-   MR.SMILE — SYSTEM INTRUSION
-========================================================== */
-
-.mrSmileSystemActivity {
-    position: fixed;
-
-    left: 50%;
-    bottom: 7vh;
-
-    width: 360px;
-
-    transform:
-        translateX(-50%);
-
-    z-index: 2147482997;
-
-    pointer-events: none;
-
-    font-family:
-        "Courier New",
-        monospace;
-
-    font-size: 9px;
-
-    letter-spacing: 1.5px;
-
-    color: rgba(
-        255,
-        255,
-        255,
-        0.34
-    );
-
-    opacity: 0;
-
-    transition:
-        opacity 900ms ease;
-}
-
-
-.mrSmileSystemActivity::before {
-
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    right: 0;
-
-    top: -9px;
-
-    height: 1px;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.16
-        );
-
-}
-
-
-.mrSmileSystemActivity::after {
-
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    right: 0;
-
-    bottom: -9px;
-
-    height: 1px;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.08
-        );
-
-}
-
-
-.mrSmileActivityText {
-
-    display: flex;
-
-    justify-content:
-        space-between;
-
-    margin: 5px 0;
-
-    white-space: nowrap;
-
-}
-
-
-.activityLabel {
-
-    color:
-        rgba(
-            255,
-            255,
-            255,
-            0.25
-        );
-
-}
-
-
-.activityValue {
-
-    color:
-        rgba(
-            255,
-            255,
-            255,
-            0.5
-        );
-
-}
-
-
-.mrSmileActivityLine {
-
-    position: absolute;
-
-    left: 0;
-
-    top: 0;
-
-    width: 0;
-
-    height: 100%;
-
-    pointer-events: none;
-
-}
-
-
-.mrSmileInterfaceCollapse
-.mrSmileSystemActivity {
-
-    opacity: 1;
-
-}
-
-
-.mrSmileSystemActivity.activityPulse {
-
-    animation:
-        mrSmileActivityPulse
-        900ms
-        ease;
-}
-
-
-@keyframes mrSmileActivityPulse {
-
-    0% {
-        opacity: 0.2;
-        transform:
-            translateX(-50%)
-            translateY(0);
+        right: 5%;
     }
 
-    25% {
-        opacity: 1;
-        transform:
-            translateX(-50%)
-            translateY(-1px);
-    }
-
-    50% {
-        opacity: 0.45;
-    }
-
-    100% {
-        opacity: 1;
-        transform:
-            translateX(-50%)
-            translateY(0);
-    }
-
-}
-
-
-.mrSmileSystemActivity.activitySilence {
-
-    opacity: 0;
-
-    transition:
-        opacity 1600ms ease;
-
-}
-
-
-@media (max-width: 700px) {
 
     .mrSmileSystemActivity {
-
         width:
             calc(100vw - 40px);
 
-        bottom: 6vh;
+        bottom:
+            6vh;
 
-        font-size: 8px;
+        font-size:
+            8px;
 
-        letter-spacing: 1px;
-
+        letter-spacing:
+            1px;
     }
-
 }
