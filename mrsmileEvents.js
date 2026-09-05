@@ -178,7 +178,81 @@ export function initMrSmileEvents() {
    
     initAmbientEvents();
 
+   
+    function initAmbientEvents() {
 
+    on("mrsmile:nightEvent", () => {
+        runAmbientEvent(ambientNightEvent);
+    });
+
+    on("mrsmile:glitchEvent", () => {
+        runAmbientEvent(ambientGlitchEvent);
+    });
+
+    on("mrsmile:idleEvent", () => {
+        runAmbientEvent(ambientIdleEvent);
+    });
+
+    on("mrsmile:observationEvent", () => {
+        runAmbientEvent(ambientObservationEvent);
+    });
+
+}
+   
+async function ambientIdleEvent() {
+    await sleep(randomBetween(400, 1200));
+
+    await systemMessage("OMEGA: background process check...");
+
+    await sleep(900);
+
+    await systemMessage("OMEGA: no irregularities detected.");
+}
+
+async function ambientObservationEvent() {
+
+    const trace = document.createElement("div");
+
+    trace.id = "mrSmileAmbientObservation";
+    trace.className = "mrSmileAmbientObservation";
+    trace.textContent = "OBSERVED";
+
+    document.body.appendChild(trace);
+
+    requestAnimationFrame(() => {
+        trace.classList.add("visible");
+    });
+
+    await sleep(1200);
+
+    trace.classList.add("fade");
+
+    await sleep(900);
+
+    trace.remove();
+}
+
+async function ambientNightEvent() {
+
+    const chance = Math.random();
+
+    if (chance < 0.5) {
+
+        await systemMessage("CLOCK SYNC: DELAYED");
+
+        await sleep(700);
+
+        await systemMessage("CLOCK SYNC: RESTORED");
+
+        return;
+    }
+
+    await systemMessage("BACKGROUND MONITOR: ACTIVE");
+
+    await sleep(1000);
+
+    await systemMessage("BACKGROUND MONITOR: IDLE");
+}
     /* ------------------------------------------------------
        FIRST CONTACT
     ------------------------------------------------------ */
