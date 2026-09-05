@@ -1203,42 +1203,78 @@ await showMrSmileFirstContactFace();</pre>
         <!-- ==========================================
              MR.SMILE FACE
         =========================================== -->
+       <div class="mrSmileFace">
 
-        <div class="mrSmileFace">
+    <div class="mrSmileFaceStructure">
 
-            <div class="mrSmileFaceFrame"></div>
+        <span class="faceTrace trace-1"></span>
+        <span class="faceTrace trace-2"></span>
+        <span class="faceTrace trace-3"></span>
+        <span class="faceTrace trace-4"></span>
+
+    </div>
 
 
-            <div class="mrSmileEye eye-left">
+    <div class="mrSmileEye eye-left">
 
-                <span class="eyeCore"></span>
+        <div class="eyeGlow"></div>
+
+        <div class="eyeCore">
+            <span class="eyePupil"></span>
+        </div>
+
+    </div>
+
+
+    <div class="mrSmileEye eye-right">
+
+        <div class="eyeGlow"></div>
+
+        <div class="eyeCore">
+            <span class="eyePupil"></span>
+        </div>
+
+    </div>
+
+
+    <div class="mrSmileMouth">
+
+        <div class="mouthOuter"></div>
+
+        <div class="mouthInner">
+
+            <div class="mouthTeeth">
+
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
 
             </div>
-
-
-            <div class="mrSmileEye eye-right">
-
-                <span class="eyeCore"></span>
-
-            </div>
-
-
-            <div class="mrSmileMouth">
-
-                <div class="mouthOuter"></div>
-
-                <div class="mouthInner"></div>
-
-                <div class="mouthBreak mouthBreak-1"></div>
-
-                <div class="mouthBreak mouthBreak-2"></div>
-
-            </div>
-
-
-            <div class="mrSmileFaceScan"></div>
 
         </div>
+
+        <div class="mouthLine mouthLineLeft"></div>
+        <div class="mouthLine mouthLineRight"></div>
+
+    </div>
+
+
+    <div class="mrSmileFaceScan"></div>
+
+</div>
+        
 
 
         <!-- ==========================================
