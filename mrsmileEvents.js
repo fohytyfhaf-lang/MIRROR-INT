@@ -83,6 +83,11 @@ import {
 let running = false;
 let firstContactRunning = false;
 
+let ambientEventRunning = false;
+let lastAmbientEventTime = 0;
+
+const AMBIENT_COOLDOWN = 45000;
+
 let sys00HandshakeArmed = false;
 let sys00HandshakeTriggered = false;
 
@@ -170,6 +175,8 @@ export function initMrSmileEvents() {
     glitchLoop();
     idleLoop();
     observationLoop();
+   
+    initAmbientEvents();
 
 
     /* ------------------------------------------------------
@@ -2054,6 +2061,123 @@ export function resetMrSmileFirstContact() {
     );
 }
 
+
+/* ==========================================================
+   AMBIENT EVENTS
+   ----------------------------------------------------------
+   Небольшие появления MR.SMILE после FIRST CONTACT.
+   
+   Эти события не должны ломать OMEGA.
+   Они создают ощущение постоянного присутствия.
+========================================================== */
+
+function initAmbientEvents() {
+
+    on(
+        "mrsmile:nightEvent",
+        () => {
+            runAmbientEvent(
+                ambientNightEvent
+            );
+        }
+    );
+
+
+    on(
+        "mrsmile:glitchEvent",
+        () => {
+            runAmbientEvent(
+                ambientGlitchEvent
+            );
+        }
+    );
+
+
+    on(
+        "mrsmile:idleEvent",
+        () => {
+            runAmbientEvent(
+                ambientIdleEvent
+            );
+        }
+    );
+
+
+    on(
+        "mrsmile:observationEvent",
+        () => {
+            runAmbientEvent(
+                ambientObservationEvent
+            );
+        }
+    );
+
+
+    console.log(
+        "[MR.SMILE] Ambient events registered."
+    );
+}
+
+
+/* ==========================================================
+   AMBIENT EVENT RUNNER
+========================================================== */
+
+async function runAmbientEvent(
+    eventFunction
+) {
+
+    if (firstContactRunning) {
+        return;
+    }
+
+
+    if (
+        localStorage.getItem(
+            "mrsmile_first_contact"
+        ) !== "1"
+    ) {
+        return;
+    }
+
+
+    if (ambientEventRunning) {
+        return;
+    }
+
+
+    const now =
+        Date.now();
+
+
+    if (
+        now - lastAmbientEventTime <
+        AMBIENT_COOLDOWN
+    ) {
+        return;
+    }
+
+
+    ambientEventRunning = true;
+    lastAmbientEventTime = now;
+
+
+    try {
+
+        await eventFunction();
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE] Ambient event failed:",
+            error
+        );
+
+    } finally {
+
+        ambientEventRunning = false;
+    }
+}
 
 /* ==========================================================
    BACKGROUND LOOP — NIGHT
