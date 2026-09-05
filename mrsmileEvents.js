@@ -1,7 +1,45 @@
-// =======================================
-// MR.SMILE EVENT SYSTEM
-// OMEGA — CENTRAL EVENT CONTROLLER
-// =======================================
+
+/* ==========================================================
+   MR.SMILE — OMEGA FIRST CONTACT EVENTS
+   ----------------------------------------------------------
+   Основная идея:
+   MR.SMILE не "ломает экран".
+   Он получает контроль над OMEGA.
+
+   SEQUENCE:
+
+   NORMAL OMEGA
+        ↓
+   UNAUTHORIZED AUTHORIZATION
+        ↓
+   MR_SMILE ACCOUNT
+        ↓
+   ACCESS GRANTED
+        ↓
+   OMEGA BEGINS LOSING CONTROL
+        ↓
+   SYSTEM COLLAPSE
+        ↓
+   DIAGNOSTICS
+        ↓
+   EYES
+        ↓
+   FACE
+        ↓
+   PLAYER INTERACTION
+        ↓
+   CURSOR OBSERVED
+        ↓
+   CURSOR CONTROL TRANSFER
+        ↓
+   OMEGA WINDOW OPENED
+        ↓
+   SUBTLE DISTORTION
+        ↓
+   MR.SMILE DISAPPEARS
+        ↓
+   OMEGA RESTORED
+========================================================== */
 
 import {
     typeSystemMessage,
@@ -38,12 +76,11 @@ import {
 } from "./eventManager.js";
 
 
-// =======================================
-// STATE
-// =======================================
+/* ==========================================================
+   STATE
+========================================================== */
 
 let running = false;
-
 let firstContactRunning = false;
 
 let sys00HandshakeArmed = false;
@@ -53,89 +90,132 @@ let integrityEventRunning = false;
 let falseRecoveryRunning = false;
 
 
-// =======================================
-// INIT
-// =======================================
+/* ==========================================================
+   TIMING
+========================================================== */
+
+const TIMING = {
+
+    authAppear: 900,
+    authAccount: 1100,
+    authPassword: 850,
+    authProcess: 1200,
+    authGranted: 1000,
+
+    collapseStep: 650,
+
+    darkness: 1400,
+    diagnostics: 2100,
+
+    eyesAppear: 1800,
+    faceAppear: 2200,
+
+    cursorObserve: 1700,
+    cursorTransfer: 1500,
+
+    windowOpen: 1800,
+    distortion: 1700,
+
+    recovery: 2600
+};
+
+
+/* ==========================================================
+   INITIALIZATION
+========================================================== */
 
 export function initMrSmileEvents() {
 
-    if (running) {
-        console.log(
-            "[MR.SMILE EVENTS] Already running."
-        );
-        return;
-    }
+    if (running) return;
 
     running = true;
 
     loadTrust();
 
-    console.log(
-        "[MR.SMILE EVENTS] Started."
-    );
+    try {
+        initMrSmileProgress();
+    } catch (error) {
+        console.warn(
+            "[MR.SMILE] Progress initialization failed:",
+            error
+        );
+    }
 
-
-    // -----------------------------------
-    // BACKGROUND SYSTEMS
-    // -----------------------------------
+    /*
+     * Background systems.
+     * Они продолжают работать после первого контакта,
+     * но сам первый контакт временно приостанавливает
+     * визуальные случайные события.
+     */
 
     nightLoop();
     glitchLoop();
     idleLoop();
     observationLoop();
 
-    initMrSmileProgress();
 
-
-    // -----------------------------------
-    // FIRST CONTACT
-    // -----------------------------------
+    /* ------------------------------------------------------
+       FIRST CONTACT
+    ------------------------------------------------------ */
 
     once(
         "mrsmile:firstContact",
-        triggerFirstContact
+        () => {
+            triggerFirstContact();
+        }
     );
 
 
-    // -----------------------------------
-    // SYS_00
-    // -----------------------------------
+    /* ------------------------------------------------------
+       SYS_00
+    ------------------------------------------------------ */
 
     on(
         "mrsmile:sys00Accepted",
-        handleSys00Accepted
+        () => {
+            handleSys00Accepted();
+        }
     );
 
 
-    // -----------------------------------
-    // HANDSHAKE
-    // -----------------------------------
+    /* ------------------------------------------------------
+       HANDSHAKE
+    ------------------------------------------------------ */
 
     on(
         "mrsmile:handshakeAccepted",
-        handleHandshakeAccepted
+        () => {
+            handleHandshakeAccepted();
+        }
+    );
+
+
+    console.log(
+        "[MR.SMILE] Event system initialized."
     );
 }
 
 
-// =======================================
-// SYS_00 ACCEPTED
-// =======================================
+/* ==========================================================
+   SYS_00
+========================================================== */
 
 function handleSys00Accepted() {
 
-    console.log(
-        "[MR.SMILE] SYS_00 accepted."
-    );
+    if (sys00HandshakeArmed) return;
+    if (sys00HandshakeTriggered) return;
 
     sys00HandshakeArmed = true;
 
-    console.log(
-        "[MR.SMILE] SYS_00 channel active."
-    );
-
-
     setTimeout(() => {
+
+        if (
+            localStorage.getItem(
+                "mrsmile_handshake"
+            ) === "1"
+        ) {
+            return;
+        }
 
         triggerSys00Handshake();
 
@@ -143,113 +223,26 @@ function handleSys00Accepted() {
 }
 
 
-// =======================================
-// SYS_00 HANDSHAKE
-// =======================================
+/* ==========================================================
+   SYS_00 HANDSHAKE
+========================================================== */
 
-function triggerSys00Handshake() {
+async function triggerSys00Handshake() {
 
-    if (!sys00HandshakeArmed)
-        return;
-
-    if (sys00HandshakeTriggered)
-        return;
-
-
-    // -----------------------------------
-    // PERSISTENT CHECK
-    // -----------------------------------
-
-    if (
-        localStorage.getItem(
-            "mrsmile_handshake"
-        ) === "1"
-    ) {
-
-        sys00HandshakeTriggered = true;
-
-        console.log(
-            "[MR.SMILE] Handshake already completed."
-        );
-
-        return;
-    }
-
+    if (sys00HandshakeTriggered) return;
 
     sys00HandshakeTriggered = true;
-
-
-    console.log(
-        "[MR.SMILE] UNKNOWN HANDSHAKE DETECTED."
-    );
-
 
     localStorage.setItem(
         "mrsmile_handshake",
         "1"
     );
 
-
     trigger(
         "mrsmile:handshakeDetected"
     );
 
-
-    showHandshakeSequence();
-}
-
-
-// =======================================
-// HANDSHAKE SEQUENCE
-// =======================================
-
-async function showHandshakeSequence() {
-
-    typeSystemMessage(
-        "SYSTEM NOTICE: Unauthorized handshake detected."
-    );
-
-    await sleep(900);
-
-
-    typeSystemMessage(
-        "CHANNEL: SYS_00"
-    );
-
-    await sleep(600);
-
-
-    typeSystemMessage(
-        "SOURCE: UNKNOWN"
-    );
-
-    await sleep(700);
-
-
-    glitch(
-        "screenGlitch",
-        300
-    );
-
-    await sleep(500);
-
-
-    typeSystemMessage(
-        "CONNECTION STATUS: ACTIVE"
-    );
-
-    await sleep(900);
-
-
-    typeSystemMessage(
-        "REMOTE HANDSHAKE ACCEPTED."
-    );
-
-
-    console.log(
-        "[MR.SMILE] HANDSHAKE ACCEPTED."
-    );
-
+    await showHandshakeSequence();
 
     trigger(
         "mrsmile:handshakeAccepted"
@@ -257,101 +250,139 @@ async function showHandshakeSequence() {
 }
 
 
-// =======================================
-// HANDSHAKE → OMEGA INTEGRITY
-// =======================================
+/* ==========================================================
+   HANDSHAKE SEQUENCE
+========================================================== */
+
+async function showHandshakeSequence() {
+
+    await systemMessage(
+        "SYSTEM NOTICE: Unauthorized handshake detected."
+    );
+
+    await sleep(500);
+
+    await systemMessage(
+        "CHANNEL: SYS_00"
+    );
+
+    await sleep(350);
+
+    await systemMessage(
+        "SOURCE: UNKNOWN"
+    );
+
+    await sleep(500);
+
+    const overlay =
+        createSystemOverlay();
+
+    overlay.classList.add(
+        "mrSmileHandshake"
+    );
+
+    await sleep(300);
+
+    overlay.classList.add(
+        "accepted"
+    );
+
+    await sleep(500);
+
+    overlay.remove();
+
+    await systemMessage(
+        "CONNECTION STATUS: ACTIVE"
+    );
+
+    await sleep(400);
+
+    await systemMessage(
+        "REMOTE HANDSHAKE ACCEPTED."
+    );
+}
+
+
+/* ==========================================================
+   HANDSHAKE ACCEPTED
+========================================================== */
 
 function handleHandshakeAccepted() {
 
-    if (integrityEventRunning)
-        return;
-
-    console.log(
-        "[MR.SMILE] Preparing OMEGA intrusion..."
-    );
+    if (integrityEventRunning) return;
 
     startOmegaIntegrityEvent();
 }
 
 
-// =======================================
-// OMEGA INTEGRITY FAILURE
-// =======================================
+/* ==========================================================
+   OMEGA INTEGRITY EVENT
+========================================================== */
 
 async function startOmegaIntegrityEvent() {
 
-    if (integrityEventRunning)
-        return;
+    if (integrityEventRunning) return;
 
     integrityEventRunning = true;
 
-
-    console.log(
-        "[MR.SMILE] OMEGA integrity event started."
-    );
-
-
     try {
 
-        await sleep(1200);
-
-        typeSystemMessage(
-            "SYSTEM INTEGRITY: 99.8%"
+        await systemMessage(
+            "OMEGA SYSTEM INTEGRITY: 99.8%"
         );
-
 
         await sleep(900);
 
-        typeSystemMessage(
-            "SYSTEM INTEGRITY: 99.6%"
+        await systemMessage(
+            "OMEGA SYSTEM INTEGRITY: 99.6%"
         );
 
+        await sleep(850);
+
+        await systemMessage(
+            "OMEGA SYSTEM INTEGRITY: 99.3%"
+        );
+
+        await sleep(700);
+
+        await systemMessage(
+            "BACKGROUND PROCESS: UNKNOWN"
+        );
+
+        await sleep(650);
+
+        await systemMessage(
+            "REMOTE PROCESS DETECTED."
+        );
 
         await sleep(900);
 
-        typeSystemMessage(
-            "SYSTEM INTEGRITY: 99.3%"
+        await systemMessage(
+            "PROCESS TERMINATION REQUESTED."
         );
 
+        await sleep(800);
 
-        await sleep(700);
-
-        typeSystemMessage(
-            "UNKNOWN PROCESS DETECTED."
-        );
-
-
-        await sleep(1200);
-
-
-        glitch(
-            "screenGlitch",
-            350
-        );
-
-
-        await sleep(700);
-
-
-        typeSystemMessage(
+        await systemMessage(
             "PROCESS TERMINATED."
         );
 
-
         await sleep(1000);
 
-
-        typeSystemMessage(
+        await systemMessage(
             "SYSTEM INTEGRITY: NORMAL"
         );
 
+        await sleep(1800);
 
-        console.log(
-            "[MR.SMILE] OMEGA integrity event complete."
+        await falseRecovery();
+
+    } catch (error) {
+
+        console.error(
+            "[MR.SMILE] Integrity event failed:",
+            error
         );
-
-
-        startOmegaFalseRecovery();
 
     } finally {
 
@@ -360,55 +391,35 @@ async function startOmegaIntegrityEvent() {
 }
 
 
-// =======================================
-// FALSE RECOVERY
-// =======================================
+/* ==========================================================
+   FALSE RECOVERY
+========================================================== */
 
-async function startOmegaFalseRecovery() {
+async function falseRecovery() {
 
-    if (falseRecoveryRunning)
-        return;
+    if (falseRecoveryRunning) return;
 
     falseRecoveryRunning = true;
 
-
     try {
 
-        await sleep(2500);
-
-
-        typeSystemMessage(
-            "BACKGROUND PROCESS: 1 UNKNOWN"
+        await systemMessage(
+            "BACKGROUND PROCESS: 01 UNKNOWN"
         );
 
+        await sleep(800);
 
-        await sleep(1200);
-
-
-        typeSystemMessage(
-            "BACKGROUND PROCESS: 0 UNKNOWN"
+        await systemMessage(
+            "BACKGROUND PROCESS: 00 UNKNOWN"
         );
 
+        await sleep(900);
 
-        await sleep(1800);
-
-
-        typeSystemMessage(
+        await systemMessage(
             "SYSTEM INTEGRITY: NORMAL"
         );
 
-
         await sleep(3000);
-
-
-        console.log(
-            "[MR.SMILE] False recovery complete."
-        );
-
-
-        // -----------------------------------
-        // NOW THE REAL EVENT STARTS
-        // -----------------------------------
 
         trigger(
             "mrsmile:firstContact"
@@ -421,120 +432,67 @@ async function startOmegaFalseRecovery() {
 }
 
 
-// =======================================
-// FIRST CONTACT
-// =======================================
+/* ==========================================================
+   FIRST CONTACT
+========================================================== */
 
-async function triggerFirstContact() {
+export async function triggerFirstContact() {
 
-    if (firstContactRunning)
-        return;
-
-
-    // -----------------------------------
-    // ALREADY COMPLETED
-    // -----------------------------------
+    if (firstContactRunning) return;
 
     if (
         localStorage.getItem(
             "mrsmile_first_contact"
         ) === "1"
     ) {
-
-        console.log(
-            "[MR.SMILE] First contact already completed."
-        );
-
         return;
     }
 
-
     firstContactRunning = true;
 
-
-    console.log(
-        "[MR.SMILE] ================================="
-    );
-
-    console.log(
-        "[MR.SMILE] FIRST CONTACT STARTED"
-    );
-
-    console.log(
-        "[MR.SMILE] ================================="
-    );
-
-
     try {
-
-        // ===================================
-        // GLOBAL LOCK
-        // ===================================
 
         document.body.classList.add(
             "mrSmileFirstContact"
         );
 
+        /*
+         * Не блокируем pointer events.
+         *
+         * Игрок должен иметь возможность:
+         * - двигать мышью;
+         * - нажимать на интерфейс;
+         * - пытаться понять, что происходит.
+         *
+         * Реальный захват управления произойдет позже.
+         */
 
-        // ===================================
-        // PHASE 1
-        // INTERRUPTION
-        // ===================================
+        await phaseAuthorization();
 
-        await phaseInterruption();
+        await phaseOmegaCollapse();
 
+        await phaseSystemDarkness();
 
-        // ===================================
-        // PHASE 2
-        // CORRUPTION
-        // ===================================
+        await phaseDiagnostics();
 
-        await phaseCorruption();
+        await phaseEyes();
 
+        await phaseFace();
 
-        // ===================================
-        // PHASE 3
-        // PRESENCE
-        // ===================================
+        await phasePlayerInteraction();
 
-        await phasePresence();
+        await phaseCursorTakeover();
 
+        await phaseOmegaIntrusion();
 
-        // ===================================
-        // PHASE 4
-        // INTRUSION
-        // ===================================
-
-        await phaseIntrusion();
-
-
-        // ===================================
-        // PHASE 5
-        // COLLAPSE
-        // ===================================
-
-        await phaseCollapse();
-
-
-        // ===================================
-        // PHASE 6
-        // SILENCE
-        // ===================================
-
-        await phaseSilence();
-
-
-        // ===================================
-        // RECOVERY
-        // ===================================
+        await phaseRelease();
 
         await finishFirstContact();
-
 
     } catch (error) {
 
         console.error(
-            "[MR.SMILE] FIRST CONTACT ERROR:",
+            "[MR.SMILE] First contact failed:",
             error
         );
 
@@ -543,478 +501,902 @@ async function triggerFirstContact() {
         cleanupFirstContact();
 
         firstContactRunning = false;
-
-
-        console.log(
-            "[MR.SMILE] FIRST CONTACT SEQUENCE ENDED."
-        );
     }
 }
 
 
-// =======================================
-// PHASE 1 — INTERRUPTION
-// =======================================
+/* ==========================================================
+   PHASE 1
+   UNAUTHORIZED AUTHORIZATION
+========================================================== */
 
-async function phaseInterruption() {
-
-    console.log(
-        "[MR.SMILE] PHASE 1 — INTERRUPTION"
-    );
-
+async function phaseAuthorization() {
 
     document.body.classList.add(
-        "mrSmilePhase1"
+        "mrSmileAuthPhase"
     );
 
+    const auth =
+        createMrSmileAuthorization();
 
-    await sleep(1000);
+    await sleep(
+        TIMING.authAppear
+    );
 
+    /*
+     * ACCOUNT
+     */
 
-    flash(
-        "mrSmileFlash",
+    const account =
+        auth.querySelector(
+            "[data-mrsmile-account]"
+        );
+
+    await typeIntoElement(
+        account,
+        "MR_SMILE",
+        115
+    );
+
+    await sleep(500);
+
+    /*
+     * PASSWORD
+     */
+
+    const password =
+        auth.querySelector(
+            "[data-mrsmile-password]"
+        );
+
+    await typeIntoElement(
+        password,
+        "********",
         120
     );
 
+    await sleep(
+        TIMING.authProcess
+    );
 
-    await sleep(1800);
+    const status =
+        auth.querySelector(
+            "[data-mrsmile-status]"
+        );
 
+    status.textContent =
+        "AUTHORIZING...";
 
-    microGlitch();
+    await sleep(700);
 
+    status.textContent =
+        "AUTHENTICATION SUCCESSFUL";
 
-    await sleep(1200);
+    status.classList.add(
+        "success"
+    );
 
+    await sleep(450);
 
-    flash(
-        "mrSmileFlash",
-        80
+    status.textContent =
+        "ACCESS GRANTED";
+
+    await sleep(
+        TIMING.authGranted
     );
 
 
-    await sleep(2200);
+    /*
+     * Important:
+     * Мы специально оставляем окно ещё немного.
+     * Игрок должен успеть понять,
+     * что аккаунт существует.
+     */
 
+    const warning =
+        auth.querySelector(
+            "[data-mrsmile-warning]"
+        );
 
-    document.body.classList.remove(
-        "mrSmilePhase1"
+    warning.textContent =
+        "ACCOUNT OWNER: UNKNOWN";
+
+    warning.classList.add(
+        "warning"
     );
-}
-
-
-// =======================================
-// PHASE 2 — CORRUPTION
-// =======================================
-
-async function phaseCorruption() {
-
-    console.log(
-        "[MR.SMILE] PHASE 2 — CORRUPTION"
-    );
-
-
-    document.body.classList.add(
-        "mrSmilePhase2"
-    );
-
-
-    await sleep(1500);
-
-
-    document.body.classList.add(
-        "mrSmileDistortion"
-    );
-
-
-    await sleep(2200);
-
-
-    document.body.classList.remove(
-        "mrSmileDistortion"
-    );
-
-
-    await sleep(800);
-
-
-    document.body.classList.add(
-        "mrSmileTextCorruption"
-    );
-
-
-    await sleep(1800);
-
-
-    document.body.classList.remove(
-        "mrSmileTextCorruption"
-    );
-
-
-    await sleep(1800);
-
-
-    document.body.classList.remove(
-        "mrSmilePhase2"
-    );
-}
-
-
-// =======================================
-// PHASE 3 — PRESENCE
-// =======================================
-
-async function phasePresence() {
-
-    console.log(
-        "[MR.SMILE] PHASE 3 — PRESENCE"
-    );
-
-
-    document.body.classList.add(
-        "mrSmilePhase3"
-    );
-
 
     await sleep(1300);
 
-
-    // -----------------------------------
-    // BLACKOUT
-    // -----------------------------------
+    /*
+     * Начинается потеря контроля.
+     */
 
     document.body.classList.add(
-        "mrSmileBlackout"
+        "mrSmileSystemTaken"
+    );
+
+    await sleep(800);
+}
+
+
+/* ==========================================================
+   AUTHORIZATION UI
+========================================================== */
+
+function createMrSmileAuthorization() {
+
+    let existing =
+        document.querySelector(
+            "#mrSmileAuthorization"
+        );
+
+    if (existing) {
+        existing.remove();
+    }
+
+    const auth =
+        document.createElement("div");
+
+    auth.id =
+        "mrSmileAuthorization";
+
+    auth.className =
+        "mrSmileAuthorization";
+
+    auth.innerHTML = `
+
+        <div class="mrSmileAuthorizationHeader">
+            <span>OMEGA SECURE AUTHENTICATION</span>
+            <span class="mrSmileAuthCode">
+                AUTH-REMOTE
+            </span>
+        </div>
+
+        <div class="mrSmileAuthorizationBody">
+
+            <div class="mrSmileAuthLogo">
+                OMEGA
+            </div>
+
+            <div class="mrSmileAuthField">
+
+                <label>ACCOUNT</label>
+
+                <div
+                    class="mrSmileAuthInput"
+                    data-mrsmile-account
+                ></div>
+
+            </div>
+
+            <div class="mrSmileAuthField">
+
+                <label>PASSWORD</label>
+
+                <div
+                    class="mrSmileAuthInput password"
+                    data-mrsmile-password
+                ></div>
+
+            </div>
+
+            <div
+                class="mrSmileAuthStatus"
+                data-mrsmile-status
+            >
+                WAITING...
+            </div>
+
+            <div
+                class="mrSmileAuthWarning"
+                data-mrsmile-warning
+            >
+                AUTHORIZATION REQUEST RECEIVED
+            </div>
+
+        </div>
+
+    `;
+
+    document.body.appendChild(auth);
+
+    return auth;
+}
+
+
+/* ==========================================================
+   PHASE 2
+   OMEGA COLLAPSE
+========================================================== */
+
+async function phaseOmegaCollapse() {
+
+    document.body.classList.add(
+        "mrSmileCollapsePhase"
+    );
+
+    const targets = [
+
+        "#notifications",
+        "#notificationArea",
+
+        "#icons",
+
+        "#sidebar",
+
+        "#topBar",
+
+        "#desktopBackground",
+
+        ".desktopWatermark"
+
+    ];
+
+    for (const selector of targets) {
+
+        const elements =
+            document.querySelectorAll(
+                selector
+            );
+
+        if (!elements.length) {
+            continue;
+        }
+
+        for (const element of elements) {
+
+            element.classList.add(
+                "mrSmileSystemDisappearing"
+            );
+        }
+
+        await sleep(
+            TIMING.collapseStep
+        );
+    }
+
+
+    /*
+     * Реальные окна OMEGA.
+     */
+
+    const windows =
+        document.querySelectorAll(
+            ".window"
+        );
+
+    for (const window of windows) {
+
+        if (
+            window.id ===
+            "mrSmileAuthorization"
+        ) {
+            continue;
+        }
+
+        window.classList.add(
+            "mrSmileSystemDisappearing"
+        );
+
+        await sleep(
+            350
+        );
+    }
+
+    await sleep(1000);
+}
+
+
+/* ==========================================================
+   PHASE 3
+   SYSTEM DARKNESS
+========================================================== */
+
+async function phaseSystemDarkness() {
+
+    document.body.classList.add(
+        "mrSmileSystemDarkness"
+    );
+
+    await sleep(
+        TIMING.darkness
     );
 
 
-    await sleep(900);
+    /*
+     * Authorization исчезает последней.
+     */
+
+    const auth =
+        document.querySelector(
+            "#mrSmileAuthorization"
+        );
+
+    if (auth) {
+
+        auth.classList.add(
+            "mrSmileSystemDisappearing"
+        );
+
+        await sleep(900);
+
+        auth.remove();
+    }
+
+    await sleep(600);
+}
 
 
-    // -----------------------------------
-    // FIRST APPEARANCE
-    // -----------------------------------
+/* ==========================================================
+   PHASE 4
+   DIAGNOSTICS
+========================================================== */
 
-    console.log(
-        "[MR.SMILE] First visual manifestation."
+async function phaseDiagnostics() {
+
+    const diagnostics =
+        createDiagnostics();
+
+    document.body.appendChild(
+        diagnostics
     );
 
+    const lines = [
+
+        "OMEGA CORE",
+        "--------------------------------",
+        "",
+        "DISPLAY............. OK",
+        "INPUT............... OK",
+        "NETWORK............. OK",
+        "AUTH................ UNKNOWN",
+        "",
+        "PROCESS............. UNKNOWN",
+        "SOURCE.............. UNKNOWN",
+        "",
+        "SYSTEM CONTROL...... LOST",
+        "",
+        "OBSERVER............"
+
+    ];
+
+    for (const line of lines) {
+
+        const row =
+            document.createElement("div");
+
+        row.textContent =
+            line;
+
+        diagnostics.appendChild(
+            row
+        );
+
+        await sleep(
+            90
+        );
+    }
+
+    await sleep(600);
+
+    const present =
+        document.createElement("div");
+
+    present.textContent =
+        "PRESENT";
+
+    present.className =
+        "mrSmileDiagnosticPresent";
+
+    diagnostics.appendChild(
+        present
+    );
+
+    await sleep(
+        TIMING.diagnostics
+    );
+}
+
+
+/* ==========================================================
+   DIAGNOSTICS
+========================================================== */
+
+function createDiagnostics() {
+
+    const diagnostics =
+        document.createElement("div");
+
+    diagnostics.id =
+        "mrSmileDiagnostics";
+
+    diagnostics.className =
+        "mrSmileDiagnostics";
+
+    return diagnostics;
+}
+
+
+/* ==========================================================
+   PHASE 5
+   EYES
+========================================================== */
+
+async function phaseEyes() {
+
+    document.body.classList.add(
+        "mrSmileEyesPhase"
+    );
+
+    await sleep(500);
 
     await showMrSmileFirstContactFace(
         "presence"
     );
 
-
-    document.body.classList.remove(
-        "mrSmileBlackout"
+    await sleep(
+        TIMING.eyesAppear
     );
+}
 
 
-    await sleep(1100);
+/* ==========================================================
+   PHASE 6
+   FACE
+========================================================== */
 
+async function phaseFace() {
 
-    // -----------------------------------
-    // SHORT ECHO
-    // -----------------------------------
+    /*
+     * Второе появление должно быть очень небольшим.
+     *
+     * Если appearance.js уже держит лицо,
+     * просто даём ему время проявиться.
+     */
 
     document.body.classList.add(
-        "mrSmileBlackout"
+        "mrSmileFacePhase"
     );
 
+    await sleep(
+        TIMING.faceAppear
+    );
+}
 
-    await sleep(400);
 
+/* ==========================================================
+   PHASE 7
+   PLAYER INTERACTION
+========================================================== */
 
-    console.log(
-        "[MR.SMILE] Visual echo detected."
+async function phasePlayerInteraction() {
+
+    document.body.classList.add(
+        "mrSmileInteractionPhase"
     );
 
+    /*
+     * Здесь ничего не блокируем.
+     *
+     * Игрок может:
+     * - двигать мышью;
+     * - нажимать кнопки;
+     * - пытаться открыть окна;
+     * - пытаться вернуть интерфейс.
+     *
+     * MR.SMILE наблюдает.
+     */
 
-    await showMrSmileFirstContactFace(
-        "echo"
+    await sleep(
+        TIMING.cursorObserve
+    );
+}
+
+
+/* ==========================================================
+   PHASE 8
+   CURSOR TAKEOVER
+========================================================== */
+
+async function phaseCursorTakeover() {
+
+    document.body.classList.add(
+        "mrSmileCursorTransfer"
     );
 
+    await sleep(500);
 
-    document.body.classList.remove(
-        "mrSmileBlackout"
+    /*
+     * Сам визуальный захват курсора
+     * выполняется appearance.js.
+     */
+
+    await triggerMrSmileManifestation();
+
+    await sleep(
+        TIMING.cursorTransfer
     );
+}
 
+
+/* ==========================================================
+   PHASE 9
+   OMEGA INTRUSION
+========================================================== */
+
+async function phaseOmegaIntrusion() {
+
+    document.body.classList.add(
+        "mrSmileIntrusionPhase"
+    );
 
     await sleep(700);
 
+    /*
+     * Ищем существующее окно Console.
+     *
+     * Если оно существует — используем его.
+     * Если нет — создаём минимальный системный
+     * intrusion window.
+     */
+
+    let target =
+        document.querySelector(
+            "#consoleWindow"
+        );
+
+    if (!target) {
+
+        target =
+            createIntrusionWindow();
+
+        document.body.appendChild(
+            target
+        );
+    }
+
+    target.classList.add(
+        "mrSmileIntrusionTarget"
+    );
+
+    await sleep(
+        TIMING.windowOpen
+    );
+
+    /*
+     * Система слегка теряет геометрию.
+     */
+
+    document.body.classList.add(
+        "mrSmileGeometryDistortion"
+    );
+
+    await sleep(
+        TIMING.distortion
+    );
 
     document.body.classList.remove(
-        "mrSmilePhase3"
+        "mrSmileGeometryDistortion"
     );
 }
 
 
-// =======================================
-// PHASE 4 — INTRUSION
-// =======================================
+/* ==========================================================
+   INTRUSION WINDOW
+========================================================== */
 
-async function phaseIntrusion() {
+function createIntrusionWindow() {
 
-    console.log(
-        "[MR.SMILE] PHASE 4 — INTRUSION"
-    );
+    const windowElement =
+        document.createElement("div");
 
+    windowElement.className =
+        "window mrSmileIntrusionWindow";
+
+    windowElement.innerHTML = `
+
+        <div class="windowHeader">
+
+            <div class="windowTitle">
+                <span class="windowIcon">▣</span>
+                SYSTEM CONSOLE
+            </div>
+
+            <div class="windowControls">
+
+                <button
+                    type="button"
+                    disabled
+                >
+                    —
+                </button>
+
+                <button
+                    type="button"
+                    disabled
+                >
+                    ×
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="windowBody">
+
+            <div
+                class="mrSmileIntrusionContent"
+            >
+
+                <div>
+                    OMEGA SYSTEM CONSOLE
+                </div>
+
+                <div>
+                    INPUT CHANNEL: LOCAL
+                </div>
+
+                <div>
+                    REMOTE PROCESS: ACTIVE
+                </div>
+
+                <div>
+                    CONTROL OWNER: UNKNOWN
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="windowStatus">
+            CONNECTION: ACTIVE
+        </div>
+
+    `;
+
+    /*
+     * Позиция относительно workspace.
+     */
+
+    windowElement.style.left =
+        "50%";
+
+    windowElement.style.top =
+        "50%";
+
+    windowElement.style.transform =
+        "translate(-50%, -50%)";
+
+    return windowElement;
+}
+
+
+/* ==========================================================
+   PHASE 10
+   RELEASE
+========================================================== */
+
+async function phaseRelease() {
 
     document.body.classList.add(
-        "mrSmilePhase4"
+        "mrSmileReleasePhase"
     );
 
-
-    await sleep(1200);
-
-
-    severeGlitch(
-        2400
-    );
-
-
-    await sleep(700);
-
-
-    hardShake(
-        1600
-    );
-
-
-    await sleep(1200);
-
-
-    severeGlitch(
-        1700
-    );
-
-
-    await sleep(900);
-
-
-    document.body.classList.remove(
-        "mrSmilePhase4"
+    await sleep(
+        TIMING.recovery
     );
 }
 
 
-// =======================================
-// PHASE 5 — COLLAPSE
-// =======================================
-
-async function phaseCollapse() {
-
-    console.log(
-        "[MR.SMILE] PHASE 5 — COLLAPSE"
-    );
-
-
-    document.body.classList.add(
-        "mrSmilePhase5"
-    );
-
-
-    await sleep(900);
-
-
-    severeGlitch(
-        4200
-    );
-
-
-    await sleep(600);
-
-
-    // -----------------------------------
-    // BLACKOUT PULSES
-    // -----------------------------------
-
-    await blackoutPulse(500);
-
-    await sleep(300);
-
-    await blackoutPulse(700);
-
-
-    await sleep(1200);
-
-
-    document.body.classList.remove(
-        "mrSmilePhase5"
-    );
-}
-
-
-// =======================================
-// PHASE 6 — SILENCE
-// =======================================
-
-async function phaseSilence() {
-
-    console.log(
-        "[MR.SMILE] PHASE 6 — SILENCE"
-    );
-
-
-    document.body.classList.add(
-        "mrSmilePhase6"
-    );
-
-
-    await sleep(1500);
-
-
-    document.body.classList.add(
-        "mrSmileFinalDarkness"
-    );
-
-
-    await sleep(3000);
-
-
-    // -----------------------------------
-    // FINAL FACE
-    // -----------------------------------
-
-    console.log(
-        "[MR.SMILE] Final visual manifestation."
-    );
-
-
-    await showMrSmileFirstContactFace(
-        "silence"
-    );
-
-
-    document.body.classList.remove(
-        "mrSmileFinalDarkness"
-    );
-
-
-    await sleep(700);
-
-
-    document.body.classList.remove(
-        "mrSmilePhase6"
-    );
-}
-
-
-// =======================================
-// FINISH FIRST CONTACT
-// =======================================
+/* ==========================================================
+   FINISH
+========================================================== */
 
 async function finishFirstContact() {
 
-    console.log(
-        "[MR.SMILE] OMEGA recovery initiated."
-    );
+    /*
+     * Сначала возвращаем OMEGA.
+     */
 
+    restoreOmegaInterface();
 
-    // -----------------------------------
-    // REMOVE GLOBAL EVENT STATE
-    // -----------------------------------
+    await sleep(1000);
 
-    cleanupFirstContact();
-
-
-    // -----------------------------------
-    // SAVE FIRST CONTACT
-    // -----------------------------------
+    /*
+     * Сохраняем факт первого контакта.
+     */
 
     localStorage.setItem(
         "mrsmile_first_contact",
         "1"
     );
 
+    try {
 
-    evaluateProgress();
+        evaluateProgress();
 
+    } catch (error) {
 
-    console.log(
-        "[MR.SMILE] First contact saved."
-    );
+        console.warn(
+            "[MR.SMILE] Progress evaluation failed:",
+            error
+        );
+    }
 
+    await sleep(1500);
 
-    // -----------------------------------
-    // FALSE NORMALITY
-    // -----------------------------------
+    /*
+     * После возвращения системы
+     * открываем MR.SMILE channel.
+     */
+
+    try {
+
+        revealMrSmileChat();
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE] Chat reveal failed:",
+            error
+        );
+    }
+
+    await sleep(1000);
+
+    try {
+
+        playFirstContactMessage();
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE] First contact message failed:",
+            error
+        );
+    }
+
+    await sleep(1300);
+
+    /*
+     * Небольшой остаточный след.
+     */
+
+    createObserverTrace();
 
     await sleep(2500);
 
+    removeObserverTrace();
+}
 
-    // -----------------------------------
-    // MR.SMILE CHAT APPEARS
-    // -----------------------------------
 
-    console.log(
-        "[MR.SMILE] Revealing MR.SMILE chat."
+/* ==========================================================
+   RESTORE OMEGA
+========================================================== */
+
+function restoreOmegaInterface() {
+
+    const disappearing =
+        document.querySelectorAll(
+            ".mrSmileSystemDisappearing"
+        );
+
+    disappearing.forEach(
+        element => {
+
+            element.classList.remove(
+                "mrSmileSystemDisappearing"
+            );
+
+            element.style.removeProperty(
+                "opacity"
+            );
+
+            element.style.removeProperty(
+                "visibility"
+            );
+
+            element.style.removeProperty(
+                "transform"
+            );
+
+        }
     );
 
 
-    revealMrSmileChat();
-
-
-    await playFirstContactMessage();
-
-
-    // -----------------------------------
-    // FINAL INTERFACE MANIFESTATION
-    // -----------------------------------
-
-    await sleep(1200);
-
-
-    console.log(
-        "[MR.SMILE] Starting full interface manifestation."
+    document.body.classList.remove(
+        "mrSmileSystemTaken"
     );
 
-
-    await triggerMrSmileManifestation();
-
-
-    console.log(
-        "[MR.SMILE] ================================="
-    );
-
-    console.log(
-        "[MR.SMILE] FIRST CONTACT COMPLETE"
-    );
-
-    console.log(
-        "[MR.SMILE] ================================="
+    document.body.classList.remove(
+        "mrSmileSystemDarkness"
     );
 }
 
 
-// =======================================
-// CLEANUP
-// =======================================
+/* ==========================================================
+   OBSERVER TRACE
+========================================================== */
+
+function createObserverTrace() {
+
+    if (
+        document.querySelector(
+            "#mrSmileObserverTrace"
+        )
+    ) {
+        return;
+    }
+
+    const trace =
+        document.createElement("div");
+
+    trace.id =
+        "mrSmileObserverTrace";
+
+    trace.className =
+        "mrSmileObserverTrace";
+
+    trace.textContent =
+        "OBSERVER: 01";
+
+    document.body.appendChild(
+        trace
+    );
+
+    setTimeout(() => {
+
+        trace.classList.add(
+            "visible"
+        );
+
+    }, 50);
+}
+
+
+function removeObserverTrace() {
+
+    const trace =
+        document.querySelector(
+            "#mrSmileObserverTrace"
+        );
+
+    if (!trace) return;
+
+    trace.classList.add(
+        "fade"
+    );
+
+    setTimeout(() => {
+
+        trace.remove();
+
+    }, 700);
+}
+
+
+/* ==========================================================
+   CLEANUP
+========================================================== */
 
 function cleanupFirstContact() {
 
     const classes = [
 
         "mrSmileFirstContact",
+        "mrSmileAuthPhase",
+        "mrSmileSystemTaken",
+        "mrSmileCollapsePhase",
+        "mrSmileSystemDarkness",
+        "mrSmileEyesPhase",
+        "mrSmileFacePhase",
+        "mrSmileInteractionPhase",
+        "mrSmileCursorTransfer",
+        "mrSmileIntrusionPhase",
+        "mrSmileGeometryDistortion",
+        "mrSmileReleasePhase"
 
-        "mrSmilePhase1",
-        "mrSmilePhase2",
-        "mrSmilePhase3",
-        "mrSmilePhase4",
-        "mrSmilePhase5",
-        "mrSmilePhase6",
-
-        "mrSmileFlash",
-        "mrSmileMicroGlitch",
-
-        "mrSmileDistortion",
-        "mrSmileTextCorruption",
-
-        "mrSmileBlackout",
-        "mrSmileSevereGlitch",
-        "mrSmileHardShake",
-
-        "mrSmileFinalDarkness"
     ];
-
 
     classes.forEach(
         className => {
@@ -1025,233 +1407,47 @@ function cleanupFirstContact() {
 
         }
     );
-}
 
 
-// =======================================
-// NIGHT EVENTS
-// =======================================
-
-function nightLoop() {
-
-    setInterval(() => {
-
-        const hour =
-            new Date().getHours();
-
-
-        if (
-            hour >= 22 ||
-            hour <= 5
-        ) {
-
-            if (
-                Math.random() < 0.20
-            ) {
-
-                typeSystemMessage(
-                    pick([
-
-                        "Unusual activity detected.",
-
-                        "Someone is moving.",
-
-                        "Security cameras lost signal.",
-
-                        "An unknown process has awakened."
-
-                    ])
-                );
-            }
-        }
-
-    }, 30000);
-}
-
-
-// =======================================
-// RANDOM GLITCH
-// =======================================
-
-function glitchLoop() {
-
-    setInterval(() => {
-
-        // Don't interrupt First Contact.
-        if (firstContactRunning)
-            return;
-
-
-        if (
-            Math.random() > 0.08
-        )
-            return;
-
-
-        glitch(
-            "screenGlitch",
-            250
+    const auth =
+        document.querySelector(
+            "#mrSmileAuthorization"
         );
 
+    if (auth) {
+        auth.remove();
+    }
 
-        typeSystemMessage(
-            pick([
 
-                "Signal unstable.",
-
-                "Connection interrupted.",
-
-                "Data corruption detected.",
-
-                "Unknown interference."
-
-            ])
+    const diagnostics =
+        document.querySelector(
+            "#mrSmileDiagnostics"
         );
 
-    }, 45000);
+    if (diagnostics) {
+        diagnostics.remove();
+    }
+
+
+    const intrusion =
+        document.querySelector(
+            ".mrSmileIntrusionWindow"
+        );
+
+    if (intrusion) {
+        intrusion.remove();
+    }
+
+
+    restoreOmegaInterface();
 }
 
 
-// =======================================
-// PLAYER OBSERVATION
-// =======================================
-
-function observationLoop() {
-
-    setInterval(() => {
-
-        const memory =
-            getMemory();
-
-
-        if (!memory)
-            return;
-
-
-        let openedFiles = [];
-
-
-        // -----------------------------------
-        // SUPPORT BOTH MEMORY FORMATS
-        // -----------------------------------
-
-        if (
-            Array.isArray(memory)
-        ) {
-
-            openedFiles =
-                memory.filter(
-                    entry =>
-                        entry &&
-                        (
-                            entry.type === "file_opened" ||
-                            entry.type === "openedFile"
-                        )
-                );
-
-        } else if (
-            Array.isArray(
-                memory.openedFiles
-            )
-        ) {
-
-            openedFiles =
-                memory.openedFiles;
-        }
-
-
-        if (
-            openedFiles.length <= 5
-        )
-            return;
-
-
-        if (
-            Math.random() < 0.25
-        ) {
-
-            typeSystemMessage(
-                "MR.SMILE: You seem interested in our archives."
-            );
-        }
-
-    }, 60000);
-}
-
-
-// =======================================
-// IDLE
-// =======================================
-
-function idleLoop() {
-
-    setInterval(() => {
-
-        if (firstContactRunning)
-            return;
-
-
-        if (
-            Math.random() > 0.12
-        )
-            return;
-
-
-        const trust =
-            getTrust();
-
-
-        if (trust > 70) {
-
-            typeSystemMessage(
-                "MR.SMILE: I was wondering when you would return."
-            );
-
-        } else {
-
-            typeSystemMessage(
-                "..."
-            );
-        }
-
-    }, 90000);
-}
-
-
-// =======================================
-// MANUAL FIRST CONTACT API
-// =======================================
+/* ==========================================================
+   PUBLIC TRIGGER
+========================================================== */
 
 export function triggerMrSmileFirstContact() {
-
-    if (
-        localStorage.getItem(
-            "mrsmile_first_contact"
-        ) === "1"
-    ) {
-
-        console.log(
-            "[MR.SMILE] First contact already completed."
-        );
-
-        return;
-    }
-
-
-    if (firstContactRunning) {
-
-        console.log(
-            "[MR.SMILE] First contact is already running."
-        );
-
-        return;
-    }
-
-
-    console.log(
-        "[MR.SMILE] Manual First Contact trigger."
-    );
-
 
     trigger(
         "mrsmile:firstContact"
@@ -1259,29 +1455,11 @@ export function triggerMrSmileFirstContact() {
 }
 
 
-// =======================================
-// RESET — DEBUG ONLY
-// =======================================
+/* ==========================================================
+   DEBUG
+========================================================== */
 
 export function resetMrSmileFirstContact() {
-
-    localStorage.removeItem(
-        "mrsmile_first_contact"
-    );
-
-
-    console.log(
-        "[MR.SMILE] First contact reset."
-    );
-}
-
-
-// =======================================
-// RESET COMPLETE MR.SMILE EVENT STATE
-// DEBUG ONLY
-// =======================================
-
-export function resetMrSmileEventState() {
 
     localStorage.removeItem(
         "mrsmile_first_contact"
@@ -1291,180 +1469,280 @@ export function resetMrSmileEventState() {
         "mrsmile_handshake"
     );
 
-
     sys00HandshakeArmed = false;
     sys00HandshakeTriggered = false;
 
-    integrityEventRunning = false;
-    falseRecoveryRunning = false;
-    firstContactRunning = false;
+    console.log(
+        "[MR.SMILE] First contact state reset."
+    );
+}
 
+
+/* ==========================================================
+   BACKGROUND LOOP — NIGHT
+========================================================== */
+
+async function nightLoop() {
+
+    while (running) {
+
+        await sleep(
+            randomBetween(
+                18000,
+                42000
+            )
+        );
+
+        if (firstContactRunning) {
+            continue;
+        }
+
+        if (
+            Math.random() < 0.18
+        ) {
+
+            trigger(
+                "mrsmile:nightEvent"
+            );
+        }
+    }
+}
+
+
+/* ==========================================================
+   BACKGROUND LOOP — GLITCH
+========================================================== */
+
+async function glitchLoop() {
+
+    while (running) {
+
+        await sleep(
+            randomBetween(
+                25000,
+                60000
+            )
+        );
+
+        if (firstContactRunning) {
+            continue;
+        }
+
+        if (
+            Math.random() < 0.12
+        ) {
+
+            trigger(
+                "mrsmile:glitchEvent"
+            );
+        }
+    }
+}
+
+
+/* ==========================================================
+   BACKGROUND LOOP — IDLE
+========================================================== */
+
+async function idleLoop() {
+
+    while (running) {
+
+        await sleep(
+            randomBetween(
+                30000,
+                75000
+            )
+        );
+
+        if (firstContactRunning) {
+            continue;
+        }
+
+        trigger(
+            "mrsmile:idleEvent"
+        );
+    }
+}
+
+
+/* ==========================================================
+   BACKGROUND LOOP — OBSERVATION
+========================================================== */
+
+async function observationLoop() {
+
+    while (running) {
+
+        await sleep(
+            randomBetween(
+                22000,
+                50000
+            )
+        );
+
+        if (firstContactRunning) {
+            continue;
+        }
+
+        const trust =
+            safeTrust();
+
+        /*
+         * Чем выше trust,
+         * тем чаще MR.SMILE может проявляться.
+         */
+
+        const chance =
+            Math.min(
+                0.45,
+                0.08 +
+                trust * 0.04
+            );
+
+        if (
+            Math.random() < chance
+        ) {
+
+            trigger(
+                "mrsmile:observationEvent"
+            );
+        }
+    }
+}
+
+
+/* ==========================================================
+   TRUST
+========================================================== */
+
+function safeTrust() {
+
+    try {
+
+        const trust =
+            getTrust();
+
+        if (
+            typeof trust ===
+            "number"
+        ) {
+            return trust;
+        }
+
+        return 0;
+
+    } catch {
+
+        return 0;
+    }
+}
+
+
+/* ==========================================================
+   SYSTEM MESSAGE
+========================================================== */
+
+async function systemMessage(
+    text
+) {
+
+    try {
+
+        if (
+            typeof typeSystemMessage ===
+            "function"
+        ) {
+
+            await typeSystemMessage(
+                text
+            );
+
+            return;
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE] typeSystemMessage failed:",
+            error
+        );
+    }
 
     console.log(
-        "[MR.SMILE] Complete event state reset."
+        "[OMEGA]",
+        text
     );
 }
 
 
-// =======================================
-// VISUAL HELPERS
-// =======================================
+/* ==========================================================
+   SYSTEM OVERLAY
+========================================================== */
 
-function glitch(
-    className,
-    duration
+function createSystemOverlay() {
+
+    const overlay =
+        document.createElement("div");
+
+    overlay.className =
+        "mrSmileSystemOverlay";
+
+    document.body.appendChild(
+        overlay
+    );
+
+    return overlay;
+}
+
+
+/* ==========================================================
+   TYPE TEXT
+========================================================== */
+
+async function typeIntoElement(
+    element,
+    text,
+    speed = 100
 ) {
 
-    document.body.classList.add(
-        className
-    );
+    if (!element) return;
 
+    element.textContent = "";
 
-    setTimeout(() => {
+    for (const character of text) {
 
-        document.body.classList.remove(
-            className
-        );
+        element.textContent +=
+            character;
 
-    }, duration);
+        await sleep(speed);
+    }
 }
 
 
-// =======================================
-// FLASH
-// =======================================
+/* ==========================================================
+   RANDOM
+========================================================== */
 
-function flash(
-    className,
-    duration
+function randomBetween(
+    min,
+    max
 ) {
 
-    document.body.classList.add(
-        className
-    );
-
-
-    setTimeout(() => {
-
-        document.body.classList.remove(
-            className
-        );
-
-    }, duration);
+    return Math.floor(
+        Math.random() *
+        (max - min + 1)
+    ) + min;
 }
 
 
-// =======================================
-// MICRO GLITCH
-// =======================================
+/* ==========================================================
+   SLEEP
+========================================================== */
 
-function microGlitch() {
-
-    flash(
-        "mrSmileMicroGlitch",
-        450
-    );
-}
-
-
-// =======================================
-// SEVERE GLITCH
-// =======================================
-
-function severeGlitch(
-    duration
+function sleep(
+    ms
 ) {
-
-    return new Promise(
-        resolve => {
-
-            document.body.classList.add(
-                "mrSmileSevereGlitch"
-            );
-
-
-            setTimeout(() => {
-
-                document.body.classList.remove(
-                    "mrSmileSevereGlitch"
-                );
-
-
-                resolve();
-
-            }, duration);
-        }
-    );
-}
-
-
-// =======================================
-// HARD SHAKE
-// =======================================
-
-function hardShake(
-    duration
-) {
-
-    return new Promise(
-        resolve => {
-
-            document.body.classList.add(
-                "mrSmileHardShake"
-            );
-
-
-            setTimeout(() => {
-
-                document.body.classList.remove(
-                    "mrSmileHardShake"
-                );
-
-
-                resolve();
-
-            }, duration);
-        }
-    );
-}
-
-
-// =======================================
-// BLACKOUT PULSE
-// =======================================
-
-function blackoutPulse(
-    duration
-) {
-
-    return new Promise(
-        resolve => {
-
-            document.body.classList.add(
-                "mrSmileBlackout"
-            );
-
-
-            setTimeout(() => {
-
-                document.body.classList.remove(
-                    "mrSmileBlackout"
-                );
-
-
-                resolve();
-
-            }, duration);
-        }
-    );
-}
-
-
-// =======================================
-// HELPERS
-// =======================================
-
-function sleep(ms) {
 
     return new Promise(
         resolve =>
@@ -1476,11 +1754,51 @@ function sleep(ms) {
 }
 
 
-function pick(arr) {
+/* ==========================================================
+   LEGACY EVENT HELPERS
+   ----------------------------------------------------------
+   Оставлены намеренно.
+   Если другие части системы используют эти события,
+   они продолжают существовать.
+========================================================== */
 
-    return arr[
-        Math.floor(
-            Math.random() * arr.length
-        )
-    ];
+export function mrSmileGlitch() {
+
+    if (firstContactRunning) {
+        return;
+    }
+
+    trigger(
+        "mrsmile:glitchEvent"
+    );
 }
+
+
+export function mrSmileObservation() {
+
+    if (firstContactRunning) {
+        return;
+    }
+
+    trigger(
+        "mrsmile:observationEvent"
+    );
+}
+
+
+export function mrSmileNightEvent() {
+
+    if (firstContactRunning) {
+        return;
+    }
+
+    trigger(
+        "mrsmile:nightEvent"
+    );
+}
+
+
+/* ==========================================================
+   END
+========================================================== */
+
