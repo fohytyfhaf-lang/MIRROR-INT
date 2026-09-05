@@ -3,8 +3,6 @@
    ----------------------------------------------------------
    VISUAL LAYER ONLY
 
-   Этот файл НЕ управляет сценарием первого контакта.
-
    mrsmileEvents.js:
         └── управляет последовательностью
 
@@ -40,6 +38,8 @@ let cursorMouseHandler = null;
 
 let appearanceTimers = [];
 
+let firstContactAppearance = false;
+
 let playerMouseX =
     window.innerWidth * 0.5;
 
@@ -52,13 +52,11 @@ let playerMouseY =
 ========================================================== */
 
 /**
- * Основная manifestation-функция.
- *
- * ВАЖНО:
- * Она больше НЕ запускает весь first-contact.
+ * Обычная manifestation.
  *
  * Используется другими системами OMEGA,
- * когда MR.SMILE должен просто проявиться.
+ * когда MR.SMILE должен самостоятельно
+ * появиться и исчезнуть.
  */
 export async function triggerMrSmileManifestation() {
 
@@ -67,6 +65,7 @@ export async function triggerMrSmileManifestation() {
     }
 
     manifestationRunning = true;
+    firstContactAppearance = false;
 
     try {
 
@@ -86,6 +85,7 @@ export async function triggerMrSmileManifestation() {
         cleanupAppearance();
 
         manifestationRunning = false;
+        firstContactAppearance = false;
     }
 }
 
@@ -97,11 +97,34 @@ export async function triggerMrSmileManifestation() {
 /**
  * Используется mrsmileEvents.js.
  *
- * mode:
+ * ВАЖНО:
  *
- * presence
- * echo
- * silence
+ * presence теперь НЕ ждёт полного disappearance.
+ *
+ * Последовательность:
+ *
+ *      create
+ *        ↓
+ *      eyes
+ *        ↓
+ *      face
+ *        ↓
+ *      return
+ *
+ * После return лицо остаётся на экране.
+ *
+ * mrsmileEvents.js продолжает:
+ *
+ *      player interaction
+ *        ↓
+ *      cursor takeover
+ *        ↓
+ *      intrusion
+ *        ↓
+ *      release
+ *
+ * И только releaseMrSmileFirstContactFace()
+ * убирает лицо.
  */
 export async function showMrSmileFirstContactFace(
     mode = "presence"
@@ -112,6 +135,7 @@ export async function showMrSmileFirstContactFace(
     }
 
     manifestationRunning = true;
+    firstContactAppearance = true;
 
     try {
 
@@ -123,6 +147,11 @@ export async function showMrSmileFirstContactFace(
 
                 await runEchoAppearance();
 
+                cleanupAppearance();
+
+                manifestationRunning = false;
+                firstContactAppearance = false;
+
                 break;
 
 
@@ -130,13 +159,30 @@ export async function showMrSmileFirstContactFace(
 
                 await runSilenceAppearance();
 
+                cleanupAppearance();
+
+                manifestationRunning = false;
+                firstContactAppearance = false;
+
                 break;
 
 
             case "presence":
             default:
 
-                await runPresenceAppearance();
+                /*
+                 * Специальный first-contact режим.
+                 *
+                 * Здесь НЕТ fade-out.
+                 */
+
+                await runFirstContactPresence();
+
+                /*
+                 * Ничего не чистим.
+                 *
+                 * Лицо должно остаться.
+                 */
 
                 break;
         }
@@ -148,20 +194,24 @@ export async function showMrSmileFirstContactFace(
             error
         );
 
-    } finally {
-
         cleanupAppearance();
 
         manifestationRunning = false;
+        firstContactAppearance = false;
     }
 }
 
 
 /* ==========================================================
-   NORMAL PRESENCE
+   FIRST CONTACT PRESENCE
 ========================================================== */
 
-async function runPresenceAppearance() {
+/**
+ * Только появление лица.
+ *
+ * Никакого исчезновения.
+ */
+async function runFirstContactPresence() {
 
     if (!manifestationRoot) {
         return;
@@ -169,7 +219,7 @@ async function runPresenceAppearance() {
 
 
     /*
-     * Сначала вообще ничего нет.
+     * Изначально ничего нет.
      */
 
     manifestationRoot.classList.add(
@@ -178,6 +228,11 @@ async function runPresenceAppearance() {
 
 
     await sleep(500);
+
+
+    if (!manifestationRoot) {
+        return;
+    }
 
 
     /*
@@ -196,6 +251,11 @@ async function runPresenceAppearance() {
     await sleep(700);
 
 
+    if (!manifestationRoot) {
+        return;
+    }
+
+
     /*
      * Глаза.
      */
@@ -206,6 +266,11 @@ async function runPresenceAppearance() {
     await sleep(1300);
 
 
+    if (!manifestationRoot) {
+        return;
+    }
+
+
     /*
      * Лицо начинает проявляться.
      */
@@ -213,31 +278,105 @@ async function runPresenceAppearance() {
     revealFace();
 
 
+    await sleep(900);
+
+
+    if (!manifestationRoot) {
+        return;
+    }
+
+
+    /*
+     * Улыбка здесь НЕ обязана
+     * появляться мгновенно.
+     *
+     * Оставляем лицо спокойным.
+     *
+     * Небольшая задержка создаёт
+     * ощущение наблюдения.
+     */
+
+    await sleep(700);
+
+
+    if (!manifestationRoot) {
+        return;
+    }
+
+
+    revealSmile();
+
+
+    /*
+     * ВАЖНО:
+     *
+     * Никакого fadeOutManifestation().
+     *
+     * Лицо остаётся.
+     */
+
+    manifestationRoot.classList.add(
+        "mrSmileFirstContactPersistent"
+    );
+}
+
+
+/* ==========================================================
+   NORMAL PRESENCE
+========================================================== */
+
+async function runPresenceAppearance() {
+
+    if (!manifestationRoot) {
+        return;
+    }
+
+
+    manifestationRoot.classList.add(
+        "mrSmileAppearanceInitial"
+    );
+
+
+    await sleep(500);
+
+
+    if (!manifestationRoot) {
+        return;
+    }
+
+
+    manifestationRoot.classList.remove(
+        "mrSmileAppearanceInitial"
+    );
+
+    manifestationRoot.classList.add(
+        "mrSmilePresence"
+    );
+
+
+    await sleep(700);
+
+
+    revealEyes();
+
+
+    await sleep(1300);
+
+
+    revealFace();
+
+
     await sleep(1500);
 
 
-    /*
-     * Небольшая пауза.
-     *
-     * Никакого jump scare.
-     */
-
     await sleep(1000);
 
-
-    /*
-     * Улыбка.
-     */
 
     revealSmile();
 
 
     await sleep(1600);
 
-
-    /*
-     * Исчезновение.
-     */
 
     await fadeOutManifestation();
 }
@@ -267,10 +406,6 @@ async function runEchoAppearance() {
 
     await sleep(1100);
 
-
-    /*
-     * Короткий взгляд.
-     */
 
     lookAtPlayer();
 
@@ -319,19 +454,11 @@ async function runSilenceAppearance() {
     await sleep(1200);
 
 
-    /*
-     * MR.SMILE смотрит прямо на пользователя.
-     */
-
     lookAtPlayer();
 
 
     await sleep(1000);
 
-
-    /*
-     * Короткое закрытие глаз.
-     */
 
     blinkEyes();
 
@@ -376,12 +503,6 @@ function createManifestation() {
         "mrSmileManifestation";
 
 
-    /*
-     * Никаких fake horror screens.
-     *
-     * Только визуальный слой сущности.
-     */
-
     manifestationRoot.innerHTML = `
 
         <div
@@ -391,21 +512,34 @@ function createManifestation() {
 
             <div class="mrSmileFaceTrace"></div>
 
+
             <div
                 class="mrSmileEye mrSmileEyeLeft"
             >
+
                 <div class="mrSmileEyeIris">
-                    <div class="mrSmileEyePupil"></div>
+
+                    <div
+                        class="mrSmileEyePupil"
+                    ></div>
+
                 </div>
+
             </div>
 
 
             <div
                 class="mrSmileEye mrSmileEyeRight"
             >
+
                 <div class="mrSmileEyeIris">
-                    <div class="mrSmileEyePupil"></div>
+
+                    <div
+                        class="mrSmileEyePupil"
+                    ></div>
+
                 </div>
+
             </div>
 
 
@@ -414,7 +548,10 @@ function createManifestation() {
 
             <div class="mrSmileMouth">
 
-                <div class="mrSmileMouthLine"></div>
+                <div
+                    class="mrSmileMouthLine"
+                ></div>
+
 
                 <div class="mrSmileTeeth">
 
@@ -430,7 +567,9 @@ function createManifestation() {
             </div>
 
 
-            <div class="mrSmileFaceScan"></div>
+            <div
+                class="mrSmileFaceScan"
+            ></div>
 
         </div>
 
@@ -457,7 +596,8 @@ function createManifestation() {
     /*
      * Следим за мышью.
      *
-     * MR.SMILE пока только наблюдает.
+     * Пока MR.SMILE только наблюдает,
+     * взгляд следует за движением пользователя.
      */
 
     cursorMouseHandler =
@@ -468,6 +608,7 @@ function createManifestation() {
 
             playerMouseY =
                 event.clientY;
+
 
             if (
                 manifestationRoot &&
@@ -480,7 +621,9 @@ function createManifestation() {
                     playerMouseX,
                     playerMouseY
                 );
+
             }
+
         };
 
 
@@ -620,9 +763,9 @@ function updateEyeDirection(
     /*
      * Очень ограниченное движение.
      *
-     * Человек должен ощущать взгляд,
-     * а не видеть два шарика,
-     * которые бегают за мышью.
+     * Глаза не должны выглядеть
+     * как два шарика, следящие
+     * за мышью.
      */
 
     const maxX = 5;
@@ -701,6 +844,11 @@ async function blinkEyes() {
     await sleep(180);
 
 
+    if (!manifestationRoot) {
+        return;
+    }
+
+
     manifestationRoot.classList.remove(
         "mrSmileEyesClosed"
     );
@@ -726,6 +874,11 @@ async function fadeOutManifestation() {
     await sleep(700);
 
 
+    if (!manifestationRoot) {
+        return;
+    }
+
+
     manifestationRoot.classList.add(
         "mrSmileManifestationGone"
     );
@@ -736,19 +889,50 @@ async function fadeOutManifestation() {
 
 
 /* ==========================================================
-   CONTROLLED CURSOR
+   RELEASE FIRST CONTACT FACE
 ========================================================== */
 
 /**
- * Визуальный cursor.
+ * Вызывается mrsmileEvents.js
+ * во время финального release.
  *
- * Браузер физически не позволяет странице
- * перемещать настоящий системный pointer.
- *
- * Поэтому создаётся отдельный визуальный cursor,
- * который в нужный момент принимает движение
- * самостоятельно.
+ * Именно здесь заканчивается
+ * persistent first-contact appearance.
  */
+export async function releaseMrSmileFirstContactFace() {
+
+    if (!firstContactAppearance) {
+        return;
+    }
+
+
+    if (!manifestationRoot) {
+
+        manifestationRunning = false;
+        firstContactAppearance = false;
+
+        return;
+    }
+
+
+    try {
+
+        await fadeOutManifestation();
+
+    } finally {
+
+        cleanupAppearance();
+
+        manifestationRunning = false;
+        firstContactAppearance = false;
+
+    }
+}
+
+
+/* ==========================================================
+   CONTROLLED CURSOR
+========================================================== */
 
 export function createMrSmileControlledCursor() {
 
@@ -876,10 +1060,6 @@ export async function moveMrSmileCursor(
                     );
 
 
-                /*
-                 * Smoothstep.
-                 */
-
                 const eased =
                     progress *
                     progress *
@@ -929,12 +1109,14 @@ export async function moveMrSmileCursor(
                     resolve();
 
                 }
+
             }
 
 
             requestAnimationFrame(
                 animate
             );
+
         }
     );
 }
@@ -957,6 +1139,11 @@ export async function clickMrSmileCursor() {
 
 
     await sleep(150);
+
+
+    if (!cursorVisual) {
+        return;
+    }
 
 
     cursorVisual.classList.remove(
@@ -984,6 +1171,11 @@ export async function loseMrSmileCursor() {
     await sleep(500);
 
 
+    if (!cursorVisual) {
+        return;
+    }
+
+
     cursorVisual.remove();
 
     cursorVisual = null;
@@ -1001,6 +1193,7 @@ export function destroyMrSmileControlledCursor() {
         cursorVisual.remove();
 
         cursorVisual = null;
+
     }
 }
 
@@ -1229,6 +1422,7 @@ function sleep(
             appearanceTimers.push(
                 timer
             );
+
         }
     );
 }
