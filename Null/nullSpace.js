@@ -1,33 +1,34 @@
 /* ==========================================================
    NULL SPACE
-   World + Rooms + Entity + Errors + Events
+   New World System
+   Forest + Red Fog + Entity + Errors + Events
    ========================================================== */
 
 
 /* ==========================================================
-   ROOM DATABASE
+   AREA DATABASE
    ========================================================== */
 
 const NULL_ROOMS = {
 
     large: {
-        name: "LARGE ROOM",
-        description: "PROTECTED VOID CHAMBER"
+        name: "OPEN VOID",
+        description: "UNDEFINED OPEN SPACE"
     },
 
     hallway: {
-        name: "HALLWAY",
-        description: "GENERATED PASSAGE"
+        name: "TREE PASSAGE",
+        description: "GENERATED FOREST CORRIDOR"
     },
 
     console: {
-        name: "CONSOLE ROOM",
-        description: "UNKNOWN SYSTEM CHAMBER"
+        name: "DEAD AREA",
+        description: "NO STRUCTURE DETECTED"
     },
 
     pillar: {
-        name: "PILLAR ROOM",
-        description: "IRREGULAR VOID STRUCTURE"
+        name: "DISTANT STRUCTURE",
+        description: "IRREGULAR VOID FORMATION"
     }
 
 };
@@ -55,11 +56,21 @@ const nullState = {
 
         space: null,
         world: null,
+        background: null,
+        environment: null,
 
-        room: null,
-        lights: null,
-        blocks: null,
+        distantTrees: null,
+        trees: null,
+        ground: null,
+
+        fogBack: null,
+        fogMiddle: null,
+        fogFront: null,
+
         entity: null,
+        entityHead: null,
+        entityBody: null,
+
         anomaly: null,
 
         errorLayer: null,
@@ -70,7 +81,9 @@ const nullState = {
 
         roomInfo: null,
         eventMessage: null,
-        status: null
+        status: null,
+
+        navigation: null
 
     }
 
@@ -288,6 +301,10 @@ function randomInt(min, max) {
 
 function pickRandom(array) {
 
+    if (!array || !array.length) {
+        return null;
+    }
+
     return array[
         Math.floor(
             Math.random() * array.length
@@ -321,7 +338,9 @@ function createNullTree(
     distant = false
 ) {
 
-    const tree = document.createElement("div");
+    const tree =
+        document.createElement("div");
+
 
     tree.className =
         distant
@@ -334,24 +353,28 @@ function createNullTree(
         `${x}%`
     );
 
+
     tree.style.setProperty(
         "--tree-y",
         `${y}%`
     );
+
 
     tree.style.setProperty(
         "--tree-scale",
         scale.toFixed(2)
     );
 
+
     tree.style.setProperty(
         "--tree-rotation",
-        `${randomInt(-4, 4)}deg`
+        `${randomInt(-5, 5)}deg`
     );
+
 
     tree.style.setProperty(
         "--tree-height",
-        `${randomInt(170, 330)}px`
+        `${randomInt(180, 340)}px`
     );
 
 
@@ -362,6 +385,7 @@ function createNullTree(
     const trunk =
         document.createElement("div");
 
+
     trunk.className =
         "nullTreeTrunk";
 
@@ -371,7 +395,9 @@ function createNullTree(
        ------------------------------------------------------ */
 
     const branchCount =
-        randomInt(4, 7);
+        distant
+            ? randomInt(3, 5)
+            : randomInt(5, 9);
 
 
     for (
@@ -383,25 +409,36 @@ function createNullTree(
         const branch =
             document.createElement("div");
 
+
         branch.className =
             "nullTreeBranch";
 
 
         branch.style.setProperty(
             "--branch-y",
-            `${15 + i * random(10, 14)}%`
+            `${12 + i * random(9, 13)}%`
         );
 
 
         branch.style.setProperty(
             "--branch-angle",
-            `${randomInt(12, 48)}deg`
+            `${randomInt(12, 50)}deg`
         );
 
 
         branch.style.setProperty(
             "--branch-length",
-            `${randomInt(45, 110)}px`
+            distant
+                ? `${randomInt(35, 75)}px`
+                : `${randomInt(55, 125)}px`
+        );
+
+
+        branch.style.setProperty(
+            "--branch-width",
+            distant
+                ? `${randomInt(2, 5)}px`
+                : `${randomInt(3, 8)}px`
         );
 
 
@@ -420,14 +457,109 @@ function createNullTree(
         }
 
 
-        trunk.appendChild(branch);
+        trunk.appendChild(
+            branch
+        );
 
     }
 
 
-    tree.appendChild(trunk);
+    tree.appendChild(
+        trunk
+    );
+
 
     return tree;
+
+}
+
+
+/* ==========================================================
+   TREE VARIATION
+   ========================================================== */
+
+function regenerateForest() {
+
+    const elements =
+        nullState.roomElements;
+
+
+    if (
+        !elements.distantTrees ||
+        !elements.trees
+    ) {
+        return;
+    }
+
+
+    elements.distantTrees.innerHTML =
+        "";
+
+
+    elements.trees.innerHTML =
+        "";
+
+
+    /* ------------------------------------------------------
+       DISTANT FOREST
+       ------------------------------------------------------ */
+
+    for (
+        let i = 0;
+        i < 24;
+        i++
+    ) {
+
+        const tree =
+            createNullTree(
+
+                random(-10, 110),
+
+                random(16, 58),
+
+                random(0.25, 0.72),
+
+                true
+
+            );
+
+
+        elements.distantTrees.appendChild(
+            tree
+        );
+
+    }
+
+
+    /* ------------------------------------------------------
+       MAIN FOREST
+       ------------------------------------------------------ */
+
+    for (
+        let i = 0;
+        i < 18;
+        i++
+    ) {
+
+        const tree =
+            createNullTree(
+
+                random(-8, 108),
+
+                random(32, 91),
+
+                random(0.60, 1.55),
+
+                false
+
+            );
+
+
+        elements.trees.appendChild(
+            tree
+        );
+
+    }
 
 }
 
@@ -441,6 +573,7 @@ function buildNullEnvironment(world) {
     const environment =
         document.createElement("div");
 
+
     environment.className =
         "nullEnvironment";
 
@@ -452,28 +585,9 @@ function buildNullEnvironment(world) {
     const distantTrees =
         document.createElement("div");
 
+
     distantTrees.className =
         "nullDistantTrees";
-
-
-    for (
-        let i = 0;
-        i < 18;
-        i++
-    ) {
-
-        const tree =
-            createNullTree(
-                random(0, 100),
-                random(22, 58),
-                random(0.35, 0.75),
-                true
-            );
-
-
-        distantTrees.appendChild(tree);
-
-    }
 
 
     /* ------------------------------------------------------
@@ -482,6 +596,7 @@ function buildNullEnvironment(world) {
 
     const ground =
         document.createElement("div");
+
 
     ground.className =
         "nullForestGround";
@@ -494,28 +609,9 @@ function buildNullEnvironment(world) {
     const trees =
         document.createElement("div");
 
+
     trees.className =
         "nullTrees";
-
-
-    for (
-        let i = 0;
-        i < 14;
-        i++
-    ) {
-
-        const tree =
-            createNullTree(
-                random(-5, 105),
-                random(34, 86),
-                random(0.65, 1.45),
-                false
-            );
-
-
-        trees.appendChild(tree);
-
-    }
 
 
     /* ------------------------------------------------------
@@ -525,12 +621,14 @@ function buildNullEnvironment(world) {
     const fogBack =
         document.createElement("div");
 
+
     fogBack.className =
         "nullRedFog nullRedFogBack";
 
 
     const fogMiddle =
         document.createElement("div");
+
 
     fogMiddle.className =
         "nullRedFog nullRedFogMiddle";
@@ -539,33 +637,39 @@ function buildNullEnvironment(world) {
     const fogFront =
         document.createElement("div");
 
+
     fogFront.className =
         "nullRedFog nullRedFogFront";
 
 
     /* ------------------------------------------------------
-       ASSEMBLE
+       ASSEMBLE ENVIRONMENT
        ------------------------------------------------------ */
 
     environment.appendChild(
         distantTrees
     );
 
+
     environment.appendChild(
         ground
     );
+
 
     environment.appendChild(
         trees
     );
 
+
     environment.appendChild(
         fogBack
     );
 
+
     environment.appendChild(
         fogMiddle
     );
+
 
     environment.appendChild(
         fogFront
@@ -577,7 +681,122 @@ function buildNullEnvironment(world) {
     );
 
 
+    nullState.roomElements.environment =
+        environment;
+
+
+    nullState.roomElements.distantTrees =
+        distantTrees;
+
+
+    nullState.roomElements.ground =
+        ground;
+
+
+    nullState.roomElements.trees =
+        trees;
+
+
+    nullState.roomElements.fogBack =
+        fogBack;
+
+
+    nullState.roomElements.fogMiddle =
+        fogMiddle;
+
+
+    nullState.roomElements.fogFront =
+        fogFront;
+
+
+    regenerateForest();
+
+
     return environment;
+
+}
+
+
+/* ==========================================================
+   ENTITY
+   ========================================================== */
+
+function buildEntity() {
+
+    const entity =
+        document.createElement("div");
+
+
+    entity.className =
+        "nullEntity";
+
+
+    const entityHead =
+        document.createElement("div");
+
+
+    entityHead.className =
+        "nullEntityHead";
+
+
+    entityHead.id =
+        "nullEntityHead";
+
+
+    const entityBody =
+        document.createElement("div");
+
+
+    entityBody.className =
+        "nullEntityBody";
+
+
+    entity.appendChild(
+        entityHead
+    );
+
+
+    entity.appendChild(
+        entityBody
+    );
+
+
+    nullState.roomElements.entity =
+        entity;
+
+
+    nullState.roomElements.entityHead =
+        entityHead;
+
+
+    nullState.roomElements.entityBody =
+        entityBody;
+
+
+    return entity;
+
+}
+
+
+/* ==========================================================
+   ANOMALY
+   ========================================================== */
+
+function buildAnomaly() {
+
+    const anomaly =
+        document.createElement("div");
+
+
+    anomaly.className =
+        "nullAnomalyLayer";
+
+
+    nullState.roomElements.anomaly =
+        anomaly;
+
+
+    return anomaly;
 
 }
 
@@ -588,7 +807,8 @@ function buildNullEnvironment(world) {
 
 function nullBuild() {
 
-    const root = getRoot();
+    const root =
+        getRoot();
 
 
     if (!root) {
@@ -603,40 +823,84 @@ function nullBuild() {
 
 
     /* ------------------------------------------------------
-       CLEAN OLD BUILD
+       CLEAN PREVIOUS BUILD
        ------------------------------------------------------ */
 
-    root.innerHTML = "";
+    root.innerHTML =
+        "";
 
 
     /* ------------------------------------------------------
-       SPACE
+       RESET REFERENCES
        ------------------------------------------------------ */
+
+    nullState.roomElements = {
+
+        space: null,
+        world: null,
+        background: null,
+        environment: null,
+
+        distantTrees: null,
+        trees: null,
+        ground: null,
+
+        fogBack: null,
+        fogMiddle: null,
+        fogFront: null,
+
+        entity: null,
+        entityHead: null,
+        entityBody: null,
+
+        anomaly: null,
+
+        errorLayer: null,
+        errorText: null,
+        errorSubtext: null,
+
+        windows: null,
+
+        roomInfo: null,
+        eventMessage: null,
+        status: null,
+
+        navigation: null
+
+    };
+
+
+    /* ======================================================
+       SPACE
+       ====================================================== */
 
     const space =
         document.createElement("div");
+
 
     space.className =
         "nullSpace";
 
 
-    /* ------------------------------------------------------
+    /* ======================================================
        WORLD
-       ------------------------------------------------------ */
+       ====================================================== */
 
     const world =
         document.createElement("div");
+
 
     world.className =
         "nullWorld";
 
 
-    /* ------------------------------------------------------
+    /* ======================================================
        BACKGROUND
-       ------------------------------------------------------ */
+       ====================================================== */
 
     const background =
         document.createElement("div");
+
 
     background.className =
         "nullWorldBackground";
@@ -647,9 +911,9 @@ function nullBuild() {
     );
 
 
-    /* ------------------------------------------------------
+    /* ======================================================
        FOREST
-       ------------------------------------------------------ */
+       ====================================================== */
 
     buildNullEnvironment(
         world
@@ -657,232 +921,15 @@ function nullBuild() {
 
 
     /* ======================================================
-       LEGACY ROOM SYSTEM
-       ====================================================== */
-
-    const room =
-        document.createElement("div");
-
-    room.className =
-        "nullRoom";
-
-
-    /*
-       The old room remains in the system.
-       CSS can hide its physical walls while
-       ENTITY and anomaly continue to exist.
-    */
-
-    room.classList.add(
-        "nullLegacyRoom"
-    );
-
-
-    /* ------------------------------------------------------
-       ROOM SURFACES
-       ------------------------------------------------------ */
-
-    const back =
-        document.createElement("div");
-
-    back.className =
-        "nullRoomBack";
-
-
-    const left =
-        document.createElement("div");
-
-    left.className =
-        "nullRoomLeft";
-
-
-    const right =
-        document.createElement("div");
-
-    right.className =
-        "nullRoomRight";
-
-
-    const floor =
-        document.createElement("div");
-
-    floor.className =
-        "nullRoomFloor";
-
-
-    const ceiling =
-        document.createElement("div");
-
-    ceiling.className =
-        "nullRoomCeiling";
-
-
-    /* ------------------------------------------------------
-       LIGHTS
-       ------------------------------------------------------ */
-
-    const lights =
-        document.createElement("div");
-
-    lights.className =
-        "nullRoomLights";
-
-
-    for (
-        let i = 0;
-        i < 5;
-        i++
-    ) {
-
-        const light =
-            document.createElement("div");
-
-
-        light.className =
-            "nullVoidLight";
-
-
-        light.dataset.light =
-            i;
-
-
-        light.style.setProperty(
-            "--light-x",
-            `${random(8, 92)}%`
-        );
-
-
-        light.style.setProperty(
-            "--light-y",
-            `${random(8, 70)}%`
-        );
-
-
-        light.style.setProperty(
-            "--light-delay",
-            `${random(0, 4)}s`
-        );
-
-
-        light.style.setProperty(
-            "--light-scale",
-            random(
-                0.75,
-                1.25
-            ).toFixed(2)
-        );
-
-
-        lights.appendChild(
-            light
-        );
-
-    }
-
-
-    /* ------------------------------------------------------
-       BLOCKS
-       ------------------------------------------------------ */
-
-    const blocks =
-        document.createElement("div");
-
-    blocks.className =
-        "nullRoomBlocks";
-
-
-    for (
-        let i = 0;
-        i < 8;
-        i++
-    ) {
-
-        const block =
-            document.createElement("div");
-
-
-        block.className =
-            "nullVoidBlock";
-
-
-        block.dataset.block =
-            i;
-
-
-        block.style.setProperty(
-            "--block-x",
-            `${random(5, 95)}%`
-        );
-
-
-        block.style.setProperty(
-            "--block-y",
-            `${random(10, 85)}%`
-        );
-
-
-        block.style.setProperty(
-            "--block-z",
-            `${random(-100, 120)}px`
-        );
-
-
-        block.style.setProperty(
-            "--block-scale",
-            random(
-                0.65,
-                1.45
-            ).toFixed(2)
-        );
-
-
-        block.style.setProperty(
-            "--block-rotation",
-            `${randomInt(-12, 12)}deg`
-        );
-
-
-        blocks.appendChild(
-            block
-        );
-
-    }
-
-
-    /* ======================================================
        ENTITY
        ====================================================== */
 
     const entity =
-        document.createElement("div");
-
-    entity.className =
-        "nullEntity";
+        buildEntity();
 
 
-    const entityHead =
-        document.createElement("div");
-
-    entityHead.className =
-        "nullEntityHead";
-
-    entityHead.id =
-        "nullEntityHead";
-
-
-    const entityBody =
-        document.createElement("div");
-
-    entityBody.className =
-        "nullEntityBody";
-
-
-    entity.appendChild(
-        entityHead
-    );
-
-    entity.appendChild(
-        entityBody
+    world.appendChild(
+        entity
     );
 
 
@@ -891,55 +938,11 @@ function nullBuild() {
        ====================================================== */
 
     const anomaly =
-        document.createElement("div");
-
-    anomaly.className =
-        "nullAnomalyLayer";
-
-
-    /* ======================================================
-       ASSEMBLE LEGACY ROOM
-       ====================================================== */
-
-    room.appendChild(
-        back
-    );
-
-    room.appendChild(
-        left
-    );
-
-    room.appendChild(
-        right
-    );
-
-    room.appendChild(
-        floor
-    );
-
-    room.appendChild(
-        ceiling
-    );
-
-    room.appendChild(
-        lights
-    );
-
-    room.appendChild(
-        blocks
-    );
-
-    room.appendChild(
-        entity
-    );
-
-    room.appendChild(
-        anomaly
-    );
+        buildAnomaly();
 
 
     world.appendChild(
-        room
+        anomaly
     );
 
 
@@ -949,6 +952,7 @@ function nullBuild() {
 
     const interfaceLayer =
         document.createElement("div");
+
 
     interfaceLayer.className =
         "nullInterface";
@@ -961,6 +965,7 @@ function nullBuild() {
     const topBar =
         document.createElement("div");
 
+
     topBar.className =
         "nullTopBar";
 
@@ -968,8 +973,10 @@ function nullBuild() {
     const title =
         document.createElement("div");
 
+
     title.className =
         "nullTitle";
+
 
     title.textContent =
         "NULL SPACE";
@@ -978,8 +985,10 @@ function nullBuild() {
     const status =
         document.createElement("div");
 
+
     status.className =
         "nullStatus";
+
 
     status.textContent =
         "STANDBY";
@@ -989,17 +998,19 @@ function nullBuild() {
         title
     );
 
+
     topBar.appendChild(
         status
     );
 
 
     /* ------------------------------------------------------
-       ROOM INFO
+       ROOM / AREA INFO
        ------------------------------------------------------ */
 
     const roomInfo =
         document.createElement("div");
+
 
     roomInfo.className =
         "nullRoomInfo";
@@ -1012,6 +1023,7 @@ function nullBuild() {
     const eventMessage =
         document.createElement("div");
 
+
     eventMessage.className =
         "nullEventMessage";
 
@@ -1023,6 +1035,7 @@ function nullBuild() {
     const navigation =
         document.createElement("div");
 
+
     navigation.className =
         "nullNavigation";
 
@@ -1030,42 +1043,30 @@ function nullBuild() {
     const enterButton =
         document.createElement("button");
 
+
     enterButton.type =
         "button";
+
 
     enterButton.textContent =
         "ENTER";
 
 
-    const exitButton =
-        document.createElement("button");
-
-    exitButton.type =
-        "button";
-
-    exitButton.textContent =
-        "EXIT";
-
-
     const nextButton =
         document.createElement("button");
+
 
     nextButton.type =
         "button";
 
+
     nextButton.textContent =
-        "NEXT ROOM";
+        "NEXT AREA";
 
 
     enterButton.addEventListener(
         "click",
         enterNullSpace
-    );
-
-
-    exitButton.addEventListener(
-        "click",
-        exitNullSpace
     );
 
 
@@ -1079,9 +1080,6 @@ function nullBuild() {
         enterButton
     );
 
-    navigation.appendChild(
-        exitButton
-    );
 
     navigation.appendChild(
         nextButton
@@ -1092,13 +1090,16 @@ function nullBuild() {
         topBar
     );
 
+
     interfaceLayer.appendChild(
         roomInfo
     );
 
+
     interfaceLayer.appendChild(
         eventMessage
     );
+
 
     interfaceLayer.appendChild(
         navigation
@@ -1112,8 +1113,10 @@ function nullBuild() {
     const errorLayer =
         document.createElement("div");
 
+
     errorLayer.className =
         "nullErrorLayer";
+
 
     errorLayer.setAttribute(
         "aria-hidden",
@@ -1124,6 +1127,7 @@ function nullBuild() {
     const errorGlitch =
         document.createElement("div");
 
+
     errorGlitch.className =
         "nullErrorGlitch";
 
@@ -1131,12 +1135,14 @@ function nullBuild() {
     const errorText =
         document.createElement("div");
 
+
     errorText.className =
         "nullErrorText";
 
 
     const errorSubtext =
         document.createElement("div");
+
 
     errorSubtext.className =
         "nullErrorSubtext";
@@ -1146,9 +1152,11 @@ function nullBuild() {
         errorGlitch
     );
 
+
     errorLayer.appendChild(
         errorText
     );
+
 
     errorLayer.appendChild(
         errorSubtext
@@ -1162,6 +1170,7 @@ function nullBuild() {
     const windows =
         document.createElement("div");
 
+
     windows.className =
         "nullWindows";
 
@@ -1174,13 +1183,16 @@ function nullBuild() {
         world
     );
 
+
     space.appendChild(
         errorLayer
     );
 
+
     space.appendChild(
         interfaceLayer
     );
+
 
     space.appendChild(
         windows
@@ -1196,28 +1208,48 @@ function nullBuild() {
        STORE REFERENCES
        ====================================================== */
 
-    nullState.roomElements = {
+    nullState.roomElements.space =
+        space;
 
-        space,
-        world,
 
-        room,
-        lights,
-        blocks,
-        entity,
-        anomaly,
+    nullState.roomElements.world =
+        world;
 
-        errorLayer,
-        errorText,
-        errorSubtext,
 
-        windows,
+    nullState.roomElements.background =
+        background;
 
-        roomInfo,
-        eventMessage,
-        status
 
-    };
+    nullState.roomElements.errorLayer =
+        errorLayer;
+
+
+    nullState.roomElements.errorText =
+        errorText;
+
+
+    nullState.roomElements.errorSubtext =
+        errorSubtext;
+
+
+    nullState.roomElements.windows =
+        windows;
+
+
+    nullState.roomElements.roomInfo =
+        roomInfo;
+
+
+    nullState.roomElements.eventMessage =
+        eventMessage;
+
+
+    nullState.roomElements.status =
+        status;
+
+
+    nullState.roomElements.navigation =
+        navigation;
 
 
     updateRoomVisual();
@@ -1237,11 +1269,14 @@ export function initNullSpace() {
     if (
         nullState.initialized
     ) {
+
         return;
+
     }
 
 
-    const root = getRoot();
+    const root =
+        getRoot();
 
 
     if (!root) {
@@ -1256,7 +1291,9 @@ export function initNullSpace() {
 
 
     if (!nullBuild()) {
+
         return;
+
     }
 
 
@@ -1278,14 +1315,24 @@ export function initNullSpace() {
 function enterNullSpace() {
 
     if (
-        !nullState.initialized ||
+        !nullState.initialized
+    ) {
+
+        initNullSpace();
+
+    }
+
+
+    if (
         !document.querySelector(
             "#nullSpaceRoot .nullSpace"
         )
     ) {
 
         if (!nullBuild()) {
+
             return;
+
         }
 
         nullState.initialized =
@@ -1299,13 +1346,16 @@ function enterNullSpace() {
 
 
     if (!root) {
+
         return;
+
     }
 
 
     root.classList.remove(
         "hidden"
     );
+
 
     root.classList.add(
         "active"
@@ -1318,7 +1368,9 @@ function enterNullSpace() {
 
     updateRoomVisual();
 
+
     startAmbientEvents();
+
 
     startErrorSystem();
 
@@ -1331,46 +1383,19 @@ function enterNullSpace() {
 
 
 /* ==========================================================
-   EXIT
-   ========================================================== */
-
-function exitNullSpace() {
-
-    const root =
-        getRoot();
-
-
-    if (!root) {
-        return;
-    }
-
-
-    root.classList.remove(
-        "active"
-    );
-
-
-    nullState.active =
-        false;
-
-
-    stopAmbientEvents();
-
-    stopErrorSystem();
-
-
-    console.log(
-        "[NULL SPACE] Exited."
-    );
-
-}
-
-
-/* ==========================================================
-   NEXT ROOM
+   NEXT AREA
    ========================================================== */
 
 function nextNullRoom() {
+
+    if (
+        !nullState.initialized
+    ) {
+
+        return;
+
+    }
+
 
     const roomTypes =
         Object.keys(
@@ -1398,11 +1423,23 @@ function nextNullRoom() {
         ];
 
 
+    /* ------------------------------------------------------
+       REGENERATE WORLD
+       ------------------------------------------------------ */
+
+    regenerateForest();
+
+
     updateRoomVisual();
 
 
+    /* ------------------------------------------------------
+       AREA MISMATCH
+       ------------------------------------------------------ */
+
     if (
-        Math.random() < 0.22
+        Math.random() < 0.22 &&
+        nullState.active
     ) {
 
         setTimeout(() => {
@@ -1410,14 +1447,16 @@ function nextNullRoom() {
             if (
                 !nullState.active
             ) {
+
                 return;
+
             }
 
 
             showNullError({
 
                 text:
-                    "ROOMTYPE MISMATCH",
+                    "AREA TYPE MISMATCH",
 
                 type:
                     "system",
@@ -1435,7 +1474,7 @@ function nextNullRoom() {
 
 
 /* ==========================================================
-   ROOM VISUAL
+   ROOM / AREA VISUAL
    ========================================================== */
 
 function updateRoomVisual() {
@@ -1450,26 +1489,27 @@ function updateRoomVisual() {
         nullState.roomElements;
 
 
-    if (!elements.room) {
-        return;
+    if (
+        elements.space
+    ) {
+
+        elements.space.classList.remove(
+
+            "room-large",
+            "room-hallway",
+            "room-console",
+            "room-pillar"
+
+        );
+
+
+        elements.space.classList.add(
+
+            `room-${nullState.roomType}`
+
+        );
+
     }
-
-
-    elements.room.classList.remove(
-
-        "room-large",
-        "room-hallway",
-        "room-console",
-        "room-pillar"
-
-    );
-
-
-    elements.room.classList.add(
-
-        `room-${nullState.roomType}`
-
-    );
 
 
     if (
@@ -1503,153 +1543,76 @@ function updateRoomVisual() {
     }
 
 
-    updateRoomDetails();
+    updateWorldVariation();
 
 }
 
 
 /* ==========================================================
-   ROOM DETAILS
+   WORLD VARIATION
    ========================================================== */
 
-function updateRoomDetails() {
+function updateWorldVariation() {
 
     const elements =
         nullState.roomElements;
 
 
-    if (!elements.room) {
+    if (
+        !elements.space
+    ) {
+
         return;
+
     }
 
 
-    const lights =
-        elements.room.querySelectorAll(
-            ".nullVoidLight"
-        );
+    elements.space.classList.remove(
 
+        "nullAreaLarge",
+        "nullAreaHallway",
+        "nullAreaConsole",
+        "nullAreaPillar"
 
-    const blocks =
-        elements.room.querySelectorAll(
-            ".nullVoidBlock"
-        );
-
-
-    /* ------------------------------------------------------
-       RESET
-       ------------------------------------------------------ */
-
-    lights.forEach(
-        light => {
-
-            light.style.opacity =
-                "";
-
-            light.style.display =
-                "";
-
-        }
     );
 
 
-    blocks.forEach(
-        block => {
+    elements.space.classList.add(
 
-            block.style.display =
-                "";
+        `nullArea${
 
-        }
+            nullState.roomType
+                .charAt(0)
+                .toUpperCase() +
+
+            nullState.roomType
+                .slice(1)
+
+        }`
+
     );
 
 
     /* ------------------------------------------------------
-       HALLWAY
+       SPECIAL TREE DISTRIBUTION
        ------------------------------------------------------ */
 
     if (
-        nullState.roomType ===
-        "hallway"
+        elements.trees
     ) {
 
-        lights.forEach(
-            (light, index) => {
+        elements.trees.style.setProperty(
 
-                light.style.setProperty(
-                    "--light-x",
-                    `${20 + index * 16}%`
-                );
+            "--tree-density",
 
+            nullState.roomType === "hallway"
+                ? "1.12"
+                : nullState.roomType === "console"
+                    ? "0.72"
+                    : nullState.roomType === "pillar"
+                        ? "0.88"
+                        : "1"
 
-                light.style.setProperty(
-                    "--light-y",
-                    `${18 + (index % 2) * 7}%`
-                );
-
-            }
-        );
-
-    }
-
-
-    /* ------------------------------------------------------
-       CONSOLE
-       ------------------------------------------------------ */
-
-    if (
-        nullState.roomType ===
-        "console"
-    ) {
-
-        blocks.forEach(
-            (block, index) => {
-
-                block.style.setProperty(
-                    "--block-x",
-                    `${20 + (index % 4) * 20}%`
-                );
-
-
-                block.style.setProperty(
-                    "--block-y",
-                    `${55 + Math.floor(index / 4) * 15}%`
-                );
-
-            }
-        );
-
-    }
-
-
-    /* ------------------------------------------------------
-       PILLAR
-       ------------------------------------------------------ */
-
-    if (
-        nullState.roomType ===
-        "pillar"
-    ) {
-
-        blocks.forEach(
-            (block, index) => {
-
-                block.style.setProperty(
-                    "--block-x",
-                    `${12 + (index % 4) * 25}%`
-                );
-
-
-                block.style.setProperty(
-                    "--block-y",
-                    `${45 + Math.floor(index / 4) * 22}%`
-                );
-
-
-                block.style.setProperty(
-                    "--block-scale",
-                    "1.6"
-                );
-
-            }
         );
 
     }
@@ -1671,7 +1634,9 @@ function startAmbientEvents() {
         if (
             !nullState.active
         ) {
+
             return;
+
         }
 
 
@@ -1722,6 +1687,7 @@ function stopAmbientEvents() {
             nullState.eventTimer
         );
 
+
         nullState.eventTimer =
             null;
 
@@ -1739,7 +1705,9 @@ function triggerAmbientEvent() {
     if (
         !nullState.active
     ) {
+
         return;
+
     }
 
 
@@ -1751,7 +1719,11 @@ function triggerAmbientEvent() {
         "SIGNAL INTERRUPTION",
         "UNIDENTIFIED PRESENCE",
         "VOID ACTIVITY",
-        "NOISE DETECTED"
+        "NOISE DETECTED",
+        "DISTANT MOVEMENT",
+        "FOREST RESPONSE",
+        "POSITION DRIFT",
+        "VISUAL DESYNC"
 
     ];
 
@@ -1765,7 +1737,9 @@ function triggerAmbientEvent() {
 
 
     if (!eventElement) {
+
         return;
+
     }
 
 
@@ -1796,27 +1770,27 @@ function triggerAmbientEvent() {
 
 
     /* ------------------------------------------------------
-       LIGHT
+       FOREST MOVEMENT
        ------------------------------------------------------ */
 
     if (
-        Math.random() < 0.35
+        Math.random() < 0.42
     ) {
 
-        flickerLights();
+        disturbForest();
 
     }
 
 
     /* ------------------------------------------------------
-       BLOCK
+       ENTITY
        ------------------------------------------------------ */
 
     if (
-        Math.random() < 0.25
+        Math.random() < 0.08
     ) {
 
-        disturbBlock();
+        disturbEntity();
 
     }
 
@@ -1824,39 +1798,54 @@ function triggerAmbientEvent() {
 
 
 /* ==========================================================
-   LIGHT FLICKER
+   FOREST DISTURBANCE
    ========================================================== */
 
-function flickerLights() {
+function disturbForest() {
 
-    const lights =
-        nullState.roomElements.lights;
+    const trees =
+        nullState.roomElements.trees;
 
 
-    if (!lights) {
+    if (!trees) {
+
         return;
+
     }
 
 
-    const lightElements =
-        lights.querySelectorAll(
-            ".nullVoidLight"
+    const treeElements =
+        trees.querySelectorAll(
+            ".nullTree"
         );
 
 
     if (
-        !lightElements.length
+        !treeElements.length
     ) {
+
         return;
+
     }
+
+
+    const targets =
+        Array.from(
+            treeElements
+        );
 
 
     const target =
         pickRandom(
-            Array.from(
-                lightElements
-            )
+            targets
         );
+
+
+    if (!target) {
+
+        return;
+
+    }
 
 
     target.classList.add(
@@ -1870,59 +1859,40 @@ function flickerLights() {
             "disturbed"
         );
 
-    }, randomInt(500, 1800));
+    }, randomInt(700, 1800));
 
 }
 
 
 /* ==========================================================
-   BLOCK DISTURBANCE
+   ENTITY DISTURBANCE
    ========================================================== */
 
-function disturbBlock() {
+function disturbEntity() {
 
-    const blocks =
-        nullState.roomElements.blocks;
+    const entity =
+        nullState.roomElements.entity;
 
 
-    if (!blocks) {
+    if (!entity) {
+
         return;
+
     }
 
 
-    const blockElements =
-        blocks.querySelectorAll(
-            ".nullVoidBlock"
-        );
-
-
-    if (
-        !blockElements.length
-    ) {
-        return;
-    }
-
-
-    const target =
-        pickRandom(
-            Array.from(
-                blockElements
-            )
-        );
-
-
-    target.classList.add(
-        "disturbed"
+    entity.classList.add(
+        "noticed"
     );
 
 
     setTimeout(() => {
 
-        target.classList.remove(
-            "disturbed"
+        entity.classList.remove(
+            "noticed"
         );
 
-    }, randomInt(900, 2200));
+    }, randomInt(500, 1500));
 
 }
 
@@ -1934,6 +1904,7 @@ function disturbBlock() {
 function startErrorSystem() {
 
     stopErrorSystem();
+
 
     scheduleNextError();
 
@@ -1953,6 +1924,7 @@ function stopErrorSystem() {
         clearTimeout(
             nullState.errorTimer
         );
+
 
         nullState.errorTimer =
             null;
@@ -1974,7 +1946,9 @@ function scheduleNextError() {
     if (
         !nullState.active
     ) {
+
         return;
+
     }
 
 
@@ -1991,7 +1965,9 @@ function scheduleNextError() {
             if (
                 !nullState.active
             ) {
+
                 return;
+
             }
 
 
@@ -2005,7 +1981,9 @@ function scheduleNextError() {
 
                 showRandomNullError();
 
-            } else if (
+            }
+
+            else if (
                 roll < 0.94
             ) {
 
@@ -2013,7 +1991,9 @@ function scheduleNextError() {
                     "corrupted"
                 );
 
-            } else {
+            }
+
+            else {
 
                 showRandomNullError(
                     "rare"
@@ -2116,14 +2096,18 @@ function showRandomNullError(
     if (
         !nullState.active
     ) {
+
         return;
+
     }
 
 
     if (
         nullState.errorCooldown
     ) {
+
         return;
+
     }
 
 
@@ -2146,6 +2130,13 @@ function showRandomNullError(
 
 function showNullError(error) {
 
+    if (!error) {
+
+        return;
+
+    }
+
+
     const elements =
         nullState.roomElements;
 
@@ -2153,7 +2144,9 @@ function showNullError(error) {
     if (
         !elements.errorLayer
     ) {
+
         return;
+
     }
 
 
@@ -2168,8 +2161,10 @@ function showNullError(error) {
     const layer =
         elements.errorLayer;
 
+
     const text =
         elements.errorText;
+
 
     const subtext =
         elements.errorSubtext;
@@ -2199,17 +2194,22 @@ function showNullError(error) {
     );
 
 
+    layer.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
     text.textContent =
         error.text;
 
 
     /* ------------------------------------------------------
-       SYSTEM SUBTEXT
+       SYSTEM
        ------------------------------------------------------ */
 
     if (
-        error.type ===
-        "system"
+        error.type === "system"
     ) {
 
         subtext.textContent =
@@ -2219,16 +2219,21 @@ function showNullError(error) {
                 "OBJECT COULD NOT BE RESOLVED",
                 "REFERENCE LOST",
                 "INVALID ENTITY STATE",
-                "PROCESS INTERRUPTED"
+                "PROCESS INTERRUPTED",
+                "WORLD STATE UNDEFINED",
+                "LOCATION REFERENCE LOST"
 
             ]);
 
     }
 
 
+    /* ------------------------------------------------------
+       CORRUPTED
+       ------------------------------------------------------ */
+
     else if (
-        error.type ===
-        "corrupted"
+        error.type === "corrupted"
     ) {
 
         subtext.textContent =
@@ -2237,12 +2242,18 @@ function showNullError(error) {
                 "READ FAILURE",
                 "MEMORY CORRUPTED",
                 "DATA INCOMPLETE",
-                "REFERENCE DAMAGED"
+                "REFERENCE DAMAGED",
+                "VISUAL DATA LOST",
+                "WORLD INDEX CORRUPTED"
 
             ]);
 
     }
 
+
+    /* ------------------------------------------------------
+       NORMAL / RARE
+       ------------------------------------------------------ */
 
     else {
 
@@ -2253,12 +2264,11 @@ function showNullError(error) {
 
 
     /* ------------------------------------------------------
-       RARE EFFECT
+       RARE
        ------------------------------------------------------ */
 
     if (
-        error.type ===
-        "rare"
+        error.type === "rare"
     ) {
 
         triggerRareErrorEffect();
@@ -2298,7 +2308,9 @@ function hideNullError() {
 
 
     if (!layer) {
+
         return;
+
     }
 
 
@@ -2348,20 +2360,20 @@ function triggerRareErrorEffect() {
 
 
     /* ------------------------------------------------------
-       LIGHT DISTURBANCE
+       FOREST DISTURBANCE
        ------------------------------------------------------ */
 
     if (
         Math.random() < 0.65
     ) {
 
-        flickerLights();
+        disturbForest();
 
     }
 
 
     /* ------------------------------------------------------
-       ENTITY VISIBILITY
+       ENTITY
        ------------------------------------------------------ */
 
     const entity =
@@ -2370,7 +2382,7 @@ function triggerRareErrorEffect() {
 
     if (
         entity &&
-        Math.random() < 0.35
+        Math.random() < 0.45
     ) {
 
         entity.classList.add(
@@ -2404,7 +2416,9 @@ function openNullWindow(
 
 
     if (!windows) {
+
         return null;
+
     }
 
 
@@ -2433,7 +2447,6 @@ function openNullWindow(
 
         </div>
 
-
         <div class="nullWindowBody">
 
             <div class="nullWindowCursor">
@@ -2451,10 +2464,14 @@ function openNullWindow(
         );
 
 
-    close.addEventListener(
-        "click",
-        () => win.remove()
-    );
+    if (close) {
+
+        close.addEventListener(
+            "click",
+            () => win.remove()
+        );
+
+    }
 
 
     windows.appendChild(
@@ -2481,8 +2498,11 @@ const NullSpace = {
         enterNullSpace,
 
 
-    exit:
-        exitNullSpace,
+    /*
+       EXIT INTENTIONALLY REMOVED.
+       NULL SPACE IS NOT DESIGNED TO PROVIDE
+       A USER EXIT MECHANISM.
+    */
 
 
     nextRoom:
@@ -2539,6 +2559,10 @@ const NullSpace = {
 };
 
 
+/* ==========================================================
+   GLOBAL API
+   ========================================================== */
+
 window.NullSpace =
     NullSpace;
 
@@ -2551,10 +2575,6 @@ window.enterNullSpace =
     enterNullSpace;
 
 
-window.exitNullSpace =
-    exitNullSpace;
-
-
 window.openNullWindow =
     openNullWindow;
 
@@ -2564,5 +2584,5 @@ window.openNullWindow =
    ========================================================== */
 
 console.log(
-    "[NULL SPACE] Module loaded."
+    "[NULL SPACE] New world system loaded."
 );
