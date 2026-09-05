@@ -2,363 +2,405 @@
    OMEGA WINDOWS
 ========================================================== */
 
-.window{
+.window {
+    position: absolute;
 
-    position:absolute;
+    display: flex;
+    flex-direction: column;
 
-    display:flex;
+    width: 950px;
+    height: 650px;
 
-    flex-direction:column;
+    min-width: 620px;
+    min-height: 420px;
 
-    overflow:hidden;
+    box-sizing: border-box;
 
-    min-width:620px;
-    min-height:420px;
-
-    width:950px;
-    height:650px;
+    overflow: hidden;
 
     background:
         linear-gradient(
+            180deg,
             #0f1825,
             #0b121c
         );
 
-    border:1px solid #29435b;
-
-    border-radius:10px;
+    border: 1px solid #29435b;
+    border-radius: 10px;
 
     box-shadow:
         0 18px 45px rgba(0,0,0,.55),
         0 0 25px rgba(79,216,255,.05);
 
-    animation:windowAppear .18s ease;
+    backdrop-filter: blur(10px);
 
-    backdrop-filter:blur(10px);
-
+    animation: windowAppear .18s ease;
 }
 
+
+/* ==========================================================
+   WINDOW BODY
+========================================================== */
 
 .windowBody {
+    position: relative;
 
-    position:relative;
+    flex: 1 1 auto;
 
-    flex:1 1 auto;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
 
-    width:100%;
+    box-sizing: border-box;
 
-    min-width:0;
-    min-height:0;
-
-    overflow:hidden;
-
-    box-sizing:border-box;
+    overflow: hidden;
 }
 
-/* ========================================================== */
 
-.window.active{
+/* ==========================================================
+   ACTIVE / INACTIVE WINDOW
+========================================================== */
 
-    border-color:#4fd8ff;
+.window {
+    opacity: .92;
+}
+
+.window.active {
+    opacity: 1;
+
+    border-color: #4fd8ff;
 
     box-shadow:
         0 20px 55px rgba(0,0,0,.6),
         0 0 20px rgba(79,216,255,.25);
-
 }
 
-/* ========================================================== */
 
-.window.minimized{
+/* ==========================================================
+   MINIMIZED
+========================================================== */
 
-    display:none;
-
+.window.minimized {
+    display: none;
 }
+
 
 /* ==========================================================
    HEADER
 ========================================================== */
 
-.windowHeader{
+.windowHeader {
+    position: relative;
 
-    height:46px;
-   
-    flex:0 0 46px;
-   
-    position:relative;
+    z-index: 100;
 
-     z-index:100;
+    flex: 0 0 46px;
 
-    display:flex;
+    height: 46px;
+    min-width: 0;
 
-    align-items:center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-    justify-content:space-between;
+    gap: 15px;
 
-    padding:0 14px;
+    padding: 0 14px;
+
+    box-sizing: border-box;
 
     background:
-
         linear-gradient(
+            180deg,
             #172535,
             #111c29
         );
 
-    border-bottom:1px solid #243d54;
+    border-bottom: 1px solid #243d54;
 
-    user-select:none;
+    user-select: none;
 
-    cursor:move;
-
+    cursor: move;
 }
 
-
-/* ========================================================== */
-
-.windowTitle{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    font-size:14px;
-
-    font-weight:600;
-
-    letter-spacing:.5px;
-
-    color:#e2f4ff;
-
-}
-
-.windowIcon{
-
-    font-size:18px;
-
-}
 
 /* ==========================================================
-   CONTROLS
+   WINDOW TITLE
 ========================================================== */
 
-.windowControls{
+.windowTitle {
+    flex: 1 1 auto;
 
-    display:flex;
+    min-width: 0;
 
-    gap:6px;
-   
-    position:relative;
-    z-index:110;
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    color: #e2f4ff;
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+
+    letter-spacing: .5px;
+
+    overflow: hidden;
 }
 
-.windowControls button{
-
-    width:32px;
-
-    height:28px;
-
-    padding:0;
-
-    border:none;
-
-    border-radius:6px;
-
-    background:#162738;
-
-    color:#b8dfff;
-   
-    cursor:pointer;
-   
-    position:relative;
-   
-    z-index:111;
-
-    transition:.2s;
-
+.windowTitle > * {
+    min-width: 0;
 }
 
-.windowControls button:hover{
-
-    background:#24445f;
-
-    color:white;
-
+.windowTitle {
+    overflow-wrap: anywhere;
 }
 
-.windowControls button:last-child:hover{
+.windowIcon {
+    flex: 0 0 auto;
 
-    background:#a72b2b;
+    font-size: 18px;
 
+    line-height: 1;
+
+    user-select: none;
 }
+
 
 /* ==========================================================
-   CONTENT
+   WINDOW CONTROLS
 ========================================================== */
 
-.windowContent{
+.windowControls {
+    position: relative;
 
-    flex:1;
+    z-index: 110;
 
-    overflow:auto;
+    flex: 0 0 auto;
 
-    padding:20px;
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+}
+
+.windowControls button {
+    position: relative;
+
+    z-index: 111;
+
+    flex: 0 0 32px;
+
+    width: 32px;
+    height: 28px;
+
+    padding: 0;
+
+    box-sizing: border-box;
+
+    border: 1px solid transparent;
+    border-radius: 6px;
+
+    background: #162738;
+
+    color: #b8dfff;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        box-shadow .2s ease;
+}
+
+.windowControls button:hover {
+    background: #24445f;
+
+    color: #ffffff;
+}
+
+.windowControls button:last-child:hover {
+    background: #a72b2b;
+
+    border-color: #d84a4a;
+}
+
+.windowControls button:focus-visible {
+    outline: 1px solid #4fd8ff;
+    outline-offset: 1px;
+
+    box-shadow:
+        0 0 8px rgba(79,216,255,.15);
+}
+
+
+/* ==========================================================
+   WINDOW CONTENT
+========================================================== */
+
+.windowContent {
+    flex: 1 1 auto;
+
+    min-width: 0;
+    min-height: 0;
+
+    box-sizing: border-box;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    padding: 20px;
 
     background:
-
         linear-gradient(
+            180deg,
             #0d1622,
             #09111a
         );
-
 }
+
 
 /* ==========================================================
    STATUS BAR
 ========================================================== */
 
-.windowStatus{
+.windowStatus {
+    flex: 0 0 30px;
 
-    height:30px;
+    height: 30px;
+    min-width: 0;
 
-    display:flex;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-    align-items:center;
+    gap: 12px;
 
-    justify-content:space-between;
+    padding: 0 14px;
 
-    padding:0 14px;
+    box-sizing: border-box;
 
-    background:#0b141d;
+    background: #0b141d;
 
-    border-top:1px solid #203547;
+    border-top: 1px solid #203547;
 
-    color:#79a8c6;
+    color: #79a8c6;
 
-    font-size:12px;
+    font-size: 12px;
+    line-height: 1.2;
 
+    white-space: nowrap;
+
+    overflow: hidden;
 }
+
+.windowStatus > * {
+    min-width: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 
 /* ==========================================================
-   SCROLLBAR
+   WINDOW FOOTER
 ========================================================== */
-
-.windowContent::-webkit-scrollbar{
-
-    width:8px;
-
-}
-
-.windowContent::-webkit-scrollbar-track{
-
-    background:#0c141d;
-
-}
-
-.windowContent::-webkit-scrollbar-thumb{
-
-    background:#32526b;
-
-    border-radius:20px;
-
-}
-
-.windowContent::-webkit-scrollbar-thumb:hover{
-
-    background:#4fd8ff;
-
-}
 
 .windowFooter {
+    position: relative;
 
-    flex:0 0 auto;
+    z-index: 90;
 
-    position:relative;
+    flex: 0 0 auto;
 
-    z-index:90;
+    min-width: 0;
 
-    display:flex;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 
-    align-items:center;
+    gap: 8px;
 
-    justify-content:flex-end;
+    padding: 8px 12px;
 
-    gap:8px;
+    box-sizing: border-box;
 
-    padding:8px 12px;
+    background: #0b141d;
 
-    background:#0b141d;
-
-    border-top:1px solid #203547;
-
-    box-sizing:border-box;
+    border-top: 1px solid #203547;
 }
 
+
 /* ==========================================================
-   ANIMATIONS
+   WINDOW SCROLLBAR
 ========================================================== */
 
-@keyframes windowAppear{
+.windowContent::-webkit-scrollbar {
+    width: 8px;
+}
 
-    from{
+.windowContent::-webkit-scrollbar-track {
+    background: #0c141d;
+}
 
-        opacity:0;
+.windowContent::-webkit-scrollbar-thumb {
+    background: #32526b;
+
+    border-radius: 20px;
+}
+
+.windowContent::-webkit-scrollbar-thumb:hover {
+    background: #4fd8ff;
+}
+
+
+/* ==========================================================
+   WINDOW APPEAR
+========================================================== */
+
+@keyframes windowAppear {
+
+    from {
+        opacity: 0;
 
         transform:
             translateY(18px)
             scale(.96);
-
     }
 
-    to{
-
-        opacity:1;
+    to {
+        opacity: 1;
 
         transform:
             translateY(0)
             scale(1);
-
     }
-
 }
 
-/* ==========================================================
-   FOCUS
-========================================================== */
-
-.window:not(.active){
-
-    opacity:.92;
-
-}
-
-.window.active{
-
-    opacity:1;
-
-}
 
 /* ==========================================================
    RESIZE HANDLE
 ========================================================== */
 
-.window::after{
+.window::after {
+    content: "";
 
-    content:"";
+    position: absolute;
 
-    position:absolute;
+    right: 0;
+    bottom: 0;
 
-    right:0;
+    width: 18px;
+    height: 18px;
 
-    bottom:0;
-
-    width:18px;
-
-    height:18px;
+    box-sizing: border-box;
 
     background:
-
         linear-gradient(
             135deg,
             transparent 40%,
@@ -367,80 +409,71 @@
             transparent 55%
         );
 
-    cursor:nwse-resize;
+    cursor: nwse-resize;
 
+    pointer-events: auto;
 }
 
+
 /* ==========================================================
-   MOBILE
-========================================================== */
-
-@media(max-width:900px){
-
-    .window{
-
-        width:95vw;
-
-        height:90vh;
-
-        min-width:0;
-
-        min-height:0;
-
-    }
-
-}
-/* ==========================================================
-   OMEGA DOCUMENT WINDOW
+   DOCUMENT WINDOW
 ========================================================== */
 
 #documentWindow {
-
     width: 950px;
     height: 700px;
 
     min-width: 700px;
     min-height: 500px;
-
 }
 
-#documentWindow .windowBody {
 
-    flex: 1;
+/* ==========================================================
+   DOCUMENT BODY
+========================================================== */
+
+#documentWindow .windowBody {
+    flex: 1 1 auto;
 
     width: 100%;
-    height: 100%;
-
     min-width: 0;
     min-height: 0;
 
     padding: 0;
+
+    box-sizing: border-box;
 
     overflow: hidden;
 
     display: flex;
     flex-direction: column;
-
 }
 
-#documentWindow #documentContent {
 
-    flex: 1;
+/* ==========================================================
+   DOCUMENT CONTENT
+========================================================== */
+
+#documentWindow #documentContent {
+    flex: 1 1 auto;
 
     width: 100%;
-    height: 100%;
-
     min-width: 0;
     min-height: 0;
 
     padding: 0;
 
-    overflow: hidden;
+    box-sizing: border-box;
 
+    overflow: hidden;
 }
 
-#documentWindow .omegaPdfViewer {
 
+/* ==========================================================
+   PDF VIEWER
+========================================================== */
+
+#documentWindow .omegaPdfViewer {
     display: block;
 
     width: 100%;
@@ -452,5 +485,181 @@
     border: none;
 
     background: #080f16;
+}
 
+
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width: 900px) {
+
+    .window {
+        width: 95vw;
+        height: 90vh;
+
+        min-width: 0;
+        min-height: 0;
+
+        border-radius: 8px;
+    }
+
+    .windowHeader {
+        flex-basis: 44px;
+
+        height: 44px;
+
+        padding: 0 12px;
+    }
+
+    .windowTitle {
+        font-size: 13px;
+    }
+
+    .windowContent {
+        padding: 16px;
+    }
+
+    #documentWindow {
+        width: 95vw;
+        height: 90vh;
+
+        min-width: 0;
+        min-height: 0;
+    }
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 650px) {
+
+    .window {
+        width: calc(100vw - 24px);
+        height: calc(100vh - 84px);
+
+        min-width: 0;
+        min-height: 0;
+
+        border-radius: 7px;
+    }
+
+    .windowHeader {
+        flex-basis: 42px;
+
+        height: 42px;
+
+        gap: 8px;
+
+        padding: 0 9px;
+    }
+
+    .windowTitle {
+        gap: 7px;
+
+        font-size: 12px;
+    }
+
+    .windowIcon {
+        font-size: 16px;
+    }
+
+    .windowControls {
+        gap: 4px;
+    }
+
+    .windowControls button {
+        flex-basis: 28px;
+
+        width: 28px;
+        height: 26px;
+
+        border-radius: 5px;
+    }
+
+    .windowContent {
+        padding: 14px;
+    }
+
+    .windowStatus {
+        flex-basis: 28px;
+
+        height: 28px;
+
+        padding: 0 10px;
+
+        font-size: 10px;
+    }
+
+    .windowFooter {
+        padding: 7px 9px;
+    }
+
+    .window::after {
+        width: 15px;
+        height: 15px;
+    }
+
+    #documentWindow {
+        width: calc(100vw - 24px);
+        height: calc(100vh - 84px);
+
+        min-width: 0;
+        min-height: 0;
+    }
+}
+
+
+/* ==========================================================
+   VERY SMALL SCREENS
+========================================================== */
+
+@media (max-width: 400px) {
+
+    .window {
+        width: calc(100vw - 16px);
+        height: calc(100vh - 76px);
+    }
+
+    .windowHeader {
+        padding: 0 7px;
+    }
+
+    .windowTitle {
+        font-size: 11px;
+    }
+
+    .windowControls button {
+        flex-basis: 26px;
+
+        width: 26px;
+        height: 24px;
+    }
+
+    .windowContent {
+        padding: 10px;
+    }
+
+    #documentWindow {
+        width: calc(100vw - 16px);
+        height: calc(100vh - 76px);
+    }
+}
+
+
+/* ==========================================================
+   REDUCED MOTION
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .window {
+        animation: none;
+    }
+
+    .windowControls button {
+        transition: none;
+    }
 }
