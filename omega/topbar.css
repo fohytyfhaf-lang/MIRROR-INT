@@ -1,220 +1,376 @@
 /* ==========================================================
-   TOP BAR
+   OMEGA TOP BAR
 ========================================================== */
 
-#topBar{
+#topBar {
+    position: absolute;
 
-    position:absolute;
+    top: 0;
+    left: 0;
+    right: 0;
 
-    top:0;
-    left:0;
-    right:0;
+    width: 100%;
+    height: 64px;
 
-    height:64px;
+    min-width: 0;
 
-    display:flex;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-    justify-content:space-between;
+    gap: 20px;
 
-    align-items:center;
+    padding: 0 22px;
 
-    padding:0 22px;
+    box-sizing: border-box;
 
     background:
         linear-gradient(
+            180deg,
             #121d2a,
             #0b141e
         );
 
-    border-bottom:1px solid #253d52;
+    border-bottom: 1px solid #253d52;
 
     box-shadow:
         0 3px 15px rgba(0,0,0,.35);
 
-    z-index:500;
-
+    z-index: 500;
 }
 
-/* ========================================================== */
 
-#omegaLogo{
+/* ==========================================================
+   OMEGA LOGO
+========================================================== */
 
-    display:flex;
+#omegaLogo {
+    flex: 1 1 auto;
 
-    align-items:center;
+    min-width: 0;
 
-    gap:16px;
+    display: flex;
+    align-items: center;
 
+    gap: 16px;
+
+    overflow: hidden;
 }
 
-#omegaLogo img{
+#omegaLogo img {
+    flex: 0 0 42px;
 
-    width:42px;
+    width: 42px;
+    height: 42px;
 
-    height:42px;
+    object-fit: contain;
 
-    object-fit:contain;
-
+    user-select: none;
+    pointer-events: none;
 }
 
-#omegaLogo h2{
+#omegaLogo h2 {
+    min-width: 0;
 
-    font-size:20px;
+    margin: 0;
 
-    color:#dff5ff;
+    color: #dff5ff;
 
-    letter-spacing:1px;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.2;
 
+    letter-spacing: 1px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-#omegaLogo span{
+#omegaLogo span {
+    display: block;
 
-    display:block;
+    min-width: 0;
 
-    margin-top:3px;
+    margin-top: 3px;
 
-    color:#7fb5d6;
+    color: #7fb5d6;
 
-    font-size:12px;
+    font-size: 12px;
+    line-height: 1.2;
 
-    letter-spacing:1px;
+    letter-spacing: 1px;
 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* ========================================================== */
 
-#systemInfo{
+/* ==========================================================
+   SYSTEM INFORMATION
+========================================================== */
 
-    display:flex;
+#systemInfo {
+    flex: 0 1 auto;
 
-    align-items:center;
+    min-width: 0;
 
-    gap:30px;
+    display: flex;
+    align-items: center;
 
+    gap: 30px;
+
+    overflow: hidden;
 }
 
-/* ========================================================== */
 
-.systemItem{
+/* ==========================================================
+   SYSTEM ITEM
+========================================================== */
 
-    display:flex;
+.systemItem {
+    flex: 0 1 auto;
 
-    flex-direction:column;
+    min-width: 0;
 
-    gap:4px;
+    display: flex;
+    flex-direction: column;
 
-    font-size:11px;
+    gap: 4px;
 
-    color:#7fa8c2;
+    color: #7fa8c2;
 
-    text-transform:uppercase;
+    font-size: 11px;
+    line-height: 1.2;
 
-    letter-spacing:1px;
+    text-transform: uppercase;
 
+    letter-spacing: 1px;
+
+    white-space: nowrap;
 }
 
-.systemItem span{
+.systemItem span {
+    display: flex;
+    align-items: center;
 
-    display:flex;
+    min-width: 0;
 
-    align-items:center;
+    gap: 8px;
 
-    gap:8px;
+    color: #d9f3ff;
 
-    font-size:14px;
+    font-size: 14px;
+    line-height: 1.25;
 
-    color:#d9f3ff;
-
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* ========================================================== */
 
-#statusLight{
+/* ==========================================================
+   STATUS LIGHT
+========================================================== */
 
-    width:10px;
+#statusLight {
+    flex: 0 0 10px;
 
-    height:10px;
+    width: 10px;
+    height: 10px;
 
-    border-radius:50%;
+    border-radius: 50%;
 
-    background:#00ff88;
+    background: #00ff88;
 
     box-shadow:
         0 0 8px #00ff88,
         0 0 16px #00ff88;
 
-    animation:statusPulse 2s infinite;
-
+    animation: statusPulse 2s infinite;
 }
 
-@keyframes statusPulse{
 
-    0%,100%{
+/* ==========================================================
+   STATUS ANIMATION
+========================================================== */
 
-        opacity:1;
+@keyframes statusPulse {
 
-        transform:scale(1);
-
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
     }
 
-    50%{
-
-        opacity:.5;
-
-        transform:scale(.85);
-
+    50% {
+        opacity: .5;
+        transform: scale(.85);
     }
-
 }
 
-/* ========================================================== */
 
-#clock{
+/* ==========================================================
+   CLOCK
+========================================================== */
 
-    font-family:Consolas, monospace;
+#clock {
+    flex: 0 0 auto;
 
-    font-size:18px;
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
 
-    color:#dff5ff;
+    font-size: 18px;
+    line-height: 1.2;
 
-    letter-spacing:1px;
+    color: #dff5ff;
 
+    letter-spacing: 1px;
+
+    white-space: nowrap;
 }
 
-/* ========================================================== */
 
-.systemItem.warning span{
+/* ==========================================================
+   STATUS STATES
+========================================================== */
 
-    color:#ffd36a;
-
+.systemItem.warning span {
+    color: #ffd36a;
 }
 
-.systemItem.error span{
-
-    color:#ff6666;
-
+.systemItem.error span {
+    color: #ff6666;
 }
 
-/* ========================================================== */
 
-@media(max-width:900px){
+/* ==========================================================
+   TABLET
+========================================================== */
 
-    #topBar{
+@media (max-width: 900px) {
 
-        padding:0 12px;
+    #topBar {
+        padding: 0 12px;
 
+        gap: 12px;
     }
 
-    #omegaLogo span{
-
-        display:none;
-
+    #omegaLogo {
+        gap: 10px;
     }
 
-    #systemInfo{
-
-        gap:15px;
-
+    #omegaLogo span {
+        display: none;
     }
 
+    #omegaLogo h2 {
+        font-size: 17px;
+    }
+
+    #systemInfo {
+        gap: 15px;
+    }
+
+    .systemItem {
+        font-size: 10px;
+    }
+
+    .systemItem span {
+        font-size: 12px;
+    }
+
+    #clock {
+        font-size: 16px;
+    }
+}
+
+
+/* ==========================================================
+   SMALL MOBILE
+========================================================== */
+
+@media (max-width: 650px) {
+
+    #topBar {
+        height: 60px;
+
+        padding: 0 10px;
+
+        gap: 8px;
+    }
+
+    #omegaLogo {
+        flex: 1 1 auto;
+
+        gap: 8px;
+    }
+
+    #omegaLogo img {
+        flex-basis: 34px;
+
+        width: 34px;
+        height: 34px;
+    }
+
+    #omegaLogo h2 {
+        font-size: 15px;
+        letter-spacing: .7px;
+    }
+
+    #systemInfo {
+        flex: 0 1 auto;
+
+        gap: 8px;
+    }
+
+    .systemItem {
+        display: none;
+    }
+
+    #clock {
+        font-size: 14px;
+        letter-spacing: .5px;
+    }
+}
+
+
+/* ==========================================================
+   VERY SMALL MOBILE
+========================================================== */
+
+@media (max-width: 400px) {
+
+    #topBar {
+        padding: 0 8px;
+    }
+
+    #omegaLogo img {
+        flex-basis: 30px;
+
+        width: 30px;
+        height: 30px;
+    }
+
+    #omegaLogo h2 {
+        font-size: 13px;
+    }
+
+    #clock {
+        font-size: 12px;
+    }
+}
+
+
+/* ==========================================================
+   REDUCED MOTION
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    #statusLight {
+        animation: none;
+    }
 }
