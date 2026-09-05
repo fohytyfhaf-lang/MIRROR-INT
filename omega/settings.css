@@ -2,9 +2,10 @@
    OMEGA SETTINGS
 ========================================================= */
 
-/* ---------------------------------------------------------
+
+/* =========================================================
    SETTINGS WINDOW CONTENT
---------------------------------------------------------- */
+========================================================= */
 
 #settingsWindow .windowContent {
     padding: 0;
@@ -13,17 +14,20 @@
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    MAIN LAYOUT
---------------------------------------------------------- */
+========================================================= */
 
 #settingsLayout {
     display: flex;
 
     width: 100%;
-    height: 100%;
+    min-width: 0;
+    min-height: 0;
 
-    min-height: 420px;
+    flex: 1 1 auto;
+
+    box-sizing: border-box;
 
     background:
         linear-gradient(
@@ -36,13 +40,16 @@
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    LEFT SIDEBAR
---------------------------------------------------------- */
+========================================================= */
 
 #settingsSidebar {
+    flex: 0 0 230px;
+
     width: 230px;
-    min-width: 230px;
+    min-width: 0;
+    min-height: 0;
 
     display: flex;
     flex-direction: column;
@@ -64,49 +71,55 @@
         inset -1px 0 rgba(255,255,255,.035),
         8px 0 25px rgba(0,0,0,.18);
 
+    overflow-x: hidden;
     overflow-y: auto;
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    SIDEBAR TITLE
---------------------------------------------------------- */
+========================================================= */
 
 #settingsSidebar::before {
     content: "OMEGA CONFIGURATION";
 
     display: block;
 
+    flex: 0 0 auto;
+
     margin: 2px 5px 16px;
 
     color: #56d9ff;
 
     font-size: 10px;
-
     font-weight: 600;
 
     letter-spacing: 2.5px;
 
     opacity: .65;
+
+    white-space: nowrap;
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    SETTINGS TABS
---------------------------------------------------------- */
+========================================================= */
 
 .settingsTab {
     position: relative;
 
-    width: 100%;
-
     display: flex;
     align-items: center;
+
+    flex: 0 0 auto;
+
+    width: 100%;
+    min-width: 0;
 
     gap: 10px;
 
     margin-bottom: 5px;
-
     padding: 12px 13px;
 
     box-sizing: border-box;
@@ -119,8 +132,8 @@
     color: #8eafc0;
 
     font-family: inherit;
-
     font-size: 12px;
+    line-height: 1.35;
 
     letter-spacing: 1px;
 
@@ -132,21 +145,23 @@
         background .18s ease,
         border-color .18s ease,
         color .18s ease,
-        padding-left .18s ease,
         box-shadow .18s ease;
 }
 
-
 .settingsTab span {
+    min-width: 0;
+
     pointer-events: none;
+
+    overflow-wrap: anywhere;
 }
 
 
-/* Hover */
+/* =========================================================
+   TAB HOVER
+========================================================= */
 
 .settingsTab:hover {
-    padding-left: 18px;
-
     background: #0c1d2a;
 
     border-left-color: #3cbfe8;
@@ -158,7 +173,9 @@
 }
 
 
-/* Active */
+/* =========================================================
+   TAB ACTIVE
+========================================================= */
 
 .settingsTab.active {
     background:
@@ -180,7 +197,9 @@
 }
 
 
-/* Active indicator */
+/* =========================================================
+   ACTIVE INDICATOR
+========================================================= */
 
 .settingsTab.active::after {
     content: "";
@@ -198,24 +217,37 @@
 
     box-shadow:
         0 0 7px #4fd8ff;
+
+    pointer-events: none;
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
+   KEYBOARD FOCUS
+========================================================= */
+
+.settingsTab:focus-visible {
+    outline: 1px solid #4fd8ff;
+    outline-offset: -1px;
+}
+
+
+/* =========================================================
    SETTINGS CONTENT
---------------------------------------------------------- */
+========================================================= */
 
 #settingsContent {
-    flex: 1;
+    flex: 1 1 auto;
 
     min-width: 0;
+    min-height: 0;
 
     padding: 30px;
 
     box-sizing: border-box;
 
-    overflow-y: auto;
     overflow-x: hidden;
+    overflow-y: auto;
 
     background:
         radial-gradient(
@@ -231,11 +263,13 @@
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    WELCOME HEADER
---------------------------------------------------------- */
+========================================================= */
 
 .settingsWelcome {
+    min-width: 0;
+
     margin-bottom: 28px;
 }
 
@@ -245,12 +279,14 @@
     color: #e4f8ff;
 
     font-size: 26px;
-
     font-weight: 600;
+    line-height: 1.25;
 
     letter-spacing: 3px;
 
     text-transform: uppercase;
+
+    overflow-wrap: anywhere;
 }
 
 .settingsWelcome p {
@@ -261,14 +297,15 @@
     color: #7696a8;
 
     font-size: 12px;
-
     line-height: 1.7;
+
+    overflow-wrap: anywhere;
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    INFO GRID
---------------------------------------------------------- */
+========================================================= */
 
 .settingsInfo {
     display: grid;
@@ -281,16 +318,21 @@
 
     gap: 14px;
 
+    width: 100%;
+    min-width: 0;
+
     margin-bottom: 20px;
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    INFO CARD
---------------------------------------------------------- */
+========================================================= */
 
 .infoCard {
     position: relative;
+
+    min-width: 0;
 
     padding: 17px;
 
@@ -321,7 +363,6 @@
         0 0 15px rgba(0,180,255,.06);
 }
 
-
 .infoCard strong {
     display: block;
 
@@ -330,43 +371,51 @@
     color: #55cbed;
 
     font-size: 9px;
-
     font-weight: 600;
 
     letter-spacing: 2px;
 
     text-transform: uppercase;
+
+    overflow-wrap: anywhere;
 }
 
-
 .infoCard span {
+    display: block;
+
+    min-width: 0;
+
     color: #e5f6fc;
 
     font-size: 17px;
+    line-height: 1.35;
 
     letter-spacing: .5px;
+
+    overflow-wrap: anywhere;
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    ONLINE STATUS
---------------------------------------------------------- */
+========================================================= */
 
 .online {
-    color: #00ff99 !important;
+    color: #00ff99;
 
     text-shadow:
         0 0 8px rgba(0,255,153,.55);
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    SETTINGS CARDS
---------------------------------------------------------- */
+========================================================= */
 
 .settingsCard {
-    margin-top: 16px;
+    min-width: 0;
 
+    margin-top: 16px;
     padding: 18px;
 
     box-sizing: border-box;
@@ -381,25 +430,26 @@
     border: 1px solid #1e3c50;
 }
 
-
 .settingsCard h2 {
     margin: 0 0 12px;
 
     color: #7edfff;
 
     font-size: 14px;
-
     font-weight: 600;
+    line-height: 1.35;
 
     letter-spacing: 2px;
 
     text-transform: uppercase;
+
+    overflow-wrap: anywhere;
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    SETTINGS ROW
---------------------------------------------------------- */
+========================================================= */
 
 .settingsRow {
     display: flex;
@@ -408,6 +458,8 @@
     justify-content: space-between;
 
     gap: 20px;
+
+    min-width: 0;
 
     padding: 14px 0;
 
@@ -418,11 +470,11 @@
     border-bottom: none;
 }
 
-
 .settingsRow > div:first-child {
+    flex: 1 1 auto;
+
     min-width: 0;
 }
-
 
 .settingsRow strong {
     display: block;
@@ -432,32 +484,38 @@
     color: #cce8f2;
 
     font-size: 12px;
+    line-height: 1.35;
+
+    overflow-wrap: anywhere;
 }
 
-
 .settingsRow small {
+    display: block;
+
     color: #658596;
 
     font-size: 10px;
-
     line-height: 1.5;
+
+    overflow-wrap: anywhere;
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    SWITCH
---------------------------------------------------------- */
+========================================================= */
 
 .switch {
     position: relative;
 
-    flex-shrink: 0;
+    flex: 0 0 50px;
 
     width: 50px;
     height: 25px;
 
-    border: 1px solid #294655;
+    box-sizing: border-box;
 
+    border: 1px solid #294655;
     border-radius: 20px;
 
     background: #14232d;
@@ -469,7 +527,6 @@
         border-color .2s ease,
         box-shadow .2s ease;
 }
-
 
 .switch::after {
     content: "";
@@ -491,14 +548,18 @@
 
     transition:
         left .2s ease,
-        background .2s ease;
+        background .2s ease,
+        box-shadow .2s ease;
 }
-
 
 .switch:hover {
     border-color: #39738d;
 }
 
+.switch:focus-visible {
+    outline: 1px solid #4fd8ff;
+    outline-offset: 2px;
+}
 
 .switch.active {
     background: #08748b;
@@ -508,7 +569,6 @@
     box-shadow:
         0 0 12px rgba(0,210,255,.18);
 }
-
 
 .switch.active::after {
     left: 28px;
@@ -520,13 +580,16 @@
 }
 
 
-/* ---------------------------------------------------------
-   SELECT / INPUTS INSIDE SETTINGS
---------------------------------------------------------- */
+/* =========================================================
+   SELECT / INPUTS
+========================================================= */
 
 #settingsContent select,
 #settingsContent input[type="text"],
 #settingsContent input[type="number"] {
+    width: auto;
+    max-width: 100%;
+
     box-sizing: border-box;
 
     padding: 9px 11px;
@@ -535,34 +598,45 @@
 
     border: 1px solid #234456;
 
+    border-radius: 3px;
+
     outline: none;
 
     color: #d9f4ff;
 
     font-family: inherit;
-
     font-size: 11px;
+    line-height: 1.3;
 
     transition:
         border-color .2s ease,
         box-shadow .2s ease;
 }
 
-
 #settingsContent select:focus,
-#settingsContent input:focus {
+#settingsContent input[type="text"]:focus,
+#settingsContent input[type="number"]:focus {
     border-color: #43c9ed;
 
     box-shadow:
         0 0 10px rgba(0,190,240,.08);
 }
 
+#settingsContent select:focus-visible,
+#settingsContent input[type="text"]:focus-visible,
+#settingsContent input[type="number"]:focus-visible {
+    outline: 1px solid rgba(79,216,255,.35);
+    outline-offset: 1px;
+}
 
-/* ---------------------------------------------------------
+
+/* =========================================================
    BUTTONS
---------------------------------------------------------- */
+========================================================= */
 
 #settingsContent .settingsButton {
+    box-sizing: border-box;
+
     padding: 9px 14px;
 
     background: #0c2635;
@@ -572,8 +646,8 @@
     color: #bceeff;
 
     font-family: inherit;
-
     font-size: 10px;
+    line-height: 1.3;
 
     letter-spacing: 1px;
 
@@ -585,7 +659,6 @@
         box-shadow .2s ease;
 }
 
-
 #settingsContent .settingsButton:hover {
     background: #12384b;
 
@@ -595,30 +668,33 @@
         0 0 12px rgba(0,200,255,.1);
 }
 
+#settingsContent .settingsButton:focus-visible {
+    outline: 1px solid #4fd8ff;
+    outline-offset: 2px;
+}
 
-/* ---------------------------------------------------------
-   SCROLLBAR
---------------------------------------------------------- */
+
+/* =========================================================
+   SETTINGS SCROLLBARS
+========================================================= */
 
 #settingsSidebar::-webkit-scrollbar,
 #settingsContent::-webkit-scrollbar {
     width: 7px;
 }
 
-
 #settingsSidebar::-webkit-scrollbar-track,
 #settingsContent::-webkit-scrollbar-track {
     background: #050b10;
 }
-
 
 #settingsSidebar::-webkit-scrollbar-thumb,
 #settingsContent::-webkit-scrollbar-thumb {
     background: #25566d;
 
     border: 1px solid #0b1821;
+    border-radius: 20px;
 }
-
 
 #settingsSidebar::-webkit-scrollbar-thumb:hover,
 #settingsContent::-webkit-scrollbar-thumb:hover {
@@ -626,9 +702,41 @@
 }
 
 
-/* ---------------------------------------------------------
-   RESPONSIVE
---------------------------------------------------------- */
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+    #settingsSidebar {
+        flex-basis: 200px;
+        width: 200px;
+
+        padding: 12px;
+    }
+
+    #settingsContent {
+        padding: 24px;
+    }
+
+    .settingsWelcome h2 {
+        font-size: 22px;
+        letter-spacing: 2px;
+    }
+
+    .settingsInfo {
+        grid-template-columns:
+            repeat(
+                auto-fit,
+                minmax(170px, 1fr)
+            );
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (max-width: 700px) {
 
@@ -637,12 +745,19 @@
     }
 
     #settingsSidebar {
-        width: 100%;
-        min-width: 0;
+        flex: 0 0 64px;
 
-        max-height: 150px;
+        width: 100%;
+        height: 64px;
+
+        max-height: none;
+
+        padding: 8px;
 
         flex-direction: row;
+
+        border-right: none;
+        border-bottom: 1px solid #20445b;
 
         overflow-x: auto;
         overflow-y: hidden;
@@ -653,16 +768,129 @@
     }
 
     .settingsTab {
+        flex: 0 0 auto;
+
+        width: auto;
         min-width: 125px;
+
+        margin-bottom: 0;
+
+        border-left: 1px solid transparent;
+        border-bottom: 3px solid transparent;
+    }
+
+    .settingsTab:hover {
+        border-left-color: transparent;
+        border-bottom-color: #3cbfe8;
+    }
+
+    .settingsTab.active {
+        border-left-color: transparent;
+        border-bottom-color: #4fd8ff;
+    }
+
+    .settingsTab.active::after {
+        right: 8px;
     }
 
     #settingsContent {
+        flex: 1 1 auto;
+
+        min-height: 0;
+
         padding: 20px;
+    }
+
+    .settingsWelcome {
+        margin-bottom: 22px;
+    }
+
+    .settingsWelcome h2 {
+        font-size: 20px;
+        letter-spacing: 2px;
+    }
+
+    .settingsInfo {
+        grid-template-columns: 1fr;
     }
 
     .settingsRow {
         align-items: flex-start;
+
         flex-direction: column;
+
+        gap: 12px;
     }
 
+    .switch {
+        align-self: flex-start;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+========================================================= */
+
+@media (max-width: 450px) {
+
+    #settingsSidebar {
+        flex-basis: 56px;
+        height: 56px;
+    }
+
+    .settingsTab {
+        min-width: 110px;
+
+        padding: 10px 11px;
+
+        font-size: 11px;
+    }
+
+    #settingsContent {
+        padding: 15px;
+    }
+
+    .settingsCard {
+        padding: 14px;
+    }
+
+    .settingsWelcome h2 {
+        font-size: 18px;
+    }
+
+    .settingsWelcome p {
+        font-size: 11px;
+    }
+
+    .infoCard {
+        padding: 14px;
+    }
+
+    .infoCard span {
+        font-size: 15px;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .settingsTab,
+    .infoCard,
+    .switch,
+    .switch::after,
+    #settingsContent select,
+    #settingsContent input[type="text"],
+    #settingsContent input[type="number"],
+    #settingsContent .settingsButton {
+        transition: none;
+    }
+
+    .infoCard:hover {
+        transform: none;
+    }
 }
