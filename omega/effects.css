@@ -1,225 +1,187 @@
-/* =========================================================
+```css
+/* ==========================================================
    OMEGA EFFECTS
-   PART 1
-   CRT + SCREEN
-========================================================= */
+   CRT / SCREEN / NOISE
+========================================================== */
 
-/* ==========================================
-   CRT LINES
-========================================== */
+/* ==========================================================
+   CRT SCANLINES
+========================================================== */
 
-body::before{
+body::before {
+    content: "";
 
-    content:"";
+    position: fixed;
+    inset: 0;
 
-    position:fixed;
+    pointer-events: none;
 
-    inset:0;
+    z-index: 9998;
 
-    pointer-events:none;
-
-    z-index:9998;
-
-    opacity:.12;
+    opacity: .12;
 
     background:
-
         repeating-linear-gradient(
-
             to bottom,
-
-            rgba(255,255,255,.04) 0px,
-
-            rgba(255,255,255,.04) 1px,
-
+            rgba(255, 255, 255, .04) 0px,
+            rgba(255, 255, 255, .04) 1px,
             transparent 2px,
-
             transparent 4px
-
         );
 
-    animation:crtMove .08s linear infinite;
-
+    animation:
+        crtMove .08s linear infinite;
 }
 
-/* ========================================== */
+@keyframes crtMove {
 
-@keyframes crtMove{
-
-    from{
-
-        transform:translateY(0);
-
+    from {
+        transform: translateY(0);
     }
 
-    to{
-
-        transform:translateY(4px);
-
+    to {
+        transform: translateY(4px);
     }
-
 }
 
-/* ==========================================
+/* ==========================================================
    VIGNETTE
-========================================== */
+========================================================== */
 
-body::after{
+body::after {
+    content: "";
 
-    content:"";
+    position: fixed;
+    inset: 0;
 
-    position:fixed;
+    pointer-events: none;
 
-    inset:0;
-
-    pointer-events:none;
-
-    z-index:9997;
+    z-index: 9997;
 
     background:
-
         radial-gradient(
-
             circle,
-
             transparent 55%,
-
-            rgba(0,0,0,.35) 100%
-
+            rgba(0, 0, 0, .35) 100%
         );
-
 }
 
-/* ==========================================
-   SCREEN FLICKER
-========================================== */
+/* ==========================================================
+   GLOBAL SCREEN FLICKER
+========================================================== */
 
-body{
-
-    animation:screenFlicker 9s infinite;
-
+body {
+    animation:
+        screenFlicker 9s infinite;
 }
 
-@keyframes screenFlicker{
+@keyframes screenFlicker {
 
-    0%,94%,100%{
-
-        filter:brightness(1);
-
+    0%,
+    94%,
+    100% {
+        filter: brightness(1);
     }
 
-    95%{
-
-        filter:brightness(.96);
-
+    95% {
+        filter: brightness(.96);
     }
 
-    96%{
-
-        filter:brightness(1.05);
-
+    96% {
+        filter: brightness(1.05);
     }
 
-    97%{
-
-        filter:brightness(.92);
-
+    97% {
+        filter: brightness(.92);
     }
 
-    98%{
-
-        filter:brightness(1.03);
-
+    98% {
+        filter: brightness(1.03);
     }
-
 }
 
-/* ==========================================
+/* ==========================================================
    DIGITAL NOISE
-========================================== */
+========================================================== */
 
-#noiseLayer{
+#noiseLayer {
+    position: fixed;
+    inset: 0;
 
-    position:fixed;
+    pointer-events: none;
 
-    inset:0;
+    z-index: 9996;
 
-    pointer-events:none;
+    opacity: .035;
 
-    opacity:.035;
+    background-image:
+        url("images/ui/noise.png");
 
-    z-index:9996;
+    background-repeat: repeat;
+    background-size: 300px 300px;
 
-    background-image:url("images/ui/noise.png");
-
-    background-size:300px;
-
-    animation:noiseMove .18s steps(4) infinite;
-
+    animation:
+        noiseMove .18s steps(4) infinite;
 }
 
-@keyframes noiseMove{
+@keyframes noiseMove {
 
-    from{
-
-        transform:translate(0,0);
-
+    0% {
+        transform: translate(0, 0);
     }
 
-    25%{
-
-        transform:translate(3px,-2px);
-
+    25% {
+        transform: translate(3px, -2px);
     }
 
-    50%{
-
-        transform:translate(-4px,3px);
-
+    50% {
+        transform: translate(-4px, 3px);
     }
 
-    75%{
-
-        transform:translate(2px,-1px);
-
+    75% {
+        transform: translate(2px, -1px);
     }
 
-    to{
-
-        transform:translate(0,0);
-
+    100% {
+        transform: translate(0, 0);
     }
-
 }
 
-/* ==========================================
+/* ==========================================================
    PIXEL FLASH
-========================================== */
+========================================================== */
 
-.pixelFlash{
-
-    animation:pixelFlash .18s;
-
+.pixelFlash {
+    animation:
+        pixelFlash .18s ease-out;
 }
 
-@keyframes pixelFlash{
+@keyframes pixelFlash {
 
-    0%{
-
-        filter:brightness(1);
-
+    0% {
+        filter: brightness(1);
     }
 
-    40%{
-
-        filter:brightness(1.3);
-
+    40% {
+        filter: brightness(1.3);
     }
 
-    100%{
-
-        filter:brightness(1);
-
+    100% {
+        filter: brightness(1);
     }
-
 }
+
+/* ==========================================================
+   ACCESSIBILITY
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    body::before,
+    body,
+    #noiseLayer,
+    .pixelFlash {
+        animation: none;
+    }
+}
+```
