@@ -83,11 +83,6 @@ import {
 let running = false;
 let firstContactRunning = false;
 
-let ambientEventRunning = false;
-let lastAmbientEventTime = 0;
-
-const AMBIENT_COOLDOWN = 45000;
-
 let sys00HandshakeArmed = false;
 let sys00HandshakeTriggered = false;
 
@@ -100,6 +95,16 @@ let originalCursor = "";
 
 let controlledCursor = null;
 let cursorMouseHandler = null;
+
+
+/* ==========================================================
+   AMBIENT STATE
+========================================================== */
+
+let ambientEventRunning = false;
+let lastAmbientEventTime = 0;
+
+const AMBIENT_COOLDOWN = 45000;
 
 
 /* ==========================================================
@@ -143,8 +148,15 @@ export function initMrSmileEvents() {
 
     running = true;
 
+
+    /* ------------------------------------------------------
+       TRUST
+    ------------------------------------------------------ */
+
     try {
+
         loadTrust();
+
     } catch (error) {
 
         console.warn(
@@ -153,6 +165,10 @@ export function initMrSmileEvents() {
         );
     }
 
+
+    /* ------------------------------------------------------
+       PROGRESS
+    ------------------------------------------------------ */
 
     try {
 
@@ -167,158 +183,18 @@ export function initMrSmileEvents() {
     }
 
 
-    /*
-     * Background behaviour.
-     */
+    /* ------------------------------------------------------
+       BACKGROUND BEHAVIOUR
+    ------------------------------------------------------ */
 
     nightLoop();
     glitchLoop();
     idleLoop();
     observationLoop();
-   
+
     initAmbientEvents();
 
-   let ambientEventRunning = false;
-let lastAmbientEventTime = 0;
 
-const AMBIENT_COOLDOWN = 45000;
-
-async function runAmbientEvent(eventFunction) {
-
-    if (firstContactRunning) return;
-
-    // Ambient MR.SMILE начинает работать только после First Contact
-    if (localStorage.getItem("mrsmile_first_contact") !== "1") {
-        return;
-    }
-
-    // Не допускаем два события одновременно
-    if (ambientEventRunning) return;
-
-    const now = Date.now();
-
-    // Минимум 45 секунд между событиями
-    if (now - lastAmbientEventTime < AMBIENT_COOLDOWN) {
-        return;
-    }
-
-    ambientEventRunning = true;
-    lastAmbientEventTime = now;
-
-    try {
-
-        await eventFunction();
-
-    } catch (error) {
-
-        console.warn(
-            "[MR.SMILE] Ambient event failed:",
-            error
-        );
-
-    } finally {
-
-        ambientEventRunning = false;
-
-    }
-}
-
-   
-    function initAmbientEvents() {
-
-    on("mrsmile:nightEvent", () => {
-        runAmbientEvent(ambientNightEvent);
-    });
-
-    on("mrsmile:glitchEvent", () => {
-        runAmbientEvent(ambientGlitchEvent);
-    });
-
-    on("mrsmile:idleEvent", () => {
-        runAmbientEvent(ambientIdleEvent);
-    });
-
-    on("mrsmile:observationEvent", () => {
-        runAmbientEvent(ambientObservationEvent);
-    });
-
-}
-   
-async function ambientIdleEvent() {
-    await sleep(randomBetween(400, 1200));
-
-    await systemMessage("OMEGA: background process check...");
-
-    await sleep(900);
-
-    await systemMessage("OMEGA: no irregularities detected.");
-}
-
-async function ambientObservationEvent() {
-
-    const trace = document.createElement("div");
-
-    trace.id = "mrSmileAmbientObservation";
-    trace.className = "mrSmileAmbientObservation";
-    trace.textContent = "OBSERVED";
-
-    document.body.appendChild(trace);
-
-    requestAnimationFrame(() => {
-        trace.classList.add("visible");
-    });
-
-    await sleep(1200);
-
-    trace.classList.add("fade");
-
-    await sleep(900);
-
-    trace.remove();
-}
-
-async function ambientNightEvent() {
-
-    const chance = Math.random();
-
-    if (chance < 0.5) {
-
-        await systemMessage("CLOCK SYNC: DELAYED");
-
-        await sleep(700);
-
-        await systemMessage("CLOCK SYNC: RESTORED");
-
-        return;
-    }
-
-    await systemMessage("BACKGROUND MONITOR: ACTIVE");
-
-    await sleep(1000);
-
-    await systemMessage("BACKGROUND MONITOR: IDLE");
-}
-   async function ambientGlitchEvent() {
-
-    const chance = Math.random();
-
-    if (chance < 0.65) {
-
-        document.body.classList.add("mrSmileAmbientGlitch");
-
-        await sleep(randomBetween(180, 400));
-
-        document.body.classList.remove("mrSmileAmbientGlitch");
-
-        return;
-    }
-
-    await systemMessage("INPUT CHANNEL: RESPONSE DELAYED");
-
-    await sleep(500);
-
-    await systemMessage("INPUT CHANNEL: NORMAL");
-}
     /* ------------------------------------------------------
        FIRST CONTACT
     ------------------------------------------------------ */
@@ -326,7 +202,9 @@ async function ambientNightEvent() {
     once(
         "mrsmile:firstContact",
         () => {
+
             triggerFirstContact();
+
         }
     );
 
@@ -338,7 +216,9 @@ async function ambientNightEvent() {
     on(
         "mrsmile:sys00Accepted",
         () => {
+
             handleSys00Accepted();
+
         }
     );
 
@@ -350,7 +230,9 @@ async function ambientNightEvent() {
     on(
         "mrsmile:handshakeAccepted",
         () => {
+
             handleHandshakeAccepted();
+
         }
     );
 
@@ -733,7 +615,6 @@ async function phaseAuthorization() {
     const auth =
         createMrSmileAuthorization();
 
-
     await sleep(
         TIMING.authAppear
     );
@@ -834,12 +715,6 @@ async function phaseAuthorization() {
 
     await sleep(1300);
 
-
-    /*
-     * Теперь игрок должен понять:
-     *
-     * это не его авторизация.
-     */
 
     document.body.classList.add(
         "mrSmileSystemTaken"
@@ -966,24 +841,13 @@ async function phaseOmegaCollapse() {
     );
 
 
-    /*
-     * Только реальные части OMEGA.
-     *
-     * Никаких body > *.
-     */
-
     const targets = [
 
         "#notificationArea",
-
         "#icons",
-
         ".desktopWatermark",
-
         "#sidebar",
-
         "#topBar",
-
         "#desktopBackground"
 
     ];
@@ -1019,14 +883,15 @@ async function phaseOmegaCollapse() {
     }
 
 
-    /*
-     * Workspace остается дольше.
-     */
+    /* ------------------------------------------------------
+       WORKSPACE
+    ------------------------------------------------------ */
 
     const workspace =
         document.querySelector(
             "#workspace"
         );
+
 
     if (workspace) {
 
@@ -1040,9 +905,9 @@ async function phaseOmegaCollapse() {
     }
 
 
-    /*
-     * Только реальные OMEGA windows.
-     */
+    /* ------------------------------------------------------
+       WINDOWS
+    ------------------------------------------------------ */
 
     const windows =
         document.querySelectorAll(
@@ -1059,9 +924,11 @@ async function phaseOmegaCollapse() {
             continue;
         }
 
+
         windowElement.classList.add(
             "mrSmileSystemDisappearing"
         );
+
 
         await sleep(300);
     }
@@ -1088,10 +955,6 @@ async function phaseSystemDarkness() {
     );
 
 
-    /*
-     * Authorization исчезает последней.
-     */
-
     const auth =
         document.querySelector(
             "#mrSmileAuthorization"
@@ -1106,7 +969,6 @@ async function phaseSystemDarkness() {
 
 
         await sleep(850);
-
 
         auth.remove();
     }
@@ -1179,7 +1041,6 @@ async function phaseDiagnostics() {
     present.textContent =
         "PRESENT";
 
-
     present.className =
         "mrSmileDiagnosticPresent";
 
@@ -1204,11 +1065,13 @@ function createDiagnostics() {
     const diagnostics =
         document.createElement("div");
 
+
     diagnostics.id =
         "mrSmileDiagnostics";
 
     diagnostics.className =
         "mrSmileDiagnostics";
+
 
     return diagnostics;
 }
@@ -1228,11 +1091,6 @@ async function phaseEyes() {
 
     await sleep(400);
 
-
-    /*
-     * Appearance module отвечает только
-     * за физическое появление сущности.
-     */
 
     await showMrSmileFirstContactFace(
         "presence"
@@ -1256,13 +1114,6 @@ async function phaseFace() {
         "mrSmileFacePhase"
     );
 
-
-    /*
-     * Не запускаем вторую manifestation-сцену.
-     *
-     * Лицо уже появляется внутри appearance.js.
-     * Здесь только даём ему время.
-     */
 
     await sleep(
         TIMING.faceAppear
@@ -1297,6 +1148,7 @@ async function phasePlayerInteraction() {
      * MR.SMILE пока только наблюдает.
      */
 
+
     await sleep(
         TIMING.playerInteraction
     );
@@ -1315,20 +1167,11 @@ async function phaseCursorTakeover() {
     );
 
 
-    /*
-     * Теперь MR.SMILE замечает курсор.
-     */
-
     await observeCursor();
 
 
     await sleep(500);
 
-
-    /*
-     * Передаём визуальное управление
-     * отдельному cursor layer.
-     */
 
     await transferCursorControl();
 
@@ -1382,11 +1225,6 @@ async function transferCursorControl() {
     createControlledCursor();
 
 
-    /*
-     * Сначала он продолжает следовать
-     * настоящей мыши.
-     */
-
     document.body.classList.add(
         "mrSmileCursorObserved"
     );
@@ -1395,16 +1233,9 @@ async function transferCursorControl() {
     await sleep(700);
 
 
-    /*
-     * Реальный cursor становится невидимым.
-     *
-     * Это только визуальное управление.
-     * Браузерный pointer физически переместить
-     * невозможно.
-     */
-
     originalCursor =
         document.body.style.cursor || "";
+
 
     document.body.style.cursor =
         "none";
@@ -1512,10 +1343,6 @@ async function animateControlledCursor() {
     await sleep(500);
 
 
-    /*
-     * Курсор двигается самостоятельно.
-     */
-
     moveControlledCursor(
         window.innerWidth * 0.38,
         window.innerHeight * 0.48
@@ -1581,10 +1408,6 @@ async function phaseOmegaIntrusion() {
     await sleep(450);
 
 
-    /*
-     * Теперь курсор выбирает системное окно.
-     */
-
     const target =
         createIntrusionWindow();
 
@@ -1598,16 +1421,6 @@ async function phaseOmegaIntrusion() {
         TIMING.intrusionWindow
     );
 
-
-    /*
-     * Небольшая геометрическая ошибка.
-     *
-     * Не screen shake.
-     * Не RGB glitch.
-     *
-     * Просто OMEGA на мгновение
-     * перестаёт идеально совпадать сама с собой.
-     */
 
     document.body.classList.add(
         "mrSmileGeometryDistortion"
@@ -1624,17 +1437,15 @@ async function phaseOmegaIntrusion() {
     );
 
 
-    /*
-     * Cursor click.
-     */
-
     if (controlledCursor) {
 
         controlledCursor.classList.add(
             "mrSmileCursorClick"
         );
 
+
         await sleep(180);
+
 
         controlledCursor.classList.remove(
             "mrSmileCursorClick"
@@ -1644,10 +1455,6 @@ async function phaseOmegaIntrusion() {
 
     await sleep(450);
 
-
-    /*
-     * Окно больше не нужно.
-     */
 
     target.classList.add(
         "mrSmileIntrusionClosing"
@@ -1753,10 +1560,6 @@ function createIntrusionWindow() {
     `;
 
 
-    /*
-     * Центрируем как настоящее OMEGA window.
-     */
-
     windowElement.style.left =
         "50%";
 
@@ -1787,13 +1590,6 @@ async function phaseRelease() {
         "mrSmileReleasePhase"
     );
 
-
-    /*
-     * MR.SMILE прекращает вмешательство.
-     *
-     * Сначала исчезает его визуальный слой.
-     * Потом возвращается input.
-     */
 
     await sleep(500);
 
@@ -1875,19 +1671,11 @@ async function releaseCursorControl() {
 
 async function finishFirstContact() {
 
-    /*
-     * Восстанавливаем OMEGA.
-     */
-
     restoreOmegaInterface();
 
 
     await sleep(1000);
 
-
-    /*
-     * Фиксируем первый контакт.
-     */
 
     localStorage.setItem(
         "mrsmile_first_contact",
@@ -1910,10 +1698,6 @@ async function finishFirstContact() {
 
     await sleep(1500);
 
-
-    /*
-     * Теперь игрок снова видит обычную OMEGA.
-     */
 
     try {
 
@@ -1946,10 +1730,6 @@ async function finishFirstContact() {
 
     await sleep(1300);
 
-
-    /*
-     * Очень маленький остаточный след.
-     */
 
     createObserverTrace();
 
@@ -2206,7 +1986,7 @@ export function resetMrSmileFirstContact() {
    AMBIENT EVENTS
    ----------------------------------------------------------
    Небольшие появления MR.SMILE после FIRST CONTACT.
-   
+
    Эти события не должны ломать OMEGA.
    Они создают ощущение постоянного присутствия.
 ========================================================== */
@@ -2216,9 +1996,11 @@ function initAmbientEvents() {
     on(
         "mrsmile:nightEvent",
         () => {
+
             runAmbientEvent(
                 ambientNightEvent
             );
+
         }
     );
 
@@ -2226,9 +2008,11 @@ function initAmbientEvents() {
     on(
         "mrsmile:glitchEvent",
         () => {
+
             runAmbientEvent(
                 ambientGlitchEvent
             );
+
         }
     );
 
@@ -2236,9 +2020,11 @@ function initAmbientEvents() {
     on(
         "mrsmile:idleEvent",
         () => {
+
             runAmbientEvent(
                 ambientIdleEvent
             );
+
         }
     );
 
@@ -2246,9 +2032,11 @@ function initAmbientEvents() {
     on(
         "mrsmile:observationEvent",
         () => {
+
             runAmbientEvent(
                 ambientObservationEvent
             );
+
         }
     );
 
@@ -2267,10 +2055,18 @@ async function runAmbientEvent(
     eventFunction
 ) {
 
+    /* ------------------------------------------------------
+       NEVER RUN DURING FIRST CONTACT
+    ------------------------------------------------------ */
+
     if (firstContactRunning) {
         return;
     }
 
+
+    /* ------------------------------------------------------
+       ONLY AFTER FIRST CONTACT
+    ------------------------------------------------------ */
 
     if (
         localStorage.getItem(
@@ -2281,10 +2077,18 @@ async function runAmbientEvent(
     }
 
 
+    /* ------------------------------------------------------
+       NO OVERLAPPING EVENTS
+    ------------------------------------------------------ */
+
     if (ambientEventRunning) {
         return;
     }
 
+
+    /* ------------------------------------------------------
+       GLOBAL COOLDOWN
+    ------------------------------------------------------ */
 
     const now =
         Date.now();
@@ -2318,6 +2122,200 @@ async function runAmbientEvent(
         ambientEventRunning = false;
     }
 }
+
+
+/* ==========================================================
+   AMBIENT — IDLE
+   ----------------------------------------------------------
+   Самое спокойное событие.
+========================================================== */
+
+async function ambientIdleEvent() {
+
+    await sleep(
+        randomBetween(
+            400,
+            1200
+        )
+    );
+
+
+    await systemMessage(
+        "OMEGA: background process check..."
+    );
+
+
+    await sleep(900);
+
+
+    await systemMessage(
+        "OMEGA: no irregularities detected."
+    );
+}
+
+
+/* ==========================================================
+   AMBIENT — OBSERVATION
+   ----------------------------------------------------------
+   MR.SMILE кратко показывает, что он наблюдает.
+========================================================== */
+
+async function ambientObservationEvent() {
+
+    const old =
+        document.querySelector(
+            "#mrSmileAmbientObservation"
+        );
+
+
+    if (old) {
+        old.remove();
+    }
+
+
+    const trace =
+        document.createElement("div");
+
+
+    trace.id =
+        "mrSmileAmbientObservation";
+
+
+    trace.className =
+        "mrSmileAmbientObservation";
+
+
+    trace.textContent =
+        "OBSERVED";
+
+
+    document.body.appendChild(
+        trace
+    );
+
+
+    requestAnimationFrame(
+        () => {
+
+            trace.classList.add(
+                "visible"
+            );
+
+        }
+    );
+
+
+    await sleep(1200);
+
+
+    trace.classList.add(
+        "fade"
+    );
+
+
+    await sleep(900);
+
+
+    if (trace.parentNode) {
+        trace.remove();
+    }
+}
+
+
+/* ==========================================================
+   AMBIENT — NIGHT
+   ----------------------------------------------------------
+   Незначительное изменение фоновой OMEGA активности.
+========================================================== */
+
+async function ambientNightEvent() {
+
+    const chance =
+        Math.random();
+
+
+    if (chance < 0.5) {
+
+        await systemMessage(
+            "CLOCK SYNC: DELAYED"
+        );
+
+
+        await sleep(700);
+
+
+        await systemMessage(
+            "CLOCK SYNC: RESTORED"
+        );
+
+
+        return;
+    }
+
+
+    await systemMessage(
+        "BACKGROUND MONITOR: ACTIVE"
+    );
+
+
+    await sleep(1000);
+
+
+    await systemMessage(
+        "BACKGROUND MONITOR: IDLE"
+    );
+}
+
+
+/* ==========================================================
+   AMBIENT — GLITCH
+   ----------------------------------------------------------
+   Очень короткая системная аномалия.
+========================================================== */
+
+async function ambientGlitchEvent() {
+
+    const chance =
+        Math.random();
+
+
+    if (chance < 0.65) {
+
+        document.body.classList.add(
+            "mrSmileAmbientGlitch"
+        );
+
+
+        await sleep(
+            randomBetween(
+                180,
+                400
+            )
+        );
+
+
+        document.body.classList.remove(
+            "mrSmileAmbientGlitch"
+        );
+
+
+        return;
+    }
+
+
+    await systemMessage(
+        "INPUT CHANNEL: RESPONSE DELAYED"
+    );
+
+
+    await sleep(500);
+
+
+    await systemMessage(
+        "INPUT CHANNEL: NORMAL"
+    );
+}
+
 
 /* ==========================================================
    BACKGROUND LOOP — NIGHT
@@ -2602,6 +2600,7 @@ function scheduleFirstContactTimer(
                         item =>
                             item !== timer
                     );
+
 
                 callback();
 
