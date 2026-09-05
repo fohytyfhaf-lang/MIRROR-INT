@@ -1,141 +1,90 @@
 /* ==========================================================
    MR.SMILE — OMEGA INTERFACE MANIFESTATION
    VISUAL EVENT SYSTEM
+   ----------------------------------------------------------
+   FIRST CONTACT / SYSTEM TAKEOVER
+
+   Основной принцип:
+
+   OMEGA → нормальная система
+       ↓
+   наблюдение
+       ↓
+   лицо
+       ↓
+   игрок замечает MR.SMILE
+       ↓
+   курсор замечен
+       ↓
+   MR.SMILE получает управление
+       ↓
+   системное окно
+       ↓
+   краткое искажение
+       ↓
+   освобождение
+========================================================== */
+
+
+/* ==========================================================
+   STATE
 ========================================================== */
 
 let manifestationRunning = false;
 
+let faceRunning = false;
+
 let cursorController = null;
+
 let systemIntrusionController = null;
 
 
 /* ==========================================================
-   PUBLIC — FULL MANIFESTATION
+   PUBLIC
+   FULL MANIFESTATION / CURSOR TAKEOVER
 ========================================================== */
 
 export async function triggerMrSmileManifestation() {
 
     if (manifestationRunning) {
+
         console.log(
             "[MR.SMILE APPEARANCE] Manifestation already running."
         );
+
         return;
     }
 
     manifestationRunning = true;
 
     console.log(
-        "[MR.SMILE APPEARANCE] FULL MANIFESTATION STARTED."
+        "[MR.SMILE APPEARANCE] SYSTEM TAKEOVER STARTED."
     );
 
 
-    const overlay = createManifestation();
+    const overlay =
+        createManifestation();
+
 
     systemIntrusionController =
         createSystemIntrusionController();
 
 
-    document.body.classList.add(
-        "mrSmileInterfaceCollapse"
-    );
-
-
     try {
 
-        /* ================================================
-           PHASE 1 — EMPTY SYSTEM
-        ================================================= */
+        /* ==================================================
+           PREPARATION
+        ================================================== */
 
-        await sleep(500);
+        document.body.classList.add(
+            "mrSmileInterfaceCollapse"
+        );
+
 
         overlay.classList.add(
-            "phase-1"
+            "phase-control"
         );
 
-        mutateCode(
-            overlay,
-            "initial"
-        );
-
-
-        await sleep(900);
-
-
-        /* ================================================
-           PHASE 2 — CODE CORRUPTION
-        ================================================= */
-
-        overlay.classList.add(
-            "phase-2"
-        );
-
-        mutateCode(
-            overlay,
-            "corruption"
-        );
-
-
-        await sleep(1100);
-
-
-        /* ================================================
-           PHASE 3 — EYES
-        ================================================= */
-
-        overlay.classList.add(
-            "phase-3"
-        );
-
-        mutateCode(
-            overlay,
-            "presence"
-        );
-
-
-        await sleep(1300);
-
-
-        /* ================================================
-           PHASE 4 — FACE
-        ================================================= */
-
-        overlay.classList.add(
-            "phase-4"
-        );
-
-        mutateCode(
-            overlay,
-            "intrusion"
-        );
-
-
-        await sleep(1300);
-
-
-        /* ================================================
-           PHASE 5 — SMILE
-        ================================================= */
-
-        overlay.classList.add(
-            "phase-5"
-        );
-
-        mutateCode(
-            overlay,
-            "smile"
-        );
-
-
-        await sleep(1500);
-
-
-        /* ================================================
-           PHASE 6 — SYSTEM CONTROL
-        ================================================= */
-
-        overlay.classList.add(
-            "phase-final"
-        );
 
         mutateCode(
             overlay,
@@ -146,24 +95,30 @@ export async function triggerMrSmileManifestation() {
         systemIntrusionController.phaseCursor();
 
 
-        await sleep(800);
+        await sleep(900);
 
 
-        /* ================================================
-           CURSOR TRANSFER
-        ================================================= */
+        /* ==================================================
+           CREATE VISUAL CURSOR
+        ================================================== */
 
-        overlay.classList.add(
-            "phase-cursor"
-        );
+        cursorController =
+            createControlledCursor();
+
+
+        if (!cursorController) {
+            return;
+        }
+
 
         document.body.classList.add(
             "mrSmileCursorControlled"
         );
 
 
-        cursorController =
-            createControlledCursor();
+        overlay.classList.add(
+            "phase-cursor"
+        );
 
 
         await runCursorControl(
@@ -172,13 +127,14 @@ export async function triggerMrSmileManifestation() {
         );
 
 
-        /* ================================================
-           SYSTEM TAKEOVER
-        ================================================= */
+        /* ==================================================
+           TAKEOVER
+        ================================================== */
 
         overlay.classList.add(
-            "phase-7"
+            "phase-takeover"
         );
+
 
         mutateCode(
             overlay,
@@ -189,59 +145,94 @@ export async function triggerMrSmileManifestation() {
         systemIntrusionController.phase7();
 
 
-        await sleep(1800);
+        await sleep(900);
 
 
-        /* ================================================
-           CODE COLLAPSE
-        ================================================= */
+        /* ==================================================
+           SYSTEM WINDOW
+        ================================================== */
+
+        overlay.classList.add(
+            "phase-intrusion"
+        );
+
 
         mutateCode(
             overlay,
-            "silence"
+            "intrusion"
         );
+
+
+        await showIntrusionWindow();
+
+
+        /* ==================================================
+           SMALL GEOMETRY FAILURE
+        ================================================== */
+
+        document.body.classList.add(
+            "mrSmileGeometryDistortion"
+        );
+
+
+        systemIntrusionController.phase7();
+
+
+        await sleep(850);
+
+
+        document.body.classList.remove(
+            "mrSmileGeometryDistortion"
+        );
+
+
+        await sleep(600);
+
+
+        /* ==================================================
+           SILENCE
+        ================================================== */
 
         overlay.classList.add(
             "phase-silence"
         );
 
 
-        systemIntrusionController.phaseSilence();
-
-
-        await sleep(1800);
-
-
-        /* ================================================
-           FINAL LOOK
-        ================================================= */
-
-        overlay.classList.add(
-            "phase-final"
+        mutateCode(
+            overlay,
+            "silence"
         );
 
 
-        systemIntrusionController.phaseFinal();
+        systemIntrusionController.phaseSilence();
 
 
-        await sleep(1200);
+        await sleep(1000);
 
 
-        /* ================================================
+        /* ==================================================
            RELEASE
-        ================================================= */
+        ================================================== */
 
         overlay.classList.add(
             "phase-release"
         );
 
 
-        await sleep(900);
+        await sleep(700);
 
+
+    } catch (error) {
+
+        console.error(
+            "[MR.SMILE APPEARANCE] System takeover failed:",
+            error
+        );
 
     } finally {
 
         destroyControlledCursor();
+
 
         if (systemIntrusionController) {
 
@@ -255,9 +246,45 @@ export async function triggerMrSmileManifestation() {
             "mrSmileCursorControlled"
         );
 
+
         document.body.classList.remove(
             "mrSmileInterfaceCollapse"
         );
+
+
+        document.body.classList.remove(
+            "mrSmileGeometryDistortion"
+        );
+
+
+        const intrusion =
+            document.querySelector(
+                ".mrSmileIntrusionWindow"
+            );
+
+
+        if (intrusion) {
+
+            intrusion.classList.add(
+                "mrSmileIntrusionClosing"
+            );
+
+
+            setTimeout(
+                () => {
+
+                    if (
+                        intrusion &&
+                        intrusion.parentNode
+                    ) {
+
+                        intrusion.remove();
+                    }
+
+                },
+                500
+            );
+        }
 
 
         overlay.remove();
@@ -267,35 +294,46 @@ export async function triggerMrSmileManifestation() {
 
 
         console.log(
-            "[MR.SMILE APPEARANCE] FULL MANIFESTATION ENDED."
+            "[MR.SMILE APPEARANCE] SYSTEM TAKEOVER ENDED."
         );
     }
 }
 
 
 /* ==========================================================
-   PUBLIC — FIRST CONTACT APPEARANCES
+   PUBLIC
+   FIRST CONTACT FACE
 ========================================================== */
 
 export async function showMrSmileFirstContactFace(
     mode = "presence"
 ) {
 
-    if (manifestationRunning) {
+    /*
+     * Важное отличие от старой версии:
+     *
+     * Появление лица НЕ считается полной
+     * manifestation.
+     *
+     * Поэтому после него можно отдельно
+     * запустить triggerMrSmileManifestation().
+     */
+
+    if (faceRunning) {
 
         console.log(
-            "[MR.SMILE APPEARANCE] Another manifestation is running."
+            "[MR.SMILE APPEARANCE] Face appearance already running."
         );
 
         return;
     }
 
 
-    manifestationRunning = true;
+    faceRunning = true;
 
 
     console.log(
-        `[MR.SMILE APPEARANCE] First Contact: ${mode}`
+        `[MR.SMILE APPEARANCE] Face appearance: ${mode}`
     );
 
 
@@ -307,10 +345,6 @@ export async function showMrSmileFirstContactFace(
 
         switch (mode) {
 
-            /* ============================================
-               PRESENCE
-            ============================================ */
-
             case "presence":
 
                 await runPresenceAppearance(
@@ -320,10 +354,6 @@ export async function showMrSmileFirstContactFace(
                 break;
 
 
-            /* ============================================
-               ECHO
-            ============================================ */
-
             case "echo":
 
                 await runEchoAppearance(
@@ -332,10 +362,6 @@ export async function showMrSmileFirstContactFace(
 
                 break;
 
-
-            /* ============================================
-               SILENCE
-            ============================================ */
 
             case "silence":
 
@@ -348,11 +374,6 @@ export async function showMrSmileFirstContactFace(
 
             default:
 
-                console.warn(
-                    "[MR.SMILE APPEARANCE] Unknown appearance mode:",
-                    mode
-                );
-
                 await runPresenceAppearance(
                     overlay
                 );
@@ -361,32 +382,31 @@ export async function showMrSmileFirstContactFace(
         }
 
 
-    } finally {
+    } catch (error) {
 
-        destroyControlledCursor();
-
-
-        document.body.classList.remove(
-            "mrSmileCursorControlled"
+        console.error(
+            "[MR.SMILE APPEARANCE] Face appearance failed:",
+            error
         );
 
+    } finally {
 
         overlay.classList.add(
             "phase-release"
         );
 
 
-        await sleep(250);
+        await sleep(450);
 
 
         overlay.remove();
 
 
-        manifestationRunning = false;
+        faceRunning = false;
 
 
         console.log(
-            `[MR.SMILE APPEARANCE] ${mode} appearance ended.`
+            `[MR.SMILE APPEARANCE] Face appearance ended: ${mode}`
         );
     }
 }
@@ -401,35 +421,20 @@ async function runPresenceAppearance(
 ) {
 
     /*
-       The screen should NOT immediately show the face.
-
-       First:
-       blackness
-       ↓
-       real OMEGA code
-       ↓
-       code flickers
-       ↓
-       eyes
-       ↓
-       face
-       ↓
-       smile
-    */
-
-
-    mutateCode(
-        overlay,
-        "initial"
-    );
-
-
-    overlay.classList.add(
-        "phase-1"
-    );
-
-
-    await sleep(900);
+     * Никакой резкой морды.
+     *
+     * Последовательность:
+     *
+     * darkness
+     * ↓
+     * barely visible eyes
+     * ↓
+     * eyes become readable
+     * ↓
+     * face structure
+     * ↓
+     * human smile
+     */
 
 
     mutateCode(
@@ -439,40 +444,40 @@ async function runPresenceAppearance(
 
 
     overlay.classList.add(
-        "phase-2"
+        "phase-presence"
     );
 
 
-    await sleep(900);
+    await sleep(700);
 
 
-    /*
+    /* ----------------------------------------------
        EYES
-    */
+    ---------------------------------------------- */
 
     overlay.classList.add(
-        "phase-3"
+        "phase-eyes"
     );
 
 
-    await sleep(1200);
+    await sleep(1500);
 
 
-    /*
+    /* ----------------------------------------------
        FACE
-    */
+    ---------------------------------------------- */
 
     overlay.classList.add(
-        "phase-4"
+        "phase-face"
     );
 
 
-    await sleep(1000);
+    await sleep(1300);
 
 
-    /*
+    /* ----------------------------------------------
        SMILE
-    */
+    ---------------------------------------------- */
 
     mutateCode(
         overlay,
@@ -481,31 +486,31 @@ async function runPresenceAppearance(
 
 
     overlay.classList.add(
-        "phase-5"
+        "phase-smile"
     );
 
 
-    await sleep(1700);
+    await sleep(1500);
 
 
     /*
-       Small unnatural pause.
-    */
+     * Очень короткая пауза.
+     *
+     * Он не делает ничего.
+     *
+     * Именно это создаёт ощущение,
+     * что он просто смотрит.
+     */
 
     await sleep(700);
 
-
-    /*
-       MR.SMILE disappears,
-       but not with a dramatic monster effect.
-    */
 
     overlay.classList.add(
         "phase-release"
     );
 
 
-    await sleep(600);
+    await sleep(550);
 }
 
 
@@ -518,12 +523,10 @@ async function runEchoAppearance(
 ) {
 
     /*
-       Much shorter.
-
-       This should feel like:
-
-       "Was that really there?"
-    */
+     * Короткое повторное появление.
+     *
+     * "Я это действительно видел?"
+     */
 
 
     mutateCode(
@@ -537,7 +540,7 @@ async function runEchoAppearance(
     );
 
 
-    await sleep(700);
+    await sleep(650);
 
 
     overlay.classList.add(
@@ -545,7 +548,7 @@ async function runEchoAppearance(
     );
 
 
-    await sleep(1200);
+    await sleep(1300);
 
 
     mutateCode(
@@ -559,14 +562,7 @@ async function runEchoAppearance(
     );
 
 
-    await sleep(1300);
-
-
-    /*
-       Tiny delay before disappearance.
-    */
-
-    await sleep(400);
+    await sleep(1100);
 
 
     overlay.classList.add(
@@ -574,7 +570,7 @@ async function runEchoAppearance(
     );
 
 
-    await sleep(500);
+    await sleep(450);
 }
 
 
@@ -587,23 +583,8 @@ async function runSilenceAppearance(
 ) {
 
     /*
-       This is the most important short appearance.
-
-       No glitch spam.
-       No giant text.
-       No monster transformation.
-
-       Just:
-       silence
-       ↓
-       face
-       ↓
-       stare
-       ↓
-       smile
-       ↓
-       darkness
-    */
+     * Очень редкое и тихое появление.
+     */
 
 
     mutateCode(
@@ -613,11 +594,19 @@ async function runSilenceAppearance(
 
 
     overlay.classList.add(
+        "phase-silence"
+    );
+
+
+    await sleep(850);
+
+
+    overlay.classList.add(
         "phase-last-eye"
     );
 
 
-    await sleep(1000);
+    await sleep(1600);
 
 
     overlay.classList.add(
@@ -625,20 +614,8 @@ async function runSilenceAppearance(
     );
 
 
-    await sleep(1800);
+    await sleep(1400);
 
-
-    overlay.classList.add(
-        "phase-last-eye-close"
-    );
-
-
-    await sleep(800);
-
-
-    /*
-       The smile remains for a moment.
-    */
 
     mutateCode(
         overlay,
@@ -646,7 +623,12 @@ async function runSilenceAppearance(
     );
 
 
-    await sleep(1100);
+    overlay.classList.add(
+        "phase-last-smile"
+    );
+
+
+    await sleep(1000);
 
 
     overlay.classList.add(
@@ -654,7 +636,7 @@ async function runSilenceAppearance(
     );
 
 
-    await sleep(700);
+    await sleep(600);
 }
 
 
@@ -707,31 +689,40 @@ function createControlledCursor() {
             false,
 
         frame:
-            0
+            0,
+
+        lastPlayerX:
+            window.innerWidth / 2,
+
+        lastPlayerY:
+            window.innerHeight / 2
     };
 
 
-    /*
-       While not controlled,
-       the visual cursor follows
-       the real pointer.
-    */
+    /* ======================================================
+       PLAYER MOUSE
+    ====================================================== */
 
     const onMove = event => {
 
-        state.targetX =
+        state.lastPlayerX =
             event.clientX;
 
-        state.targetY =
+        state.lastPlayerY =
             event.clientY;
 
 
+        /*
+         * Пока MR.SMILE не получил контроль,
+         * визуальный курсор повторяет реальный.
+         */
+
         if (!state.controlled) {
 
-            state.x =
+            state.targetX =
                 event.clientX;
 
-            state.y =
+            state.targetY =
                 event.clientY;
         }
     };
@@ -744,16 +735,21 @@ function createControlledCursor() {
     );
 
 
+    /* ======================================================
+       RENDER
+    ====================================================== */
+
     function render() {
 
-        if (state.destroyed)
+        if (state.destroyed) {
             return;
+        }
 
 
         const smoothing =
             state.controlled
-                ? 0.075
-                : 0.45;
+                ? 0.065
+                : 0.65;
 
 
         state.x +=
@@ -795,7 +791,7 @@ function createControlledCursor() {
         setControlled(value) {
 
             state.controlled =
-                value;
+                Boolean(value);
         },
 
 
@@ -809,10 +805,24 @@ function createControlledCursor() {
         },
 
 
+        getPlayerPosition() {
+
+            return {
+
+                x:
+                    state.lastPlayerX,
+
+                y:
+                    state.lastPlayerY
+            };
+        },
+
+
         destroy() {
 
-            if (state.destroyed)
+            if (state.destroyed) {
                 return;
+            }
 
 
             state.destroyed =
@@ -838,7 +848,7 @@ function createControlledCursor() {
 
 
 /* ==========================================================
-   RUN CURSOR CONTROL
+   CURSOR CONTROL
 ========================================================== */
 
 async function runCursorControl(
@@ -846,8 +856,9 @@ async function runCursorControl(
     controller
 ) {
 
-    if (!controller)
+    if (!controller) {
         return;
+    }
 
 
     const state =
@@ -855,51 +866,27 @@ async function runCursorControl(
 
 
     /*
-       Let the player use the cursor
-       normally for a short moment.
-    */
+     * ------------------------------------------------------
+     * PLAYER STILL HAS CONTROL
+     * ------------------------------------------------------
+     */
 
     controller.setControlled(
         false
     );
 
 
-    await sleep(1800);
+    await sleep(1200);
 
 
     /*
-       TRANSFER
-    */
+     * ------------------------------------------------------
+     * MR.SMILE NOTICES CURSOR
+     * ------------------------------------------------------
+     */
 
     overlay.classList.add(
-        "cursor-transfer"
-    );
-
-
-    controller.setControlled(
-        true
-    );
-
-
-    /*
-       Freeze at the exact current location.
-    */
-
-    controller.setTarget(
-        state.x,
-        state.y
-    );
-
-
-    await sleep(1300);
-
-
-    /*
-       LOCK
-    */
-
-    overlay.classList.add(
-        "cursor-locked"
+        "cursor-observed"
     );
 
 
@@ -907,8 +894,43 @@ async function runCursorControl(
 
 
     /*
-       SELF MOVEMENT
-    */
+     * ------------------------------------------------------
+     * TRANSFER
+     * ------------------------------------------------------
+     */
+
+    overlay.classList.add(
+        "cursor-transfer"
+    );
+
+
+    /*
+     * Замораживаем визуальный курсор
+     * именно там, где его оставил игрок.
+     */
+
+    controller.setTarget(
+        state.x,
+        state.y
+    );
+
+
+    await sleep(500);
+
+
+    controller.setControlled(
+        true
+    );
+
+
+    await sleep(850);
+
+
+    /*
+     * ------------------------------------------------------
+     * CURSOR MOVES BY ITSELF
+     * ------------------------------------------------------
+     */
 
     overlay.classList.add(
         "cursor-self-move"
@@ -916,57 +938,44 @@ async function runCursorControl(
 
 
     const centerX =
-        window.innerWidth * 0.50;
+        window.innerWidth * 0.5;
 
     const centerY =
-        window.innerHeight * 0.49;
+        window.innerHeight * 0.5;
 
 
     /*
-       Move left.
-    */
+     * Небольшое движение.
+     *
+     * Не надо водить курсором по всему экрану.
+     */
 
     controller.setTarget(
-        centerX - 120,
-        centerY - 20
-    );
-
-
-    await sleep(1100);
-
-
-    /*
-       Move right.
-    */
-
-    controller.setTarget(
-        centerX + 120,
-        centerY - 15
-    );
-
-
-    await sleep(1000);
-
-
-    /*
-       Return to center.
-    */
-
-    controller.setTarget(
-        centerX + 15,
+        centerX - 80,
         centerY + 10
     );
 
 
-    await sleep(1000);
+    await sleep(850);
+
+
+    controller.setTarget(
+        centerX + 70,
+        centerY + 5
+    );
+
+
+    await sleep(850);
 
 
     /*
-       Approach the left eye.
-    */
+     * ------------------------------------------------------
+     * CURSOR LOOKS AT MR.SMILE
+     * ------------------------------------------------------
+     */
 
     overlay.classList.add(
-        "cursor-at-eye"
+        "cursor-at-face"
     );
 
 
@@ -976,28 +985,15 @@ async function runCursorControl(
     );
 
 
-    await sleep(1800);
-
-
-    /*
-       MR.SMILE notices the cursor.
-    */
-
-    overlay.classList.add(
-        "cursor-noticed"
-    );
-
-
     await sleep(1300);
 
 
     /*
-       Suddenly move away.
-    */
+     * MR.SMILE notices.
+     */
 
-    controller.setTarget(
-        window.innerWidth * 0.17,
-        window.innerHeight * 0.80
+    overlay.classList.add(
+        "cursor-noticed"
     );
 
 
@@ -1005,44 +1001,40 @@ async function runCursorControl(
 
 
     /*
-       RETURN CONTROL TO PLAYER
-    */
+     * Небольшое движение вниз.
+     *
+     * Как будто он понял,
+     * что игрок пытается сделать.
+     */
 
-    overlay.classList.add(
-        "cursor-return"
+    controller.setTarget(
+        centerX - 70,
+        centerY + 100
     );
-
-
-    controller.setControlled(
-        false
-    );
-
-
-    state.x =
-        state.targetX;
-
-    state.y =
-        state.targetY;
 
 
     await sleep(800);
 
 
-    overlay.classList.remove(
+    /*
+     * ------------------------------------------------------
+     * CURSOR RELEASE
+     * ------------------------------------------------------
+     *
+     * ВАЖНО:
+     * Полный контроль возвращается игроку
+     * после основной сцены takeover.
+     *
+     * Здесь только визуально подготавливаем
+     * состояние.
+     */
 
-        "cursor-transfer",
-
-        "cursor-locked",
-
-        "cursor-self-move",
-
-        "cursor-at-eye",
-
-        "cursor-noticed",
-
-        "cursor-return"
-
+    overlay.classList.add(
+        "cursor-held"
     );
+
+
+    await sleep(500);
 }
 
 
@@ -1052,8 +1044,9 @@ async function runCursorControl(
 
 function destroyControlledCursor() {
 
-    if (!cursorController)
+    if (!cursorController) {
         return;
+    }
 
 
     cursorController.destroy();
@@ -1061,6 +1054,208 @@ function destroyControlledCursor() {
 
     cursorController =
         null;
+}
+
+
+/* ==========================================================
+   SYSTEM INTRUSION WINDOW
+========================================================== */
+
+async function showIntrusionWindow() {
+
+    let target =
+        document.querySelector(
+            "#consoleWindow"
+        );
+
+
+    /*
+     * Если Console уже существует —
+     * используем реальное окно.
+     */
+
+    if (target) {
+
+        target.classList.add(
+            "mrSmileIntrusionTarget"
+        );
+
+
+        await sleep(700);
+
+
+        return;
+    }
+
+
+    /*
+     * Если Console не открыта,
+     * создаём окно в стиле OMEGA.
+     */
+
+    target =
+        createIntrusionWindow();
+
+
+    document.body.appendChild(
+        target
+    );
+
+
+    await sleep(900);
+
+
+    target.classList.add(
+        "mrSmileIntrusionTarget"
+    );
+
+
+    await sleep(700);
+}
+
+
+/* ==========================================================
+   CREATE INTRUSION WINDOW
+========================================================== */
+
+function createIntrusionWindow() {
+
+    const windowElement =
+        document.createElement("div");
+
+
+    windowElement.id =
+        "mrSmileIntrusionWindow";
+
+
+    windowElement.className =
+        "window mrSmileIntrusionWindow";
+
+
+    windowElement.innerHTML = `
+
+        <div class="windowHeader">
+
+            <div class="windowTitle">
+
+                <span class="windowIcon">
+                    ▣
+                </span>
+
+                <span>
+                    SYSTEM CONSOLE
+                </span>
+
+            </div>
+
+
+            <div class="windowControls">
+
+                <button
+                    type="button"
+                    disabled
+                >
+                    —
+                </button>
+
+                <button
+                    type="button"
+                    disabled
+                >
+                    ×
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="windowBody">
+
+            <div class="mrSmileIntrusionContent">
+
+                <div>
+                    OMEGA SYSTEM CONSOLE
+                </div>
+
+                <div>
+                    INPUT CHANNEL: LOCAL
+                </div>
+
+                <div>
+                    REMOTE PROCESS: ACTIVE
+                </div>
+
+                <div>
+                    CONTROL OWNER: UNKNOWN
+                </div>
+
+                <div>
+                    RESPONSE: DELAYED
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="windowStatus">
+
+            <span>
+                CONNECTION: ACTIVE
+            </span>
+
+            <span>
+                INPUT: REMOTE
+            </span>
+
+        </div>
+
+    `;
+
+
+    /*
+     * Ставим его туда, где обычно
+     * находится рабочая область.
+     */
+
+    const workspace =
+        document.querySelector(
+            "#workspace"
+        );
+
+
+    if (workspace) {
+
+        const rect =
+            workspace.getBoundingClientRect();
+
+
+        windowElement.style.left =
+            `${rect.width * 0.5}px`;
+
+
+        windowElement.style.top =
+            `${rect.height * 0.5}px`;
+
+
+        windowElement.style.transform =
+            "translate(-50%, -50%)";
+
+    } else {
+
+        windowElement.style.left =
+            "50%";
+
+        windowElement.style.top =
+            "50%";
+
+        windowElement.style.transform =
+            "translate(-50%, -50%)";
+    }
+
+
+    return windowElement;
 }
 
 
@@ -1076,8 +1271,9 @@ function createManifestation() {
         );
 
 
-    if (existing)
+    if (existing) {
         existing.remove();
+    }
 
 
     const overlay =
@@ -1090,108 +1286,95 @@ function createManifestation() {
 
     overlay.innerHTML = `
 
-        <!-- ==========================================
-             OMEGA CODE
-        =========================================== -->
+        <!-- =================================================
+             OMEGA SYSTEM FRAGMENTS
+        ================================================== -->
 
         <div class="mrSmileUIFragments">
+
 
             <pre
                 class="mrSmileFragment fragment-top"
                 data-code="top"
-            >import {
-    trigger,
-    on,
-    once
-} from "./eventManager.js";</pre>
+            >OMEGA SYSTEM
+AUTHENTICATION CHANNEL</pre>
 
 
             <pre
                 class="mrSmileFragment fragment-left"
                 data-code="left"
-            >import {
-    showMrSmileFirstContactFace
-} from "./mrsmileAppearance.js";</pre>
+            >REMOTE SESSION
+SOURCE: UNKNOWN</pre>
 
 
             <pre
                 class="mrSmileFragment fragment-right"
                 data-code="right"
-            >const overlay =
-    document.createElement("div");
-
-overlay.id =
-    "mrSmileManifestation";</pre>
+            >PROCESS:
+UNKNOWN</pre>
 
 
             <pre
                 class="mrSmileFragment fragment-bottom"
                 data-code="bottom"
-            >document.body.classList.add(
-    "mrSmileFirstContact"
-);
-
-await showMrSmileFirstContactFace();</pre>
+            >INPUT CHANNEL:
+LOCAL</pre>
 
 
             <pre
                 class="mrSmileFragment fragment-code code-1"
                 data-code="code1"
-            >if (manifestationRunning)
-    return;</pre>
+            >SYSTEM CONTROL:
+LOCAL</pre>
 
 
             <pre
                 class="mrSmileFragment fragment-code code-2"
                 data-code="code2"
-            >document.body.classList.add(
-    "mrSmileInterfaceCollapse"
-);</pre>
+            >REMOTE ACCESS:
+NONE</pre>
 
 
             <pre
                 class="mrSmileFragment fragment-code code-3"
                 data-code="code3"
-            >const state = {
-    controlled: false,
-    targetX,
-    targetY
-};</pre>
+            >OBSERVER:
+UNKNOWN</pre>
 
 
             <pre
                 class="mrSmileFragment fragment-code code-4"
                 data-code="code4"
-            >window.addEventListener(
-    "mousemove",
-    onMove,
-    true
-);</pre>
+            >INPUT:
+AVAILABLE</pre>
 
 
             <pre
                 class="mrSmileFragment fragment-code code-5"
                 data-code="code5"
-            >controller.setControlled(
-    true
-);</pre>
+            >SESSION:
+LOCAL</pre>
 
 
             <div
                 class="mrSmileFragment fragment-line line-1"
             ></div>
 
+
             <div
                 class="mrSmileFragment fragment-line line-2"
             ></div>
+
 
             <div
                 class="mrSmileFragment fragment-line line-3"
             ></div>
 
+
             <div
                 class="mrSmileFragment fragment-line line-4"
             ></div>
+
 
             <div
                 class="mrSmileFragment fragment-line line-5"
@@ -1200,92 +1383,119 @@ await showMrSmileFirstContactFace();</pre>
         </div>
 
 
-        <!-- ==========================================
+        <!-- =================================================
              MR.SMILE FACE
-        =========================================== -->
-       <div class="mrSmileFace">
+        ================================================== -->
 
-    <div class="mrSmileFaceStructure">
+        <div class="mrSmileFace">
 
-        <span class="faceTrace trace-1"></span>
-        <span class="faceTrace trace-2"></span>
-        <span class="faceTrace trace-3"></span>
-        <span class="faceTrace trace-4"></span>
+            <div class="mrSmileFaceStructure">
 
-    </div>
+                <span
+                    class="faceTrace trace-1"
+                ></span>
 
+                <span
+                    class="faceTrace trace-2"
+                ></span>
 
-    <div class="mrSmileEye eye-left">
+                <span
+                    class="faceTrace trace-3"
+                ></span>
 
-        <div class="eyeGlow"></div>
-
-        <div class="eyeCore">
-            <span class="eyePupil"></span>
-        </div>
-
-    </div>
-
-
-    <div class="mrSmileEye eye-right">
-
-        <div class="eyeGlow"></div>
-
-        <div class="eyeCore">
-            <span class="eyePupil"></span>
-        </div>
-
-    </div>
-
-
-    <div class="mrSmileMouth">
-
-        <div class="mouthOuter"></div>
-
-        <div class="mouthInner">
-
-            <div class="mouthTeeth">
-
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span
+                    class="faceTrace trace-4"
+                ></span>
 
             </div>
 
+
+            <div class="mrSmileEye eye-left">
+
+                <div class="eyeGlow"></div>
+
+                <div class="eyeCore">
+
+                    <span
+                        class="eyePupil"
+                    ></span>
+
+                </div>
+
+            </div>
+
+
+            <div class="mrSmileEye eye-right">
+
+                <div class="eyeGlow"></div>
+
+                <div class="eyeCore">
+
+                    <span
+                        class="eyePupil"
+                    ></span>
+
+                </div>
+
+            </div>
+
+
+            <div class="mrSmileMouth">
+
+                <div class="mouthOuter"></div>
+
+
+                <div class="mouthInner">
+
+                    <div class="mouthTeeth">
+
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="mouthLine mouthLineLeft"
+                ></div>
+
+                <div
+                    class="mouthLine mouthLineRight"
+                ></div>
+
+            </div>
+
+
+            <div class="mrSmileFaceScan"></div>
+
         </div>
 
-        <div class="mouthLine mouthLineLeft"></div>
-        <div class="mouthLine mouthLineRight"></div>
 
-    </div>
-
-
-    <div class="mrSmileFaceScan"></div>
-
-</div>
-        
-
-
-        <!-- ==========================================
+        <!-- =================================================
              SYSTEM SIGNAL
-        =========================================== -->
+        ================================================== -->
 
         <div class="mrSmileSignal">
 
             <span class="signalNormal">
                 CONNECTION: ACTIVE
             </span>
+
 
             <span class="signalControl">
                 CURSOR CONTROL: TRANSFERRED
@@ -1314,8 +1524,9 @@ function mutateCode(
     mode
 ) {
 
-    if (!overlay)
+    if (!overlay) {
         return;
+    }
 
 
     const fragments =
@@ -1326,403 +1537,293 @@ function mutateCode(
 
     const codeMap = {
 
-        initial: {
-
-            top:
-`import {
-    trigger,
-    on,
-    once
-} from "./eventManager.js";`,
-
-            left:
-`import {
-    showMrSmileFirstContactFace
-} from "./mrsmileAppearance.js";`,
-
-            right:
-`const overlay =
-    document.createElement("div");`,
-
-            bottom:
-`document.body.classList.add(
-    "mrSmileFirstContact"
-);`,
-
-            code1:
-`if (manifestationRunning)
-    return;`,
-
-            code2:
-`document.body.classList.add(
-    "mrSmileInterfaceCollapse"
-);`,
-
-            code3:
-`const state = {
-    controlled: false
-};`,
-
-            code4:
-`window.addEventListener(
-    "mousemove",
-    onMove,
-    true
-);`,
-
-            code5:
-`controller.setControlled(
-    false
-);`
-        },
-
-
-        corruption: {
-
-            top:
-`import {
-    trigger,
-    on,
-    once
-} from "./eventManager.js";
-
-...`,
-
-            left:
-`import {
-    showMrSmileFirstContactFace
-} from "./mrsmileAppearance.js";
-
-...`,
-
-            right:
-`const overlay =
-    document.createElement("div");
-
-overlay.id =
-    "mrSmileManifestation";`,
-
-            bottom:
-`document.body.classList.add(
-    "mrSmileFirstContact"
-);
-
-await showMrSmileFirstContactFace();`,
-
-            code1:
-`if (manifestationRunning)
-    return;
-
-    ...`,
-
-            code2:
-`document.body.classList.add(
-    "mrSmileInterfaceCollapse"
-);
-
-...`,
-
-            code3:
-`const state = {
-    controlled: false,
-    targetX,
-    targetY
-};`,
-
-            code4:
-`window.addEventListener(
-    "mousemove",
-    onMove,
-    true
-);
-
-...`,
-
-            code5:
-`controller.setControlled(
-    false
-);`
-        },
-
+        /* ==================================================
+           PRESENCE
+        ================================================== */
 
         presence: {
 
             top:
-`import {
-    trigger,
-    on,
-    once
-} from "./eventManager.js";
-
-await ...`,
+`OMEGA SYSTEM
+AUTHENTICATION CHANNEL
+STATUS: ACTIVE`,
 
             left:
-`showMrSmileFirstContactFace(
-    "presence"
-);`,
+`REMOTE SESSION
+SOURCE: UNKNOWN
+IDENTIFIER: —`,
 
             right:
-`const overlay =
-    document.createElement("div");
-
-overlay.id =
-    "mrSmileManifestation";`,
+`PROCESS:
+UNKNOWN
+STATE: WAITING`,
 
             bottom:
-`document.body.classList.add(
-    "mrSmilePhase3"
-);
-
-...`,
+`INPUT CHANNEL:
+LOCAL
+OPERATOR: ACTIVE`,
 
             code1:
-`if (manifestationRunning)
-    return;`,
+`SYSTEM CONTROL:
+LOCAL`,
 
             code2:
-`document.body.classList.add(
-    "mrSmileInterfaceCollapse"
-);`,
+`REMOTE ACCESS:
+NONE`,
 
             code3:
-`const state = {
-    controlled: false
-};`,
+`OBSERVER:
+UNKNOWN`,
 
             code4:
-`window.addEventListener(
-    "mousemove",
-    onMove,
-    true
-);`,
+`INPUT:
+AVAILABLE`,
 
             code5:
-`controller.setControlled(
-    false
-);`
+`SESSION:
+LOCAL`
         },
 
 
-        intrusion: {
-
-            top:
-`trigger(
-    "mrsmile:firstContact"
-);
-
-...`,
-
-            left:
-`showMrSmileFirstContactFace(
-    "presence"
-);
-
-...`,
-
-            right:
-`overlay.classList.add(
-    "phase-4"
-);`,
-
-            bottom:
-`document.body.classList.add(
-    "mrSmilePhase4"
-);`,
-
-            code1:
-`if (firstContactRunning)
-    return;`,
-
-            code2:
-`document.body.classList.add(
-    "mrSmileSevereGlitch"
-);`,
-
-            code3:
-`const process =
-    "UNKNOWN";`,
-
-            code4:
-`typeSystemMessage(
-    "UNKNOWN PROCESS DETECTED."
-);`,
-
-            code5:
-`controller.setControlled(
-    false
-);`
-        },
-
+        /* ==================================================
+           SMILE
+        ================================================== */
 
         smile: {
 
             top:
-`await showMrSmileFirstContactFace(
-    "presence"
-);
-
-...`,
+`OMEGA SYSTEM
+AUTHENTICATION CHANNEL
+STATUS: ACTIVE`,
 
             left:
-`overlay.classList.add(
-    "phase-5"
-);`,
+`REMOTE SESSION
+SOURCE: UNKNOWN
+IDENTIFIER: MR_SMILE`,
 
             right:
-`const mouth =
-    overlay.querySelector(
-        ".mrSmileMouth"
-    );`,
+`PROCESS:
+ACTIVE
+STATE: OBSERVING`,
 
             bottom:
-`document.body.classList.add(
-    "mrSmilePhase5"
-);`,
+`INPUT CHANNEL:
+LOCAL
+OPERATOR: OBSERVED`,
 
             code1:
-`if (manifestationRunning)
-    return;`,
+`SYSTEM CONTROL:
+LOCAL`,
 
             code2:
-`mrSmileInterfaceCollapse
-    = true;`,
+`REMOTE ACCESS:
+ACTIVE`,
 
             code3:
-`const smile =
-    "..." ;`,
+`OBSERVER:
+PRESENT`,
 
             code4:
-`// ...`,
+`INPUT:
+MONITORED`,
 
             code5:
-`controller.setControlled(
-    false
-);`
+`SESSION:
+SHARED`
         },
 
+
+        /* ==================================================
+           CONTROL
+        ================================================== */
 
         control: {
 
             top:
-`const controller =
-    createControlledCursor();`,
+`OMEGA SYSTEM
+CONTROL CHANNEL
+STATUS: CHANGING`,
 
             left:
-`controller.setControlled(
-    true
-);`,
+`REMOTE SESSION
+SOURCE: MR_SMILE
+IDENTIFIER: ACTIVE`,
 
             right:
-`overlay.classList.add(
-    "cursor-transfer"
-);`,
+`PROCESS:
+ACTIVE
+STATE: CONTROL`,
 
             bottom:
-`CURSOR CONTROL:
-TRANSFERRED`,
+`INPUT CHANNEL:
+REMOTE
+OPERATOR: OBSERVED`,
 
             code1:
-`if (!controller)
-    return;`,
+`SYSTEM CONTROL:
+PARTIAL`,
 
             code2:
-`state.controlled =
-    true;`,
+`REMOTE ACCESS:
+FULL`,
 
             code3:
-`targetX =
-    window.innerWidth * .50;`,
+`OBSERVER:
+PRESENT`,
 
             code4:
-`targetY =
-    window.innerHeight * .49;`,
+`INPUT:
+TRANSFERRED`,
 
             code5:
-`controller.setTarget(
-    targetX,
-    targetY
-);`
+`SESSION:
+REMOTE`
         },
 
+
+        /* ==================================================
+           INTRUSION
+        ================================================== */
+
+        intrusion: {
+
+            top:
+`OMEGA SYSTEM
+CONTROL CHANNEL
+STATUS: REMOTE`,
+
+            left:
+`REMOTE SESSION
+SOURCE: MR_SMILE
+ACCESS: ELEVATED`,
+
+            right:
+`PROCESS:
+UNKNOWN
+STATE: ACTIVE`,
+
+            bottom:
+`INPUT CHANNEL:
+REMOTE
+RESPONSE: DELAYED`,
+
+            code1:
+`SYSTEM CONTROL:
+FULL`,
+
+            code2:
+`OMEGA RESPONSE:
+FAILED`,
+
+            code3:
+`OBSERVER:
+ACTIVE`,
+
+            code4:
+`INPUT:
+REMOTE`,
+
+            code5:
+`SESSION:
+UNAUTHORIZED`
+        },
+
+
+        /* ==================================================
+           TAKEOVER
+        ================================================== */
 
         takeover: {
 
             top:
-`SYSTEM CONTROL:
-PARTIAL
-
-...`,
+`OMEGA SYSTEM
+CONTROL CHANNEL
+OWNER: UNKNOWN`,
 
             left:
-`REMOTE SESSION:
-ACTIVE`,
+`REMOTE SESSION
+SOURCE: MR_SMILE
+ACCESS: SYSTEM`,
 
             right:
-`controller.setControlled(
-    true
-);`,
+`PROCESS:
+ACTIVE
+STATE: CONTROL`,
 
             bottom:
-`document.body.classList.add(
-    "mrSmileInterfaceCollapse"
-);`,
+`INPUT CHANNEL:
+REMOTE
+OPERATOR: LOCKED`,
 
             code1:
 `SYSTEM CONTROL:
-FULL;`,
+FULL`,
 
             code2:
 `OMEGA RESPONSE:
-FAILED;`,
+FAILED`,
 
             code3:
-`TERMINATION REQUEST
-IGNORED;`,
+`OBSERVER:
+01`,
 
             code4:
-`REMOTE SESSION:
-ACTIVE;`,
+`INPUT:
+CONTROLLED`,
 
             code5:
-`...`
+`SESSION:
+REMOTE`
         },
 
+
+        /* ==================================================
+           SILENCE
+        ================================================== */
 
         silence: {
 
             top:
-`...`,
+`OMEGA CORE`,
 
             left:
-`...`,
+`REMOTE SESSION
+ACTIVE`,
 
             right:
-`...`,
+`PROCESS:
+—`,
 
             bottom:
-`...`,
+`INPUT:
+—`,
 
             code1:
-`...`,
+`SYSTEM:
+—`,
 
             code2:
-`...`,
+`REMOTE:
+—`,
 
             code3:
-`...`,
+`OBSERVER:
+01`,
 
             code4:
-`...`,
+`INPUT:
+—`,
 
             code5:
-`...`
+`SESSION:
+—`
         }
     };
 
 
     const selected =
         codeMap[mode] ||
-        codeMap.initial;
+        codeMap.presence;
 
 
     fragments.forEach(
@@ -1742,10 +1843,6 @@ ACTIVE;`,
         }
     );
 
-
-    /*
-       Visual corruption class.
-    */
 
     overlay.dataset.codeState =
         mode;
@@ -1817,6 +1914,16 @@ function createSystemIntrusionController() {
     );
 
 
+    /*
+     * Все внутренние таймеры старой версии
+     * убраны.
+     *
+     * Это важно:
+     * никаких сообщений, которые продолжают
+     * появляться после того, как сцена закончилась.
+     */
+
+
     function setStatus(
         label,
         value
@@ -1879,18 +1986,13 @@ function createSystemIntrusionController() {
     ) {
 
         /*
-           mrsmileEvents.js imports
-           typeSystemMessage directly.
-
-           We intentionally don't import
-           mrsmileChat.js here to avoid
-           creating an unnecessary circular
-           dependency.
-        */
+         * Используем глобальный typeSystemMessage,
+         * если он был экспортирован в window.
+         */
 
         if (
-            typeof window.typeSystemMessage
-                === "function"
+            typeof window.typeSystemMessage ===
+            "function"
         ) {
 
             window.typeSystemMessage(
@@ -1901,12 +2003,6 @@ function createSystemIntrusionController() {
         }
 
 
-        /*
-           Fallback for projects where
-           the function is globally exposed
-           under a different scope.
-        */
-
         console.log(
             "[MR.SMILE SYSTEM]",
             text
@@ -1916,7 +2012,7 @@ function createSystemIntrusionController() {
 
     return {
 
-        phase1() {
+        phaseCursor() {
 
             setStatus(
                 "REMOTE ACCESS",
@@ -1934,238 +2030,7 @@ function createSystemIntrusionController() {
 
 
             message(
-                "REMOTE ACCESS REQUESTED."
-            );
-        },
-
-
-        phase2() {
-
-            setStatus(
-                "REMOTE ACCESS",
-                "DENIED"
-            );
-
-
-            flashActivity();
-
-
-            message(
-                "ACCESS REQUEST: DENIED."
-            );
-
-
-            setTimeout(
-                () => {
-
-                    setStatus(
-                        "REMOTE ACCESS",
-                        "ACCEPTED"
-                    );
-
-
-                    flashActivity();
-
-
-                    message(
-                        "ACCESS REQUEST: ACCEPTED."
-                    );
-
-                },
-                1800
-            );
-        },
-
-
-        phase3() {
-
-            setStatus(
-                "UNKNOWN PROCESS",
-                "1"
-            );
-
-
-            flashActivity();
-
-
-            message(
-                "UNKNOWN PROCESS DETECTED."
-            );
-
-
-            setTimeout(
-                () => {
-
-                    message(
-                        "PROCESS ORIGIN: UNKNOWN."
-                    );
-
-                },
-                1200
-            );
-
-
-            setTimeout(
-                () => {
-
-                    message(
-                        "PROCESS PERMISSIONS: ELEVATED."
-                    );
-
-                },
-                2600
-            );
-        },
-
-
-        phase4() {
-
-            setStatus(
-                "REMOTE ACCESS",
-                "ACTIVE"
-            );
-
-
-            flashActivity();
-
-
-            message(
-                "REMOTE SESSION INITIALIZED."
-            );
-
-
-            setTimeout(
-                () => {
-
-                    message(
-                        "SECURITY CHANNEL: BYPASSED."
-                    );
-
-                },
-                1400
-            );
-
-
-            setTimeout(
-                () => {
-
-                    message(
-                        "LOCAL AUTHORIZATION: IGNORED."
-                    );
-
-                },
-                2900
-            );
-        },
-
-
-        phase5() {
-
-            flashActivity();
-
-
-            message(
-                "SYSTEM CONTROL: PARTIAL."
-            );
-
-
-            setTimeout(
-                () => {
-
-                    message(
-                        "WINDOW CONTROL: REMOTE."
-                    );
-
-                },
-                1300
-            );
-
-
-            setTimeout(
-                () => {
-
-                    message(
-                        "INPUT MONITORING: ACTIVE."
-                    );
-
-                },
-                2700
-            );
-        },
-
-
-        phaseCursor() {
-
-            setStatus(
-                "REMOTE ACCESS",
-                "FULL"
-            );
-
-
-            flashActivity();
-
-
-            message(
                 "CURSOR CONTROL REQUESTED."
-            );
-
-
-            setTimeout(
-                () => {
-
-                    message(
-                        "CURSOR CONTROL: TRANSFERRED."
-                    );
-
-                },
-                1800
-            );
-        },
-
-
-        phase6() {
-
-            flashActivity();
-
-
-            message(
-                "SECURITY DATABASE: ACCESSING."
-            );
-
-
-            setTimeout(
-                () => {
-
-                    message(
-                        "SECURITY DATABASE: ACCESS GRANTED."
-                    );
-
-                },
-                1500
-            );
-
-
-            setTimeout(
-                () => {
-
-                    message(
-                        "ARCHIVE INDEX: READING."
-                    );
-
-                },
-                3000
-            );
-
-
-            setTimeout(
-                () => {
-
-                    message(
-                        "RESTRICTED CHANNEL: OPEN."
-                    );
-
-                },
-                4700
             );
         },
 
@@ -2173,14 +2038,20 @@ function createSystemIntrusionController() {
         phase7() {
 
             setStatus(
-                "UNKNOWN PROCESS",
-                "1"
+                "SYSTEM",
+                "REMOTE"
             );
 
 
             setStatus(
                 "REMOTE ACCESS",
                 "FULL"
+            );
+
+
+            setStatus(
+                "UNKNOWN PROCESS",
+                "1"
             );
 
 
@@ -2189,42 +2060,6 @@ function createSystemIntrusionController() {
 
             message(
                 "SYSTEM CONTROL: FULL."
-            );
-
-
-            setTimeout(
-                () => {
-
-                    message(
-                        "OMEGA RESPONSE: FAILED."
-                    );
-
-                },
-                1500
-            );
-
-
-            setTimeout(
-                () => {
-
-                    message(
-                        "TERMINATION REQUEST SENT."
-                    );
-
-                },
-                3200
-            );
-
-
-            setTimeout(
-                () => {
-
-                    message(
-                        "TERMINATION REQUEST: IGNORED."
-                    );
-
-                },
-                5200
             );
         },
 
@@ -2246,38 +2081,32 @@ function createSystemIntrusionController() {
                 "UNKNOWN PROCESS",
                 "—"
             );
+
+
+            setStatus(
+                "SYSTEM",
+                "—"
+            );
         },
 
 
         phaseFinal() {
 
-            message(
-                "REMOTE SESSION: ACTIVE."
+            setStatus(
+                "REMOTE ACCESS",
+                "NONE"
             );
 
 
-            setTimeout(
-                () => {
-
-                    message(
-                        "REMOTE SESSION: CLOSED."
-                    );
-
-                },
-                1800
+            setStatus(
+                "UNKNOWN PROCESS",
+                "0"
             );
 
 
-            setTimeout(
-                () => {
-
-                    setStatus(
-                        "REMOTE ACCESS",
-                        "NONE"
-                    );
-
-                },
-                2300
+            setStatus(
+                "SYSTEM",
+                "NORMAL"
             );
         },
 
