@@ -1,208 +1,184 @@
 /* ==========================================================
    MR.SMILE
-   ENTITY
+   OMEGA ENTITY / FIRST CONTACT
+   ----------------------------------------------------------
+   VISUAL SYSTEM FOR:
+   mrsmileEvents.js
+   mrsmileAppearance.js
+
+   PRINCIPLES:
+   - subtle
+   - believable
+   - human
+   - cold
+   - no random horror spam
+   - no fake full-screen game UI
+   - OMEGA remains the main interface
 ========================================================== */
 
-/* ==========================================
-   MAIN ENTITY
-========================================== */
 
-#mrSmile{
+/* ==========================================================
+   01. LEGACY ENTITY
+========================================================== */
 
-    position:fixed;
+#mrSmile {
 
-    right:35px;
+    position: fixed;
 
-    bottom:30px;
+    right: 35px;
+    bottom: 30px;
 
-    width:170px;
+    width: 170px;
 
-    pointer-events:none;
+    pointer-events: none;
+    user-select: none;
 
-    user-select:none;
+    opacity: 0;
 
-    opacity:0;
-
-    z-index:9996;
+    z-index: 9996;
 
     transition:
-        opacity .8s,
-        transform .8s,
-        filter .5s;
+        opacity .8s ease,
+        transform .8s ease,
+        filter .5s ease;
 
     transform:
         translateY(40px)
         scale(.92);
-
 }
 
-/* ========================================== */
 
-#mrSmile img{
+#mrSmile img {
 
-    width:100%;
+    width: 100%;
 
-    display:block;
+    display: block;
 
     filter:
-        drop-shadow(0 0 12px rgba(0,255,170,.35));
-
+        drop-shadow(
+            0 0 12px
+            rgba(0,255,170,.35)
+        );
 }
 
-/* ==========================================
-   STATES
-========================================== */
 
-#mrSmile.visible{
+#mrSmile.visible {
 
-    opacity:.42;
+    opacity: .42;
 
     transform:
         translateY(0)
         scale(1);
-
 }
 
-/* ========================================== */
 
-#mrSmile.hidden{
+#mrSmile.hidden {
 
-    opacity:0;
+    opacity: 0;
 
     transform:
         translateY(40px)
         scale(.9);
-
 }
 
-/* ==========================================
-   HOVER GLOW
-========================================== */
 
-#mrSmile.glow img{
+#mrSmile.glow img {
 
     animation:
         smileGlow 3s infinite ease-in-out;
-
 }
 
-@keyframes smileGlow{
 
-    0%{
+@keyframes smileGlow {
 
+    0% {
         filter:
-            drop-shadow(0 0 8px rgba(0,255,180,.2));
-
+            drop-shadow(
+                0 0 8px
+                rgba(0,255,180,.2)
+            );
     }
 
-    50%{
-
+    50% {
         filter:
-            drop-shadow(0 0 28px rgba(0,255,180,.65));
-
+            drop-shadow(
+                0 0 28px
+                rgba(0,255,180,.65)
+            );
     }
 
-    100%{
-
+    100% {
         filter:
-            drop-shadow(0 0 8px rgba(0,255,180,.2));
-
+            drop-shadow(
+                0 0 8px
+                rgba(0,255,180,.2)
+            );
     }
-
 }
 
-/* ==========================================
-   FLOATING
-========================================== */
 
-#mrSmile.float{
+#mrSmile.float {
 
     animation:
         smileFloat 7s ease-in-out infinite;
-
 }
 
-@keyframes smileFloat{
 
-    0%{
+@keyframes smileFloat {
 
-        transform:
-            translateY(0);
-
+    0% {
+        transform: translateY(0);
     }
 
-    25%{
-
-        transform:
-            translateY(-5px);
-
+    25% {
+        transform: translateY(-5px);
     }
 
-    50%{
-
-        transform:
-            translateY(3px);
-
+    50% {
+        transform: translateY(3px);
     }
 
-    75%{
-
-        transform:
-            translateY(-2px);
-
+    75% {
+        transform: translateY(-2px);
     }
 
-    100%{
-
-        transform:
-            translateY(0);
-
+    100% {
+        transform: translateY(0);
     }
-
 }
 
-/* ==========================================
-   BREATHING
-========================================== */
 
-#mrSmile.breath{
+#mrSmile.breath {
 
     animation:
         smileBreath 5s infinite ease-in-out;
-
 }
 
-@keyframes smileBreath{
 
-    0%{
+@keyframes smileBreath {
 
-        transform:
-            scale(1);
-
+    0% {
+        transform: scale(1);
     }
 
-    50%{
-
-        transform:
-            scale(1.03);
-
+    50% {
+        transform: scale(1.03);
     }
 
-    100%{
-
-        transform:
-            scale(1);
-
+    100% {
+        transform: scale(1);
     }
-
 }
+
 
 /* ==========================================================
-   MR.SMILE — EYES
+   02. LEGACY EYES
 ========================================================== */
 
 #eyesLayer {
+
     position: fixed;
+
     inset: 0;
 
     pointer-events: none;
@@ -215,11 +191,8 @@
 }
 
 
-/* ==========================================================
-   EYE
-========================================================== */
-
 .eye {
+
     position: absolute;
 
     width: 36px;
@@ -227,13 +200,19 @@
 
     border-radius: 50%;
 
-    background: rgba(235, 255, 250, 0.92);
+    background:
+        rgba(235,255,250,.92);
 
-    border: 1px solid rgba(255,255,255,.35);
+    border:
+        1px solid
+        rgba(255,255,255,.35);
 
     box-shadow:
-        0 0 8px rgba(0,255,180,.25),
-        0 0 20px rgba(0,255,180,.12);
+        0 0 8px
+        rgba(0,255,180,.25),
+
+        0 0 20px
+        rgba(0,255,180,.12);
 
     overflow: hidden;
 
@@ -250,10 +229,6 @@
         filter .4s;
 }
 
-
-/* ==========================================================
-   IRIS
-========================================================== */
 
 .eye::before {
 
@@ -282,13 +257,10 @@
         );
 
     box-shadow:
-        0 0 7px rgba(0,255,180,.65);
+        0 0 7px
+        rgba(0,255,180,.65);
 }
 
-
-/* ==========================================================
-   PUPIL
-========================================================== */
 
 .pupil {
 
@@ -311,10 +283,6 @@
 }
 
 
-/* ==========================================================
-   EYE MOVEMENT
-========================================================== */
-
 @keyframes eyeFloat {
 
     0% {
@@ -328,13 +296,8 @@
     100% {
         margin-top: 0;
     }
-
 }
 
-
-/* ==========================================================
-   BLINK
-========================================================== */
 
 @keyframes eyeBlink {
 
@@ -345,14 +308,1903 @@
 
         clip-path:
             inset(0 0 0 0);
-
     }
 
     44% {
 
         clip-path:
             inset(48% 0 48% 0);
+    }
+}
 
+
+/* ==========================================================
+   03. MR.SMILE MANIFESTATION ROOT
+========================================================== */
+
+#mrSmileManifestation {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    pointer-events: none;
+
+    user-select: none;
+
+    overflow: hidden;
+
+    z-index: 9990;
+
+    opacity: 1;
+
+    background:
+        transparent;
+
+    transition:
+        opacity 1.1s ease;
+}
+
+
+/*
+ * Пока manifestation существует,
+ * она НЕ должна мешать OMEGA.
+ */
+
+#mrSmileManifestation * {
+
+    pointer-events: none;
+
+    box-sizing: border-box;
+}
+
+
+/* ==========================================================
+   04. INITIAL STATE
+========================================================== */
+
+#mrSmileManifestation.mrSmileAppearanceInitial {
+
+    opacity: 0;
+}
+
+
+#mrSmileManifestation.mrSmilePresence {
+
+    opacity: 1;
+}
+
+
+/* ==========================================================
+   05. FACE CONTAINER
+========================================================== */
+
+#mrSmileManifestation .mrSmileFace {
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width:
+        min(620px, 72vw);
+
+    height:
+        min(440px, 58vh);
+
+    transform:
+        translate(-50%, -50%)
+        scale(.96);
+
+    opacity: 0;
+
+    filter:
+        contrast(.92)
+        brightness(.76);
+
+    transition:
+        opacity 2.2s ease,
+        transform 2.4s cubic-bezier(.2,.8,.2,1),
+        filter 2.4s ease;
+
+    /*
+     * Очень слабая человеческая форма.
+     * Не монстр.
+     */
+
+    background:
+        radial-gradient(
+            ellipse at 50% 42%,
+            rgba(185,194,193,.09) 0%,
+            rgba(95,103,103,.045) 34%,
+            rgba(0,0,0,0) 68%
+        );
+}
+
+
+/* ==========================================================
+   06. FACE VISIBLE
+========================================================== */
+
+#mrSmileManifestation.mrSmileFaceVisible
+.mrSmileFace {
+
+    opacity: .88;
+
+    transform:
+        translate(-50%, -50%)
+        scale(1);
+
+    filter:
+        contrast(1)
+        brightness(.82);
+}
+
+
+/* ==========================================================
+   07. FACE TRACE
+========================================================== */
+
+.mrSmileFaceTrace {
+
+    position: absolute;
+
+    inset: 7% 17%;
+
+    border-radius:
+        48% 52%
+        45% 55%
+        /
+        48% 44%
+        56% 52%;
+
+    border:
+        1px solid
+        rgba(210,220,217,.055);
+
+    opacity: .45;
+
+    filter:
+        blur(.35px);
+
+    transform:
+        scaleX(.86);
+
+    box-shadow:
+        inset
+        0 0 45px
+        rgba(255,255,255,.025);
+}
+
+
+/* ==========================================================
+   08. EYES
+========================================================== */
+
+#mrSmileManifestation .mrSmileEye {
+
+    position: absolute;
+
+    top: 35%;
+
+    width:
+        clamp(62px, 9vw, 104px);
+
+    height:
+        clamp(25px, 3vw, 39px);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(225,231,228,.92),
+            rgba(155,162,160,.52) 62%,
+            rgba(60,65,64,.05) 100%
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,.12);
+
+    box-shadow:
+        0 0 14px
+        rgba(210,220,217,.07);
+
+    opacity: 0;
+
+    transform:
+        scaleY(.72);
+
+    transition:
+        opacity 1.5s ease,
+        transform 1.6s ease;
+}
+
+
+#mrSmileManifestation .mrSmileEyeLeft {
+
+    left: 26%;
+}
+
+
+#mrSmileManifestation .mrSmileEyeRight {
+
+    right: 26%;
+}
+
+
+#mrSmileManifestation.mrSmileEyesVisible
+.mrSmileEye {
+
+    opacity: .9;
+
+    transform:
+        scaleY(1);
+}
+
+
+/* ==========================================================
+   09. IRIS
+========================================================== */
+
+.mrSmileEyeIris {
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width:
+        clamp(15px, 2vw, 24px);
+
+    height:
+        clamp(15px, 2vw, 24px);
+
+    transform:
+        translate(
+            calc(-50% + var(--mr-eye-x, 0px)),
+            calc(-50% + var(--mr-eye-y, 0px))
+        );
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #050606 0 25%,
+            #c5d0cd 27% 43%,
+            #65716e 47% 62%,
+            #101414 66% 100%
+        );
+
+    box-shadow:
+        0 0 8px
+        rgba(215,225,222,.18);
+
+    transition:
+        transform .25s ease-out;
+}
+
+
+.mrSmileEyePupil {
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 6px;
+    height: 6px;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background: #000;
+}
+
+
+/* ==========================================================
+   10. EYE SHADOW
+========================================================== */
+
+.mrSmileEye::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: -8%;
+    right: -8%;
+
+    top: 42%;
+
+    height: 1px;
+
+    background:
+        rgba(0,0,0,.34);
+
+    filter:
+        blur(2px);
+
+    opacity: .5;
+}
+
+
+/* ==========================================================
+   11. NOSE
+========================================================== */
+
+.mrSmileNose {
+
+    position: absolute;
+
+    left: 50%;
+    top: 43%;
+
+    width: 70px;
+    height: 100px;
+
+    transform:
+        translateX(-50%);
+
+    opacity: 0;
+
+    transition:
+        opacity 1.8s ease;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 90%,
+            rgba(180,187,184,.10),
+            transparent 68%
+        );
+}
+
+
+#mrSmileManifestation.mrSmileFaceVisible
+.mrSmileNose {
+
+    opacity: .45;
+}
+
+
+/* ==========================================================
+   12. MOUTH
+========================================================== */
+
+.mrSmileMouth {
+
+    position: absolute;
+
+    left: 50%;
+    bottom: 25%;
+
+    width:
+        clamp(150px, 20vw, 250px);
+
+    height:
+        clamp(30px, 4vw, 52px);
+
+    transform:
+        translateX(-50%)
+        scaleX(.72);
+
+    opacity: 0;
+
+    transition:
+        opacity 1.8s ease,
+        transform 2s cubic-bezier(.2,.8,.2,1);
+}
+
+
+#mrSmileManifestation.mrSmileSmileVisible
+.mrSmileMouth {
+
+    opacity: .94;
+
+    transform:
+        translateX(-50%)
+        scaleX(1);
+}
+
+
+/* ==========================================================
+   13. MOUTH LINE
+========================================================== */
+
+.mrSmileMouthLine {
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    top: 50%;
+
+    height: 2px;
+
+    transform:
+        translateY(-50%);
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(15,15,15,.85) 12%,
+            rgba(5,5,5,1) 50%,
+            rgba(15,15,15,.85) 88%,
+            transparent
+        );
+
+    box-shadow:
+        0 0 5px
+        rgba(0,0,0,.55);
+}
+
+
+/* ==========================================================
+   14. TEETH
+========================================================== */
+
+.mrSmileTeeth {
+
+    position: absolute;
+
+    left: 10%;
+    right: 10%;
+
+    top: 50%;
+
+    height: 17px;
+
+    transform:
+        translateY(-50%);
+
+    display: flex;
+
+    justify-content:
+        center;
+
+    gap: 2px;
+
+    opacity: 0;
+
+    transition:
+        opacity 1.2s ease;
+}
+
+
+.mrSmileSmileVisible
+.mrSmileTeeth {
+
+    opacity: .7;
+}
+
+
+.mrSmileTeeth span {
+
+    display: block;
+
+    width: 10px;
+    height: 14px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(224,226,220,.82),
+            rgba(145,149,145,.48)
+        );
+
+    border-radius:
+        1px 1px 3px 3px;
+
+    box-shadow:
+        0 0 3px
+        rgba(255,255,255,.08);
+}
+
+
+/* ==========================================================
+   15. FACE SCAN
+========================================================== */
+
+.mrSmileFaceScan {
+
+    position: absolute;
+
+    left: 15%;
+    right: 15%;
+
+    top: 5%;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(210,225,220,.12),
+            transparent
+        );
+
+    opacity: 0;
+
+    animation:
+        mrSmileFaceScan 5s
+        ease-in-out infinite;
+}
+
+
+#mrSmileManifestation.mrSmileFaceVisible
+.mrSmileFaceScan {
+
+    opacity: .35;
+}
+
+
+@keyframes mrSmileFaceScan {
+
+    0% {
+        transform:
+            translateY(0);
     }
 
+    50% {
+        transform:
+            translateY(400px);
+    }
+
+    100% {
+        transform:
+            translateY(0);
+    }
 }
+
+
+/* ==========================================================
+   16. EYES CLOSED
+========================================================== */
+
+#mrSmileManifestation.mrSmileEyesClosed
+.mrSmileEye {
+
+    transform:
+        scaleY(.08);
+
+    opacity: .5;
+}
+
+
+/* ==========================================================
+   17. LOOKING AT PLAYER
+========================================================== */
+
+#mrSmileManifestation.mrSmileLookingAtPlayer
+.mrSmileEyeIris {
+
+    transition:
+        transform .7s
+        cubic-bezier(.2,.8,.2,1);
+}
+
+
+/* ==========================================================
+   18. MANIFESTATION LEAVING
+========================================================== */
+
+#mrSmileManifestation.mrSmileManifestationLeaving {
+
+    opacity: 0;
+}
+
+
+#mrSmileManifestation.mrSmileManifestationLeaving
+.mrSmileFace {
+
+    opacity: 0;
+
+    transform:
+        translate(-50%, -48%)
+        scale(1.015);
+
+    filter:
+        blur(2px)
+        brightness(.4);
+}
+
+
+#mrSmileManifestation.mrSmileManifestationGone {
+
+    display: none;
+}
+
+
+/* ==========================================================
+   19. SYSTEM AUTHORIZATION
+========================================================== */
+
+.mrSmileAuthorization {
+
+    position: fixed;
+
+    left: 50%;
+    top: 50%;
+
+    width:
+        min(440px, 90vw);
+
+    min-height: 300px;
+
+    transform:
+        translate(-50%, -50%)
+        scale(.97);
+
+    opacity: 0;
+
+    z-index: 2147482000;
+
+    display: flex;
+
+    flex-direction: column;
+
+    background:
+        linear-gradient(
+            180deg,
+            #101a26,
+            #09111a
+        );
+
+    border:
+        1px solid
+        #29445b;
+
+    border-radius: 8px;
+
+    box-shadow:
+        0 20px 70px
+        rgba(0,0,0,.65),
+
+        0 0 30px
+        rgba(0,170,200,.08);
+
+    color: #c8d7df;
+
+    font-family:
+        "Consolas",
+        "Courier New",
+        monospace;
+
+    overflow: hidden;
+
+    transition:
+        opacity .6s ease,
+        transform .6s ease;
+}
+
+
+body.mrSmileAuthPhase
+.mrSmileAuthorization {
+
+    opacity: 1;
+
+    transform:
+        translate(-50%, -50%)
+        scale(1);
+}
+
+
+/* ==========================================================
+   AUTH HEADER
+========================================================== */
+
+.mrSmileAuthorizationHeader {
+
+    height: 46px;
+
+    flex: 0 0 46px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding:
+        0 15px;
+
+    background:
+        linear-gradient(
+            #152433,
+            #0d1823
+        );
+
+    border-bottom:
+        1px solid
+        #263d51;
+
+    font-size: 12px;
+
+    letter-spacing: .08em;
+}
+
+
+.mrSmileAuthorizationHeader::before {
+
+    content: "";
+
+    width: 8px;
+    height: 8px;
+
+    margin-right: 9px;
+
+    border-radius: 50%;
+
+    background: #35c7a0;
+
+    box-shadow:
+        0 0 8px
+        rgba(53,199,160,.45);
+}
+
+
+/* ==========================================================
+   AUTH CONTENT
+========================================================== */
+
+.mrSmileAuthorizationBody {
+
+    padding: 30px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 16px;
+}
+
+
+.mrSmileAuthorizationLogo {
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    letter-spacing: .15em;
+
+    color: #e0edf0;
+}
+
+
+.mrSmileAuthorizationMeta {
+
+    font-size: 9px;
+
+    color: #657887;
+
+    letter-spacing: .1em;
+}
+
+
+.mrSmileAuthorizationField {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+
+.mrSmileAuthorizationField label {
+
+    font-size: 9px;
+
+    color: #687d8d;
+
+    letter-spacing: .1em;
+}
+
+
+.mrSmileAuthorizationField input {
+
+    height: 36px;
+
+    padding:
+        0 10px;
+
+    background:
+        #071019;
+
+    border:
+        1px solid
+        #243c4e;
+
+    color: #d8e6ea;
+
+    outline: none;
+
+    font:
+        12px
+        "Consolas",
+        monospace;
+}
+
+
+.mrSmileAuthorizationStatus {
+
+    min-height: 18px;
+
+    font-size: 10px;
+
+    color: #5cc8b0;
+
+    letter-spacing: .08em;
+}
+
+
+.mrSmileAuthorizationWarning {
+
+    padding:
+        9px 10px;
+
+    border:
+        1px solid
+        rgba(210,160,60,.22);
+
+    background:
+        rgba(120,80,20,.08);
+
+    color:
+        #aa986c;
+
+    font-size: 9px;
+
+    letter-spacing: .06em;
+}
+
+
+/* ==========================================================
+   20. SYSTEM TAKEN
+========================================================== */
+
+body.mrSmileSystemTaken
+#desktop {
+
+    filter:
+        brightness(.78)
+        saturate(.72);
+}
+
+
+body.mrSmileSystemTaken
+#topBar,
+body.mrSmileSystemTaken
+#sidebar {
+
+    transition:
+        opacity .5s ease,
+        filter .5s ease;
+}
+
+
+/* ==========================================================
+   21. OMEGA COLLAPSE
+========================================================== */
+
+body.mrSmileSystemDisappearing
+#notificationArea,
+body.mrSmileSystemDisappearing
+#icons,
+body.mrSmileSystemDisappearing
+.desktopWatermark,
+body.mrSmileSystemDisappearing
+#sidebar,
+body.mrSmileSystemDisappearing
+#topBar,
+body.mrSmileSystemDisappearing
+#desktopBackground {
+
+    opacity: 0;
+
+    filter:
+        blur(1px);
+
+    pointer-events: none;
+
+    transition:
+        opacity .55s ease,
+        filter .55s ease;
+}
+
+
+body.mrSmileSystemDisappearing
+#workspace {
+
+    opacity: 0;
+
+    filter:
+        blur(2px);
+
+    transition:
+        opacity .7s ease,
+        filter .7s ease;
+}
+
+
+body.mrSmileSystemDisappearing
+.window:not(#mrSmileAuthorization) {
+
+    opacity: 0;
+
+    transform:
+        scale(.985);
+
+    filter:
+        blur(1px);
+
+    transition:
+        opacity .55s ease,
+        transform .55s ease,
+        filter .55s ease;
+}
+
+
+/* ==========================================================
+   22. BLACKOUT
+========================================================== */
+
+body.mrSmileSystemDarkness {
+
+    background:
+        #000 !important;
+}
+
+
+body.mrSmileSystemDarkness
+#desktop {
+
+    opacity: 0;
+
+    background: #000 !important;
+}
+
+
+body.mrSmileSystemDarkness
+#mrSmileAuthorization {
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+/* ==========================================================
+   23. DIAGNOSTICS
+========================================================== */
+
+.mrSmileDiagnostics {
+
+    position: fixed;
+
+    left: 50%;
+    top: 50%;
+
+    width:
+        min(560px, 82vw);
+
+    transform:
+        translate(-50%, -50%);
+
+    z-index: 2147482500;
+
+    color:
+        rgba(184,204,205,.72);
+
+    font:
+        11px/1.7
+        "Consolas",
+        "Courier New",
+        monospace;
+
+    letter-spacing:
+        .045em;
+
+    white-space:
+        pre-wrap;
+
+    text-align:
+        left;
+
+    text-shadow:
+        0 0 8px
+        rgba(120,200,190,.08);
+
+    opacity: 0;
+
+    transition:
+        opacity .8s ease;
+}
+
+
+body.mrSmileSystemDarkness
+.mrSmileDiagnostics {
+
+    opacity: 1;
+}
+
+
+.mrSmileDiagnosticsLine {
+
+    min-height: 18px;
+}
+
+
+.mrSmileDiagnosticsLine.system {
+
+    color:
+        rgba(200,218,218,.78);
+}
+
+
+.mrSmileDiagnosticsLine.warning {
+
+    color:
+        rgba(194,171,110,.75);
+}
+
+
+.mrSmileDiagnosticsLine.error {
+
+    color:
+        rgba(190,125,125,.72);
+}
+
+
+/* ==========================================================
+   24. DIAGNOSTIC CURSOR
+========================================================== */
+
+.mrSmileDiagnostics::after {
+
+    content: "_";
+
+    display: inline-block;
+
+    margin-left: 3px;
+
+    opacity: .65;
+
+    animation:
+        diagnosticCursor 1s
+        steps(1)
+        infinite;
+}
+
+
+@keyframes diagnosticCursor {
+
+    0%,
+    50% {
+        opacity: .65;
+    }
+
+    51%,
+    100% {
+        opacity: 0;
+    }
+}
+
+
+/* ==========================================================
+   25. CURSOR VISUAL
+========================================================== */
+
+.mrSmileControlledCursor {
+
+    position: fixed;
+
+    left: 50%;
+    top: 50%;
+
+    width: 26px;
+    height: 32px;
+
+    z-index: 2147483000;
+
+    pointer-events: none;
+
+    transform:
+        translate(-1px, -1px);
+
+    filter:
+        drop-shadow(
+            0 0 5px
+            rgba(210,235,230,.15)
+        );
+
+    transition:
+        filter .15s ease;
+}
+
+
+.mrCursorArrow {
+
+    position: absolute;
+
+    left: 1px;
+    top: 1px;
+
+    width: 0;
+    height: 0;
+
+    border-top:
+        18px solid
+        rgba(235,242,240,.94);
+
+    border-right:
+        8px solid
+        transparent;
+
+    border-bottom:
+        0 solid
+        transparent;
+
+    border-left:
+        8px solid
+        transparent;
+
+    transform:
+        rotate(-8deg)
+        scaleX(.7);
+
+    transform-origin:
+        top left;
+
+    filter:
+        drop-shadow(
+            0 0 1px
+            #000
+        );
+}
+
+
+.mrCursorCore {
+
+    position: absolute;
+
+    left: 5px;
+    top: 5px;
+
+    width: 4px;
+    height: 4px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.8);
+
+    opacity: .3;
+}
+
+
+/* ==========================================================
+   26. CURSOR OBSERVED
+========================================================== */
+
+body.mrSmileCursorObserved
+.mrSmileControlledCursor {
+
+    opacity: .85;
+
+    filter:
+        drop-shadow(
+            0 0 8px
+            rgba(200,225,220,.3)
+        );
+}
+
+
+/* ==========================================================
+   27. CURSOR CONTROLLED
+========================================================== */
+
+body.mrSmileCursorControlled
+.mrSmileControlledCursor {
+
+    opacity: 1;
+
+    filter:
+        drop-shadow(
+            0 0 10px
+            rgba(215,235,230,.3)
+        );
+}
+
+
+/*
+ * Настоящий cursor исчезает только во время
+ * контролируемой фазы.
+ */
+
+body.mrSmileCursorControlled {
+
+    cursor: none !important;
+}
+
+
+body.mrSmileCursorControlled * {
+
+    cursor: none !important;
+}
+
+
+/* ==========================================================
+   28. CURSOR CLICK
+========================================================== */
+
+.mrSmileControlledCursor.mrSmileCursorClick {
+
+    filter:
+        brightness(1.25)
+        drop-shadow(
+            0 0 14px
+            rgba(220,240,235,.45)
+        );
+}
+
+
+.mrSmileControlledCursor.mrSmileCursorClick
+.mrCursorCore {
+
+    opacity: 1;
+
+    transform:
+        scale(1.8);
+}
+
+
+/* ==========================================================
+   29. CURSOR LOST
+========================================================== */
+
+.mrSmileControlledCursor.mrSmileCursorLost {
+
+    opacity: 0;
+
+    filter:
+        blur(2px);
+
+    transform:
+        translate(-1px, -1px)
+        scale(.7);
+
+    transition:
+        opacity .7s ease,
+        filter .7s ease,
+        transform .7s ease;
+}
+
+
+/* ==========================================================
+   30. SUBTLE GEOMETRY DISTORTION
+========================================================== */
+
+/*
+ * Не ломаем весь экран.
+ *
+ * Только небольшое ощущение,
+ * что система на мгновение потеряла
+ * правильную геометрию.
+ */
+
+body.mrSmileGeometryDistortion
+#workspace {
+
+    transform:
+        translate(
+            .8px,
+            -.5px
+        )
+        scaleX(1.002);
+
+    filter:
+        contrast(1.015);
+
+    transition:
+        transform .18s ease,
+        filter .18s ease;
+}
+
+
+body.mrSmileGeometryDistortion
+#topBar {
+
+    transform:
+        translateX(-.5px);
+
+    transition:
+        transform .18s ease;
+}
+
+
+body.mrSmileGeometryDistortionSoft
+#workspace {
+
+    transform:
+        translate(
+            -.35px,
+            .3px
+        )
+        scaleX(.999);
+
+    filter:
+        contrast(.99);
+}
+
+
+/* ==========================================================
+   31. INTRUSION WINDOW
+========================================================== */
+
+.mrSmileIntrusionWindow {
+
+    position: absolute !important;
+
+    width:
+        min(560px, 78vw) !important;
+
+    height:
+        min(340px, 55vh) !important;
+
+    min-width:
+        0 !important;
+
+    min-height:
+        0 !important;
+
+    z-index:
+        2147482800 !important;
+
+    opacity: 0;
+
+    transform:
+        scale(.985);
+
+    transition:
+        opacity .55s ease,
+        transform .55s ease;
+}
+
+
+.mrSmileIntrusionWindow.mrSmileIntrusionVisible {
+
+    opacity: 1;
+
+    transform:
+        scale(1);
+}
+
+
+/* ==========================================================
+   32. INTRUSION CONTENT
+========================================================== */
+
+.mrSmileIntrusionContent {
+
+    height: 100%;
+
+    padding:
+        22px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    gap: 11px;
+
+    background:
+        #0a121b;
+
+    color:
+        #aebfc7;
+
+    font:
+        11px/1.6
+        "Consolas",
+        monospace;
+}
+
+
+.mrSmileIntrusionContent .systemLine {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    border-bottom:
+        1px solid
+        rgba(100,130,145,.08);
+
+    padding-bottom:
+        5px;
+}
+
+
+.mrSmileIntrusionContent .systemLabel {
+
+    color:
+        #617584;
+}
+
+
+.mrSmileIntrusionContent .systemValue {
+
+    color:
+        #b6c7cc;
+}
+
+
+.mrSmileIntrusionContent .unknown {
+
+    color:
+        #a88d6d;
+}
+
+
+/* ==========================================================
+   33. RELEASE
+========================================================== */
+
+body.mrSmileReleasePhase
+.mrSmileFace {
+
+    opacity: 0;
+
+    transform:
+        translate(-50%, -49%)
+        scale(.99);
+
+    filter:
+        blur(1px)
+        brightness(.55);
+
+    transition:
+        opacity .9s ease,
+        transform .9s ease,
+        filter .9s ease;
+}
+
+
+body.mrSmileReleasePhase
+.mrSmileDiagnostics {
+
+    opacity: 0;
+
+    transition:
+        opacity .5s ease;
+}
+
+
+/* ==========================================================
+   34. OBSERVER TRACE
+========================================================== */
+
+.mrSmilePresenceTrace {
+
+    position: fixed;
+
+    right: 18px;
+    bottom: 16px;
+
+    z-index: 2147481000;
+
+    display: flex;
+
+    gap: 8px;
+
+    font:
+        8px
+        "Consolas",
+        monospace;
+
+    letter-spacing:
+        .12em;
+
+    color:
+        rgba(140,164,170,.38);
+
+    opacity: 0;
+
+    transform:
+        translateY(5px);
+
+    transition:
+        opacity .5s ease,
+        transform .5s ease;
+}
+
+
+.mrSmilePresenceTrace.visible {
+
+    opacity: .7;
+
+    transform:
+        translateY(0);
+}
+
+
+.mrSmilePresenceTrace.fade {
+
+    opacity: 0;
+
+    transform:
+        translateY(-4px);
+}
+
+
+/* ==========================================================
+   35. SYSTEM ACTIVITY
+========================================================== */
+
+.mrSmileSystemActivity {
+
+    position: fixed;
+
+    left: 50%;
+    bottom: 7vh;
+
+    width:
+        min(360px, 80vw);
+
+    transform:
+        translateX(-50%);
+
+    z-index:
+        2147482997;
+
+    pointer-events: none;
+
+    user-select: none;
+
+    font:
+        9px/1.6
+        "Consolas",
+        "Courier New",
+        monospace;
+
+    color:
+        rgba(150,174,178,.42);
+
+    opacity: 0;
+
+    transition:
+        opacity .6s ease;
+}
+
+
+body.mrSmileInterfaceCollapse
+.mrSmileSystemActivity {
+
+    opacity: 1;
+}
+
+
+.mrSmileActivityText {
+
+    margin-bottom: 7px;
+
+    letter-spacing:
+        .07em;
+}
+
+
+.activityLabel {
+
+    color:
+        rgba(110,135,142,.45);
+}
+
+
+.activityValue {
+
+    color:
+        rgba(170,192,194,.5);
+}
+
+
+.mrSmileActivityLine {
+
+    min-height: 14px;
+}
+
+
+.mrSmileActivityLine.activityPulse {
+
+    animation:
+        activityPulse 1.5s
+        ease-in-out infinite;
+}
+
+
+.mrSmileActivityLine.activitySilence {
+
+    opacity: .15;
+}
+
+
+@keyframes activityPulse {
+
+    0%,
+    100% {
+        opacity: .35;
+    }
+
+    50% {
+        opacity: .85;
+    }
+}
+
+
+/* ==========================================================
+   36. FIRST CONTACT BODY
+========================================================== */
+
+body.mrSmileFirstContact {
+
+    overflow: hidden;
+}
+
+
+/*
+ * ВАЖНО:
+ *
+ * Здесь НЕТ:
+ *
+ * body > * {
+ *     pointer-events:none;
+ * }
+ *
+ * Пользователь должен иметь возможность
+ * двигать курсор и пытаться взаимодействовать.
+ */
+
+
+/* ==========================================================
+   37. FIRST CONTACT FACE PRIORITY
+========================================================== */
+
+body.mrSmileFirstContact
+#mrSmileManifestation {
+
+    z-index: 2147481500;
+}
+
+
+/* ==========================================================
+   38. CURSOR NOTICE
+========================================================== */
+
+#mrSmileManifestation.mrSmileCursorNoticed
+.mrSmileEyeIris {
+
+    transition:
+        transform .8s
+        cubic-bezier(.18,.8,.18,1);
+}
+
+
+#mrSmileManifestation.mrSmileCursorNoticed
+.mrSmileFace {
+
+    filter:
+        contrast(1.02)
+        brightness(.86);
+}
+
+
+/*
+ * Короткое ощущение:
+ *
+ * "Он понял, что я двигаю мышью."
+ */
+
+#mrSmileManifestation.mrSmileCursorNoticed
+.mrSmileEye {
+
+    box-shadow:
+        0 0 18px
+        rgba(220,230,225,.11);
+}
+
+
+/* ==========================================================
+   39. RESPONSIVE
+========================================================== */
+
+@media (max-width: 900px) {
+
+    #mrSmileManifestation
+    .mrSmileFace {
+
+        width:
+            82vw;
+
+        height:
+            58vh;
+    }
+
+
+    #mrSmileManifestation
+    .mrSmileEyeLeft {
+
+        left: 19%;
+    }
+
+
+    #mrSmileManifestation
+    .mrSmileEyeRight {
+
+        right: 19%;
+    }
+
+
+    .mrSmileMouth {
+
+        bottom: 24%;
+    }
+
+
+    .mrSmileAuthorization {
+
+        width:
+            min(430px, 88vw);
+    }
+
+
+    .mrSmileAuthorizationBody {
+
+        padding: 22px;
+    }
+
+
+    .mrSmileDiagnostics {
+
+        width: 84vw;
+
+        font-size: 9px;
+    }
+}
+
+
+/* ==========================================================
+   40. SMALL MOBILE
+========================================================== */
+
+@media (max-width: 600px) {
+
+    #mrSmile {
+
+        right: 18px;
+        bottom: 18px;
+
+        width: 125px;
+    }
+
+
+    #mrSmileManifestation
+    .mrSmileFace {
+
+        width: 92vw;
+
+        height: 52vh;
+    }
+
+
+    #mrSmileManifestation
+    .mrSmileEye {
+
+        top: 34%;
+
+        width: 58px;
+        height: 22px;
+    }
+
+
+    #mrSmileManifestation
+    .mrSmileEyeLeft {
+
+        left: 17%;
+    }
+
+
+    #mrSmileManifestation
+    .mrSmileEyeRight {
+
+        right: 17%;
+    }
+
+
+    .mrSmileMouth {
+
+        width: 155px;
+    }
+
+
+    .mrSmileTeeth span {
+
+        width: 7px;
+        height: 11px;
+    }
+
+
+    .mrSmileAuthorization {
+
+        width: 91vw;
+
+        min-height: 280px;
+    }
+
+
+    .mrSmileAuthorizationBody {
+
+        padding: 18px;
+    }
+
+
+    .mrSmileDiagnostics {
+
+        width: 88vw;
+
+        font-size: 8px;
+
+        line-height: 1.6;
+    }
+
+
+    .mrSmileSystemActivity {
+
+        width: 82vw;
+
+        bottom: 5vh;
+
+        font-size: 8px;
+    }
+}
+
+
+/* ==========================================================
+   41. REDUCED MOTION
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    #mrSmileManifestation *,
+    #mrSmile,
+    .mrSmileControlledCursor,
+    .mrSmileDiagnostics,
+    .mrSmileAuthorization {
+
+        animation-duration:
+            .01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            .01ms !important;
+    }
+}
+
+
+/* ==========================================================
+   END OF MR.SMILE SYSTEM
+========================================================== */
