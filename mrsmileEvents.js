@@ -178,6 +178,51 @@ export function initMrSmileEvents() {
    
     initAmbientEvents();
 
+   let ambientEventRunning = false;
+let lastAmbientEventTime = 0;
+
+const AMBIENT_COOLDOWN = 45000;
+
+async function runAmbientEvent(eventFunction) {
+
+    if (firstContactRunning) return;
+
+    // Ambient MR.SMILE начинает работать только после First Contact
+    if (localStorage.getItem("mrsmile_first_contact") !== "1") {
+        return;
+    }
+
+    // Не допускаем два события одновременно
+    if (ambientEventRunning) return;
+
+    const now = Date.now();
+
+    // Минимум 45 секунд между событиями
+    if (now - lastAmbientEventTime < AMBIENT_COOLDOWN) {
+        return;
+    }
+
+    ambientEventRunning = true;
+    lastAmbientEventTime = now;
+
+    try {
+
+        await eventFunction();
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE] Ambient event failed:",
+            error
+        );
+
+    } finally {
+
+        ambientEventRunning = false;
+
+    }
+}
+
    
     function initAmbientEvents() {
 
@@ -252,6 +297,27 @@ async function ambientNightEvent() {
     await sleep(1000);
 
     await systemMessage("BACKGROUND MONITOR: IDLE");
+}
+   async function ambientGlitchEvent() {
+
+    const chance = Math.random();
+
+    if (chance < 0.65) {
+
+        document.body.classList.add("mrSmileAmbientGlitch");
+
+        await sleep(randomBetween(180, 400));
+
+        document.body.classList.remove("mrSmileAmbientGlitch");
+
+        return;
+    }
+
+    await systemMessage("INPUT CHANNEL: RESPONSE DELAYED");
+
+    await sleep(500);
+
+    await systemMessage("INPUT CHANNEL: NORMAL");
 }
     /* ------------------------------------------------------
        FIRST CONTACT
