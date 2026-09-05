@@ -1,245 +1,312 @@
+```css
 /* ==========================================================
    OMEGA CONSOLE
 ========================================================== */
 
-#consoleWindow{
+#consoleWindow {
+    display: flex;
+    flex-direction: column;
 
-    display:flex;
-
-    flex-direction:column;
-
-    height:100%;
-
-    background:#05090d;
-
+    background: #05090d;
 }
 
-/* ========================================================== */
+/* ==========================================================
+   HEADER
+========================================================== */
 
-#consoleHeader{
+#consoleHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-    display:flex;
+    padding: 12px 18px;
 
-    justify-content:space-between;
+    background: #101821;
+    border-bottom: 1px solid #22364a;
 
-    align-items:center;
-
-    padding:12px 18px;
-
-    background:#101821;
-
-    border-bottom:1px solid #22364a;
-
+    flex: 0 0 auto;
 }
 
-#consoleTitle{
+#consoleTitle {
+    color: #7fdfff;
 
-    color:#7fdfff;
-
-    font-size:15px;
-
-    font-weight:bold;
-
-    letter-spacing:1px;
-
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 1px;
 }
 
-/* ========================================================== */
+/* ==========================================================
+   TOOLBAR
+========================================================== */
 
-#consoleToolbar{
-
-    display:flex;
-
-    gap:10px;
-
+#consoleToolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.consoleButton{
+.consoleButton {
+    box-sizing: border-box;
 
-    padding:6px 12px;
+    padding: 6px 12px;
 
-    background:#173149;
+    background: #173149;
+    border: 1px solid #29506d;
+    border-radius: 4px;
 
-    border:1px solid #29506d;
+    color: #dff6ff;
 
-    color:#dff6ff;
+    font-family: inherit;
+    font-size: 13px;
 
-    border-radius:4px;
+    cursor: pointer;
 
-    cursor:pointer;
-
-    transition:.2s;
-
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
 }
 
-.consoleButton:hover{
-
-    background:#255178;
-
+.consoleButton:hover {
+    background: #255178;
 }
 
-/* ========================================================== */
+.consoleButton:focus-visible {
+    outline: none;
 
-#consoleOutput{
+    border-color: #4fd8ff;
 
-    flex:1;
-
-    overflow-y:auto;
-
-    padding:20px;
-
-    font-family:Consolas, monospace;
-
-    font-size:14px;
-
-    line-height:1.7;
-
-    color:#78ff8d;
-
-    background:#030608;
-
+    box-shadow:
+        0 0 8px rgba(79, 216, 255, .2);
 }
 
-/* ========================================================== */
+/* ==========================================================
+   OUTPUT
+========================================================== */
 
-.consoleLine{
+#consoleOutput {
+    flex: 1 1 auto;
+    min-height: 0;
+    min-width: 0;
 
-    margin-bottom:8px;
+    overflow-y: auto;
+    overflow-x: hidden;
 
-    white-space:pre-wrap;
+    padding: 20px;
 
-    word-break:break-word;
+    background: #030608;
 
+    color: #78ff8d;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size: 14px;
+    line-height: 1.7;
+
+    box-sizing: border-box;
 }
 
-.consoleSystem{
+/* ==========================================================
+   CONSOLE LINES
+========================================================== */
 
-    color:#7fdfff;
+.consoleLine {
+    margin-bottom: 8px;
 
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
 
-.consoleWarning{
-
-    color:#ffd54a;
-
+.consoleSystem {
+    color: #7fdfff;
 }
 
-.consoleError{
-
-    color:#ff6666;
-
+.consoleWarning {
+    color: #ffd54a;
 }
 
-.consoleSuccess{
-
-    color:#66ff99;
-
+.consoleError {
+    color: #ff6666;
 }
 
-/* ========================================================== */
-
-#consoleInputArea{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    padding:14px 18px;
-
-    background:#101821;
-
-    border-top:1px solid #22364a;
-
+.consoleSuccess {
+    color: #66ff99;
 }
 
-.consolePrompt{
+/* ==========================================================
+   INPUT AREA
+========================================================== */
 
-    color:#4fd8ff;
+#consoleInputArea {
+    display: flex;
+    align-items: center;
 
-    font-family:Consolas, monospace;
+    gap: 10px;
 
-    font-size:15px;
+    padding: 14px 18px;
 
+    background: #101821;
+    border-top: 1px solid #22364a;
+
+    flex: 0 0 auto;
+    box-sizing: border-box;
 }
 
-#consoleInput{
+/* ==========================================================
+   PROMPT
+========================================================== */
 
-    flex:1;
+.consolePrompt {
+    flex: 0 0 auto;
 
-    background:#081018;
+    color: #4fd8ff;
 
-    color:#dff6ff;
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
 
-    border:1px solid #294760;
+    font-size: 15px;
 
-    padding:10px 12px;
-
-    font-family:Consolas, monospace;
-
-    font-size:14px;
-
+    white-space: nowrap;
 }
 
-#consoleInput:focus{
+/* ==========================================================
+   INPUT
+========================================================== */
 
-    border-color:#4fd8ff;
+#consoleInput {
+    flex: 1 1 auto;
+    min-width: 0;
 
-    box-shadow:0 0 10px rgba(79,216,255,.2);
+    box-sizing: border-box;
 
+    padding: 10px 12px;
+
+    background: #081018;
+
+    border: 1px solid #294760;
+
+    color: #dff6ff;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
 }
 
-/* ========================================================== */
+#consoleInput:focus {
+    border-color: #4fd8ff;
 
-.consoleCursor{
-
-    display:inline-block;
-
-    width:8px;
-
-    height:16px;
-
-    background:#66ff99;
-
-    animation:consoleBlink 1s infinite;
-
+    box-shadow:
+        0 0 10px rgba(79, 216, 255, .2);
 }
 
-@keyframes consoleBlink{
+/* ==========================================================
+   CURSOR
+========================================================== */
 
-    0%,45%{
+.consoleCursor {
+    display: inline-block;
 
-        opacity:1;
+    width: 8px;
+    height: 16px;
 
+    margin-left: 2px;
+
+    vertical-align: -2px;
+
+    background: #66ff99;
+
+    animation: consoleBlink 1s infinite;
+}
+
+@keyframes consoleBlink {
+    0%,
+    45% {
+        opacity: 1;
     }
 
-    50%,100%{
+    50%,
+    100% {
+        opacity: 0;
+    }
+}
 
-        opacity:0;
+/* ==========================================================
+   SCROLLBAR
+========================================================== */
 
+#consoleOutput::-webkit-scrollbar {
+    width: 8px;
+}
+
+#consoleOutput::-webkit-scrollbar-track {
+    background: #05090d;
+}
+
+#consoleOutput::-webkit-scrollbar-thumb {
+    background: #315774;
+    border-radius: 20px;
+}
+
+#consoleOutput::-webkit-scrollbar-thumb:hover {
+    background: #4fd8ff;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 700px) {
+
+    #consoleHeader {
+        padding: 10px 12px;
     }
 
+    #consoleTitle {
+        font-size: 13px;
+    }
+
+    #consoleToolbar {
+        gap: 6px;
+    }
+
+    .consoleButton {
+        padding: 5px 8px;
+        font-size: 12px;
+    }
+
+    #consoleOutput {
+        padding: 14px;
+
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    #consoleInputArea {
+        padding: 10px 12px;
+        gap: 7px;
+    }
+
+    .consolePrompt {
+        font-size: 13px;
+    }
+
+    #consoleInput {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
 }
-
-/* ========================================================== */
-
-#consoleOutput::-webkit-scrollbar{
-
-    width:8px;
-
-}
-
-#consoleOutput::-webkit-scrollbar-thumb{
-
-    background:#315774;
-
-    border-radius:20px;
-
-}
-
-#consoleOutput::-webkit-scrollbar-thumb:hover{
-
-    background:#4fd8ff;
-
-}
+```
