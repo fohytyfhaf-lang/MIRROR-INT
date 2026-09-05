@@ -1,5 +1,5 @@
-===================
-   SYSTEM INTRUSION
+/* ==========================================================
+   SYSTEM INTRUSION / ACTIVITY
 ========================================================== */
 
 .mrSmileSystemActivity {
@@ -8,7 +8,8 @@
     left: 50%;
     bottom: 7vh;
 
-    width: 360px;
+    width:
+        min(360px, 80vw);
 
     transform:
         translateX(-50%);
@@ -16,14 +17,18 @@
     z-index: 2147482997;
 
     pointer-events: none;
+    user-select: none;
 
-    font-family:
+    box-sizing: border-box;
+
+    font:
+        9px/1.6
+        "Consolas",
         "Courier New",
         monospace;
 
-    font-size: 9px;
-
-    letter-spacing: 1.5px;
+    letter-spacing:
+        1.5px;
 
     color:
         rgba(190,190,190,.28);
@@ -72,11 +77,16 @@
 .mrSmileActivityText {
     display: flex;
 
+    align-items: center;
     justify-content:
         space-between;
 
+    gap: 16px;
+
     margin:
         5px 0;
+
+    min-width: 0;
 
     white-space:
         nowrap;
@@ -84,32 +94,59 @@
 
 
 .activityLabel {
+    min-width: 0;
+
     color:
         rgba(170,170,170,.20);
+
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 
 .activityValue {
+    min-width: 0;
+
     color:
         rgba(190,190,190,.38);
+
+    text-align: right;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
+
+/*
+ * Activity lines are generated/controlled by JS.
+ *
+ * Keep them visually passive.
+ * They must not create another interaction layer.
+ */
 
 .mrSmileActivityLine {
-    position: absolute;
+    min-height: 14px;
 
-    left: 0;
-    top: 0;
+    box-sizing: border-box;
 
-    width: 0;
-    height: 100%;
+    overflow:
+        hidden;
 }
 
 
-body.mrSmileInterfaceCollapse .mrSmileSystemActivity {
+/* ==========================================================
+   INTERFACE COLLAPSE
+========================================================== */
+
+body.mrSmileInterfaceCollapse
+.mrSmileSystemActivity {
     opacity: 1;
 }
 
+
+/* ==========================================================
+   ACTIVITY PULSE
+========================================================== */
 
 .mrSmileSystemActivity.activityPulse {
     animation:
@@ -151,6 +188,10 @@ body.mrSmileInterfaceCollapse .mrSmileSystemActivity {
 }
 
 
+/* ==========================================================
+   ACTIVITY SILENCE
+========================================================== */
+
 .mrSmileSystemActivity.activitySilence {
     opacity: 0;
 
@@ -165,94 +206,40 @@ body.mrSmileInterfaceCollapse .mrSmileSystemActivity {
 
 @media (max-width: 700px) {
 
+    #mrSmileManifestation
     .mrSmileFace {
-        width: 88vw;
-        height: 48vh;
+        width:
+            88vw;
+
+        height:
+            48vh;
     }
 
 
+    #mrSmileManifestation
     .mrSmileEye {
-        width: 84px;
-        height: 60px;
+        width:
+            84px;
+
+        height:
+            60px;
     }
 
 
-    .eye-left {
-        width: 88px;
-        height: 61px;
+    #mrSmileManifestation
+    .mrSmileMouth {
+        width:
+            180px;
     }
 
 
-    .eye-right {
-        width: 76px;
-        height: 66px;
-    }
+    #mrSmileManifestation
+    .mrSmileTeeth span {
+        width:
+            8px;
 
-
-    .eyeCore {
-        width: 13px;
-        height: 13px;
-    }
-
-
-    .eyeCore::before {
-        width: 4px;
-        height: 4px;
-    }
-
-
-    #mrSmileManifestation.phase-5 .mrSmileMouth {
-        width: 180px;
-        height: 50px;
-    }
-
-
-    #mrSmileManifestation.phase-6 .mrSmileMouth {
-        width: 215px;
-        height: 58px;
-    }
-
-
-    #mrSmileManifestation.phase-7 .mrSmileMouth {
-        width: 245px;
-        height: 63px;
-    }
-
-
-    .mouthInner::before {
-        font-size: 13px;
-    }
-
-
-    .mouthInner::after {
-        font-size: 9px;
-    }
-
-
-    .mrSmileFragment {
-        font-size: 8px;
-    }
-
-
-    .fragment-left {
-        left: 3%;
-    }
-
-
-    .fragment-right {
-        right: 3%;
-    }
-
-
-    .code-1,
-    .code-3 {
-        left: 5%;
-    }
-
-
-    .code-2,
-    .code-4 {
-        right: 5%;
+        height:
+            12px;
     }
 
 
@@ -268,5 +255,73 @@ body.mrSmileInterfaceCollapse .mrSmileSystemActivity {
 
         letter-spacing:
             1px;
+    }
+
+
+    .mrSmileActivityText {
+        gap:
+            10px;
+    }
+}
+
+
+/* ==========================================================
+   SMALL MOBILE
+========================================================== */
+
+@media (max-width: 600px) {
+
+    #mrSmileManifestation
+    .mrSmileFace {
+        width:
+            92vw;
+
+        height:
+            52vh;
+    }
+
+
+    #mrSmileManifestation
+    .mrSmileEye {
+        width:
+            58px;
+
+        height:
+            22px;
+    }
+
+
+    #mrSmileManifestation
+    .mrSmileMouth {
+        width:
+            155px;
+    }
+
+
+    #mrSmileManifestation
+    .mrSmileTeeth span {
+        width:
+            7px;
+
+        height:
+            11px;
+    }
+
+
+    .mrSmileSystemActivity {
+        width:
+            82vw;
+
+        bottom:
+            5vh;
+
+        font-size:
+            8px;
+    }
+
+
+    .mrSmileActivityText {
+        gap:
+            8px;
     }
 }
