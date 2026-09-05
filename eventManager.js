@@ -69,20 +69,22 @@ export function trigger(eventName, data = null) {
 /* ===================================
             ONCE
 =================================== */
-
 export function once(eventName, callback) {
 
     function wrapper(data) {
 
-        callback(data);
-
-        off(eventName, wrapper);
+        try {
+            callback(data);
+        } finally {
+            off(eventName, wrapper);
+        }
 
     }
 
     on(eventName, wrapper);
 
 }
+
 
 /* ===================================
             CLEAR
