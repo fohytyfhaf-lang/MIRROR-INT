@@ -2,324 +2,674 @@
    RESEARCH DATABASE
 ========================================================== */
 
-#researchWindow{
+/* ==========================================================
+   MAIN WINDOW
+========================================================== */
 
-    display:flex;
-
-    height:100%;
-
-    overflow:hidden;
-
+#researchWindow {
+    display: flex;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
 }
 
-/* ========================================================== */
 
-#researchCategories{
+/* ==========================================================
+   CATEGORIES
+========================================================== */
 
-    width:240px;
+#researchCategories {
+    flex: 0 0 240px;
+    width: 240px;
+    min-width: 0;
+    min-height: 0;
 
-    background:#09131d;
+    box-sizing: border-box;
 
-    border-right:1px solid #22364a;
+    padding: 12px;
 
-    overflow-y:auto;
+    background: #09131d;
+    border-right: 1px solid #22364a;
 
-    padding:12px;
-
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
-/* ========================================================== */
 
-.researchCategory{
+/* ==========================================================
+   CATEGORY BUTTON
+========================================================== */
 
-    width:100%;
+.researchCategory {
+    display: block;
 
-    margin-bottom:8px;
+    width: 100%;
+    min-width: 0;
 
-    padding:12px 14px;
+    margin-bottom: 8px;
+    padding: 12px 14px;
 
-    border:none;
+    box-sizing: border-box;
 
-    border-radius:6px;
+    border: 1px solid transparent;
+    border-left: 4px solid transparent;
+    border-radius: 6px;
 
-    background:#122030;
+    background: #122030;
 
-    color:#d9ecff;
+    color: #d9ecff;
 
-    text-align:left;
+    text-align: left;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.35;
 
-    cursor:pointer;
+    cursor: pointer;
 
-    transition:.2s;
-
-    font-size:14px;
-
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
 }
 
-.researchCategory:hover{
-
-    background:#1d3348;
-
+.researchCategory:hover {
+    background: #1d3348;
 }
 
-.researchCategory.active{
-
-    background:#2b4d68;
-
-    border-left:4px solid #4fd8ff;
-
+.researchCategory.active {
+    background: #2b4d68;
+    border-left-color: #4fd8ff;
+    box-shadow: inset 0 0 12px rgba(79, 216, 255, .04);
 }
 
-/* ========================================================== */
-
-#researchFiles{
-
-    width:300px;
-
-    background:#0d1722;
-
-    border-right:1px solid #22364a;
-
-    overflow-y:auto;
-
+.researchCategory:focus-visible {
+    outline: 1px solid #4fd8ff;
+    outline-offset: -1px;
 }
 
-/* ========================================================== */
 
-.researchFile{
+/* ==========================================================
+   RESEARCH FILE LIST
+========================================================== */
 
-    padding:14px 18px;
+#researchFiles {
+    flex: 0 0 300px;
+    width: 300px;
+    min-width: 0;
+    min-height: 0;
 
-    cursor:pointer;
+    box-sizing: border-box;
 
-    border-bottom:1px solid rgba(255,255,255,.05);
+    background: #0d1722;
+    border-right: 1px solid #22364a;
 
-    transition:.2s;
-
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
-.researchFile:hover{
 
-    background:#17293b;
+/* ==========================================================
+   RESEARCH FILE
+========================================================== */
 
+.researchFile {
+    position: relative;
+
+    min-width: 0;
+
+    padding: 14px 18px;
+
+    box-sizing: border-box;
+
+    border-left: 4px solid transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, .05);
+
+    background: transparent;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease;
 }
 
-.researchFile.active{
-
-    background:#20394f;
-
-    border-left:4px solid #4fd8ff;
-
+.researchFile:hover {
+    background: #17293b;
 }
 
-.researchFile b{
-
-    color:white;
-
-    display:block;
-
-    margin-bottom:4px;
-
+.researchFile.active {
+    background: #20394f;
+    border-left-color: #4fd8ff;
 }
 
-.researchFile small{
-
-    color:#8bb8d7;
-
+.researchFile:focus-visible {
+    outline: 1px solid #4fd8ff;
+    outline-offset: -1px;
 }
 
-/* ========================================================== */
+.researchFile b {
+    display: block;
 
-#researchViewer{
+    min-width: 0;
 
-    flex:1;
+    margin-bottom: 4px;
 
-    display:flex;
+    color: #ffffff;
 
-    flex-direction:column;
+    font-size: 14px;
+    line-height: 1.35;
 
-    overflow:hidden;
-
+    overflow-wrap: anywhere;
 }
 
-/* ========================================================== */
+.researchFile small {
+    display: block;
 
-#viewerHeader{
+    min-width: 0;
 
-    display:flex;
+    color: #8bb8d7;
 
-    justify-content:space-between;
+    font-size: 12px;
+    line-height: 1.4;
 
-    align-items:center;
-
-    padding:18px 22px;
-
-    background:#111d2b;
-
-    border-bottom:1px solid #22364a;
-
+    overflow-wrap: anywhere;
 }
 
-#viewerTitle{
 
-    font-size:22px;
+/* ==========================================================
+   RESEARCH VIEWER
+========================================================== */
 
-    color:#e7f6ff;
+#researchViewer {
+    flex: 1 1 auto;
 
+    min-width: 0;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    background: #081018;
 }
 
-#viewerLevel{
 
-    padding:6px 12px;
+/* ==========================================================
+   VIEWER HEADER
+========================================================== */
 
-    border-radius:20px;
+#viewerHeader {
+    flex: 0 0 auto;
 
-    background:#204d35;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-    color:#6dffb2;
+    gap: 18px;
 
-    font-size:12px;
+    min-width: 0;
 
-    letter-spacing:1px;
+    padding: 18px 22px;
 
+    box-sizing: border-box;
+
+    background: #111d2b;
+    border-bottom: 1px solid #22364a;
 }
 
-/* ========================================================== */
+#viewerTitle {
+    flex: 1 1 auto;
 
-#viewerBody{
+    min-width: 0;
 
-    flex:1;
+    margin: 0;
 
-    overflow-y:auto;
+    color: #e7f6ff;
 
-    padding:25px;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.3;
 
+    overflow-wrap: anywhere;
 }
 
-/* ========================================================== */
+#viewerLevel {
+    flex: 0 0 auto;
 
-#viewerImage{
+    padding: 6px 12px;
 
-    margin-bottom:25px;
+    box-sizing: border-box;
 
+    border-radius: 20px;
+
+    background: #204d35;
+
+    color: #6dffb2;
+
+    font-size: 12px;
+    line-height: 1.2;
+    letter-spacing: 1px;
+
+    white-space: nowrap;
 }
 
-#viewerImage img{
 
-    width:100%;
+/* ==========================================================
+   VIEWER BODY
+========================================================== */
 
-    max-width:450px;
+#viewerBody {
+    flex: 1 1 auto;
 
-    border:1px solid #2b4258;
+    min-width: 0;
+    min-height: 0;
 
-    border-radius:8px;
+    padding: 25px;
 
-    box-shadow:0 0 25px rgba(0,0,0,.4);
+    box-sizing: border-box;
 
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    background: #081018;
 }
 
-/* ========================================================== */
 
-#viewerContent{
+/* ==========================================================
+   VIEWER IMAGE
+========================================================== */
 
-    white-space:pre-wrap;
+#viewerImage {
+    min-width: 0;
 
-    line-height:1.7;
-
-    color:#d2e7f8;
-
-    font-size:15px;
-
+    margin-bottom: 25px;
 }
 
-/* ========================================================== */
+#viewerImage img {
+    display: block;
 
-.clearanceLevel{
+    width: 100%;
+    max-width: 450px;
+    height: auto;
 
-    display:inline-block;
+    box-sizing: border-box;
 
-    margin-top:12px;
+    border: 1px solid #2b4258;
+    border-radius: 8px;
 
-    padding:6px 12px;
+    background: #05090d;
 
-    background:#501515;
+    box-shadow: 0 0 25px rgba(0, 0, 0, .4);
 
-    color:#ff9f9f;
-
-    border-radius:4px;
-
+    user-select: none;
 }
 
-/* ========================================================== */
 
-.statusAlive{
+/* ==========================================================
+   VIEWER CONTENT
+========================================================== */
 
-    color:#6effb6;
+#viewerContent {
+    min-width: 0;
 
+    color: #d2e7f8;
+
+    font-size: 15px;
+    line-height: 1.7;
+
+    white-space: pre-wrap;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
-.statusDead{
 
-    color:#ff5f5f;
+/* ==========================================================
+   CLEARANCE
+========================================================== */
 
+.clearanceLevel {
+    display: inline-block;
+
+    margin-top: 12px;
+    padding: 6px 12px;
+
+    box-sizing: border-box;
+
+    background: #501515;
+
+    border: 1px solid rgba(255, 95, 95, .1);
+    border-radius: 4px;
+
+    color: #ff9f9f;
+
+    font-size: 12px;
+    line-height: 1.3;
 }
 
-.statusUnknown{
 
-    color:#ffd966;
+/* ==========================================================
+   RESEARCH STATUS
+========================================================== */
 
+.statusAlive {
+    color: #6effb6;
 }
 
-/* ========================================================== */
-
-.researchSearch{
-
-    padding:15px;
-
-    border-bottom:1px solid #22364a;
-
+.statusDead {
+    color: #ff5f5f;
 }
 
-.researchSearch input{
-
-    width:100%;
-
-    padding:10px 12px;
-
-    background:#071018;
-
-    border:1px solid #22364a;
-
-    color:white;
-
-    border-radius:4px;
-
+.statusUnknown {
+    color: #ffd966;
 }
 
-.researchSearch input:focus{
 
-    border-color:#4fd8ff;
+/* ==========================================================
+   RESEARCH SEARCH
+========================================================== */
 
+.researchSearch {
+    flex: 0 0 auto;
+
+    padding: 15px;
+
+    box-sizing: border-box;
+
+    background: #0d1722;
+    border-bottom: 1px solid #22364a;
 }
 
-/* ========================================================== */
+.researchSearch input {
+    display: block;
 
-::-webkit-scrollbar{
+    width: 100%;
+    min-width: 0;
 
-    width:8px;
+    padding: 10px 12px;
 
+    box-sizing: border-box;
+
+    background: #071018;
+
+    border: 1px solid #22364a;
+    border-radius: 4px;
+
+    color: #dff6ff;
+
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.3;
+
+    outline: none;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
 }
 
-::-webkit-scrollbar-thumb{
-
-    background:#315774;
-
-    border-radius:20px;
-
+.researchSearch input::placeholder {
+    color: #68869d;
 }
 
-::-webkit-scrollbar-thumb:hover{
+.researchSearch input:focus {
+    border-color: #4fd8ff;
+    box-shadow: 0 0 8px rgba(79, 216, 255, .12);
+}
 
-    background:#4fd8ff;
 
+/* ==========================================================
+   RESEARCH SCROLLBARS
+========================================================== */
+
+#researchCategories::-webkit-scrollbar,
+#researchFiles::-webkit-scrollbar,
+#viewerBody::-webkit-scrollbar {
+    width: 8px;
+}
+
+#researchCategories::-webkit-scrollbar-track,
+#researchFiles::-webkit-scrollbar-track,
+#viewerBody::-webkit-scrollbar-track {
+    background: #071019;
+}
+
+#researchCategories::-webkit-scrollbar-thumb,
+#researchFiles::-webkit-scrollbar-thumb,
+#viewerBody::-webkit-scrollbar-thumb {
+    background: #315774;
+    border-radius: 20px;
+}
+
+#researchCategories::-webkit-scrollbar-thumb:hover,
+#researchFiles::-webkit-scrollbar-thumb:hover,
+#viewerBody::-webkit-scrollbar-thumb:hover {
+    background: #4fd8ff;
+}
+
+
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width: 900px) {
+
+    #researchCategories {
+        flex-basis: 200px;
+        width: 200px;
+        padding: 10px;
+    }
+
+    #researchFiles {
+        flex-basis: 240px;
+        width: 240px;
+    }
+
+    .researchCategory {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .researchFile {
+        padding: 12px 14px;
+    }
+
+    #viewerHeader {
+        padding: 15px 18px;
+    }
+
+    #viewerTitle {
+        font-size: 19px;
+    }
+
+    #viewerBody {
+        padding: 20px;
+    }
+
+    #viewerContent {
+        font-size: 14px;
+    }
+}
+
+
+/* ==========================================================
+   SMALL SCREENS
+========================================================== */
+
+@media (max-width: 700px) {
+
+    #researchWindow {
+        flex-direction: column;
+    }
+
+    #researchCategories {
+        flex: 0 0 58px;
+
+        width: 100%;
+        height: 58px;
+
+        padding: 8px;
+
+        border-right: none;
+        border-bottom: 1px solid #22364a;
+
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        display: flex;
+        gap: 8px;
+    }
+
+    .researchCategory {
+        flex: 0 0 auto;
+
+        width: auto;
+        min-width: 120px;
+
+        margin-bottom: 0;
+        padding: 9px 12px;
+
+        white-space: nowrap;
+    }
+
+    #researchFiles {
+        flex: 0 0 150px;
+
+        width: 100%;
+        height: 150px;
+
+        border-right: none;
+        border-bottom: 1px solid #22364a;
+
+        display: flex;
+
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .researchFile {
+        flex: 0 0 190px;
+
+        height: 100%;
+
+        border-left: none;
+        border-bottom: 3px solid transparent;
+    }
+
+    .researchFile.active {
+        border-left-color: transparent;
+        border-bottom-color: #4fd8ff;
+    }
+
+    #researchViewer {
+        flex: 1 1 auto;
+
+        min-height: 0;
+    }
+
+    #viewerHeader {
+        gap: 12px;
+        padding: 12px 15px;
+    }
+
+    #viewerTitle {
+        font-size: 17px;
+    }
+
+    #viewerLevel {
+        padding: 5px 9px;
+        font-size: 10px;
+    }
+
+    #viewerBody {
+        padding: 16px;
+    }
+
+    #viewerImage {
+        margin-bottom: 18px;
+    }
+
+    #viewerImage img {
+        max-width: 100%;
+    }
+
+    #viewerContent {
+        font-size: 13px;
+        line-height: 1.65;
+    }
+
+    .researchSearch {
+        padding: 10px;
+    }
+}
+
+
+/* ==========================================================
+   VERY SMALL SCREENS
+========================================================== */
+
+@media (max-width: 450px) {
+
+    #researchCategories {
+        flex-basis: 52px;
+        height: 52px;
+    }
+
+    .researchCategory {
+        min-width: 105px;
+
+        padding: 8px 10px;
+
+        font-size: 12px;
+    }
+
+    #researchFiles {
+        flex-basis: 130px;
+        height: 130px;
+    }
+
+    .researchFile {
+        flex-basis: 165px;
+        padding: 10px 12px;
+    }
+
+    .researchFile b {
+        font-size: 13px;
+    }
+
+    .researchFile small {
+        font-size: 11px;
+    }
+
+    #viewerHeader {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    #viewerTitle {
+        width: 100%;
+    }
+
+    #viewerLevel {
+        align-self: flex-start;
+    }
+
+    #viewerBody {
+        padding: 14px;
+    }
+}
+
+
+/* ==========================================================
+   REDUCED MOTION
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .researchCategory,
+    .researchFile,
+    .researchSearch input {
+        transition: none;
+    }
 }
