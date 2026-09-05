@@ -5,17 +5,21 @@
 
 
 /* ==========================================================
-   GLOBAL LOCK
+   GLOBAL EVENT STATE
 ========================================================== */
 
 body.mrSmileFirstContact {
     overflow: hidden !important;
-    cursor: default !important;
 }
 
-body.mrSmileFirstContact > * {
-    pointer-events: none !important;
-}
+
+/*
+   IMPORTANT:
+   Do NOT disable pointer-events globally here.
+
+   During first contact the player must still be able
+   to move and interact with the cursor.
+*/
 
 
 /* ==========================================================
@@ -58,9 +62,9 @@ body.mrSmilePhase2 {
 body.mrSmileDistortion {
     filter:
         contrast(1.7)
-        saturate(0.4)
+        saturate(.4)
         brightness(1.15)
-        blur(0.4px) !important;
+        blur(.4px) !important;
 
     animation:
         mrSmileDistort
@@ -76,7 +80,7 @@ body.mrSmileTextCorruption * {
 
     animation:
         mrSmileTextShake
-        0.12s
+        .12s
         steps(2, end)
         infinite !important;
 }
@@ -100,19 +104,13 @@ body.mrSmileBlackout::after {
     content: "";
 
     position: fixed;
-
     inset: 0;
-
-    width: 100vw;
-    height: 100vh;
 
     background: #000;
 
     z-index: 2147483640;
 
-    pointer-events: all;
-
-    opacity: 1;
+    pointer-events: none;
 }
 
 
@@ -123,7 +121,7 @@ body.mrSmileBlackout::after {
 body.mrSmilePhase4 {
     animation:
         mrSmileIntrusion
-        0.09s
+        .09s
         steps(3, end)
         infinite !important;
 }
@@ -132,7 +130,6 @@ body.mrSmilePhase4::before {
     content: "";
 
     position: fixed;
-
     inset: 0;
 
     z-index: 2147483644;
@@ -142,7 +139,7 @@ body.mrSmilePhase4::before {
     background:
         repeating-linear-gradient(
             0deg,
-            transparent 0px,
+            transparent 0,
             transparent 3px,
             rgba(255,255,255,.045) 4px,
             transparent 5px
@@ -152,7 +149,7 @@ body.mrSmilePhase4::before {
 
     animation:
         mrSmileScan
-        0.08s
+        .08s
         steps(4, end)
         infinite;
 }
@@ -161,7 +158,6 @@ body.mrSmilePhase4::after {
     content: "";
 
     position: fixed;
-
     inset: 0;
 
     z-index: 2147483645;
@@ -171,7 +167,7 @@ body.mrSmilePhase4::after {
     background:
         repeating-linear-gradient(
             90deg,
-            transparent 0px,
+            transparent 0,
             transparent 35px,
             rgba(255,255,255,.025) 36px,
             transparent 38px
@@ -179,7 +175,7 @@ body.mrSmilePhase4::after {
 
     animation:
         mrSmileNoise
-        0.13s
+        .13s
         steps(4, end)
         infinite;
 }
@@ -192,7 +188,7 @@ body.mrSmilePhase4::after {
 body.mrSmileSevereGlitch {
     animation:
         mrSmileSevereShake
-        0.055s
+        .055s
         steps(3, end)
         infinite !important;
 
@@ -204,7 +200,7 @@ body.mrSmileSevereGlitch {
 body.mrSmileSevereGlitch > * {
     animation:
         mrSmileElementGlitch
-        0.08s
+        .08s
         steps(3, end)
         infinite !important;
 }
@@ -217,7 +213,7 @@ body.mrSmileSevereGlitch > * {
 body.mrSmileHardShake {
     animation:
         mrSmileHardShake
-        0.06s
+        .06s
         steps(4, end)
         infinite !important;
 }
@@ -237,7 +233,6 @@ body.mrSmilePhase5::before {
     content: "";
 
     position: fixed;
-
     inset: 0;
 
     z-index: 2147483645;
@@ -247,16 +242,32 @@ body.mrSmilePhase5::before {
     background:
         repeating-linear-gradient(
             0deg,
-            rgba(255,255,255,.025) 0px,
+            rgba(255,255,255,.025) 0,
             transparent 2px,
             transparent 5px
         );
 
     animation:
         mrSmileCollapse
-        0.07s
+        .07s
         steps(3, end)
         infinite;
+}
+
+
+/* ==========================================================
+   INTERFACE COLLAPSE
+========================================================== */
+
+/*
+   The actual OMEGA interface elements are hidden by
+   mrsmileEvents.js.
+
+   This state only provides the atmospheric layer.
+*/
+
+body.mrSmileInterfaceCollapse {
+    overflow: hidden !important;
 }
 
 
@@ -269,21 +280,22 @@ body.mrSmilePhase6 {
     filter: none !important;
 }
 
+
+/* ==========================================================
+   FINAL DARKNESS
+========================================================== */
+
 body.mrSmileFinalDarkness::after {
     content: "";
 
     position: fixed;
-
     inset: 0;
-
-    width: 100vw;
-    height: 100vh;
 
     background: #000;
 
     z-index: 2147483640;
 
-    pointer-events: all;
+    pointer-events: none;
 
     animation:
         mrSmileDarkness
@@ -301,7 +313,6 @@ body.mrSmileFlash::after {
     content: "";
 
     position: fixed;
-
     inset: 0;
 
     background: #fff;
@@ -312,7 +323,7 @@ body.mrSmileFlash::after {
 
     animation:
         mrSmileFlash
-        0.12s
+        .12s
         steps(2, end)
         forwards;
 }
@@ -373,27 +384,39 @@ body.mrSmileFlash::after {
 @keyframes mrSmileCorruption {
 
     0% {
-        transform: translate(0,0) skew(0deg);
+        transform:
+            translate(0,0)
+            skew(0deg);
     }
 
     20% {
-        transform: translate(-3px,1px) skew(0.4deg);
+        transform:
+            translate(-3px,1px)
+            skew(.4deg);
     }
 
     40% {
-        transform: translate(4px,-2px) skew(-0.6deg);
+        transform:
+            translate(4px,-2px)
+            skew(-.6deg);
     }
 
     60% {
-        transform: translate(-2px,3px) skew(0.3deg);
+        transform:
+            translate(-2px,3px)
+            skew(.3deg);
     }
 
     80% {
-        transform: translate(3px,-1px) skew(-0.5deg);
+        transform:
+            translate(3px,-1px)
+            skew(-.5deg);
     }
 
     100% {
-        transform: translate(0,0) skew(0deg);
+        transform:
+            translate(0,0)
+            skew(0deg);
     }
 }
 
@@ -435,15 +458,18 @@ body.mrSmileFlash::after {
 @keyframes mrSmileTextShake {
 
     0% {
-        transform: translate(0,0);
+        transform:
+            translate(0,0);
     }
 
     50% {
-        transform: translate(2px,-1px);
+        transform:
+            translate(2px,-1px);
     }
 
     100% {
-        transform: translate(-1px,1px);
+        transform:
+            translate(-1px,1px);
     }
 }
 
@@ -451,33 +477,52 @@ body.mrSmileFlash::after {
 @keyframes mrSmileIntrusion {
 
     0% {
-        transform: translate(0,0);
-        filter: contrast(1);
+        transform:
+            translate(0,0);
+
+        filter:
+            contrast(1);
     }
 
     20% {
-        transform: translate(-7px,2px);
-        filter: contrast(1.8);
+        transform:
+            translate(-7px,2px);
+
+        filter:
+            contrast(1.8);
     }
 
     40% {
-        transform: translate(6px,-3px);
-        filter: contrast(2.2);
+        transform:
+            translate(6px,-3px);
+
+        filter:
+            contrast(2.2);
     }
 
     60% {
-        transform: translate(-4px,4px);
-        filter: brightness(.8) contrast(2);
+        transform:
+            translate(-4px,4px);
+
+        filter:
+            brightness(.8)
+            contrast(2);
     }
 
     80% {
-        transform: translate(8px,-2px);
-        filter: contrast(2.5);
+        transform:
+            translate(8px,-2px);
+
+        filter:
+            contrast(2.5);
     }
 
     100% {
-        transform: translate(0,0);
-        filter: contrast(1);
+        transform:
+            translate(0,0);
+
+        filter:
+            contrast(1);
     }
 }
 
@@ -525,19 +570,23 @@ body.mrSmileFlash::after {
 @keyframes mrSmileElementGlitch {
 
     0% {
-        transform: translate(0,0);
+        transform:
+            translate(0,0);
     }
 
     30% {
-        transform: translate(-5px,1px);
+        transform:
+            translate(-5px,1px);
     }
 
     60% {
-        transform: translate(6px,-2px);
+        transform:
+            translate(6px,-2px);
     }
 
     100% {
-        transform: translate(0,0);
+        transform:
+            translate(0,0);
     }
 }
 
@@ -545,27 +594,33 @@ body.mrSmileFlash::after {
 @keyframes mrSmileHardShake {
 
     0% {
-        transform: translate(0,0);
+        transform:
+            translate(0,0);
     }
 
     20% {
-        transform: translate(-15px,6px);
+        transform:
+            translate(-15px,6px);
     }
 
     40% {
-        transform: translate(13px,-7px);
+        transform:
+            translate(13px,-7px);
     }
 
     60% {
-        transform: translate(-9px,8px);
+        transform:
+            translate(-9px,8px);
     }
 
     80% {
-        transform: translate(14px,-5px);
+        transform:
+            translate(14px,-5px);
     }
 
     100% {
-        transform: translate(0,0);
+        transform:
+            translate(0,0);
     }
 }
 
@@ -573,15 +628,18 @@ body.mrSmileFlash::after {
 @keyframes mrSmileScan {
 
     0% {
-        transform: translateY(-10px);
+        transform:
+            translateY(-10px);
     }
 
     50% {
-        transform: translateY(10px);
+        transform:
+            translateY(10px);
     }
 
     100% {
-        transform: translateY(-10px);
+        transform:
+            translateY(-10px);
     }
 }
 
@@ -589,23 +647,28 @@ body.mrSmileFlash::after {
 @keyframes mrSmileNoise {
 
     0% {
-        transform: translate(0,0);
+        transform:
+            translate(0,0);
     }
 
     25% {
-        transform: translate(-12px,3px);
+        transform:
+            translate(-12px,3px);
     }
 
     50% {
-        transform: translate(8px,-4px);
+        transform:
+            translate(8px,-4px);
     }
 
     75% {
-        transform: translate(-5px,5px);
+        transform:
+            translate(-5px,5px);
     }
 
     100% {
-        transform: translate(0,0);
+        transform:
+            translate(0,0);
     }
 }
 
@@ -613,28 +676,43 @@ body.mrSmileFlash::after {
 @keyframes mrSmileCollapse {
 
     0% {
-        transform: translate(0,0);
-        opacity: .2;
+        transform:
+            translate(0,0);
+
+        opacity:
+            .2;
     }
 
     25% {
-        transform: translate(-10px,3px);
-        opacity: .8;
+        transform:
+            translate(-10px,3px);
+
+        opacity:
+            .8;
     }
 
     50% {
-        transform: translate(12px,-4px);
-        opacity: .3;
+        transform:
+            translate(12px,-4px);
+
+        opacity:
+            .3;
     }
 
     75% {
-        transform: translate(-8px,5px);
-        opacity: .9;
+        transform:
+            translate(-8px,5px);
+
+        opacity:
+            .9;
     }
 
     100% {
-        transform: translate(0,0);
-        opacity: .2;
+        transform:
+            translate(0,0);
+
+        opacity:
+            .2;
     }
 }
 
@@ -673,13 +751,27 @@ body.mrSmileFlash::after {
 
 @media (prefers-reduced-motion: reduce) {
 
-    body.mrSmileFirstContact,
-    body.mrSmileFirstContact > *,
+    body.mrSmilePhase1,
+    body.mrSmilePhase2,
+    body.mrSmilePhase4,
+    body.mrSmilePhase5,
     body.mrSmileSevereGlitch,
     body.mrSmileHardShake {
 
         animation: none !important;
-
     }
 
+    body.mrSmileMicroGlitch,
+    body.mrSmileDistortion,
+    body.mrSmileTextCorruption * {
+
+        animation: none !important;
+    }
+
+    body.mrSmilePhase4::before,
+    body.mrSmilePhase4::after,
+    body.mrSmilePhase5::before {
+
+        animation: none !important;
+    }
 }
