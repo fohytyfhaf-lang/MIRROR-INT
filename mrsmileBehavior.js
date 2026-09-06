@@ -41,6 +41,11 @@ import {
     shouldRefuseOperator
 } from "./mrsmileRelationship.js";
 
+console.log(
+    "[MR.SMILE DEBUG] Initial MRSMILE:",
+    window.MRSMILE
+);
+
 
 // =======================================
 // STATE
