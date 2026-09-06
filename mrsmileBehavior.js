@@ -413,25 +413,18 @@ function decideArchive(
 ) {
 
     // -----------------------------------
-    // TRUSTED
+    // CLOSE / TRUSTED
     // -----------------------------------
 
     if (
-        context.relationship ===
-        "close"
-        ||
-        context.relationship ===
-        "trusted"
+        context.relationship === "close" ||
+        context.relationship === "trusted"
     ) {
 
         return createDecision(
-
             "grant",
-
             "archive",
-
             "operator_trusted"
-
         );
 
     }
@@ -442,18 +435,13 @@ function decideArchive(
     // -----------------------------------
 
     if (
-        context.relationship ===
-        "friendly"
+        context.relationship === "friendly"
     ) {
 
         return createDecision(
-
             "delay",
-
             "archive",
-
             "operator_not_ready"
-
         );
 
     }
@@ -468,33 +456,27 @@ function decideArchive(
     ) {
 
         return createDecision(
-
             "deny",
-
             "archive",
-
             "relationship_hostile"
-
         );
 
     }
 
 
     // -----------------------------------
-    // DEFAULT
+    // COLD / NEUTRAL
     // -----------------------------------
 
     return createDecision(
-
         "delay",
-
         "archive",
-
-        "mrsmile_undecided"
-
+        "relationship_cold"
     );
 
 }
+
+ 
 
 
 // =======================================
@@ -576,15 +558,15 @@ function decideGame(
     }
 
 
-    return createDecision(
+         return createDecision(
+           "delay",
+             
+            "game",
+             
+            "relationship_cold"
 
-        "delay",
 
-        "game",
-
-        "mrsmile_undecided"
-
-    );
+       );
 
 }
 
