@@ -1382,3 +1382,8 @@ console.log(
 window.MRSMILE.test123 = function() {
     console.log("MR.SMILE TEST 123 WORKS");
 };
+
+console.log(
+    "[MR.SMILE DEBUG TEST] AFTER ASSIGN:",
+    Object.getOwnPropertyNames(window.MRSMILE)
+);
