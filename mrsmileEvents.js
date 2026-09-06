@@ -75,6 +75,10 @@ import {
     trigger
 } from "./eventManager.js";
 
+import {
+    initMrSmileIntrusionUI
+} from "./mrsmileIntrusionUI.js";
+
 
 /* ==========================================================
    STATE
@@ -193,6 +197,7 @@ export function initMrSmileEvents() {
     observationLoop();
 
     initAmbientEvents();
+   initMrSmileIntrusionUI();
 
 
     /* ------------------------------------------------------
