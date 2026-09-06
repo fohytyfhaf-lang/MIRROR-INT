@@ -1391,15 +1391,4 @@ console.log(
 console.log(
     "[MR.SMILE DEBUG TEST] behavior.js debug block loaded"
 );
-console.log("========== BEHAVIOR FILE END TEST ==========");
 
-window.MRSMILE = window.MRSMILE || {};
-
-window.MRSMILE.test123 = function () {
-    console.log("MR.SMILE TEST 123 WORKS");
-};
-
-console.log(
-    "BEHAVIOR END:",
-    Object.getOwnPropertyNames(window.MRSMILE)
-);
