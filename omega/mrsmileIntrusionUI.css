@@ -1,0 +1,493 @@
+/* ==========================================================
+   MR.SMILE — INTRUSION UI
+   Visual layer
+========================================================== */
+
+
+/* ==========================================================
+   SYSTEM NOTICE
+========================================================== */
+
+.mrSmileActionNotice {
+    position: fixed;
+
+    right: 22px;
+    bottom: 22px;
+
+    min-width: 230px;
+    max-width: 360px;
+
+    padding: 10px 14px;
+
+    box-sizing: border-box;
+
+    background: rgba(0, 0, 0, 0.92);
+
+    border: 1px solid rgba(255, 255, 255, 0.28);
+
+    color: #d8d8d8;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 12px;
+    line-height: 1.4;
+
+    letter-spacing: 0.04em;
+
+    opacity: 0;
+
+    transform:
+        translateY(8px);
+
+    pointer-events: none;
+
+    z-index: 999999;
+
+    transition:
+        opacity 0.22s ease,
+        transform 0.22s ease;
+}
+
+
+.mrSmileActionNotice.visible {
+
+    opacity: 1;
+
+    transform:
+        translateY(0);
+
+}
+
+
+/* ==========================================================
+   VIRTUAL CURSOR
+========================================================== */
+
+.mrSmileIntrusionCursor {
+
+    position: fixed;
+
+    width: 14px;
+    height: 19px;
+
+    pointer-events: none;
+
+    z-index: 1000000;
+
+    opacity: 0;
+
+    transform:
+        translate(-2px, -2px)
+        scale(0.9);
+
+    transition:
+        opacity 0.15s ease,
+        transform 0.2s ease;
+
+}
+
+
+/*
+   Pixel-like cursor shape
+*/
+
+.mrSmileIntrusionCursor::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 0;
+    height: 0;
+
+    border-top: 17px solid #ffffff;
+
+    border-right: 7px solid transparent;
+
+    filter:
+        drop-shadow(
+            1px 1px 0 #000
+        );
+
+}
+
+
+.mrSmileIntrusionCursor.active {
+
+    opacity: 1;
+
+    transform:
+        translate(0, 0)
+        scale(1);
+
+}
+
+
+/* ==========================================================
+   FOCUS INTERFERENCE
+========================================================== */
+
+.window.mrSmileFocusInterference {
+
+    animation:
+        mrSmileFocusInterference
+        0.12s
+        steps(2, end)
+        infinite;
+
+}
+
+
+@keyframes mrSmileFocusInterference {
+
+    0% {
+        transform: translate(0, 0);
+    }
+
+    25% {
+        transform: translate(1px, 0);
+    }
+
+    50% {
+        transform: translate(-1px, 0);
+    }
+
+    75% {
+        transform: translate(0, 1px);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+
+}
+
+
+/* ==========================================================
+   WINDOW INTERFERENCE
+========================================================== */
+
+.window.mrSmileWindowInterference {
+
+    animation:
+        mrSmileWindowInterference
+        0.16s
+        steps(2, end)
+        infinite;
+
+}
+
+
+@keyframes mrSmileWindowInterference {
+
+    0% {
+
+        transform:
+            translate(0, 0);
+
+        filter:
+            none;
+
+    }
+
+    20% {
+
+        transform:
+            translate(-2px, 1px);
+
+    }
+
+    40% {
+
+        transform:
+            translate(2px, -1px);
+
+        filter:
+            contrast(1.2);
+
+    }
+
+    60% {
+
+        transform:
+            translate(-1px, 0);
+
+    }
+
+    80% {
+
+        transform:
+            translate(1px, 1px);
+
+    }
+
+    100% {
+
+        transform:
+            translate(0, 0);
+
+        filter:
+            none;
+
+    }
+
+}
+
+
+/* ==========================================================
+   INPUT INTERFERENCE
+========================================================== */
+
+body.mrSmileInputInterference {
+
+    cursor: wait !important;
+
+}
+
+
+body.mrSmileInputInterference
+* {
+
+    /*
+       Do NOT disable pointer-events.
+
+       MR.SMILE should interfere with the interface,
+       not completely destroy the website.
+    */
+
+    transition-delay:
+        0.08s !important;
+
+}
+
+
+/* ==========================================================
+   INTERACTION BLOCK
+========================================================== */
+
+body.mrSmileInteractionBlocked {
+
+    cursor:
+        not-allowed !important;
+
+}
+
+
+body.mrSmileInteractionBlocked
+#workspace {
+
+    filter:
+        contrast(0.96);
+
+}
+
+
+/* ==========================================================
+   INTERFACE PULSE
+========================================================== */
+
+body.mrSmileInterfacePulse {
+
+    animation:
+        mrSmileInterfacePulse
+        0.45s
+        steps(2, end);
+
+}
+
+
+@keyframes mrSmileInterfacePulse {
+
+    0% {
+
+        filter:
+            none;
+
+    }
+
+    30% {
+
+        filter:
+            brightness(1.18);
+
+    }
+
+    55% {
+
+        filter:
+            brightness(0.88);
+
+    }
+
+    75% {
+
+        filter:
+            brightness(1.08);
+
+    }
+
+    100% {
+
+        filter:
+            none;
+
+    }
+
+}
+
+
+/* ==========================================================
+   INTERFACE DISTORTION
+========================================================== */
+
+body.mrSmileInterfaceDistortion {
+
+    animation:
+        mrSmileInterfaceDistortion
+        0.3s
+        steps(3, end);
+
+}
+
+
+@keyframes mrSmileInterfaceDistortion {
+
+    0% {
+
+        transform:
+            translate(0, 0);
+
+    }
+
+    20% {
+
+        transform:
+            translate(-2px, 0);
+
+    }
+
+    40% {
+
+        transform:
+            translate(2px, -1px);
+
+    }
+
+    60% {
+
+        transform:
+            translate(-1px, 1px);
+
+    }
+
+    80% {
+
+        transform:
+            translate(1px, 0);
+
+    }
+
+    100% {
+
+        transform:
+            translate(0, 0);
+
+    }
+
+}
+
+
+/* ==========================================================
+   OBSERVATION
+========================================================== */
+
+.mrSmileAmbientObservation {
+
+    position: fixed;
+
+    top: 50%;
+    left: 50%;
+
+    transform:
+        translate(-50%, -50%)
+        scale(0.96);
+
+    padding:
+        6px 12px;
+
+    background:
+        rgba(0, 0, 0, 0.86);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.2);
+
+    color:
+        rgba(255, 255, 255, 0.72);
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size:
+        11px;
+
+    letter-spacing:
+        0.18em;
+
+    opacity: 0;
+
+    pointer-events:
+        none;
+
+    z-index:
+        999998;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+
+}
+
+
+.mrSmileAmbientObservation.visible {
+
+    opacity: 1;
+
+    transform:
+        translate(-50%, -50%)
+        scale(1);
+
+}
+
+
+/* ==========================================================
+   REDUCED MOTION
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .mrSmileActionNotice,
+    .mrSmileIntrusionCursor,
+    .mrSmileAmbientObservation {
+
+        transition:
+            none;
+
+    }
+
+    .window.mrSmileFocusInterference,
+    .window.mrSmileWindowInterference,
+    body.mrSmileInterfacePulse,
+    body.mrSmileInterfaceDistortion {
+
+        animation:
+            none;
+
+    }
+
+}
