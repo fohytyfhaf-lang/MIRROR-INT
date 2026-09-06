@@ -1212,3 +1212,246 @@ export function resetMrSmileBehavior() {
     );
 
 }
+
+/* ===================================
+        MR.SMILE DEBUG API
+=================================== */
+
+/*
+    Debug API.
+
+    IMPORTANT:
+    This does NOT bypass Behavior.
+
+    MRSMILE.test(...)
+        ↓
+    decide(...)
+        ↓
+    real relationship evaluation
+        ↓
+    real decision
+        ↓
+    mrsmile:actionRequested
+        ↓
+    mrsmileActions.js
+        ↓
+    mrsmileIntrusionUI.js
+*/
+
+
+window.MRSMILE = window.MRSMILE || {};
+
+
+/* ===================================
+        TEST BEHAVIOR
+=================================== */
+
+window.MRSMILE.test = function(
+    type,
+    target = "test"
+) {
+
+    console.log(
+        "[MR.SMILE DEBUG] Testing behavior:",
+        type,
+        "target:",
+        target
+    );
+
+
+    const decision =
+        requestMrSmileBehavior({
+
+            type,
+
+            target,
+
+            reason:
+                "debug_test"
+
+        });
+
+
+    console.log(
+        "[MR.SMILE DEBUG] Result:",
+        decision
+    );
+
+
+    return decision;
+
+};
+
+
+/* ===================================
+        TEST ACCESS
+=================================== */
+
+window.MRSMILE.access = function(
+    type,
+    target = type
+) {
+
+    const allowed = [
+        "archive",
+        "game",
+        "truth"
+    ];
+
+
+    if (
+        !allowed.includes(type)
+    ) {
+
+        console.warn(
+            "[MR.SMILE DEBUG] Unknown access type:",
+            type
+        );
+
+        console.log(
+            "[MR.SMILE DEBUG] Available:",
+            allowed
+        );
+
+        return null;
+
+    }
+
+
+    return window.MRSMILE.test(
+        type,
+        target
+    );
+
+};
+
+
+/* ===================================
+        TEST HELP
+=================================== */
+
+window.MRSMILE.help = function() {
+
+    console.log(`
+
+=======================================
+        MR.SMILE DEBUG
+=======================================
+
+GENERAL:
+
+MRSMILE.test("operator_help_request")
+MRSMILE.test("operator_attack")
+MRSMILE.test("restricted_file")
+
+ACCESS:
+
+MRSMILE.access("archive")
+MRSMILE.access("game")
+MRSMILE.access("truth")
+
+EXAMPLES:
+
+MRSMILE.test(
+    "operator_help_request",
+    "test"
+)
+
+MRSMILE.test(
+    "operator_attack",
+    "test"
+)
+
+MRSMILE.test(
+    "restricted_file",
+    "MIRROR-00"
+)
+
+MRSMILE.access("archive")
+MRSMILE.access("game")
+MRSMILE.access("truth")
+
+STATUS:
+
+MRSMILE.status()
+
+=======================================
+
+`);
+
+};
+
+
+/* ===================================
+        STATUS
+=================================== */
+
+window.MRSMILE.status = function() {
+
+    const relationship =
+        getRelationshipStatus();
+
+
+    console.log(
+        "======================================="
+    );
+
+    console.log(
+        "[MR.SMILE DEBUG] RELATIONSHIP"
+    );
+
+    console.log(
+        relationship
+    );
+
+
+    console.log(
+        "[MR.SMILE DEBUG] CURRENT DECISION"
+    );
+
+    console.log(
+        state.lastDecision
+    );
+
+
+    console.log(
+        "[MR.SMILE DEBUG] CURRENT CONTEXT"
+    );
+
+    console.log(
+        state.lastContext
+    );
+
+
+    console.log(
+        "[MR.SMILE DEBUG] DECISION HISTORY"
+    );
+
+    console.log(
+        state.decisionHistory
+    );
+
+
+    console.log(
+        "======================================="
+    );
+
+
+    return {
+
+        relationship,
+
+        decision:
+            state.lastDecision,
+
+        context:
+            state.lastContext,
+
+        history:
+            [
+                ...state.decisionHistory
+            ]
+
+    };
+
+};
