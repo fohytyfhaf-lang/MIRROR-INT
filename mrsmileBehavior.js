@@ -1165,22 +1165,10 @@ export function requestMrSmileBehavior(
 
     initMrSmileBehavior();
 
-    const decision = decide(
-        context
-    );
-
-    // Remember what MR.SMILE saw
-    state.lastContext = {
-        ...context
-    };
-
-    // Remember what MR.SMILE decided
-    state.lastDecision = decision;
-
-    // Add decision to history
-    rememberDecision(
-        decision
-    );
+    const decision =
+        decide(
+            context
+        );
 
     // Send decision to action layer
     executeDecision(
