@@ -232,6 +232,9 @@ export function initMrSmileEvents() {
         });
 
     });
+   setTimeout(() => {
+    trigger("mrsmile:testBehavior");
+}, 3000);
 
 
 
