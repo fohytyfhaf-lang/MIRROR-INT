@@ -79,6 +79,14 @@ import {
     initMrSmileIntrusionUI
 } from "./mrsmileIntrusionUI.js";
 
+import {
+    initMrSmileBehavior
+} from "./mrsmileBehavior.js";
+
+import {
+    initMrSmileActions
+} from "./mrsmileActions.js";
+
 
 /* ==========================================================
    STATE
@@ -197,6 +205,9 @@ export function initMrSmileEvents() {
     observationLoop();
 
     initAmbientEvents();
+   initMrSmileIntrusionUI();
+   initMrSmileBehavior();
+   initMrSmileActions();
    initMrSmileIntrusionUI();
 
 
