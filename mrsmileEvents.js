@@ -210,6 +210,30 @@ export function initMrSmileEvents() {
    initMrSmileActions();
    initMrSmileIntrusionUI();
 
+   /* ======================================================
+       TEMP TEST
+    ====================================================== */
+
+    on("mrsmile:testBehavior", () => {
+
+        trigger("mrsmile:actionRequested", {
+            action: "observe",
+            target: "test",
+            reason: "manual_test",
+            timestamp: Date.now(),
+
+            relationship: {
+                trust: 0,
+                respect: 50,
+                irritation: 0,
+                score: 33,
+                level: "cold"
+            }
+        });
+
+    });
+
+
 
     /* ------------------------------------------------------
        FIRST CONTACT
