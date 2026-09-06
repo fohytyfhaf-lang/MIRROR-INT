@@ -1182,9 +1182,17 @@ export function requestMrSmileBehavior(
     context = {}
 ) {
 
-    return decide(
+    initMrSmileBehavior();
+
+    const decision = decide(
         context
     );
+
+    executeDecision(
+        decision
+    );
+
+    return decision;
 
 }
 
