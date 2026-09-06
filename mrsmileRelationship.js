@@ -782,19 +782,10 @@ export function isHelpful() {
 export function isHostile() {
 
     return (
-
-        getRelationshipLevel()
-        === "hostile"
-
-        ||
-
-        getRelationshipLevel()
-        === "cold"
-
+        getRelationshipLevel() === "hostile"
     );
 
 }
-
 
 export function isTrusted() {
 
