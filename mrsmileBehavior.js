@@ -1159,7 +1159,6 @@ export function clearMrSmileBehaviorHistory() {
 //     file: "MIRROR-00"
 // });
 // =======================================
-
 export function requestMrSmileBehavior(
     context = {}
 ) {
@@ -1170,6 +1169,20 @@ export function requestMrSmileBehavior(
         context
     );
 
+    // Remember what MR.SMILE saw
+    state.lastContext = {
+        ...context
+    };
+
+    // Remember what MR.SMILE decided
+    state.lastDecision = decision;
+
+    // Add decision to history
+    rememberDecision(
+        decision
+    );
+
+    // Send decision to action layer
     executeDecision(
         decision
     );
