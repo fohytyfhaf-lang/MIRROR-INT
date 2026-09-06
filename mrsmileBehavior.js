@@ -1375,3 +1375,10 @@ console.log(
     "[MR.SMILE DEBUG] Global API ready:",
     window.MRSMILE
 );
+console.log(
+    "[MR.SMILE DEBUG TEST] behavior.js debug block loaded"
+);
+
+window.MRSMILE.test123 = function() {
+    console.log("MR.SMILE TEST 123 WORKS");
+};
