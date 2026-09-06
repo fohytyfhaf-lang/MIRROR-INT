@@ -261,15 +261,27 @@ export function readFile(path) {
     // SECURITY ACCESS
     // -----------------------------------
 
-    if (!hasSecurityAccess(node)) {
+ if (!hasSecurityAccess(node)) {
 
-        return "ACCESS DENIED";
-
-    }
-
-    return node.data;
+    return "ACCESS DENIED";
 
 }
+
+
+/* =====================================================
+   MR.SMILE — OPERATOR READ EVENT
+===================================================== */
+
+trigger(
+    "mrsmile:operatorReadFile",
+    {
+        path: normalizePath(path),
+        file: node
+    }
+);
+
+
+return node.data;
 
 
 // =======================================
