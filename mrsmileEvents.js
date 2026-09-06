@@ -48,7 +48,8 @@ import {
 
 import {
     getTrust,
-    loadTrust
+    loadTrust,
+    addTrust
 } from "./mrsmileTrust.js";
 
 import {
