@@ -215,12 +215,14 @@ function bootSystem() {
 
     if (knowledgeInit) knowledgeInit();
 
-    window.MRSMILE = {
-        start: forceEnableMrSmile,
-        stop: forceDisableMrSmile,
-        chat: mrSmileSay,
-        initChat: initMrSmileChat
-    };
+   window.MRSMILE = {
+    ...(window.MRSMILE || {}),
+
+    start: forceEnableMrSmile,
+    stop: forceDisableMrSmile,
+    chat: mrSmileSay,
+    initChat: initMrSmileChat
+};
 }
 
 /* =========================
