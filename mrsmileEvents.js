@@ -163,29 +163,6 @@ export function initMrSmileEvents() {
 
    
 
-/* ==========================================================
-   OPERATOR — READ FILE
-========================================================== */
-
-function handleOperatorReadFile(data) {
-
-    if (!data) {
-        return;
-    }
-
-    const path =
-        data.path || "";
-
-    console.log(
-        "[MR.SMILE] Operator read file:",
-        path
-    );
-
-    addTrust(
-        1,
-        `READ_FILE: ${path}`
-    );
-}
     /* ------------------------------------------------------
        TRUST
     ------------------------------------------------------ */
@@ -250,6 +227,31 @@ function handleOperatorReadFile(data) {
         }
     );
 
+
+   
+/* ==========================================================
+   OPERATOR — READ FILE
+========================================================== */
+
+function handleOperatorReadFile(data) {
+
+    if (!data) {
+        return;
+    }
+
+    const path =
+        data.path || "";
+
+    console.log(
+        "[MR.SMILE] Operator read file:",
+        path
+    );
+
+    addTrust(
+        1,
+        `READ_FILE: ${path}`
+    );
+}
 
     /* ------------------------------------------------------
        SYS_00
