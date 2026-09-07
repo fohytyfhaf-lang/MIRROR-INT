@@ -1161,6 +1161,152 @@ function createDecision(
 
 }
 
+// =======================================
+// CHAT REACTION
+// =======================================
+//
+// Behavior decides whether MR.SMILE
+// should actually speak.
+//
+// UI/chat rendering remains inside
+// mrsmileChat.js.
+// =======================================
+
+function emitChatReaction(
+    decision,
+    context = {}
+) {
+
+    if (!decision) {
+        return;
+    }
+
+
+    // -----------------------------------
+    // SILENCE
+    // -----------------------------------
+
+    if (
+        decision.action === "observe"
+    ) {
+        return;
+    }
+
+
+    // -----------------------------------
+    // ENTITY FILE
+    // -----------------------------------
+
+    if (
+        decision.reason ===
+        "operator_read_entity_file"
+    ) {
+
+        trigger(
+            "mrsmile:chatMessage",
+            {
+                text:
+                    "You were reading about me.",
+
+                delay:
+                    800
+            }
+        );
+
+        return;
+    }
+
+
+    // -----------------------------------
+    // MIRROR ARCHIVE
+    // -----------------------------------
+
+    if (
+        decision.reason ===
+        "operator_accessed_mirror_archive"
+    ) {
+
+        trigger(
+            "mrsmile:chatSequence",
+            {
+                stopIdle: true,
+
+                messages: [
+
+                    {
+                        text:
+                            "So you found it.",
+
+                        delay:
+                            700
+                    },
+
+                    {
+                        text:
+                            "I wondered when you would.",
+
+                        delay:
+                            1400
+                    }
+
+                ],
+
+                resumeIdle: true
+            }
+        );
+
+        return;
+    }
+
+
+    // -----------------------------------
+    // RESTRICTED ARCHIVE
+    // -----------------------------------
+
+    if (
+        decision.reason ===
+        "operator_accessed_restricted_archive"
+    ) {
+
+        trigger(
+            "mrsmile:chatMessage",
+            {
+                text:
+                    "That file wasn't meant for you.",
+
+                delay:
+                    900
+            }
+        );
+
+        return;
+    }
+
+
+    // -----------------------------------
+    // IRRITATION
+    // -----------------------------------
+
+    if (
+        decision.reason ===
+        "mrsmile_irritated"
+    ) {
+
+        trigger(
+            "mrsmile:chatMessage",
+            {
+                text:
+                    "You're becoming careless.",
+
+                delay:
+                    600
+            }
+        );
+
+    }
+
+}
+
 
 // =======================================
 // EXECUTE DECISION
