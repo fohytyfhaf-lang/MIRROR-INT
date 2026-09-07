@@ -206,10 +206,9 @@ export function initMrSmileEvents() {
     observationLoop();
 
     initAmbientEvents();
-   initMrSmileIntrusionUI();
+    initMrSmileIntrusionUI();
    initMrSmileBehavior();
    initMrSmileActions();
-   initMrSmileIntrusionUI();
 
  
 
@@ -241,6 +240,20 @@ export function initMrSmileEvents() {
         }
     );
 
+
+   
+    /* ------------------------------------------------------
+   OPERATOR ACTIONS
+------------------------------------------------------ */
+
+on(
+    "mrsmile:operatorReadFile",
+    data => {
+
+        handleOperatorReadFile(data);
+
+    }
+);
 
     /* ------------------------------------------------------
        HANDSHAKE
