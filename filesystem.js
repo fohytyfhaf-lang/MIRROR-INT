@@ -8,6 +8,10 @@ import {
     isProgressUnlocked
 } from "./mrsmileProgress.js";
 
+import {
+    trigger
+} from "./eventManager.js";
+
 
 // =======================================
 // FILESYSTEM DATA
@@ -282,7 +286,8 @@ trigger(
 
 
 return node.data;
-
+    
+}
 
 // =======================================
 // GET FILE / NODE
