@@ -401,6 +401,11 @@ export function decide(
         decision
     );
 
+    emitChatReaction(
+        decision,
+        normalizedContext
+    );
+
 
     console.log(
         "[MR.SMILE BEHAVIOR] Decision:",
