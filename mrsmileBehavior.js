@@ -940,6 +940,128 @@ function decideRestrictedFile(
 
 
 // =======================================
+// OPERATOR READ FILE
+// =======================================
+//
+// MR.SMILE does NOT react to every file.
+//
+// Ordinary files:
+//      observe / silence
+//
+// MR.SMILE-related files:
+//      possible reaction
+//
+// Restricted files:
+//      context-dependent reaction
+// =======================================
+
+function decideOperatorReadFile(
+    context
+) {
+
+    const path =
+        context.path || "";
+
+
+    // -----------------------------------
+    // MR.SMILE ENTITY FILE
+    // -----------------------------------
+
+    if (
+        path === "/files/entity_mrsmile.txt"
+    ) {
+
+        return createDecision(
+
+            "speak",
+
+            "mrsmile_file",
+
+            "operator_read_entity_file"
+
+        );
+
+    }
+
+
+    // -----------------------------------
+    // MIRROR ARCHIVE
+    // -----------------------------------
+
+    if (
+        path === "/files/mirror_archive.txt"
+    ) {
+
+        if (
+            context.relationship === "close" ||
+            context.relationship === "trusted"
+        ) {
+
+            return createDecision(
+
+                "speak",
+
+                "mirror_archive",
+
+                "operator_accessed_mirror_archive"
+
+            );
+
+        }
+
+
+        return createDecision(
+
+            "observe",
+
+            "mirror_archive",
+
+            "operator_accessed_restricted_archive"
+
+        );
+
+    }
+
+
+    // -----------------------------------
+    // HIGH IRRITATION
+    // -----------------------------------
+
+    if (
+        context.irritation >= 70
+    ) {
+
+        return createDecision(
+
+            "speak",
+
+            "operator",
+
+            "mrsmile_irritated"
+
+        );
+
+    }
+
+
+    // -----------------------------------
+    // NORMAL FILE
+    // -----------------------------------
+
+    return createDecision(
+
+        "observe",
+
+        "file",
+
+        "ordinary_file_read"
+
+    );
+
+}
+
+
+// =======================================
 // GENERAL BEHAVIOR
 // =======================================
 
