@@ -1363,6 +1363,39 @@ window.debugMrSmileChat = {
         );
 
     },
+   
+/* 
+Тест event-driven последовательности.
+*/
+
+   sequenceTest() {
+
+    trigger(
+        "mrsmile:chatSequence",
+        {
+            stopIdle: true,
+
+            messages: [
+                {
+                    text: "You shouldn't be here.",
+                    delay: 500
+                },
+                {
+                    text: "But you already know that.",
+                    delay: 1400
+                },
+                {
+                    text: "Continue.",
+                    delay: 1000
+                }
+            ],
+
+            resumeIdle: true
+        }
+    );
+
+},
+
 
 
     /*
@@ -1414,30 +1447,3 @@ window.debugMrSmileChat = {
     }
 
 };
-sequenceTest() {
-
-    trigger(
-        "mrsmile:chatSequence",
-        {
-            stopIdle: true,
-
-            messages: [
-                {
-                    text: "You shouldn't be here.",
-                    delay: 500
-                },
-                {
-                    text: "But you already know that.",
-                    delay: 1400
-                },
-                {
-                    text: "Continue.",
-                    delay: 1000
-                }
-            ],
-
-            resumeIdle: true
-        }
-    );
-
-},
