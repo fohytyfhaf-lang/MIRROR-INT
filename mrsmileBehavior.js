@@ -362,6 +362,15 @@ export function decide(
 
         break;  
 
+        case "operator_read_file":
+
+             decision =
+                 decideOperatorReadFile(
+                 normalizedContext
+         );
+
+    break;
+
 
         default:
 
