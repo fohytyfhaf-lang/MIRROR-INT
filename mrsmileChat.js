@@ -1,9 +1,27 @@
+
 /* ==========================================================
    MR.SMILE CHAT
    OMEGA / MIRROR-INT
+
+   RESPONSIBILITY:
+   - MR.SMILE conversation layer
+   - Connects MR.SMILE logic with real OMEGA chat
+   - Handles direct responses
+   - Handles event-driven MR.SMILE messages
+   - Handles first contact
+   - Handles idle messages
+   - Handles MIRROR-00 access conversation
+
+   IMPORTANT:
+   The main chat system owns:
+       window.addChatMessage()
+
+   This module does NOT create another chat system.
 ========================================================== */
 
-import { mrSmileSay } from "./mrsmileCore.js";
+import {
+    mrSmileSay
+} from "./mrsmileCore.js";
 
 import {
     on
@@ -15,9 +33,19 @@ import {
 } from "./mrsmileProgress.js";
 
 
+/* ==========================================================
+   STATE
+========================================================== */
+
 let initialized = false;
+
 let idleTimer = null;
+
 let archiveEventRegistered = false;
+
+let chatEventRegistered = false;
+
+let idleEnabled = true;
 
 
 /* ==========================================================
@@ -25,17 +53,45 @@ let archiveEventRegistered = false;
 ========================================================== */
 
 function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+
+    return new Promise(resolve => {
+
+        setTimeout(
+            resolve,
+            ms
+        );
+
+    });
+
 }
 
 
 function getCurrentTime() {
-    const now = new Date();
 
-    return now.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit"
-    });
+    const now =
+        new Date();
+
+    return now.toLocaleTimeString(
+        [],
+        {
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   CHAT AVAILABILITY
+========================================================== */
+
+function isChatAvailable() {
+
+    return (
+        typeof window.addChatMessage === "function"
+    );
+
 }
 
 
@@ -43,9 +99,34 @@ function getCurrentTime() {
    REAL OMEGA CHAT BRIDGE
 ========================================================== */
 
+/*
+   IMPORTANT:
+
+   This is NOT a second chat system.
+
+   The real OMEGA chat remains responsible for:
+       - chat storage
+       - rendering
+       - unread counters
+       - active channel
+       - message list
+
+   MR.SMILE only sends messages into it.
+*/
+
+
 function addMrSmileChatMessage(text) {
 
-    if (typeof window.addChatMessage !== "function") {
+    if (
+        text === null ||
+        text === undefined
+    ) {
+        return false;
+    }
+
+
+    if (!isChatAvailable()) {
+
         console.warn(
             "[MR.SMILE] window.addChatMessage() unavailable."
         );
@@ -53,19 +134,47 @@ function addMrSmileChatMessage(text) {
         return false;
     }
 
-    window.addChatMessage("mrsmile", {
-        user: "MR.SMILE",
-        time: getCurrentTime(),
-        text: text
-    });
+
+    const message =
+        String(text).trim();
+
+
+    if (!message) {
+        return false;
+    }
+
+
+    window.addChatMessage(
+        "mrsmile",
+        {
+            user: "MR.SMILE",
+            time: getCurrentTime(),
+            text: message
+        }
+    );
+
 
     return true;
+
 }
 
+
+/* ==========================================================
+   SYSTEM CHAT MESSAGE
+========================================================== */
 
 function addSystemChatMessage(text) {
 
-    if (typeof window.addChatMessage !== "function") {
+    if (
+        text === null ||
+        text === undefined
+    ) {
+        return false;
+    }
+
+
+    if (!isChatAvailable()) {
+
         console.warn(
             "[MR.SMILE] window.addChatMessage() unavailable."
         );
@@ -73,19 +182,58 @@ function addSystemChatMessage(text) {
         return false;
     }
 
-    window.addChatMessage("mrsmile", {
-        user: "SYSTEM",
-        time: getCurrentTime(),
-        text: text
-    });
+
+    const message =
+        String(text).trim();
+
+
+    if (!message) {
+        return false;
+    }
+
+
+    window.addChatMessage(
+        "mrsmile",
+        {
+            user: "SYSTEM",
+            time: getCurrentTime(),
+            text: message
+        }
+    );
+
 
     return true;
+
 }
 
 
+/* ==========================================================
+   OPERATOR / SYSTEM COMPATIBILITY
+========================================================== */
+
+/*
+   Старые системы могли использовать
+   addOperatorChatMessage().
+
+   Если это сообщение действительно относится
+   к оператору, оно должно отображаться как YOU.
+
+   При этом мы НЕ добавляем сообщение повторно
+   в основной чат — только передаём его через bridge.
+*/
+
 function addOperatorChatMessage(text) {
 
-    if (typeof window.addChatMessage !== "function") {
+    if (
+        text === null ||
+        text === undefined
+    ) {
+        return false;
+    }
+
+
+    if (!isChatAvailable()) {
+
         console.warn(
             "[MR.SMILE] window.addChatMessage() unavailable."
         );
@@ -93,37 +241,63 @@ function addOperatorChatMessage(text) {
         return false;
     }
 
-    window.addChatMessage("mrsmile", {
-        user: "SYSTEM",
-        time: getCurrentTime(),
-        text: text
-    });
+
+    const message =
+        String(text).trim();
+
+
+    if (!message) {
+        return false;
+    }
+
+
+    window.addChatMessage(
+        "mrsmile",
+        {
+            user: "YOU",
+            time: getCurrentTime(),
+            text: message
+        }
+    );
+
 
     return true;
+
 }
 
 
 /* ==========================================================
    TYPING COMPATIBILITY
-   ==========================================================
-
-   Старые системы вызывают typeMessage() / typeSystemMessage().
-   Теперь они просто отправляют сообщение в настоящий OMEGA chat.
 ========================================================== */
+
+/*
+   Старые системы вызывают:
+
+       typeMessage()
+       typeSystemMessage()
+
+   Теперь они используют настоящий OMEGA chat.
+*/
 
 export async function typeMessage(text) {
 
-    addMrSmileChatMessage(text);
+    addMrSmileChatMessage(
+        text
+    );
 
     await sleep(50);
+
 }
 
 
 export async function typeSystemMessage(text) {
 
-    addSystemChatMessage(text);
+    addSystemChatMessage(
+        text
+    );
 
     await sleep(50);
+
 }
 
 
@@ -135,29 +309,74 @@ export async function playFirstContactMessage() {
 
     await sleep(600);
 
-    addMrSmileChatMessage(":)");
+
+    addMrSmileChatMessage(
+        ":)"
+    );
+
 
     await sleep(1200);
 
-    addMrSmileChatMessage("Hello, operator.");
+
+    addMrSmileChatMessage(
+        "Hello, operator."
+    );
+
 }
 
 
 /* ==========================================================
-   MR.SMILE RESPONSE
+   RESPONSE TO OPERATOR
 ========================================================== */
 
 async function sendMrSmileResponse(text) {
 
+    if (
+        text === null ||
+        text === undefined
+    ) {
+        return;
+    }
+
+
+    const input =
+        String(text).trim();
+
+
+    if (!input) {
+        return;
+    }
+
+
     try {
 
-        const response = await mrSmileSay(text);
+        const response =
+            await mrSmileSay(
+                input
+            );
 
-        if (!response) {
+
+        if (
+            response === null ||
+            response === undefined
+        ) {
             return;
         }
 
-        addMrSmileChatMessage(response);
+
+        const message =
+            String(response).trim();
+
+
+        if (!message) {
+            return;
+        }
+
+
+        addMrSmileChatMessage(
+            message
+        );
+
 
     } catch (error) {
 
@@ -167,6 +386,7 @@ async function sendMrSmileResponse(text) {
         );
 
     }
+
 }
 
 
@@ -174,11 +394,25 @@ async function sendMrSmileResponse(text) {
    INPUT
 ========================================================== */
 
+/*
+   This function is intentionally kept compatible
+   with the existing OMEGA chat architecture.
+
+   The main chats system already adds the YOU message.
+
+   Therefore we do NOT add it here again.
+*/
+
 function sendMessage() {
 
-    const input = document.getElementById("chatInput");
+    const input =
+        document.getElementById(
+            "chatInput"
+        );
+
 
     if (!input) {
+
         console.warn(
             "[MR.SMILE CHAT] chatInput not found."
         );
@@ -186,28 +420,29 @@ function sendMessage() {
         return;
     }
 
-    const text = input.value.trim();
+
+    const text =
+        input.value.trim();
+
 
     if (!text) {
         return;
     }
 
+
     input.value = "";
 
-    /*
-       ВАЖНО:
 
-       Само добавление сообщения пользователя уже делает
-       chats.js.
+    setTimeout(
+        () => {
 
-       Поэтому здесь НЕ добавляем YOU повторно.
-    */
+            sendMrSmileResponse(
+                text
+            );
 
-    setTimeout(() => {
-
-        sendMrSmileResponse(text);
-
-    }, 700);
+        },
+        700
+    );
 
 }
 
@@ -217,57 +452,390 @@ function sendMessage() {
 ========================================================== */
 
 const idleMessages = [
+
     ":)",
+
     "I'm still here.",
+
     "You are looking in the wrong place.",
+
     "I can see this.",
+
     "Nothing is wrong.",
+
     "Continue.",
+
     "You didn't close the channel.",
+
     "I remember.",
+
     "Closer than you think."
+
 ];
 
 
+/* ==========================================================
+   IDLE STATE
+========================================================== */
+
+function canUseIdleMessages() {
+
+    if (!idleEnabled) {
+        return false;
+    }
+
+
+    return (
+        localStorage.getItem(
+            "mrsmile_first_contact"
+        ) === "1"
+    );
+
+}
+
+
+/* ==========================================================
+   SCHEDULE IDLE
+========================================================== */
+
 function scheduleRandomMessage() {
 
-    clearTimeout(idleTimer);
+    clearTimeout(
+        idleTimer
+    );
+
+
+    if (!canUseIdleMessages()) {
+
+        return;
+
+    }
+
 
     const delay =
         30000 +
         Math.random() * 60000;
 
-    idleTimer = setTimeout(() => {
 
-        /*
-           Не отправляем случайные сообщения,
-           если MR.SMILE ещё не открыт.
-        */
+    idleTimer =
+        setTimeout(
+            () => {
 
-        if (
-            localStorage.getItem(
-                "mrsmile_first_contact"
-            ) !== "1"
-        ) {
-            scheduleRandomMessage();
-            return;
+                idleTimer = null;
+
+
+                if (
+                    !canUseIdleMessages()
+                ) {
+
+                    scheduleRandomMessage();
+
+                    return;
+
+                }
+
+
+                const message =
+                    idleMessages[
+                        Math.floor(
+                            Math.random() *
+                            idleMessages.length
+                        )
+                    ];
+
+
+                addMrSmileChatMessage(
+                    message
+                );
+
+
+                scheduleRandomMessage();
+
+            },
+            delay
+        );
+
+}
+
+
+/* ==========================================================
+   STOP IDLE
+========================================================== */
+
+function stopIdleMessages() {
+
+    clearTimeout(
+        idleTimer
+    );
+
+    idleTimer = null;
+
+}
+
+
+/* ==========================================================
+   START IDLE
+========================================================== */
+
+function startIdleMessages() {
+
+    stopIdleMessages();
+
+    idleEnabled = true;
+
+    scheduleRandomMessage();
+
+}
+
+
+/* ==========================================================
+   TEMPORARY IDLE DISABLE
+========================================================== */
+
+/*
+   Используется другими MR.SMILE событиями.
+
+   Например:
+
+       важное вмешательство
+       предупреждение
+       glitch
+       camera event
+       restricted file reaction
+
+   Пока событие происходит, обычный idle не мешает.
+*/
+
+function disableIdleMessages() {
+
+    idleEnabled = false;
+
+    stopIdleMessages();
+
+}
+
+
+/* ==========================================================
+   TEMPORARY IDLE ENABLE
+========================================================== */
+
+function enableIdleMessages() {
+
+    idleEnabled = true;
+
+    scheduleRandomMessage();
+
+}
+
+
+/* ==========================================================
+   EVENT-DRIVEN MR.SMILE MESSAGE
+========================================================== */
+
+/*
+   Это главный мост между:
+
+       mrsmileBehavior
+              ↓
+       mrsmileEvents
+              ↓
+       eventManager
+              ↓
+       mrsmileChat
+
+   Другой модуль НЕ должен напрямую
+   вызывать window.addChatMessage().
+
+   Вместо этого:
+
+       trigger(
+           "mrsmile:chatMessage",
+           {
+               text: "Don't.",
+               delay: 800
+           }
+       );
+*/
+
+
+async function handleMrSmileChatMessage(data) {
+
+    if (!data) {
+        return;
+    }
+
+
+    if (
+        data.text === null ||
+        data.text === undefined
+    ) {
+        return;
+    }
+
+
+    const text =
+        String(data.text).trim();
+
+
+    if (!text) {
+        return;
+    }
+
+
+    /*
+       Важное событие может временно
+       отключить idle-сообщения.
+    */
+
+    if (
+        data.stopIdle === true
+    ) {
+
+        disableIdleMessages();
+
+    }
+
+
+    const delay =
+        Number.isFinite(
+            data.delay
+        )
+            ? Math.max(
+                0,
+                data.delay
+            )
+            : 0;
+
+
+    if (delay > 0) {
+
+        await sleep(
+            delay
+        );
+
+    }
+
+
+    /*
+       Можно выбрать тип сообщения.
+
+       По умолчанию:
+           MR.SMILE
+
+       Если type === "system":
+           SYSTEM
+    */
+
+    if (
+        data.type === "system"
+    ) {
+
+        addSystemChatMessage(
+            text
+        );
+
+    } else {
+
+        addMrSmileChatMessage(
+            text
+        );
+
+    }
+
+
+    /*
+       После сообщения можно
+       автоматически вернуть idle.
+    */
+
+    if (
+        data.resumeIdle === true
+    ) {
+
+        enableIdleMessages();
+
+    }
+
+}
+
+
+/* ==========================================================
+   MULTI-MESSAGE EVENT
+========================================================== */
+
+/*
+   Позволяет MR.SMILE сделать сцену:
+
+       "You shouldn't be here."
+
+       ...
+
+       "But you already know that."
+
+   через один event.
+
+   Формат:
+
+       {
+           messages: [
+               {
+                   text: "...",
+                   delay: 500
+               },
+               {
+                   text: "...",
+                   delay: 1200
+               }
+           ]
+       }
+*/
+
+async function handleMrSmileChatSequence(data) {
+
+    if (!data) {
+        return;
+    }
+
+
+    if (!Array.isArray(data.messages)) {
+        return;
+    }
+
+
+    if (data.stopIdle === true) {
+
+        disableIdleMessages();
+
+    }
+
+
+    for (
+        const message of data.messages
+    ) {
+
+        if (!message) {
+            continue;
         }
 
 
-        const message =
-            idleMessages[
-                Math.floor(
-                    Math.random() *
-                    idleMessages.length
-                )
-            ];
+        await handleMrSmileChatMessage(
+            {
+                ...message,
+                stopIdle: false
+            }
+        );
+
+    }
 
 
-        addMrSmileChatMessage(message);
+    if (
+        data.resumeIdle === true
+    ) {
 
-        scheduleRandomMessage();
+        enableIdleMessages();
 
-    }, delay);
+    }
+
 }
 
 
@@ -277,8 +845,12 @@ function scheduleRandomMessage() {
 
 async function handleMirrorArchiveAccess() {
 
-    if (!hasPendingMirrorArchiveAccess()) {
+    if (
+        !hasPendingMirrorArchiveAccess()
+    ) {
+
         return;
+
     }
 
 
@@ -287,14 +859,23 @@ async function handleMirrorArchiveAccess() {
     );
 
 
-    clearTimeout(idleTimer);
+    /*
+       MIRROR-00 — важное событие.
+
+       Поэтому обычный idle временно
+       выключается.
+    */
+
+    disableIdleMessages();
 
 
     /*
-       MR.SMILE отвечает не мгновенно.
+       MR.SMILE не отвечает мгновенно.
     */
 
-    await sleep(900);
+    await sleep(
+        900
+    );
 
 
     addMrSmileChatMessage(
@@ -302,7 +883,9 @@ async function handleMirrorArchiveAccess() {
     );
 
 
-    await sleep(1200);
+    await sleep(
+        1200
+    );
 
 
     addMrSmileChatMessage(
@@ -310,11 +893,14 @@ async function handleMirrorArchiveAccess() {
     );
 
 
-    await sleep(700);
+    await sleep(
+        700
+    );
 
 
     /*
-       Именно здесь MR.SMILE официально выдаёт доступ.
+       Именно здесь MR.SMILE официально
+       выдаёт доступ.
     */
 
     const granted =
@@ -327,9 +913,11 @@ async function handleMirrorArchiveAccess() {
             "[MR.SMILE] MIRROR-00 access was already granted."
         );
 
-        scheduleRandomMessage();
+
+        enableIdleMessages();
 
         return;
+
     }
 
 
@@ -339,8 +927,8 @@ async function handleMirrorArchiveAccess() {
 
 
     /*
-       SYSTEM сообщение идёт в тот же MR.SMILE канал,
-       поэтому пользователь реально его увидит.
+       SYSTEM сообщение идёт в тот же
+       MR.SMILE канал.
     */
 
     addSystemChatMessage(
@@ -348,7 +936,9 @@ async function handleMirrorArchiveAccess() {
     );
 
 
-    await sleep(500);
+    await sleep(
+        500
+    );
 
 
     addSystemChatMessage(
@@ -357,11 +947,11 @@ async function handleMirrorArchiveAccess() {
 
 
     /*
-       После выдачи доступа возвращаем обычное
-       поведение MR.SMILE.
+       Возвращаем обычное поведение.
     */
 
-    scheduleRandomMessage();
+    enableIdleMessages();
+
 }
 
 
@@ -371,25 +961,74 @@ async function handleMirrorArchiveAccess() {
 
 function registerEvents() {
 
-    if (archiveEventRegistered) {
-        return;
+    /* ------------------------------------------------------
+       MIRROR-00
+    ------------------------------------------------------ */
+
+    if (
+        !archiveEventRegistered
+    ) {
+
+        archiveEventRegistered = true;
+
+
+        on(
+            "mrsmile:archiveAccessRequested",
+            () => {
+
+                console.log(
+                    "[MR.SMILE] MIRROR-00 access request received."
+                );
+
+
+                handleMirrorArchiveAccess();
+
+            }
+        );
+
     }
 
-    archiveEventRegistered = true;
+
+    /* ------------------------------------------------------
+       SINGLE CHAT MESSAGE
+    ------------------------------------------------------ */
+
+    if (
+        !chatEventRegistered
+    ) {
+
+        chatEventRegistered = true;
 
 
-    on(
-        "mrsmile:archiveAccessRequested",
-        () => {
+        on(
+            "mrsmile:chatMessage",
+            data => {
 
-            console.log(
-                "[MR.SMILE] MIRROR-00 access request received."
-            );
+                handleMrSmileChatMessage(
+                    data
+                );
 
-            handleMirrorArchiveAccess();
+            }
+        );
 
-        }
-    );
+
+        /*
+           Optional sequence event.
+        */
+
+        on(
+            "mrsmile:chatSequence",
+            data => {
+
+                handleMrSmileChatSequence(
+                    data
+                );
+
+            }
+        );
+
+    }
+
 }
 
 
@@ -403,6 +1042,7 @@ export function initMrSmileChat() {
         return;
     }
 
+
     initialized = true;
 
 
@@ -415,18 +1055,19 @@ export function initMrSmileChat() {
 
 
     /*
-       Кнопка отправки.
+       Кнопка отправки намеренно НЕ
+       назначается здесь.
 
-       Обычно sendMessage уже обрабатывается chats.js,
-       поэтому здесь НЕ назначаем onclick повторно.
+       Основной chats.js уже управляет
+       вводом пользователя.
 
-       Это важно, чтобы одно сообщение не отправлялось дважды.
+       Это предотвращает двойную отправку.
     */
 
 
     /*
-       Если FIRST CONTACT уже был завершён,
-       запускаем idle-сообщения.
+       Если FIRST CONTACT уже завершён,
+       запускаем idle.
     */
 
     if (
@@ -441,19 +1082,22 @@ export function initMrSmileChat() {
 
 
     /*
-       Если запрос MIRROR-00 уже существовал до
-       перезагрузки страницы — продолжаем его.
+       Если запрос MIRROR-00 уже существовал
+       до перезагрузки страницы — продолжаем.
     */
 
     if (
         hasPendingMirrorArchiveAccess()
     ) {
 
-        setTimeout(() => {
+        setTimeout(
+            () => {
 
-            handleMirrorArchiveAccess();
+                handleMirrorArchiveAccess();
 
-        }, 1000);
+            },
+            1000
+        );
 
     }
 
@@ -461,22 +1105,134 @@ export function initMrSmileChat() {
     console.log(
         "[MR.SMILE CHAT] Initialized."
     );
+
 }
 
 
 /* ==========================================================
    OPTIONAL DIRECT SEND
-   ========================================================== */
+========================================================== */
+
+/*
+   Позволяет другому модулю напрямую
+   попросить MR.SMILE ответить оператору.
+
+   Здесь используется mrSmileSay(),
+   поэтому это именно "ответ", а не
+   принудительная реплика.
+*/
 
 export function mrSmileChatSend(text) {
 
-    if (!text) {
+    if (
+        text === null ||
+        text === undefined
+    ) {
+
+        return;
+
+    }
+
+
+    const message =
+        String(text).trim();
+
+
+    if (!message) {
         return;
     }
 
+
     sendMrSmileResponse(
-        String(text).trim()
+        message
     );
+
+}
+
+
+/* ==========================================================
+   DIRECT EVENT MESSAGE
+========================================================== */
+
+/*
+   Прямой экспорт для JS-модулей.
+
+   Используется, если модулю удобнее
+   не работать через eventManager.
+
+   Пример:
+
+       mrSmileChatMessage(
+           "Don't."
+       );
+*/
+
+export function mrSmileChatMessage(
+    text,
+    options = {}
+) {
+
+    if (
+        text === null ||
+        text === undefined
+    ) {
+
+        return false;
+
+    }
+
+
+    const message =
+        String(text).trim();
+
+
+    if (!message) {
+        return false;
+    }
+
+
+    handleMrSmileChatMessage(
+        {
+            text: message,
+            ...options
+        }
+    );
+
+
+    return true;
+
+}
+
+
+/* ==========================================================
+   CHAT SEQUENCE
+========================================================== */
+
+/*
+   Прямой API для последовательности сообщений.
+*/
+
+export async function mrSmileChatSequence(
+    messages,
+    options = {}
+) {
+
+    if (
+        !Array.isArray(messages)
+    ) {
+
+        return;
+
+    }
+
+
+    await handleMrSmileChatSequence(
+        {
+            messages,
+            ...options
+        }
+    );
+
 }
 
 
@@ -486,11 +1242,16 @@ export function mrSmileChatSend(text) {
 
 window.debugMrSmileChat = {
 
+    /*
+       Прямое сообщение MR.SMILE.
+    */
+
     send(text) {
 
         if (!text) {
             return;
         }
+
 
         addMrSmileChatMessage(
             String(text)
@@ -498,11 +1259,17 @@ window.debugMrSmileChat = {
 
     },
 
+
+    /*
+       SYSTEM сообщение.
+    */
+
     system(text) {
 
         if (!text) {
             return;
         }
+
 
         addSystemChatMessage(
             String(text)
@@ -510,11 +1277,42 @@ window.debugMrSmileChat = {
 
     },
 
+
+    /*
+       Сообщение YOU.
+       Использовать только для debug/testing,
+       поскольку обычный chats.js уже
+       добавляет сообщения оператора.
+    */
+
+    operator(text) {
+
+        if (!text) {
+            return;
+        }
+
+
+        addOperatorChatMessage(
+            String(text)
+        );
+
+    },
+
+
+    /*
+       FIRST CONTACT.
+    */
+
     firstContact() {
 
         playFirstContactMessage();
 
     },
+
+
+    /*
+       MIRROR-00.
+    */
 
     mirrorAccess() {
 
@@ -522,16 +1320,97 @@ window.debugMrSmileChat = {
 
     },
 
-    stopIdle() {
 
-        clearTimeout(idleTimer);
+    /*
+       Проверка event-driven сообщения.
+    */
+
+    event(text) {
+
+        if (!text) {
+            return;
+        }
+
+
+        handleMrSmileChatMessage(
+            {
+                text: String(text)
+            }
+        );
 
     },
 
+
+    /*
+       Проверка последовательности.
+    */
+
+    sequence(messages) {
+
+        if (
+            !Array.isArray(messages)
+        ) {
+
+            return;
+        }
+
+
+        handleMrSmileChatSequence(
+            {
+                messages
+            }
+        );
+
+    },
+
+
+    /*
+       Idle.
+    */
+
+    stopIdle() {
+
+        disableIdleMessages();
+
+    },
+
+
     startIdle() {
 
-        scheduleRandomMessage();
+        enableIdleMessages();
+
+    },
+
+
+    /*
+       Status.
+    */
+
+    status() {
+
+        return {
+
+            initialized,
+
+            idleEnabled,
+
+            idleRunning:
+                idleTimer !== null,
+
+            firstContact:
+                localStorage.getItem(
+                    "mrsmile_first_contact"
+                ) === "1",
+
+            chatAvailable:
+                isChatAvailable(),
+
+            archivePending:
+                hasPendingMirrorArchiveAccess()
+
+        };
 
     }
 
 };
+
