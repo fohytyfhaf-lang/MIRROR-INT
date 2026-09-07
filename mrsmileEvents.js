@@ -81,7 +81,8 @@ import {
 } from "./mrsmileIntrusionUI.js";
 
 import {
-    initMrSmileBehavior
+    initMrSmileBehavior,
+    requestMrSmileBehavior
 } from "./mrsmileBehavior.js";
 
 import {
