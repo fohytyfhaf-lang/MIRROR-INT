@@ -122,6 +122,26 @@ const AMBIENT_COOLDOWN = 45000;
 
 
 /* ==========================================================
+   OPERATOR REACTION STATE
+   ----------------------------------------------------------
+   Реакции на действия оператора имеют приоритет
+   над обычными ambient-событиями.
+
+   Например:
+
+   OPERATOR READ FILE
+          ↓
+   MR.SMILE DECISION
+          ↓
+   CHAT REACTION
+          ↓
+   ambient временно не вмешивается
+========================================================== */
+
+let mrSmileReactionRunning = false;
+
+
+/* ==========================================================
    TIMING
 ========================================================== */
 
@@ -158,11 +178,13 @@ const TIMING = {
 
 export function initMrSmileEvents() {
 
-    if (running) return;
+    if (running) {
+        return;
+    }
+
 
     running = true;
 
-   
 
     /* ------------------------------------------------------
        TRUST
@@ -208,11 +230,12 @@ export function initMrSmileEvents() {
     observationLoop();
 
     initAmbientEvents();
-    initMrSmileIntrusionUI();
-   initMrSmileBehavior();
-   initMrSmileActions();
 
- 
+    initMrSmileIntrusionUI();
+
+    initMrSmileBehavior();
+
+    initMrSmileActions();
 
 
     /* ------------------------------------------------------
@@ -229,7 +252,54 @@ export function initMrSmileEvents() {
     );
 
 
-   
+    /* ======================================================
+       OPERATOR — READ FILE
+    ====================================================== */
+
+    on(
+        "mrsmile:operatorReadFile",
+        data => {
+
+            handleOperatorReadFile(data);
+
+        }
+    );
+
+
+    /* ------------------------------------------------------
+       SYS_00
+    ------------------------------------------------------ */
+
+    on(
+        "mrsmile:sys00Accepted",
+        () => {
+
+            handleSys00Accepted();
+
+        }
+    );
+
+
+    /* ------------------------------------------------------
+       HANDSHAKE
+    ------------------------------------------------------ */
+
+    on(
+        "mrsmile:handshakeAccepted",
+        () => {
+
+            handleHandshakeAccepted();
+
+        }
+    );
+
+
+    console.log(
+        "[MR.SMILE] Event system initialized."
+    );
+}
+
+
 /* ==========================================================
    OPERATOR — READ FILE
 ========================================================== */
@@ -239,6 +309,7 @@ function handleOperatorReadFile(data) {
     if (!data) {
         return;
     }
+
 
     const path =
         data.path || "";
@@ -269,7 +340,6 @@ function handleOperatorReadFile(data) {
             1,
             `READ_FILE: ${path}`
         );
-
     }
 
 
@@ -277,67 +347,25 @@ function handleOperatorReadFile(data) {
        BEHAVIOR
     ------------------------------------------------------ */
 
-    requestMrSmileBehavior({
+    runMrSmileOperatorReaction(
+        async () => {
 
-        type:
-            "operator_read_file",
+            requestMrSmileBehavior({
 
-        path,
+                type:
+                    "operator_read_file",
 
-        file:
-            data.file || null,
+                path,
 
-        reason:
-            "operator_read_file"
+                file:
+                    data.file || null,
 
-    });
+                reason:
+                    "operator_read_file"
 
-}
-
-    /* ------------------------------------------------------
-       SYS_00
-    ------------------------------------------------------ */
-
-    on(
-        "mrsmile:sys00Accepted",
-        () => {
-
-            handleSys00Accepted();
+            });
 
         }
-    );
-
-
-   
-    /* ------------------------------------------------------
-   OPERATOR ACTIONS
------------------------------------------------------- */
-
-on(
-    "mrsmile:operatorReadFile",
-    data => {
-
-        handleOperatorReadFile(data);
-
-    }
-);
-
-    /* ------------------------------------------------------
-       HANDSHAKE
-    ------------------------------------------------------ */
-
-    on(
-        "mrsmile:handshakeAccepted",
-        () => {
-
-            handleHandshakeAccepted();
-
-        }
-    );
-
-
-    console.log(
-        "[MR.SMILE] Event system initialized."
     );
 }
 
@@ -348,10 +376,17 @@ on(
 
 function handleSys00Accepted() {
 
-    if (sys00HandshakeArmed) return;
-    if (sys00HandshakeTriggered) return;
+    if (sys00HandshakeArmed) {
+        return;
+    }
+
+    if (sys00HandshakeTriggered) {
+        return;
+    }
+
 
     sys00HandshakeArmed = true;
+
 
     scheduleFirstContactTimer(
         () => {
@@ -363,6 +398,7 @@ function handleSys00Accepted() {
             ) {
                 return;
             }
+
 
             triggerSys00Handshake();
 
@@ -378,20 +414,27 @@ function handleSys00Accepted() {
 
 async function triggerSys00Handshake() {
 
-    if (sys00HandshakeTriggered) return;
+    if (sys00HandshakeTriggered) {
+        return;
+    }
+
 
     sys00HandshakeTriggered = true;
+
 
     localStorage.setItem(
         "mrsmile_handshake",
         "1"
     );
 
+
     trigger(
         "mrsmile:handshakeDetected"
     );
 
+
     await showHandshakeSequence();
+
 
     trigger(
         "mrsmile:handshakeAccepted"
@@ -409,42 +452,56 @@ async function showHandshakeSequence() {
         "SYSTEM NOTICE: Unauthorized handshake detected."
     );
 
+
     await sleep(500);
+
 
     await systemMessage(
         "CHANNEL: SYS_00"
     );
 
+
     await sleep(350);
+
 
     await systemMessage(
         "SOURCE: UNKNOWN"
     );
 
+
     await sleep(500);
+
 
     const overlay =
         createSystemOverlay();
+
 
     overlay.classList.add(
         "mrSmileHandshake"
     );
 
+
     await sleep(300);
+
 
     overlay.classList.add(
         "accepted"
     );
 
+
     await sleep(500);
 
+
     overlay.remove();
+
 
     await systemMessage(
         "CONNECTION STATUS: ACTIVE"
     );
 
+
     await sleep(400);
+
 
     await systemMessage(
         "REMOTE HANDSHAKE ACCEPTED."
@@ -458,7 +515,10 @@ async function showHandshakeSequence() {
 
 function handleHandshakeAccepted() {
 
-    if (integrityEventRunning) return;
+    if (integrityEventRunning) {
+        return;
+    }
+
 
     startOmegaIntegrityEvent();
 }
@@ -470,9 +530,13 @@ function handleHandshakeAccepted() {
 
 async function startOmegaIntegrityEvent() {
 
-    if (integrityEventRunning) return;
+    if (integrityEventRunning) {
+        return;
+    }
+
 
     integrityEventRunning = true;
+
 
     try {
 
@@ -480,49 +544,65 @@ async function startOmegaIntegrityEvent() {
             "OMEGA SYSTEM INTEGRITY: 99.8%"
         );
 
+
         await sleep(900);
+
 
         await systemMessage(
             "OMEGA SYSTEM INTEGRITY: 99.6%"
         );
 
+
         await sleep(850);
+
 
         await systemMessage(
             "OMEGA SYSTEM INTEGRITY: 99.3%"
         );
 
+
         await sleep(700);
+
 
         await systemMessage(
             "BACKGROUND PROCESS: UNKNOWN"
         );
 
+
         await sleep(650);
+
 
         await systemMessage(
             "REMOTE PROCESS DETECTED."
         );
 
+
         await sleep(900);
+
 
         await systemMessage(
             "PROCESS TERMINATION REQUESTED."
         );
 
+
         await sleep(800);
+
 
         await systemMessage(
             "PROCESS TERMINATED."
         );
 
+
         await sleep(1000);
+
 
         await systemMessage(
             "SYSTEM INTEGRITY: NORMAL"
         );
 
+
         await sleep(1800);
+
 
         await falseRecovery();
 
@@ -546,9 +626,13 @@ async function startOmegaIntegrityEvent() {
 
 async function falseRecovery() {
 
-    if (falseRecoveryRunning) return;
+    if (falseRecoveryRunning) {
+        return;
+    }
+
 
     falseRecoveryRunning = true;
+
 
     try {
 
@@ -556,19 +640,25 @@ async function falseRecovery() {
             "BACKGROUND PROCESS: 01 UNKNOWN"
         );
 
+
         await sleep(800);
+
 
         await systemMessage(
             "BACKGROUND PROCESS: 00 UNKNOWN"
         );
 
+
         await sleep(900);
+
 
         await systemMessage(
             "SYSTEM INTEGRITY: NORMAL"
         );
 
+
         await sleep(3000);
+
 
         trigger(
             "mrsmile:firstContact"
@@ -587,7 +677,10 @@ async function falseRecovery() {
 
 export async function triggerFirstContact() {
 
-    if (firstContactRunning) return;
+    if (firstContactRunning) {
+        return;
+    }
+
 
     if (
         localStorage.getItem(
@@ -597,9 +690,12 @@ export async function triggerFirstContact() {
         return;
     }
 
+
     firstContactRunning = true;
 
+
     clearFirstContactTimers();
+
 
     try {
 
@@ -711,8 +807,10 @@ async function phaseAuthorization() {
         "mrSmileAuthPhase"
     );
 
+
     const auth =
         createMrSmileAuthorization();
+
 
     await sleep(
         TIMING.authAppear
@@ -727,6 +825,7 @@ async function phaseAuthorization() {
         auth.querySelector(
             "[data-mrsmile-account]"
         );
+
 
     await typeIntoElement(
         account,
@@ -746,6 +845,7 @@ async function phaseAuthorization() {
         auth.querySelector(
             "[data-mrsmile-password]"
         );
+
 
     await typeIntoElement(
         password,
@@ -768,6 +868,7 @@ async function phaseAuthorization() {
             "[data-mrsmile-status]"
         );
 
+
     status.textContent =
         "AUTHORIZING...";
 
@@ -777,6 +878,7 @@ async function phaseAuthorization() {
 
     status.textContent =
         "AUTHENTICATION SUCCESSFUL";
+
 
     status.classList.add(
         "success"
@@ -804,8 +906,10 @@ async function phaseAuthorization() {
             "[data-mrsmile-warning]"
         );
 
+
     warning.textContent =
         "ACCOUNT OWNER: UNKNOWN";
+
 
     warning.classList.add(
         "warning"
@@ -835,6 +939,7 @@ function createMrSmileAuthorization() {
             "#mrSmileAuthorization"
         );
 
+
     if (old) {
         old.remove();
     }
@@ -843,8 +948,10 @@ function createMrSmileAuthorization() {
     const auth =
         document.createElement("div");
 
+
     auth.id =
         "mrSmileAuthorization";
+
 
     auth.className =
         "mrSmileAuthorization";
@@ -998,6 +1105,7 @@ async function phaseOmegaCollapse() {
             "mrSmileSystemDisappearing"
         );
 
+
         await sleep(
             TIMING.collapseStep
         );
@@ -1069,6 +1177,7 @@ async function phaseSystemDarkness() {
 
         await sleep(850);
 
+
         auth.remove();
     }
 
@@ -1118,8 +1227,10 @@ async function phaseDiagnostics() {
         const row =
             document.createElement("div");
 
+
         row.textContent =
             line;
+
 
         diagnostics.appendChild(
             row
@@ -1139,6 +1250,7 @@ async function phaseDiagnostics() {
 
     present.textContent =
         "PRESENT";
+
 
     present.className =
         "mrSmileDiagnosticPresent";
@@ -1167,6 +1279,7 @@ function createDiagnostics() {
 
     diagnostics.id =
         "mrSmileDiagnostics";
+
 
     diagnostics.className =
         "mrSmileDiagnostics";
@@ -1429,6 +1542,7 @@ async function animateControlledCursor() {
     const startX =
         window.innerWidth * 0.5;
 
+
     const startY =
         window.innerHeight * 0.55;
 
@@ -1486,6 +1600,7 @@ function moveControlledCursor(
 
     controlledCursor.style.left =
         `${x}px`;
+
 
     controlledCursor.style.top =
         `${y}px`;
@@ -1662,8 +1777,10 @@ function createIntrusionWindow() {
     windowElement.style.left =
         "50%";
 
+
     windowElement.style.top =
         "50%";
+
 
     windowElement.style.transform =
         "translate(-50%, -50%)";
@@ -1743,6 +1860,7 @@ async function releaseCursorControl() {
             true
         );
 
+
         cursorMouseHandler = null;
     }
 
@@ -1758,6 +1876,7 @@ async function releaseCursorControl() {
 
 
         controlledCursor.remove();
+
 
         controlledCursor = null;
     }
@@ -1859,13 +1978,16 @@ function restoreOmegaInterface() {
                 "mrSmileSystemDisappearing"
             );
 
+
             element.style.removeProperty(
                 "opacity"
             );
 
+
             element.style.removeProperty(
                 "visibility"
             );
+
 
             element.style.removeProperty(
                 "transform"
@@ -1942,7 +2064,9 @@ function removeObserverTrace() {
         );
 
 
-    if (!trace) return;
+    if (!trace) {
+        return;
+    }
 
 
     trace.classList.add(
@@ -2063,6 +2187,7 @@ export function resetMrSmileFirstContact() {
         "mrsmile_first_contact"
     );
 
+
     localStorage.removeItem(
         "mrsmile_handshake"
     );
@@ -2177,6 +2302,15 @@ async function runAmbientEvent(
 
 
     /* ------------------------------------------------------
+       OPERATOR REACTION HAS PRIORITY
+    ------------------------------------------------------ */
+
+    if (mrSmileReactionRunning) {
+        return;
+    }
+
+
+    /* ------------------------------------------------------
        NO OVERLAPPING EVENTS
     ------------------------------------------------------ */
 
@@ -2219,6 +2353,84 @@ async function runAmbientEvent(
     } finally {
 
         ambientEventRunning = false;
+    }
+}
+
+
+/* ==========================================================
+   OPERATOR REACTION RUNNER
+   ----------------------------------------------------------
+   Контекстные реакции оператора имеют приоритет
+   над ambient-событиями.
+
+   Важно:
+   эта функция НЕ меняет Trust/Respect/Irritation.
+   Она только управляет временем выполнения реакции.
+
+   Сама логика поведения находится в
+   mrsmileBehavior.js / mrsmileRelationship.js.
+========================================================== */
+
+async function runMrSmileOperatorReaction(
+    reactionFunction
+) {
+
+    if (
+        typeof reactionFunction !==
+        "function"
+    ) {
+        return;
+    }
+
+
+    /* ------------------------------------------------------
+       FIRST CONTACT
+    ------------------------------------------------------ */
+
+    if (firstContactRunning) {
+        return;
+    }
+
+
+    /* ------------------------------------------------------
+       ONLY AFTER FIRST CONTACT
+    ------------------------------------------------------ */
+
+    if (
+        localStorage.getItem(
+            "mrsmile_first_contact"
+        ) !== "1"
+    ) {
+        return;
+    }
+
+
+    /* ------------------------------------------------------
+       NO OVERLAPPING OPERATOR REACTIONS
+    ------------------------------------------------------ */
+
+    if (mrSmileReactionRunning) {
+        return;
+    }
+
+
+    mrSmileReactionRunning = true;
+
+
+    try {
+
+        await reactionFunction();
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE] Operator reaction failed:",
+            error
+        );
+
+    } finally {
+
+        mrSmileReactionRunning = false;
     }
 }
 
@@ -2437,6 +2649,11 @@ async function nightLoop() {
         }
 
 
+        if (mrSmileReactionRunning) {
+            continue;
+        }
+
+
         if (
             Math.random() < 0.18
         ) {
@@ -2466,6 +2683,11 @@ async function glitchLoop() {
 
 
         if (firstContactRunning) {
+            continue;
+        }
+
+
+        if (mrSmileReactionRunning) {
             continue;
         }
 
@@ -2503,6 +2725,11 @@ async function idleLoop() {
         }
 
 
+        if (mrSmileReactionRunning) {
+            continue;
+        }
+
+
         trigger(
             "mrsmile:idleEvent"
         );
@@ -2527,6 +2754,11 @@ async function observationLoop() {
 
 
         if (firstContactRunning) {
+            continue;
+        }
+
+
+        if (mrSmileReactionRunning) {
             continue;
         }
 
@@ -2655,7 +2887,9 @@ async function typeIntoElement(
     speed = 100
 ) {
 
-    if (!element) return;
+    if (!element) {
+        return;
+    }
 
 
     element.textContent =
@@ -2783,6 +3017,11 @@ export function mrSmileGlitch() {
     }
 
 
+    if (mrSmileReactionRunning) {
+        return;
+    }
+
+
     trigger(
         "mrsmile:glitchEvent"
     );
@@ -2796,6 +3035,11 @@ export function mrSmileObservation() {
     }
 
 
+    if (mrSmileReactionRunning) {
+        return;
+    }
+
+
     trigger(
         "mrsmile:observationEvent"
     );
@@ -2805,6 +3049,11 @@ export function mrSmileObservation() {
 export function mrSmileNightEvent() {
 
     if (firstContactRunning) {
+        return;
+    }
+
+
+    if (mrSmileReactionRunning) {
         return;
     }
 
