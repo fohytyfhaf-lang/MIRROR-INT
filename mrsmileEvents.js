@@ -242,15 +242,55 @@ function handleOperatorReadFile(data) {
     const path =
         data.path || "";
 
+
     console.log(
         "[MR.SMILE] Operator read file:",
         path
     );
 
-    addTrust(
-        1,
-        `READ_FILE: ${path}`
-    );
+
+    /* ------------------------------------------------------
+       TRUST
+    ------------------------------------------------------ */
+
+    if (
+        path === "/files/entity_mrsmile.txt"
+    ) {
+
+        addTrust(
+            2,
+            `READ_SECRET: ${path}`
+        );
+
+    } else {
+
+        addTrust(
+            1,
+            `READ_FILE: ${path}`
+        );
+
+    }
+
+
+    /* ------------------------------------------------------
+       BEHAVIOR
+    ------------------------------------------------------ */
+
+    requestMrSmileBehavior({
+
+        type:
+            "operator_read_file",
+
+        path,
+
+        file:
+            data.file || null,
+
+        reason:
+            "operator_read_file"
+
+    });
+
 }
 
     /* ------------------------------------------------------
