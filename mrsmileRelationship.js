@@ -1033,26 +1033,38 @@ function loadRelationship() {
 window.debugRelationship = {
 
     status() {
+
         return getRelationshipStatus();
+
     },
+
 
     setRespect(value) {
 
         value = Number(value);
 
         if (!Number.isFinite(value)) {
+
             console.warn(
-                "[MR.SMILE RELATIONSHIP] Invalid respect value:",
+                "[MR.SMILE RELATIONSHIP] Invalid respect:",
                 value
             );
-            return;
+
+            return getRelationshipStatus();
+
         }
 
-        const previous = state.respect;
 
-        state.respect = clamp(value);
+        const previous =
+            state.respect;
+
+
+        state.respect =
+            clamp(value);
+
 
         saveRelationship();
+
 
         console.log(
             "[MR.SMILE RELATIONSHIP] Respect:",
@@ -1061,26 +1073,44 @@ window.debugRelationship = {
             state.respect
         );
 
-        emitRelationshipChange();
+
+        trigger(
+            "mrsmile:relationshipChanged",
+            getRelationshipStatus()
+        );
+
+
+        return getRelationshipStatus();
+
     },
+
 
     setIrritation(value) {
 
         value = Number(value);
 
         if (!Number.isFinite(value)) {
+
             console.warn(
-                "[MR.SMILE RELATIONSHIP] Invalid irritation value:",
+                "[MR.SMILE RELATIONSHIP] Invalid irritation:",
                 value
             );
-            return;
+
+            return getRelationshipStatus();
+
         }
 
-        const previous = state.irritation;
 
-        state.irritation = clamp(value);
+        const previous =
+            state.irritation;
+
+
+        state.irritation =
+            clamp(value);
+
 
         saveRelationship();
+
 
         console.log(
             "[MR.SMILE RELATIONSHIP] Irritation:",
@@ -1089,7 +1119,22 @@ window.debugRelationship = {
             state.irritation
         );
 
-        emitRelationshipChange();
+
+        trigger(
+            "mrsmile:relationshipChanged",
+            getRelationshipStatus()
+        );
+
+
+        return getRelationshipStatus();
+
+    },
+
+
+    reset() {
+
+        return resetMrSmileRelationship();
+
     }
 
 };
