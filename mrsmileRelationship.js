@@ -1025,3 +1025,71 @@ function loadRelationship() {
     }
 
 }
+
+// =======================================
+// DEBUG RELATIONSHIP CONTROLS
+// =======================================
+
+window.debugRelationship = {
+
+    status() {
+        return getRelationshipStatus();
+    },
+
+    setRespect(value) {
+
+        value = Number(value);
+
+        if (!Number.isFinite(value)) {
+            console.warn(
+                "[MR.SMILE RELATIONSHIP] Invalid respect value:",
+                value
+            );
+            return;
+        }
+
+        const previous = state.respect;
+
+        state.respect = clamp(value);
+
+        saveRelationship();
+
+        console.log(
+            "[MR.SMILE RELATIONSHIP] Respect:",
+            previous,
+            "→",
+            state.respect
+        );
+
+        emitRelationshipChange();
+    },
+
+    setIrritation(value) {
+
+        value = Number(value);
+
+        if (!Number.isFinite(value)) {
+            console.warn(
+                "[MR.SMILE RELATIONSHIP] Invalid irritation value:",
+                value
+            );
+            return;
+        }
+
+        const previous = state.irritation;
+
+        state.irritation = clamp(value);
+
+        saveRelationship();
+
+        console.log(
+            "[MR.SMILE RELATIONSHIP] Irritation:",
+            previous,
+            "→",
+            state.irritation
+        );
+
+        emitRelationshipChange();
+    }
+
+};
