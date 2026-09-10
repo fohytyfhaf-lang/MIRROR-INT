@@ -57,7 +57,6 @@ import {
 } from "./mrsmileMemory.js";
 
 import {
-    triggerMrSmileManifestation,
     showMrSmileFirstContactFace
 } from "./mrsmileAppearance.js";
 
@@ -81,14 +80,12 @@ import {
 } from "./mrsmileIntrusionUI.js";
 
 import {
-    initMrSmileBehavior,
-    requestMrSmileBehavior
+    initMrSmileBehavior
 } from "./mrsmileBehavior.js";
 
 import {
     initMrSmileActions
 } from "./mrsmileActions.js";
-
 
 import {
     initMrSmileContext
@@ -129,18 +126,26 @@ const AMBIENT_COOLDOWN = 45000;
 /* ==========================================================
    OPERATOR REACTION STATE
    ----------------------------------------------------------
-   Реакции на действия оператора имеют приоритет
-   над обычными ambient-событиями.
+   ВАЖНО:
 
-   Например:
+   Контекстные реакции оператора теперь обрабатываются
+   через:
 
-   OPERATOR READ FILE
-          ↓
-   MR.SMILE DECISION
-          ↓
-   CHAT REACTION
-          ↓
-   ambient временно не вмешивается
+       Explorer / OMEGA action
+              ↓
+       mrsmile:operatorAction
+              ↓
+       mrsmileContext
+              ↓
+       mrsmileBehavior
+              ↓
+       mrsmileActions
+
+   Этот модуль больше НЕ должен повторно вызывать
+   requestMrSmileBehavior() для тех же действий.
+
+   mrSmileReactionRunning сохраняется для блокировки
+   ambient-событий во время legacy/contextual процессов.
 ========================================================== */
 
 let mrSmileReactionRunning = false;
@@ -236,12 +241,23 @@ export function initMrSmileEvents() {
 
     initAmbientEvents();
 
+
+    /* ------------------------------------------------------
+       MR.SMILE CORE SYSTEMS
+
+       IMPORTANT:
+       Инициализация идёт один раз.
+
+       Context → Behavior → Actions
+       является основной системой реакций.
+    ------------------------------------------------------ */
+
     initMrSmileIntrusionUI();
 
     initMrSmileBehavior();
 
     initMrSmileActions();
-   
+
     initMrSmileContext();
 
 
@@ -261,6 +277,32 @@ export function initMrSmileEvents() {
 
     /* ======================================================
        OPERATOR — READ FILE
+
+       ВАЖНО:
+
+       Этот listener НЕ вызывает Behavior.
+
+       Раньше здесь было:
+
+           requestMrSmileBehavior(...)
+
+       Это создавало вторую реакцию одновременно
+       с новой системой Context.
+
+       Теперь здесь остаётся только Trust-логика
+       для чтения файлов.
+
+       Само действие уже проходит через:
+
+           explorer
+               ↓
+           operatorAction
+               ↓
+           mrsmileContext
+               ↓
+           behavior
+               ↓
+           actions
     ====================================================== */
 
     on(
@@ -309,6 +351,18 @@ export function initMrSmileEvents() {
 
 /* ==========================================================
    OPERATOR — READ FILE
+   ----------------------------------------------------------
+   LEGACY TRUST HANDLER
+
+   Этот обработчик больше НЕ вызывает Behavior.
+
+   Он нужен только для старой механики Trust:
+
+       обычный файл  → +1 Trust
+       entity_mrsmile → +2 Trust
+
+   Реакция MR.SMILE теперь полностью проходит
+   через mrsmileContext.
 ========================================================== */
 
 function handleOperatorReadFile(data) {
@@ -350,30 +404,20 @@ function handleOperatorReadFile(data) {
     }
 
 
-    /* ------------------------------------------------------
-       BEHAVIOR
-    ------------------------------------------------------ */
-
-    runMrSmileOperatorReaction(
-        async () => {
-
-            requestMrSmileBehavior({
-
-                type:
-                    "operator_read_file",
-
-                path,
-
-                file:
-                    data.file || null,
-
-                reason:
-                    "operator_read_file"
-
-            });
-
-        }
-    );
+    /*
+     * НИЧЕГО БОЛЬШЕ ЗДЕСЬ НЕ ДЕЛАЕМ.
+     *
+     * Особенно НЕ вызываем:
+     *
+     * requestMrSmileBehavior(...)
+     *
+     * потому что Explorer уже отправляет:
+     *
+     * mrsmile:operatorAction
+     *
+     * а mrsmileContext сам передаёт его
+     * в Behavior.
+     */
 }
 
 
@@ -2219,6 +2263,7 @@ export function resetMrSmileFirstContact() {
    Небольшие появления MR.SMILE после FIRST CONTACT.
 
    Эти события не должны ломать OMEGA.
+
    Они создают ощущение постоянного присутствия.
 ========================================================== */
 
@@ -2367,15 +2412,13 @@ async function runAmbientEvent(
 /* ==========================================================
    OPERATOR REACTION RUNNER
    ----------------------------------------------------------
-   Контекстные реакции оператора имеют приоритет
-   над ambient-событиями.
+   LEGACY COMPATIBILITY
 
-   Важно:
-   эта функция НЕ меняет Trust/Respect/Irritation.
-   Она только управляет временем выполнения реакции.
+   Эта функция больше не используется для Explorer
+   после перехода на mrsmileContext.
 
-   Сама логика поведения находится в
-   mrsmileBehavior.js / mrsmileRelationship.js.
+   Оставлена здесь для совместимости с другими
+   старыми событиями, если они используют её.
 ========================================================== */
 
 async function runMrSmileOperatorReaction(
@@ -2444,8 +2487,6 @@ async function runMrSmileOperatorReaction(
 
 /* ==========================================================
    AMBIENT — IDLE
-   ----------------------------------------------------------
-   Самое спокойное событие.
 ========================================================== */
 
 async function ambientIdleEvent() {
@@ -2474,8 +2515,6 @@ async function ambientIdleEvent() {
 
 /* ==========================================================
    AMBIENT — OBSERVATION
-   ----------------------------------------------------------
-   MR.SMILE кратко показывает, что он наблюдает.
 ========================================================== */
 
 async function ambientObservationEvent() {
@@ -2542,8 +2581,6 @@ async function ambientObservationEvent() {
 
 /* ==========================================================
    AMBIENT — NIGHT
-   ----------------------------------------------------------
-   Незначительное изменение фоновой OMEGA активности.
 ========================================================== */
 
 async function ambientNightEvent() {
@@ -2587,8 +2624,6 @@ async function ambientNightEvent() {
 
 /* ==========================================================
    AMBIENT — GLITCH
-   ----------------------------------------------------------
-   Очень короткая системная аномалия.
 ========================================================== */
 
 async function ambientGlitchEvent() {
@@ -2842,6 +2877,7 @@ async function systemMessage(
                 text
             );
 
+
             return;
         }
 
@@ -2921,9 +2957,6 @@ async function typeIntoElement(
 
 /* ==========================================================
    SCHEDULE TIMER
-   ----------------------------------------------------------
-   В отличие от старой версии все временные
-   callbacks первого контакта можно отменить.
 ========================================================== */
 
 function scheduleFirstContactTimer(
