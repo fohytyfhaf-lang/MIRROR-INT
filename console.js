@@ -4,7 +4,9 @@ import {
     canAccess
 } from "./security.js";
 
-import { trigger } from "./eventManager.js";
+import {
+    trigger
+} from "./eventManager.js";
 
 
 /* =========================================================
@@ -13,6 +15,53 @@ import { trigger } from "./eventManager.js";
 
 let commandHistory = [];
 let historyIndex = -1;
+
+
+/* =========================================================
+   MR.SMILE CONTEXT REPORTING
+========================================================= */
+
+/*
+    Консоль сообщает реальные действия оператора
+    в общую систему MR.SMILE.
+
+    Цепочка:
+
+    Console
+        ↓
+    mrsmile:operatorAction
+        ↓
+    mrsmileContext
+        ↓
+    mrsmileBehavior
+        ↓
+    mrsmileActions
+*/
+
+function reportMrSmileConsoleAction(data = {}) {
+
+    try {
+
+        trigger(
+            "mrsmile:operatorAction",
+            {
+                source: "console",
+                page: "console",
+                operator: data.operator || "operator",
+                ...data
+            }
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "[OMEGA CONSOLE] MR.SMILE context report failed:",
+            error
+        );
+
+    }
+
+}
 
 
 /* =========================================================
@@ -50,7 +99,7 @@ const commands = {
         clearance: 0,
         description: "Run system diagnostics"
     },
-    
+
     sys_00: {
         clearance: 0,
         description: "Initialize unknown system channel"
@@ -292,8 +341,7 @@ function showFiles() {
         print("  experiment_Ten.pdf");
         print("  experiment_Alexey.pdf");
 
-    }
-    else {
+    } else {
 
         print(
             "  [RESTRICTED FILES HIDDEN]",
@@ -344,20 +392,29 @@ function showMessages() {
 
     if (getClearance() >= 2) {
 
-        print("RESEARCH ............ AVAILABLE");
+        print(
+            "RESEARCH ............ AVAILABLE"
+        );
 
     }
 
     if (getClearance() >= 3) {
 
-        print("MEDICAL ............. AVAILABLE");
-        print("INCIDENTS ........... AVAILABLE");
+        print(
+            "MEDICAL ............. AVAILABLE"
+        );
+
+        print(
+            "INCIDENTS ........... AVAILABLE"
+        );
 
     }
 
     if (getClearance() >= 5) {
 
-        print("ADMINISTRATION ...... AVAILABLE");
+        print(
+            "ADMINISTRATION ...... AVAILABLE"
+        );
 
     }
 
@@ -402,6 +459,7 @@ function showSecurity() {
     if (getClearance() >= 5) {
 
         print("");
+
         print(
             "ADMIN OVERRIDE ...... AVAILABLE"
         );
@@ -689,7 +747,9 @@ function easterEgg(command) {
 
 
             /*
-               Передаём событие остальной системе.
+               Старое событие оставляем,
+               чтобы не сломать существующую
+               систему MR.SMILE.
             */
 
             trigger(
@@ -799,31 +859,55 @@ function showHelp() {
 }
 
 
-/* ==========================================================
+/* =========================================================
    SYS_00 — UNKNOWN SYSTEM CHANNEL
-========================================================== */
+========================================================= */
 
 function openSys00Prompt() {
 
-    // Если окно уже существует — не создаём второе
-    const existing = document.getElementById("sys00Prompt");
+    /*
+       Если окно уже существует —
+       не создаём второе.
+    */
+
+    const existing =
+        document.getElementById(
+            "sys00Prompt"
+        );
 
     if (existing) {
-        existing.style.display = "flex";
+
+        existing.style.display =
+            "flex";
+
         return;
+
     }
 
-    const overlay = document.createElement("div");
 
-    overlay.id = "sys00Prompt";
+    const overlay =
+        document.createElement("div");
+
+    overlay.id =
+        "sys00Prompt";
+
 
     overlay.innerHTML = `
+
         <div class="sys00Window">
 
             <div class="sys00Header">
-                <span>OMEGA SYSTEM</span>
-                <span>SYS_00</span>
+
+                <span>
+                    OMEGA SYSTEM
+                </span>
+
+                <span>
+                    SYS_00
+                </span>
+
             </div>
+
 
             <div class="sys00Body">
 
@@ -831,17 +915,26 @@ function openSys00Prompt() {
                     UNAUTHORIZED SYSTEM CHANNEL
                 </div>
 
+
                 <div class="sys00Info">
+
                     CHANNEL: SYS_00<br>
                     STATUS: UNKNOWN<br>
                     SOURCE: LOCAL
+
                 </div>
 
+
                 <div class="sys00Text">
+
                     SYS_00 requests initialization.
+
                     <br><br>
+
                     Continue?
+
                 </div>
+
 
                 <div class="sys00Buttons">
 
@@ -858,88 +951,188 @@ function openSys00Prompt() {
             </div>
 
         </div>
+
     `;
 
-    document.body.appendChild(overlay);
 
-    /* YES */
+    document.body.appendChild(
+        overlay
+    );
+
+
+    /* -----------------------------------------
+       YES
+    ----------------------------------------- */
 
     document
         .getElementById("sys00Yes")
-        .addEventListener("click", () => {
+        .addEventListener(
+            "click",
+            () => {
 
-            console.log(
-                "[SYS_00] Initialization accepted."
-            );
+                console.log(
+                    "[SYS_00] Initialization accepted."
+                );
 
-            localStorage.setItem(
-                "mrsmile_sys00",
-                "1"
-            );
 
-            trigger(
-                "mrsmile:sys00Accepted"
-            );
+                localStorage.setItem(
+                    "mrsmile_sys00",
+                    "1"
+                );
 
-            const body =
-                overlay.querySelector(".sys00Body");
 
-            body.innerHTML = `
-                <div class="sys00Warning">
-                    INITIALIZING...
-                </div>
+                trigger(
+                    "mrsmile:sys00Accepted"
+                );
 
-                <div class="sys00Info">
-                    CHANNEL: SYS_00<br>
-                    STATUS: CONNECTING
-                </div>
-            `;
 
-            setTimeout(() => {
+                /*
+                   Сообщаем MR.SMILE,
+                   что оператор согласился
+                   инициализировать SYS_00.
+                */
+
+                reportMrSmileConsoleAction({
+
+                    type: "system_action",
+
+                    target: "SYS_00",
+
+                    action: "initialize",
+
+                    reason:
+                        "operator_accepted_sys00",
+
+                    metadata: {
+
+                        channel: "SYS_00",
+
+                        status: "unknown",
+
+                        source: "local",
+
+                        accepted: true
+
+                    }
+
+                });
+
+
+                const body =
+                    overlay.querySelector(
+                        ".sys00Body"
+                    );
+
 
                 body.innerHTML = `
+
                     <div class="sys00Warning">
-                        CONNECTION ESTABLISHED
+                        INITIALIZING...
                     </div>
 
                     <div class="sys00Info">
                         CHANNEL: SYS_00<br>
-                        STATUS: IDLE
+                        STATUS: CONNECTING
                     </div>
+
                 `;
 
-                setTimeout(() => {
-                    overlay.remove();
-                }, 1500);
 
-            }, 1200);
+                setTimeout(
+                    () => {
 
-        });
+                        body.innerHTML = `
+
+                            <div class="sys00Warning">
+                                CONNECTION ESTABLISHED
+                            </div>
+
+                            <div class="sys00Info">
+                                CHANNEL: SYS_00<br>
+                                STATUS: IDLE
+                            </div>
+
+                        `;
 
 
-    /* NO */
+                        setTimeout(
+                            () => {
+
+                                overlay.remove();
+
+                            },
+                            1500
+                        );
+
+                    },
+                    1200
+                );
+
+            }
+        );
+
+
+    /* -----------------------------------------
+       NO
+    ----------------------------------------- */
 
     document
         .getElementById("sys00No")
-        .addEventListener("click", () => {
+        .addEventListener(
+            "click",
+            () => {
 
-            console.log(
-                "[SYS_00] Initialization cancelled."
-            );
+                console.log(
+                    "[SYS_00] Initialization cancelled."
+                );
 
-            overlay.remove();
 
-        });
+                reportMrSmileConsoleAction({
+
+                    type: "system_action",
+
+                    target: "SYS_00",
+
+                    action: "cancel",
+
+                    reason:
+                        "operator_cancelled_sys00",
+
+                    metadata: {
+
+                        channel: "SYS_00",
+
+                        status: "unknown",
+
+                        source: "local",
+
+                        accepted: false
+
+                    }
+
+                });
+
+
+                overlay.remove();
+
+            }
+        );
 
 }
+
+
 /* =========================================================
    MAIN COMMAND SYSTEM
 ========================================================= */
 
-export function runCommand(commandText = null) {
+export function runCommand(
+    commandText = null
+) {
 
     const input =
-        document.getElementById("consoleInput");
+        document.getElementById(
+            "consoleInput"
+        );
 
 
     /*
@@ -964,13 +1157,17 @@ export function runCommand(commandText = null) {
 
 
     command =
-        command.trim().toLowerCase();
+        command
+            .trim()
+            .toLowerCase();
 
 
     if (!command) return;
 
 
-    addHistory(command);
+    addHistory(
+        command
+    );
 
 
     print(
@@ -980,7 +1177,54 @@ export function runCommand(commandText = null) {
 
 
     /*
-       Пасхалки
+       =====================================================
+       MR.SMILE CONTEXT
+
+       Сообщаем о РЕАЛЬНОМ вводе команды.
+
+       Это происходит до выполнения команды,
+       поэтому MR.SMILE знает, что оператор
+       пытался выполнить.
+       =====================================================
+    */
+
+    reportMrSmileConsoleAction({
+
+        type: "console_command",
+
+        target: command,
+
+        action: "execute",
+
+        reason:
+            "operator_executed_console_command",
+
+        metadata: {
+
+            command: command,
+
+            role: getRole(),
+
+            clearance: getClearance(),
+
+            knownCommand:
+                Object.prototype.hasOwnProperty.call(
+                    commands,
+                    command
+                ),
+
+            timestamp:
+                Date.now()
+
+        }
+
+    });
+
+
+    /*
+       =====================================================
+       ПАСХАЛКИ
+       =====================================================
     */
 
     if (
@@ -995,7 +1239,9 @@ export function runCommand(commandText = null) {
 
 
     /*
-       Проверяем существование команды.
+       =====================================================
+       ПРОВЕРЯЕМ СУЩЕСТВОВАНИЕ КОМАНДЫ
+       =====================================================
     */
 
     const data =
@@ -1009,6 +1255,45 @@ export function runCommand(commandText = null) {
             "error"
         );
 
+
+        /*
+           Отдельно сообщаем,
+           что команда неизвестна.
+
+           Это позволяет Behavior
+           отличать обычную команду
+           от попытки выполнить
+           неизвестную команду.
+        */
+
+        reportMrSmileConsoleAction({
+
+            type: "console_command",
+
+            target: command,
+
+            action: "unknown",
+
+            reason:
+                "operator_entered_unknown_command",
+
+            metadata: {
+
+                command: command,
+
+                role: getRole(),
+
+                clearance: getClearance(),
+
+                knownCommand: false,
+
+                executed: false
+
+            }
+
+        });
+
+
         showPrompt();
 
         return;
@@ -1017,7 +1302,9 @@ export function runCommand(commandText = null) {
 
 
     /*
-       Проверяем clearance.
+       =====================================================
+       ПРОВЕРЯЕМ CLEARANCE
+       =====================================================
     */
 
     if (
@@ -1030,6 +1317,44 @@ export function runCommand(commandText = null) {
             data.clearance
         );
 
+
+        /*
+           Отдельный контекст:
+           оператор попытался выполнить
+           команду, для которой
+           недостаточно clearance.
+        */
+
+        reportMrSmileConsoleAction({
+
+            type: "restricted_file",
+
+            target: command,
+
+            action: "access",
+
+            reason:
+                "operator_attempted_restricted_command",
+
+            metadata: {
+
+                command: command,
+
+                requiredClearance:
+                    data.clearance,
+
+                currentClearance:
+                    getClearance(),
+
+                role: getRole(),
+
+                executed: false
+
+            }
+
+        });
+
+
         showPrompt();
 
         return;
@@ -1038,10 +1363,13 @@ export function runCommand(commandText = null) {
 
 
     /*
-       Выполнение команды.
+       =====================================================
+       ВЫПОЛНЕНИЕ КОМАНДЫ
+       =====================================================
     */
 
     switch (command) {
+
 
         case "help":
 
@@ -1091,15 +1419,32 @@ export function runCommand(commandText = null) {
 
             break;
 
+
         case "sys_00":
 
-             print("SYS_00");
+            print(
+                "SYS_00"
+            );
 
-             setTimeout(() => {
-                 openSys00Prompt();
-             }, 150);
 
-             return true;
+            setTimeout(
+                () => {
+
+                    openSys00Prompt();
+
+                },
+                150
+            );
+
+
+            /*
+               SYS_00 продолжает работать
+               асинхронно, поэтому не вызываем
+               обычный завершённый prompt
+               здесь.
+            */
+
+            return true;
 
 
         case "personnel":
@@ -1147,8 +1492,16 @@ export function runCommand(commandText = null) {
 
 
     /*
-       Сообщаем eventManager,
-       что команда была выполнена.
+       =====================================================
+       СТАРОЕ СОБЫТИЕ CONSOLE
+       =====================================================
+
+       Не удаляем его.
+
+       Другие системы OMEGA могут
+       всё ещё использовать:
+       
+       console.command
     */
 
     trigger(
@@ -1160,6 +1513,10 @@ export function runCommand(commandText = null) {
         }
     );
 
+
+    /*
+       Завершённая команда.
+    */
 
     showPrompt();
 
@@ -1173,7 +1530,9 @@ export function runCommand(commandText = null) {
 function clearConsole() {
 
     const log =
-        document.getElementById("consoleLog");
+        document.getElementById(
+            "consoleLog"
+        );
 
     if (!log) return;
 
@@ -1189,7 +1548,10 @@ function clearConsole() {
 export function initConsole() {
 
     const input =
-        document.getElementById("consoleInput");
+        document.getElementById(
+            "consoleInput"
+        );
+
 
     if (!input) {
 
@@ -1224,7 +1586,9 @@ export function initConsole() {
         event => {
 
 
-            /* ENTER */
+            /* -----------------------------------------
+               ENTER
+            ----------------------------------------- */
 
             if (
                 event.key === "Enter"
@@ -1237,7 +1601,9 @@ export function initConsole() {
             }
 
 
-            /* HISTORY UP */
+            /* -----------------------------------------
+               HISTORY UP
+            ----------------------------------------- */
 
             if (
                 event.key === "ArrowUp"
@@ -1248,7 +1614,11 @@ export function initConsole() {
 
                 if (
                     commandHistory.length === 0
-                ) return;
+                ) {
+
+                    return;
+
+                }
 
 
                 historyIndex =
@@ -1266,7 +1636,9 @@ export function initConsole() {
             }
 
 
-            /* HISTORY DOWN */
+            /* -----------------------------------------
+               HISTORY DOWN
+            ----------------------------------------- */
 
             if (
                 event.key === "ArrowDown"
@@ -1277,7 +1649,11 @@ export function initConsole() {
 
                 if (
                     commandHistory.length === 0
-                ) return;
+                ) {
+
+                    return;
+
+                }
 
 
                 historyIndex =
@@ -1298,6 +1674,12 @@ export function initConsole() {
     );
 
 
+    /*
+       =====================================================
+       INITIAL CONSOLE OUTPUT
+       =====================================================
+    */
+
     print(
         "OMEGA SYSTEM CONSOLE",
         "system"
@@ -1308,6 +1690,7 @@ export function initConsole() {
     );
 
     print("");
+
 
     showPrompt();
 
