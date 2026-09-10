@@ -1,3 +1,8 @@
+/* =========================================================
+   OMEGA EXPLORER
+   Filesystem Browser + MR.SMILE Context Integration
+========================================================= */
+
 import {
     listFiles,
     readFile,
@@ -5,11 +10,71 @@ import {
 } from "./filesystem.js";
 
 import {
-    on
+    on,
+    trigger
 } from "./eventManager.js";
+
+
+/* =========================================================
+   STATE
+========================================================= */
 
 let currentExplorerPath = "/files";
 
+
+/* =========================================================
+   MR.SMILE CONTEXT
+========================================================= */
+
+/*
+    Explorer does NOT decide what MR.SMILE should do.
+
+    It only reports what the operator actually did.
+
+    Flow:
+
+        Explorer
+            ↓
+        operatorAction
+            ↓
+        mrsmileContext
+            ↓
+        mrsmileBehavior
+            ↓
+        decision
+            ↓
+        mrsmileActions
+*/
+
+
+function reportMrSmileAction(data = {}) {
+
+    try {
+
+        trigger(
+            "mrsmile:operatorAction",
+            {
+                source: "explorer",
+                page: "files",
+
+                operator:
+                    data.operator ||
+                    "operator",
+
+                ...data
+            }
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "[OMEGA EXPLORER] MR.SMILE context report failed:",
+            error
+        );
+
+    }
+
+}
 
 
 /* =========================================================
@@ -18,18 +83,46 @@ let currentExplorerPath = "/files";
 
 function renderExplorer(path) {
 
-    const view = document.getElementById("filesList");
-    const pathBar = document.getElementById("pathBar");
+    const view =
+        document.getElementById("filesList");
 
-    if (!view) return;
+    const pathBar =
+        document.getElementById("pathBar");
+
+
+    if (!view) {
+
+        console.warn(
+            "[OMEGA EXPLORER] filesList NOT FOUND"
+        );
+
+        return;
+
+    }
+
 
     currentExplorerPath = path;
 
+
+    /* -----------------------------------------------------
+       PATH BAR
+    ----------------------------------------------------- */
+
     if (pathBar) {
-        pathBar.textContent = path;
+
+        pathBar.textContent =
+            path;
+
     }
 
-    const items = listFiles(path);
+
+    /* -----------------------------------------------------
+       GET FILES
+    ----------------------------------------------------- */
+
+    const items =
+        listFiles(path);
+
 
     console.log(
         "[OMEGA EXPLORER] PATH:",
@@ -41,6 +134,11 @@ function renderExplorer(path) {
         items
     );
 
+
+    /* -----------------------------------------------------
+       EMPTY FOLDER
+    ----------------------------------------------------- */
+
     if (!items.length) {
 
         view.innerHTML = `
@@ -50,119 +148,237 @@ function renderExplorer(path) {
         `;
 
         return;
+
     }
 
-    view.innerHTML = items.map(item => {
 
-        const fullPath =
-            path === "/"
-                ? "/" + item
-                : path + "/" + item;
+    /* -----------------------------------------------------
+       RENDER ITEMS
+    ----------------------------------------------------- */
 
-        const node = getFile(fullPath);
+    view.innerHTML =
+        items.map(item => {
 
-        let icon = "📄";
+            const fullPath =
+                path === "/"
+                    ? "/" + item
+                    : path + "/" + item;
 
-        if (node?.type === "dir") {
-            icon = "📁";
-        }
 
-        if (node?.type === "external") {
+            const node =
+                getFile(fullPath);
 
-            const extension =
-                item.split(".").pop().toLowerCase();
 
-            if (extension === "pdf") {
-                icon = "📕";
-            }
+            let icon = "📄";
 
-            else if (
-                extension === "mp4" ||
-                extension === "webm" ||
-                extension === "ogg"
+
+            /* ------------------------------------------------
+               DIRECTORY
+            ------------------------------------------------ */
+
+            if (
+                node?.type === "dir"
             ) {
-                icon = "📹";
+
+                icon = "📁";
+
             }
 
-            else if (
-                extension === "png" ||
-                extension === "jpg" ||
-                extension === "jpeg" ||
-                extension === "webp"
+
+            /* ------------------------------------------------
+               EXTERNAL
+            ------------------------------------------------ */
+
+            if (
+                node?.type === "external"
             ) {
-                icon = "🖼";
+
+                const extension =
+                    getExtension(item);
+
+
+                if (
+                    extension === "pdf"
+                ) {
+
+                    icon = "📕";
+
+                }
+
+                else if (
+                    extension === "mp4" ||
+                    extension === "webm" ||
+                    extension === "ogg"
+                ) {
+
+                    icon = "📹";
+
+                }
+
+                else if (
+                    extension === "png" ||
+                    extension === "jpg" ||
+                    extension === "jpeg" ||
+                    extension === "webp"
+                ) {
+
+                    icon = "🖼";
+
+                }
+
+                else if (
+                    extension === "txt"
+                ) {
+
+                    icon = "📄";
+
+                }
+
             }
-        }
 
-        if (node?.type === "denied") {
-            icon = "🔒";
-        }
 
-        return `
-            <div
-                class="explorerItem"
-                data-path="${escapeAttribute(fullPath)}">
+            /* ------------------------------------------------
+               DENIED
+            ------------------------------------------------ */
 
-                <span class="explorerIcon">
-                    ${icon}
-                </span>
+            if (
+                node?.type === "denied"
+            ) {
 
-                <span class="explorerName">
-                    ${escapeHtml(item)}
-                </span>
+                icon = "🔒";
 
-            </div>
-        `;
+            }
 
-    }).join("");
+
+            return `
+                <div
+                    class="explorerItem"
+                    data-path="${escapeAttribute(fullPath)}"
+                    data-type="${escapeAttribute(node?.type || "unknown")}"
+                >
+
+                    <span class="explorerIcon">
+                        ${icon}
+                    </span>
+
+                    <span class="explorerName">
+                        ${escapeHtml(item)}
+                    </span>
+
+                </div>
+            `;
+
+        }).join("");
 
 
     /* =====================================================
        CLICK EVENTS
     ===================================================== */
 
-    view.querySelectorAll(".explorerItem").forEach(item => {
+    view
+        .querySelectorAll(".explorerItem")
+        .forEach(item => {
 
-        item.addEventListener("click", () => {
+            item.addEventListener(
+                "click",
+                () => {
 
-            const path =
-                item.dataset.path;
+                    const path =
+                        item.dataset.path;
 
-            openExplorerItem(path);
+
+                    openExplorerItem(
+                        path
+                    );
+
+                }
+            );
 
         });
 
-    });
-
 }
+
 
 /* =========================================================
    MR.SMILE ARCHIVE UNLOCK
 ========================================================= */
 
-on("mrsmile:archiveUnlocked", () => {
+on(
+    "mrsmile:archiveUnlocked",
+    () => {
 
-    console.log(
-        "[OMEGA EXPLORER] MIRROR-00 unlocked. Refreshing filesystem..."
-    );
+        console.log(
+            "[OMEGA EXPLORER] MIRROR-00 unlocked. Refreshing filesystem..."
+        );
 
-    /*
-       Если Explorer сейчас открыт —
-       обновляем его немедленно.
-    */
 
-    const explorer =
-        document.getElementById("filesList");
+        const explorer =
+            document.getElementById("filesList");
 
-    if (!explorer) {
-        return;
+
+        if (!explorer) {
+
+            return;
+
+        }
+
+
+        renderExplorer(
+            currentExplorerPath
+        );
+
     }
+);
 
-    renderExplorer(
-        currentExplorerPath
-    );
 
-});
+/* =========================================================
+   MR.SMILE GAME / TRUTH REFRESH
+========================================================= */
+
+on(
+    "mrsmile:gameUnlocked",
+    () => {
+
+        console.log(
+            "[OMEGA EXPLORER] Game access changed. Refreshing filesystem..."
+        );
+
+
+        if (
+            document.getElementById("filesList")
+        ) {
+
+            renderExplorer(
+                currentExplorerPath
+            );
+
+        }
+
+    }
+);
+
+
+on(
+    "mrsmile:truthUnlocked",
+    () => {
+
+        console.log(
+            "[OMEGA EXPLORER] Truth access changed. Refreshing filesystem..."
+        );
+
+
+        if (
+            document.getElementById("filesList")
+        ) {
+
+            renderExplorer(
+                currentExplorerPath
+            );
+
+        }
+
+    }
+);
 
 
 /* =========================================================
@@ -176,13 +392,20 @@ function openExplorerItem(path) {
         path
     );
 
-    const node = getFile(path);
+
+    const node =
+        getFile(path);
+
 
     console.log(
         "[OMEGA EXPLORER] NODE:",
         node
     );
 
+
+    /* =====================================================
+       FILE NOT FOUND
+    ===================================================== */
 
     if (!node) {
 
@@ -191,7 +414,94 @@ function openExplorerItem(path) {
             path
         );
 
+
+        reportMrSmileAction({
+
+            type: "file_open_failed",
+
+            target: path,
+
+            action: "open",
+
+            reason: "file_not_found",
+
+            metadata: {
+
+                path,
+
+                currentPath:
+                    currentExplorerPath
+
+            }
+
+        });
+
+
         return;
+
+    }
+
+
+    const fileName =
+        path
+            .split("/")
+            .pop();
+
+
+    const extension =
+        getExtension(fileName);
+
+
+    /* =====================================================
+       DIRECTORY
+    ===================================================== */
+
+    if (
+        node.type === "dir"
+    ) {
+
+        console.log(
+            "[OMEGA EXPLORER] OPEN DIRECTORY:",
+            path
+        );
+
+
+        reportMrSmileAction({
+
+            type: "folder_open",
+
+            target: path,
+
+            action: "open",
+
+            reason: "operator_opened_folder",
+
+            metadata: {
+
+                path,
+
+                name: fileName,
+
+                itemType: "directory",
+
+                previousPath:
+                    currentExplorerPath,
+
+                currentPath:
+                    path
+
+            }
+
+        });
+
+
+        renderExplorer(
+            path
+        );
+
+
+        return;
+
     }
 
 
@@ -199,25 +509,73 @@ function openExplorerItem(path) {
        ACCESS DENIED
     ===================================================== */
 
-    if (node.type === "denied") {
+    if (
+        node.type === "denied"
+    ) {
 
-        openDocumentWindow(
-            path.split("/").pop()
+        console.log(
+            "[OMEGA EXPLORER] ACCESS DENIED:",
+            path
         );
 
+
+        reportMrSmileAction({
+
+            type: "restricted_file",
+
+            target: fileName,
+
+            action: "open",
+
+            reason: "operator_attempted_restricted_file",
+
+            metadata: {
+
+                path,
+
+                name: fileName,
+
+                extension,
+
+                itemType: "denied",
+
+                currentPath:
+                    currentExplorerPath,
+
+                clearanceRequired:
+                    node.clearance ??
+                    node.requiredClearance ??
+                    null
+
+            }
+
+        });
+
+
+        openDocumentWindow(
+            fileName
+        );
+
+
         const content =
-            document.getElementById("documentContent");
+            document.getElementById(
+                "documentContent"
+            );
+
 
         if (content) {
 
             content.innerHTML = `
+
                 <div class="documentDenied">
 
                     <div class="deniedIcon">
                         🔒
                     </div>
 
-                    <h2>ACCESS DENIED</h2>
+                    <h2>
+                        ACCESS DENIED
+                    </h2>
 
                     <p>
                         Insufficient clearance level.
@@ -228,27 +586,14 @@ function openExplorerItem(path) {
                     </p>
 
                 </div>
+
             `;
+
         }
 
-        return;
-    }
-
-
-    /* =====================================================
-       DIRECTORY
-    ===================================================== */
-
-    if (node.type === "dir") {
-
-        console.log(
-            "[OMEGA EXPLORER] OPEN DIRECTORY:",
-            path
-        );
-
-        renderExplorer(path);
 
         return;
+
     }
 
 
@@ -256,19 +601,63 @@ function openExplorerItem(path) {
        EXTERNAL FILE
     ===================================================== */
 
-    if (node.type === "external") {
+    if (
+        node.type === "external"
+    ) {
 
         console.log(
             "[OMEGA EXPLORER] OPEN EXTERNAL FILE:",
             node.path
         );
 
+
+        reportMrSmileAction({
+
+            type:
+                getExternalContextType(
+                    extension
+                ),
+
+            target:
+                fileName,
+
+            action:
+                "open",
+
+            reason:
+                "operator_opened_external_file",
+
+            metadata: {
+
+                path,
+
+                externalPath:
+                    node.path,
+
+                name:
+                    fileName,
+
+                extension,
+
+                itemType:
+                    "external",
+
+                currentPath:
+                    currentExplorerPath
+
+            }
+
+        });
+
+
         openExternalFile(
             node.path,
             path
         );
 
+
         return;
+
     }
 
 
@@ -276,30 +665,87 @@ function openExplorerItem(path) {
        INTERNAL TEXT FILE
     ===================================================== */
 
-    if (node.type === "file") {
+    if (
+        node.type === "file"
+    ) {
 
         console.log(
             "[OMEGA EXPLORER] OPEN TEXT FILE:",
             path
         );
 
+
+        reportMrSmileAction({
+
+            type:
+                isRestrictedPath(path)
+                    ? "restricted_file"
+                    : "file_open",
+
+            target:
+                fileName,
+
+            action:
+                "open",
+
+            reason:
+                "operator_opened_internal_file",
+
+            metadata: {
+
+                path,
+
+                name:
+                    fileName,
+
+                extension:
+                    extension || "txt",
+
+                itemType:
+                    "internal_file",
+
+                currentPath:
+                    currentExplorerPath,
+
+                restricted:
+                    isRestrictedPath(path)
+
+            }
+
+        });
+
+
         openDocumentWindow(
-            path.split("/").pop()
+            fileName
         );
 
-        const content =
-            document.getElementById("documentContent");
 
-        if (!content) return;
+        const content =
+            document.getElementById(
+                "documentContent"
+            );
+
+
+        if (!content) {
+
+            return;
+
+        }
+
 
         const data =
             readFile(path);
 
+
         content.innerHTML = `
+
             <pre class="textDocument">${escapeHtml(data)}</pre>
+
         `;
 
+
         return;
+
     }
 
 }
@@ -309,114 +755,173 @@ function openExplorerItem(path) {
    EXTERNAL FILE
 ========================================================= */
 
-function openExternalFile(filePath, omegaPath) {
+function openExternalFile(
+    filePath,
+    omegaPath
+) {
 
     const extension =
-        filePath
-            .split(".")
-            .pop()
-            .toLowerCase();
+        getExtension(filePath);
+
+
+    const fileName =
+        omegaPath
+            .split("/")
+            .pop();
 
 
     /* =====================================================
        PDF
     ===================================================== */
 
-    if (extension === "pdf") {
+    if (
+        extension === "pdf"
+    ) {
 
         console.log(
             "[OMEGA EXPLORER] OPENING PDF:",
             filePath
         );
 
+
         openDocumentWindow(
-            omegaPath.split("/").pop()
+            fileName
         );
 
-        const content =
-            document.getElementById("documentContent");
 
-        if (!content) return;
+        const content =
+            document.getElementById(
+                "documentContent"
+            );
+
+
+        if (!content) {
+
+            return;
+
+        }
+
 
         content.innerHTML = `
+
             <iframe
                 class="omegaPdfViewer"
                 src="${escapeAttribute(filePath)}"
                 title="OMEGA PDF">
             </iframe>
+
         `;
 
+
         return;
+
     }
 
+
     /* =====================================================
-   TEXT FILE
-===================================================== */
+       TXT
+    ===================================================== */
 
-if (extension === "txt") {
+    if (
+        extension === "txt"
+    ) {
 
-    console.log(
-        "[OMEGA EXPLORER] OPENING TXT:",
-        filePath
-    );
+        console.log(
+            "[OMEGA EXPLORER] OPENING TXT:",
+            filePath
+        );
 
-    openDocumentWindow(
-        omegaPath.split("/").pop()
-    );
 
-    const content =
-        document.getElementById("documentContent");
+        openDocumentWindow(
+            fileName
+        );
 
-    if (!content) return;
 
-    content.innerHTML = `
-        <div class="documentLoading">
-            READING DOCUMENT...
-        </div>
-    `;
-
-    fetch(filePath)
-        .then(response => {
-
-            if (!response.ok) {
-                throw new Error(
-                    `HTTP ${response.status}`
-                );
-            }
-
-            return response.text();
-
-        })
-        .then(text => {
-
-            content.innerHTML = `
-                <pre class="textDocument">${escapeHtml(text)}</pre>
-            `;
-
-        })
-        .catch(error => {
-
-            console.error(
-                "[OMEGA EXPLORER] TXT LOAD ERROR:",
-                error
+        const content =
+            document.getElementById(
+                "documentContent"
             );
 
-            content.innerHTML = `
-                <div class="documentUnknown">
 
-                    <h2>FILE READ ERROR</h2>
+        if (!content) {
 
-                    <p>
-                        Unable to read external document.
-                    </p>
+            return;
 
-                </div>
-            `;
+        }
 
-        });
 
-    return;
-}
+        content.innerHTML = `
+
+            <div class="documentLoading">
+                READING DOCUMENT...
+            </div>
+
+        `;
+
+
+        fetch(filePath)
+
+            .then(
+                response => {
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            `HTTP ${response.status}`
+                        );
+
+                    }
+
+
+                    return response.text();
+
+                }
+            )
+
+            .then(
+                text => {
+
+                    content.innerHTML = `
+
+                        <pre class="textDocument">${escapeHtml(text)}</pre>
+
+                    `;
+
+                }
+            )
+
+            .catch(
+                error => {
+
+                    console.error(
+                        "[OMEGA EXPLORER] TXT LOAD ERROR:",
+                        error
+                    );
+
+
+                    content.innerHTML = `
+
+                        <div class="documentUnknown">
+
+                            <h2>
+                                FILE READ ERROR
+                            </h2>
+
+                            <p>
+                                Unable to read external document.
+                            </p>
+
+                        </div>
+
+                    `;
+
+                }
+            );
+
+
+        return;
+
+    }
 
 
     /* =====================================================
@@ -434,9 +939,14 @@ if (extension === "txt") {
             filePath
         );
 
-        openVideoWindow(filePath);
+
+        openVideoWindow(
+            filePath
+        );
+
 
         return;
+
     }
 
 
@@ -451,16 +961,32 @@ if (extension === "txt") {
         extension === "webp"
     ) {
 
-        openDocumentWindow(
-            omegaPath.split("/").pop()
+        console.log(
+            "[OMEGA EXPLORER] OPENING IMAGE:",
+            filePath
         );
 
-        const content =
-            document.getElementById("documentContent");
 
-        if (!content) return;
+        openDocumentWindow(
+            fileName
+        );
+
+
+        const content =
+            document.getElementById(
+                "documentContent"
+            );
+
+
+        if (!content) {
+
+            return;
+
+        }
+
 
         content.innerHTML = `
+
             <div class="omegaImageViewer">
 
                 <img
@@ -468,9 +994,12 @@ if (extension === "txt") {
                     alt="OMEGA FILE">
 
             </div>
+
         `;
 
+
         return;
+
     }
 
 
@@ -479,25 +1008,39 @@ if (extension === "txt") {
     ===================================================== */
 
     openDocumentWindow(
-        omegaPath.split("/").pop()
+        fileName
     );
 
-    const content =
-        document.getElementById("documentContent");
 
-    if (!content) return;
+    const content =
+        document.getElementById(
+            "documentContent"
+        );
+
+
+    if (!content) {
+
+        return;
+
+    }
+
 
     content.innerHTML = `
+
         <div class="documentUnknown">
 
-            <h2>UNKNOWN FILE TYPE</h2>
+            <h2>
+                UNKNOWN FILE TYPE
+            </h2>
 
             <p>
                 ${escapeHtml(filePath)}
             </p>
 
         </div>
+
     `;
+
 }
 
 
@@ -505,10 +1048,15 @@ if (extension === "txt") {
    DOCUMENT WINDOW
 ========================================================= */
 
-function openDocumentWindow(titleText = "DOCUMENT") {
+function openDocumentWindow(
+    titleText = "DOCUMENT"
+) {
 
     const win =
-        document.getElementById("documentWindow");
+        document.getElementById(
+            "documentWindow"
+        );
+
 
     if (!win) {
 
@@ -517,22 +1065,43 @@ function openDocumentWindow(titleText = "DOCUMENT") {
         );
 
         return;
+
     }
+
 
     const title =
-        document.getElementById("viewerTitle");
+        document.getElementById(
+            "viewerTitle"
+        );
+
 
     if (title) {
-        title.textContent = titleText;
+
+        title.textContent =
+            titleText;
+
     }
 
-    win.classList.remove("hidden");
 
-    win.style.display = "flex";
+    win.classList.remove(
+        "hidden"
+    );
 
-    if (window.bringToFront) {
-        window.bringToFront(win);
+
+    win.style.display =
+        "flex";
+
+
+    if (
+        window.bringToFront
+    ) {
+
+        window.bringToFront(
+            win
+        );
+
     }
+
 }
 
 
@@ -540,10 +1109,15 @@ function openDocumentWindow(titleText = "DOCUMENT") {
    VIDEO WINDOW
 ========================================================= */
 
-function openVideoWindow(filePath) {
+function openVideoWindow(
+    filePath
+) {
 
     const win =
-        document.getElementById("videoWindow");
+        document.getElementById(
+            "videoWindow"
+        );
+
 
     if (!win) {
 
@@ -552,28 +1126,47 @@ function openVideoWindow(filePath) {
         );
 
         return;
+
     }
 
+
     const video =
-        document.getElementById("omegaVideo");
+        document.getElementById(
+            "omegaVideo"
+        );
+
 
     if (video) {
 
         video.pause();
 
-        video.src = filePath;
+        video.src =
+            filePath;
 
         video.load();
 
     }
 
-    win.classList.remove("hidden");
 
-    win.style.display = "flex";
+    win.classList.remove(
+        "hidden"
+    );
 
-    if (window.bringToFront) {
-        window.bringToFront(win);
+
+    win.style.display =
+        "flex";
+
+
+    if (
+        window.bringToFront
+    ) {
+
+        window.bringToFront(
+            win
+        );
+
     }
+
 }
 
 
@@ -583,23 +1176,263 @@ function openVideoWindow(filePath) {
 
 function goBack() {
 
-    if (currentExplorerPath === "/files") {
+    if (
+        currentExplorerPath === "/files"
+    ) {
+
         return;
+
     }
+
+
+    const previousPath =
+        currentExplorerPath;
+
 
     const parts =
         currentExplorerPath
             .split("/")
             .filter(Boolean);
 
+
     parts.pop();
+
 
     const newPath =
         "/" + parts.join("/");
 
+
+    const finalPath =
+        newPath === "/"
+            ? "/files"
+            : newPath;
+
+
+    reportMrSmileAction({
+
+        type:
+            "folder_close",
+
+        target:
+            previousPath,
+
+        action:
+            "back",
+
+        reason:
+            "operator_navigated_back",
+
+        metadata: {
+
+            previousPath,
+
+            newPath:
+                finalPath,
+
+            itemType:
+                "directory"
+
+        }
+
+    });
+
+
     renderExplorer(
-        newPath || "/files"
+        finalPath
     );
+
+}
+
+
+/* =========================================================
+   CURRENT PATH
+========================================================= */
+
+export function getCurrentExplorerPath() {
+
+    return currentExplorerPath;
+
+}
+
+
+/* =========================================================
+   PUBLIC OPEN
+========================================================= */
+
+export function openExplorerItemPublic(
+    path
+) {
+
+    return openExplorerItem(
+        path
+    );
+
+}
+
+
+/* =========================================================
+   OPEN EXPLORER
+========================================================= */
+
+export function openExplorer() {
+
+    renderExplorer(
+        "/files"
+    );
+
+
+    reportMrSmileAction({
+
+        type:
+            "navigation",
+
+        target:
+            "/files",
+
+        action:
+            "open",
+
+        reason:
+            "operator_opened_explorer",
+
+        metadata: {
+
+            path:
+                "/files"
+
+        }
+
+    });
+
+}
+
+
+/* =========================================================
+   EXTERNAL FILE CONTEXT TYPE
+========================================================= */
+
+function getExternalContextType(
+    extension
+) {
+
+    switch (
+        extension
+    ) {
+
+        case "pdf":
+            return "file_open";
+
+        case "txt":
+            return "file_open";
+
+        case "mp4":
+        case "webm":
+        case "ogg":
+            return "file_open";
+
+        case "png":
+        case "jpg":
+        case "jpeg":
+        case "webp":
+            return "file_open";
+
+        default:
+            return "file_open";
+
+    }
+
+}
+
+
+/* =========================================================
+   EXTENSION
+========================================================= */
+
+function getExtension(
+    path
+) {
+
+    if (!path) {
+
+        return "";
+
+    }
+
+
+    const cleanPath =
+        String(path)
+            .split("?")[0]
+            .split("#")[0];
+
+
+    const fileName =
+        cleanPath
+            .split("/")
+            .pop();
+
+
+    if (
+        !fileName ||
+        !fileName.includes(".")
+    ) {
+
+        return "";
+
+    }
+
+
+    return fileName
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+}
+
+
+/* =========================================================
+   RESTRICTED PATH DETECTION
+========================================================= */
+
+function isRestrictedPath(
+    path
+) {
+
+    if (!path) {
+
+        return false;
+
+    }
+
+
+    const lower =
+        String(path)
+            .toLowerCase();
+
+
+    /*
+        This is intentionally conservative.
+
+        Real permissions should eventually
+        come from filesystem.js / roleManager.
+
+        This function only helps Context
+        understand what happened.
+    */
+
+    return (
+
+        lower.includes("/restricted/") ||
+
+        lower.includes("/secret/") ||
+
+        lower.includes("/classified/") ||
+
+        lower.includes("mirror-00") ||
+
+        lower.includes("truth")
+
+    );
+
 }
 
 
@@ -610,41 +1443,92 @@ function goBack() {
 window.openExplorerItem =
     openExplorerItem;
 
+
 window.goBack =
     goBack;
+
+
+window.getCurrentExplorerPath =
+    getCurrentExplorerPath;
 
 
 /* =========================================================
    ESCAPE HTML
 ========================================================= */
 
-function escapeHtml(text) {
+function escapeHtml(
+    text
+) {
 
     return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
 
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
 
-function escapeAttribute(text) {
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
 
-    return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;");
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
 }
 
 
 /* =========================================================
-   ENTRY POINT
+   ESCAPE ATTRIBUTE
 ========================================================= */
 
-export function openExplorer() {
+function escapeAttribute(
+    text
+) {
 
-    renderExplorer("/files");
+    return String(text)
+
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+
+        .replaceAll(
+            ">",
+            "&gt;"
+        );
 
 }
+
+
+/* =========================================================
+   EXPORTS
+========================================================= */
+
+export {
+    openExplorerItem,
+    goBack,
+    getCurrentExplorerPath
+};
