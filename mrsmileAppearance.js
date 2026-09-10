@@ -1,25 +1,39 @@
+
 /* ==========================================================
-   MR.SMILE — OMEGA APPEARANCE SYSTEM
+   MR.SMILE — OMEGA INTRUSION APPEARANCE SYSTEM
    ----------------------------------------------------------
-   VISUAL LAYER ONLY
+   VISUAL / PRESENTATION LAYER ONLY
 
-   mrsmileEvents.js:
-        └── управляет последовательностью
+   Назначение:
+        ├── системные сообщения
+        ├── intrusion dialogue
+        ├── fake console activity
+        ├── security failure
+        ├── cursor takeover
+        ├── subtle system distortion
+        └── intrusion indicators
 
-   mrsmileAppearance.js:
-        ├── глаза
-        ├── лицо
-        ├── взгляд
-        ├── cursor visual
-        ├── subtle presence
-        └── disappearance
+   НЕ содержит:
+        - лица
+        - глаз
+        - носа
+        - рта
+        - старой manifestation-системы
+        - jumpscare
+        - глобального pointer-events блокирования
+        - постоянного fullscreen overlay
 
-   Никакого:
-        - screen shake spam
-        - random RGB glitch
-        - giant horror overlays
-        - повторного first-contact sequence
-        - глобального блокирования pointer-events
+   Архитектура:
+
+        mrsmileBehavior
+                ↓
+        mrsmileActions
+                ↓
+        mrsmileIntrusionUI
+                ↓
+        mrsmileAppearance
+                ↓
+        реальный интерфейс OMEGA
 ========================================================== */
 
 
@@ -27,18 +41,17 @@
    STATE
 ========================================================== */
 
-let manifestationRunning = false;
-
-let manifestationRoot = null;
-let faceElement = null;
-let eyesLayer = null;
+let appearanceRunning = false;
 
 let cursorVisual = null;
 let cursorMouseHandler = null;
 
 let appearanceTimers = [];
 
-let firstContactAppearance = false;
+let intrusionLayer = null;
+let intrusionConsole = null;
+let intrusionDialogue = null;
+let intrusionNotice = null;
 
 let playerMouseX =
     window.innerWidth * 0.5;
@@ -48,35 +61,72 @@ let playerMouseY =
 
 
 /* ==========================================================
+   CONSTANTS
+========================================================== */
+
+const DEFAULT_TIMING = {
+
+    messageDuration: 2200,
+
+    dialogueDuration: 2600,
+
+    noticeDuration: 1800,
+
+    commandCharacterDelay: 35,
+
+    systemFailureDuration: 1700,
+
+    distortionDuration: 700,
+
+    cursorClickDuration: 150,
+
+    cursorLostDuration: 500,
+
+    recoveryDuration: 900
+
+};
+
+
+/* ==========================================================
    PUBLIC
 ========================================================== */
 
 /**
- * Обычная manifestation.
+ * Показывает короткое визуальное
+ * вмешательство MR.SMILE.
  *
- * Используется другими системами OMEGA,
- * когда MR.SMILE должен самостоятельно
- * появиться и исчезнуть.
+ * Это НЕ First Contact sequence.
+ *
+ * Используется другими системами,
+ * когда уже принято решение:
+ *
+ *      observe
+ *      interfere
+ *      warn
+ *      sabotage
+ *      help
  */
 export async function triggerMrSmileManifestation() {
 
-    if (manifestationRunning) {
+    if (appearanceRunning) {
         return;
     }
 
-    manifestationRunning = true;
-    firstContactAppearance = false;
+    appearanceRunning = true;
 
     try {
 
-        createManifestation();
+        createIntrusionLayer();
 
-        await runPresenceAppearance();
+        await showIntrusionNotice(
+            "UNKNOWN PROCESS ACTIVE",
+            "warning"
+        );
 
     } catch (error) {
 
         console.error(
-            "[MR.SMILE] Manifestation failed:",
+            "[MR.SMILE] Intrusion appearance failed:",
             error
         );
 
@@ -84,85 +134,76 @@ export async function triggerMrSmileManifestation() {
 
         cleanupAppearance();
 
-        manifestationRunning = false;
-        firstContactAppearance = false;
+        appearanceRunning = false;
     }
 }
 
 
 /* ==========================================================
-   FIRST CONTACT FACE
+   FIRST CONTACT
 ========================================================== */
 
 /**
- * Используется mrsmileEvents.js.
+ * Замена старого showMrSmileFirstContactFace().
  *
- * ВАЖНО:
+ * Теперь никакого лица.
  *
- * presence теперь НЕ ждёт полного disappearance.
+ * First Contact визуально происходит
+ * через саму систему OMEGA.
  *
  * Последовательность:
  *
- *      create
- *        ↓
- *      eyes
- *        ↓
- *      face
- *        ↓
- *      return
+ *      system anomaly
+ *          ↓
+ *      security detection
+ *          ↓
+ *      console intrusion
+ *          ↓
+ *      MR.SMILE message
+ *          ↓
+ *      OMEGA termination attempt
+ *          ↓
+ *      termination failure
  *
- * После return лицо остаётся на экране.
+ * ВАЖНО:
  *
- * mrsmileEvents.js продолжает:
+ * Функция заканчивает визуальную
+ * последовательность сама.
  *
- *      player interaction
- *        ↓
- *      cursor takeover
- *        ↓
- *      intrusion
- *        ↓
- *      release
- *
- * И только releaseMrSmileFirstContactFace()
- * убирает лицо.
+ * MR.SMILE после этого остаётся
+ * в State / Presence.
  */
 export async function showMrSmileFirstContactFace(
     mode = "presence"
 ) {
 
-    if (manifestationRunning) {
+    console.warn(
+        "[MR.SMILE] showMrSmileFirstContactFace() is deprecated. " +
+        "Running system intrusion instead."
+    );
+
+    if (appearanceRunning) {
         return;
     }
 
-    manifestationRunning = true;
-    firstContactAppearance = true;
+    appearanceRunning = true;
 
     try {
 
-        createManifestation();
+        createIntrusionLayer();
 
         switch (mode) {
 
             case "echo":
 
-                await runEchoAppearance();
-
-                cleanupAppearance();
-
-                manifestationRunning = false;
-                firstContactAppearance = false;
+                await runEchoIntrusion();
 
                 break;
 
 
             case "silence":
 
-                await runSilenceAppearance();
-
-                cleanupAppearance();
-
-                manifestationRunning = false;
-                firstContactAppearance = false;
+                await runSilentIntrusion();
 
                 break;
 
@@ -170,19 +211,7 @@ export async function showMrSmileFirstContactFace(
             case "presence":
             default:
 
-                /*
-                 * Специальный first-contact режим.
-                 *
-                 * Здесь НЕТ fade-out.
-                 */
-
-                await runFirstContactPresence();
-
-                /*
-                 * Ничего не чистим.
-                 *
-                 * Лицо должно остаться.
-                 */
+                await runFirstContactIntrusion();
 
                 break;
         }
@@ -190,750 +219,817 @@ export async function showMrSmileFirstContactFace(
     } catch (error) {
 
         console.error(
-            "[MR.SMILE] First contact appearance failed:",
+            "[MR.SMILE] First contact intrusion failed:",
             error
         );
-
-        cleanupAppearance();
-
-        manifestationRunning = false;
-        firstContactAppearance = false;
-    }
-}
-
-
-/* ==========================================================
-   FIRST CONTACT PRESENCE
-========================================================== */
-
-/**
- * Только появление лица.
- *
- * Никакого исчезновения.
- */
-async function runFirstContactPresence() {
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    /*
-     * Изначально ничего нет.
-     */
-
-    manifestationRoot.classList.add(
-        "mrSmileAppearanceInitial"
-    );
-
-
-    await sleep(500);
-
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    /*
-     * Очень слабое присутствие.
-     */
-
-    manifestationRoot.classList.remove(
-        "mrSmileAppearanceInitial"
-    );
-
-    manifestationRoot.classList.add(
-        "mrSmilePresence"
-    );
-
-
-    await sleep(700);
-
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    /*
-     * Глаза.
-     */
-
-    revealEyes();
-
-
-    await sleep(1300);
-
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    /*
-     * Лицо начинает проявляться.
-     */
-
-    revealFace();
-
-
-    await sleep(900);
-
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    /*
-     * Улыбка здесь НЕ обязана
-     * появляться мгновенно.
-     *
-     * Оставляем лицо спокойным.
-     *
-     * Небольшая задержка создаёт
-     * ощущение наблюдения.
-     */
-
-    await sleep(700);
-
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    revealSmile();
-
-
-    /*
-     * ВАЖНО:
-     *
-     * Никакого fadeOutManifestation().
-     *
-     * Лицо остаётся.
-     */
-
-    manifestationRoot.classList.add(
-        "mrSmileFirstContactPersistent"
-    );
-}
-
-
-/* ==========================================================
-   NORMAL PRESENCE
-========================================================== */
-
-async function runPresenceAppearance() {
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    manifestationRoot.classList.add(
-        "mrSmileAppearanceInitial"
-    );
-
-
-    await sleep(500);
-
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    manifestationRoot.classList.remove(
-        "mrSmileAppearanceInitial"
-    );
-
-    manifestationRoot.classList.add(
-        "mrSmilePresence"
-    );
-
-
-    await sleep(700);
-
-
-    revealEyes();
-
-
-    await sleep(1300);
-
-
-    revealFace();
-
-
-    await sleep(1500);
-
-
-    await sleep(1000);
-
-
-    revealSmile();
-
-
-    await sleep(1600);
-
-
-    await fadeOutManifestation();
-}
-
-
-/* ==========================================================
-   ECHO APPEARANCE
-========================================================== */
-
-async function runEchoAppearance() {
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    manifestationRoot.classList.add(
-        "mrSmilePresence"
-    );
-
-
-    await sleep(500);
-
-
-    revealEyes();
-
-
-    await sleep(1100);
-
-
-    lookAtPlayer();
-
-
-    await sleep(800);
-
-
-    revealFace();
-
-
-    await sleep(900);
-
-
-    revealSmile();
-
-
-    await sleep(900);
-
-
-    await fadeOutManifestation();
-}
-
-
-/* ==========================================================
-   SILENCE APPEARANCE
-========================================================== */
-
-async function runSilenceAppearance() {
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    manifestationRoot.classList.add(
-        "mrSmilePresence"
-    );
-
-
-    await sleep(900);
-
-
-    revealEyes();
-
-
-    await sleep(1200);
-
-
-    lookAtPlayer();
-
-
-    await sleep(1000);
-
-
-    blinkEyes();
-
-
-    await sleep(700);
-
-
-    revealFace();
-
-
-    await sleep(900);
-
-
-    revealSmile();
-
-
-    await sleep(1100);
-
-
-    await fadeOutManifestation();
-}
-
-
-/* ==========================================================
-   CREATE MANIFESTATION
-========================================================== */
-
-function createManifestation() {
-
-    cleanupAppearance();
-
-
-    manifestationRoot =
-        document.createElement("div");
-
-
-    manifestationRoot.id =
-        "mrSmileManifestation";
-
-
-    manifestationRoot.className =
-        "mrSmileManifestation";
-
-
-    manifestationRoot.innerHTML = `
-
-        <div
-            class="mrSmileFace"
-            aria-hidden="true"
-        >
-
-            <div class="mrSmileFaceTrace"></div>
-
-
-            <div
-                class="mrSmileEye mrSmileEyeLeft"
-            >
-
-                <div class="mrSmileEyeIris">
-
-                    <div
-                        class="mrSmileEyePupil"
-                    ></div>
-
-                </div>
-
-            </div>
-
-
-            <div
-                class="mrSmileEye mrSmileEyeRight"
-            >
-
-                <div class="mrSmileEyeIris">
-
-                    <div
-                        class="mrSmileEyePupil"
-                    ></div>
-
-                </div>
-
-            </div>
-
-
-            <div class="mrSmileNose"></div>
-
-
-            <div class="mrSmileMouth">
-
-                <div
-                    class="mrSmileMouthLine"
-                ></div>
-
-
-                <div class="mrSmileTeeth">
-
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-
-                </div>
-
-            </div>
-
-
-            <div
-                class="mrSmileFaceScan"
-            ></div>
-
-        </div>
-
-    `;
-
-
-    document.body.appendChild(
-        manifestationRoot
-    );
-
-
-    faceElement =
-        manifestationRoot.querySelector(
-            ".mrSmileFace"
-        );
-
-
-    eyesLayer =
-        manifestationRoot.querySelectorAll(
-            ".mrSmileEye"
-        );
-
-
-    /*
-     * Следим за мышью.
-     *
-     * Пока MR.SMILE только наблюдает,
-     * взгляд следует за движением пользователя.
-     */
-
-    cursorMouseHandler =
-        event => {
-
-            playerMouseX =
-                event.clientX;
-
-            playerMouseY =
-                event.clientY;
-
-
-            if (
-                manifestationRoot &&
-                manifestationRoot.classList.contains(
-                    "mrSmileTrackingCursor"
-                )
-            ) {
-
-                updateEyeDirection(
-                    playerMouseX,
-                    playerMouseY
-                );
-
-            }
-
-        };
-
-
-    document.addEventListener(
-        "mousemove",
-        cursorMouseHandler,
-        true
-    );
-}
-
-
-/* ==========================================================
-   REVEAL EYES
-========================================================== */
-
-function revealEyes() {
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    manifestationRoot.classList.add(
-        "mrSmileEyesVisible"
-    );
-
-
-    manifestationRoot.classList.add(
-        "mrSmileTrackingCursor"
-    );
-
-
-    updateEyeDirection(
-        playerMouseX,
-        playerMouseY
-    );
-}
-
-
-/* ==========================================================
-   REVEAL FACE
-========================================================== */
-
-function revealFace() {
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    manifestationRoot.classList.add(
-        "mrSmileFaceVisible"
-    );
-}
-
-
-/* ==========================================================
-   REVEAL SMILE
-========================================================== */
-
-function revealSmile() {
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    manifestationRoot.classList.add(
-        "mrSmileSmileVisible"
-    );
-}
-
-
-/* ==========================================================
-   LOOK AT PLAYER
-========================================================== */
-
-function lookAtPlayer() {
-
-    if (!faceElement) {
-        return;
-    }
-
-
-    manifestationRoot.classList.add(
-        "mrSmileLookingAtPlayer"
-    );
-
-
-    updateEyeDirection(
-        playerMouseX,
-        playerMouseY
-    );
-}
-
-
-/* ==========================================================
-   EYE DIRECTION
-========================================================== */
-
-function updateEyeDirection(
-    x,
-    y
-) {
-
-    if (!eyesLayer) {
-        return;
-    }
-
-
-    const centerX =
-        window.innerWidth * 0.5;
-
-    const centerY =
-        window.innerHeight * 0.5;
-
-
-    const dx =
-        x - centerX;
-
-    const dy =
-        y - centerY;
-
-
-    const distance =
-        Math.sqrt(
-            dx * dx +
-            dy * dy
-        );
-
-
-    if (distance <= 1) {
-        return;
-    }
-
-
-    /*
-     * Очень ограниченное движение.
-     *
-     * Глаза не должны выглядеть
-     * как два шарика, следящие
-     * за мышью.
-     */
-
-    const maxX = 5;
-    const maxY = 4;
-
-
-    const normalizedX =
-        Math.max(
-            -1,
-            Math.min(
-                1,
-                dx /
-                Math.max(
-                    window.innerWidth * 0.35,
-                    1
-                )
-            )
-        );
-
-
-    const normalizedY =
-        Math.max(
-            -1,
-            Math.min(
-                1,
-                dy /
-                Math.max(
-                    window.innerHeight * 0.35,
-                    1
-                )
-            )
-        );
-
-
-    const offsetX =
-        normalizedX * maxX;
-
-    const offsetY =
-        normalizedY * maxY;
-
-
-    eyesLayer.forEach(
-        eye => {
-
-            eye.style.setProperty(
-                "--mr-eye-x",
-                `${offsetX}px`
-            );
-
-            eye.style.setProperty(
-                "--mr-eye-y",
-                `${offsetY}px`
-            );
-
-        }
-    );
-}
-
-
-/* ==========================================================
-   BLINK
-========================================================== */
-
-async function blinkEyes() {
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    manifestationRoot.classList.add(
-        "mrSmileEyesClosed"
-    );
-
-
-    await sleep(180);
-
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    manifestationRoot.classList.remove(
-        "mrSmileEyesClosed"
-    );
-}
-
-
-/* ==========================================================
-   FADE OUT
-========================================================== */
-
-async function fadeOutManifestation() {
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    manifestationRoot.classList.add(
-        "mrSmileManifestationLeaving"
-    );
-
-
-    await sleep(700);
-
-
-    if (!manifestationRoot) {
-        return;
-    }
-
-
-    manifestationRoot.classList.add(
-        "mrSmileManifestationGone"
-    );
-
-
-    await sleep(350);
-}
-
-
-/* ==========================================================
-   RELEASE FIRST CONTACT FACE
-========================================================== */
-
-/**
- * Вызывается mrsmileEvents.js
- * во время финального release.
- *
- * Именно здесь заканчивается
- * persistent first-contact appearance.
- */
-export async function releaseMrSmileFirstContactFace() {
-
-    if (!firstContactAppearance) {
-        return;
-    }
-
-
-    if (!manifestationRoot) {
-
-        manifestationRunning = false;
-        firstContactAppearance = false;
-
-        return;
-    }
-
-
-    try {
-
-        await fadeOutManifestation();
 
     } finally {
 
         cleanupAppearance();
 
-        manifestationRunning = false;
-        firstContactAppearance = false;
-
+        appearanceRunning = false;
     }
 }
 
 
 /* ==========================================================
-   CONTROLLED CURSOR
+   FIRST CONTACT INTRUSION
 ========================================================== */
 
+async function runFirstContactIntrusion() {
+
+    /*
+     * 1.
+     * OMEGA сначала сама замечает
+     * неизвестную активность.
+     */
+
+    await showSystemStatus(
+        "SECURITY EVENT",
+        "UNAUTHORIZED PROCESS DETECTED",
+        "warning"
+    );
+
+
+    await sleep(700);
+
+
+    /*
+     * 2.
+     * Система пытается определить источник.
+     */
+
+    await showIntrusionNotice(
+        "IDENTIFYING PROCESS...",
+        "system"
+    );
+
+
+    await sleep(900);
+
+
+    /*
+     * 3.
+     * Открываем Console.
+     */
+
+    openConsoleWindow();
+
+
+    await sleep(650);
+
+
+    /*
+     * 4.
+     * Самопроизвольный ввод.
+     */
+
+    await typeConsoleCommand(
+        "process.scan --unknown"
+    );
+
+
+    await sleep(500);
+
+
+    await typeConsoleOutput(
+        "UNKNOWN PROCESS FOUND"
+    );
+
+
+    await typeConsoleOutput(
+        "SOURCE: INTERNAL"
+    );
+
+
+    await typeConsoleOutput(
+        "PRIVILEGE: UNKNOWN"
+    );
+
+
+    await sleep(800);
+
+
+    /*
+     * 5.
+     * OMEGA пытается удалить процесс.
+     */
+
+    await typeConsoleCommand(
+        "security.terminate --unknown"
+    );
+
+
+    await sleep(650);
+
+
+    await typeConsoleOutput(
+        "TERMINATION IN PROGRESS..."
+    );
+
+
+    await sleep(900);
+
+
+    /*
+     * 6.
+     * Неудача.
+     */
+
+    await showSystemStatus(
+        "SECURITY FAILURE",
+        "PROCESS REFUSED TERMINATION",
+        "error"
+    );
+
+
+    await sleep(700);
+
+
+    /*
+     * 7.
+     * MR.SMILE впервые обращается
+     * непосредственно к оператору.
+     */
+
+    await showMrSmileDialogue(
+        "You noticed.",
+        "MR.SMILE"
+    );
+
+
+    await sleep(1000);
+
+
+    /*
+     * 8.
+     * Небольшое вмешательство.
+     */
+
+    await runMrSmileSubtleDistortion();
+
+
+    /*
+     * 9.
+     * Последнее сообщение.
+     */
+
+    await showMrSmileDialogue(
+        "I'm still here.",
+        "MR.SMILE"
+    );
+
+
+    await sleep(1100);
+
+
+    /*
+     * 10.
+     * OMEGA восстанавливает интерфейс.
+     *
+     * Сам процесс остаётся.
+     */
+
+    await showSystemStatus(
+        "OMEGA",
+        "SYSTEM RECOVERY COMPLETE",
+        "system"
+    );
+
+
+    await sleep(
+        DEFAULT_TIMING.recoveryDuration
+    );
+}
+
+
+/* ==========================================================
+   ECHO INTRUSION
+========================================================== */
+
+async function runEchoIntrusion() {
+
+    await showIntrusionNotice(
+        "UNUSUAL ACTIVITY DETECTED",
+        "warning"
+    );
+
+
+    await sleep(700);
+
+
+    openConsoleWindow();
+
+
+    await sleep(600);
+
+
+    await typeConsoleOutput(
+        "SESSION MONITOR: ACTIVE"
+    );
+
+
+    await typeConsoleOutput(
+        "EXTERNAL OBSERVER: PRESENT"
+    );
+
+
+    await sleep(800);
+
+
+    await showMrSmileDialogue(
+        "Keep looking.",
+        "MR.SMILE"
+    );
+
+
+    await sleep(900);
+}
+
+
+/* ==========================================================
+   SILENT INTRUSION
+========================================================== */
+
+async function runSilentIntrusion() {
+
+    await showSystemStatus(
+        "OMEGA",
+        "INPUT ANOMALY DETECTED",
+        "warning"
+    );
+
+
+    await sleep(900);
+
+
+    openConsoleWindow();
+
+
+    await sleep(700);
+
+
+    await typeConsoleCommand(
+        "whoami"
+    );
+
+
+    await sleep(350);
+
+
+    await typeConsoleOutput(
+        "operator"
+    );
+
+
+    await sleep(500);
+
+
+    await typeConsoleCommand(
+        "who.is.watching"
+    );
+
+
+    await sleep(700);
+
+
+    await typeConsoleOutput(
+        "..."
+    );
+
+
+    await sleep(900);
+
+
+    await runMrSmileSubtleDistortion();
+}
+
+
+/* ==========================================================
+   INTRUSION LAYER
+========================================================== */
+
+function createIntrusionLayer() {
+
+    removeIntrusionElements();
+
+
+    intrusionLayer =
+        document.createElement("div");
+
+
+    intrusionLayer.id =
+        "mrSmileIntrusionLayer";
+
+
+    intrusionLayer.className =
+        "mrSmileIntrusionLayer";
+
+
+    intrusionLayer.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    /*
+     * ВАЖНО:
+     *
+     * Layer не блокирует интерфейс.
+     */
+
+    intrusionLayer.style.pointerEvents =
+        "none";
+
+
+    document.body.appendChild(
+        intrusionLayer
+    );
+}
+
+
+/* ==========================================================
+   SYSTEM STATUS
+========================================================== */
+
+export async function showSystemStatus(
+    title,
+    message,
+    type = "system",
+    duration =
+        DEFAULT_TIMING.messageDuration
+) {
+
+    createIntrusionLayer();
+
+
+    const panel =
+        document.createElement("div");
+
+
+    panel.className =
+        "mrSmileSystemStatus " +
+        `mrSmileSystemStatus-${type}`;
+
+
+    panel.innerHTML = `
+
+        <div class="mrSmileSystemStatusHeader">
+            ${escapeHtml(title)}
+        </div>
+
+        <div class="mrSmileSystemStatusBody">
+            ${escapeHtml(message)}
+        </div>
+
+    `;
+
+
+    intrusionLayer.appendChild(
+        panel
+    );
+
+
+    requestAnimationFrame(
+        () => {
+
+            panel.classList.add(
+                "visible"
+            );
+
+        }
+    );
+
+
+    await sleep(duration);
+
+
+    if (!panel.isConnected) {
+        return;
+    }
+
+
+    panel.classList.add(
+        "fade"
+    );
+
+
+    await sleep(350);
+
+
+    if (panel.isConnected) {
+        panel.remove();
+    }
+}
+
+
+/* ==========================================================
+   INTRUSION NOTICE
+========================================================== */
+
+export async function showIntrusionNotice(
+    message,
+    type = "system",
+    duration =
+        DEFAULT_TIMING.noticeDuration
+) {
+
+    createIntrusionLayer();
+
+
+    if (intrusionNotice) {
+        intrusionNotice.remove();
+    }
+
+
+    intrusionNotice =
+        document.createElement("div");
+
+
+    intrusionNotice.id =
+        "mrSmileIntrusionNotice";
+
+
+    intrusionNotice.className =
+        "mrSmileIntrusionNotice " +
+        `mrSmileIntrusionNotice-${type}`;
+
+
+    intrusionNotice.textContent =
+        message;
+
+
+    intrusionLayer.appendChild(
+        intrusionNotice
+    );
+
+
+    requestAnimationFrame(
+        () => {
+
+            intrusionNotice.classList.add(
+                "visible"
+            );
+
+        }
+    );
+
+
+    await sleep(duration);
+
+
+    if (!intrusionNotice) {
+        return;
+    }
+
+
+    intrusionNotice.classList.add(
+        "fade"
+    );
+
+
+    await sleep(300);
+
+
+    if (intrusionNotice) {
+
+        intrusionNotice.remove();
+
+        intrusionNotice = null;
+    }
+}
+
+
+/* ==========================================================
+   MR.SMILE DIALOGUE
+========================================================== */
+
+export async function showMrSmileDialogue(
+    message,
+    sender = "MR.SMILE",
+    duration =
+        DEFAULT_TIMING.dialogueDuration
+) {
+
+    createIntrusionLayer();
+
+
+    if (intrusionDialogue) {
+        intrusionDialogue.remove();
+    }
+
+
+    intrusionDialogue =
+        document.createElement("div");
+
+
+    intrusionDialogue.id =
+        "mrSmileIntrusionDialogue";
+
+
+    intrusionDialogue.className =
+        "mrSmileIntrusionDialogue";
+
+
+    intrusionDialogue.innerHTML = `
+
+        <div class="mrSmileDialogueHeader">
+            ${escapeHtml(sender)}
+        </div>
+
+        <div class="mrSmileDialogueBody">
+            ${escapeHtml(message)}
+        </div>
+
+    `;
+
+
+    intrusionLayer.appendChild(
+        intrusionDialogue
+    );
+
+
+    requestAnimationFrame(
+        () => {
+
+            intrusionDialogue.classList.add(
+                "visible"
+            );
+
+        }
+    );
+
+
+    await sleep(duration);
+
+
+    if (!intrusionDialogue) {
+        return;
+    }
+
+
+    intrusionDialogue.classList.add(
+        "fade"
+    );
+
+
+    await sleep(350);
+
+
+    if (intrusionDialogue) {
+
+        intrusionDialogue.remove();
+
+        intrusionDialogue = null;
+    }
+}
+
+
+/* ==========================================================
+   CONSOLE WINDOW
+========================================================== */
+
+export function openConsoleWindow() {
+
+    /*
+     * Используем настоящий Window Manager,
+     * если он доступен.
+     */
+
+    try {
+
+        if (
+            typeof window.openWindow ===
+            "function"
+        ) {
+
+            window.openWindow(
+                "console"
+            );
+
+            return;
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE] Unable to open console:",
+            error
+        );
+    }
+
+
+    /*
+     * Fallback.
+     */
+
+    const consoleWindow =
+        document.querySelector(
+            "#consoleWindow"
+        ) ||
+        document.querySelector(
+            '[data-window="console"]'
+        );
+
+
+    if (!consoleWindow) {
+        return;
+    }
+
+
+    consoleWindow.classList.remove(
+        "hidden"
+    );
+
+
+    consoleWindow.style.display =
+        "flex";
+}
+
+
+/* ==========================================================
+   CONSOLE COMMAND
+========================================================== */
+
+export async function typeConsoleCommand(
+    command
+) {
+
+    const consoleElement =
+        getConsoleOutputElement();
+
+
+    if (!consoleElement) {
+
+        /*
+         * Если настоящая Console не найдена,
+         * показываем действие через
+         * intrusion notice.
+         */
+
+        await showIntrusionNotice(
+            `> ${command}`,
+            "console"
+        );
+
+        return;
+    }
+
+
+    const line =
+        document.createElement("div");
+
+
+    line.className =
+        "mrSmileConsoleLine mrSmileConsoleCommand";
+
+
+    line.textContent =
+        `> ${command}`;
+
+
+    consoleElement.appendChild(
+        line
+    );
+
+
+    scrollConsoleToBottom();
+
+
+    /*
+     * Небольшая задержка,
+     * чтобы команда выглядела
+     * введённой системой.
+     */
+
+    await sleep(250);
+}
+
+
+/* ==========================================================
+   CONSOLE OUTPUT
+========================================================== */
+
+export async function typeConsoleOutput(
+    text
+) {
+
+    const consoleElement =
+        getConsoleOutputElement();
+
+
+    if (!consoleElement) {
+
+        await showIntrusionNotice(
+            text,
+            "console"
+        );
+
+        await sleep(250);
+
+        return;
+    }
+
+
+    const line =
+        document.createElement("div");
+
+
+    line.className =
+        "mrSmileConsoleLine mrSmileConsoleOutput";
+
+
+    line.textContent =
+        text;
+
+
+    consoleElement.appendChild(
+        line
+    );
+
+
+    scrollConsoleToBottom();
+
+
+    await sleep(300);
+}
+
+
+/* ==========================================================
+   FIND CONSOLE OUTPUT
+========================================================== */
+
+function getConsoleOutputElement() {
+
+    const selectors = [
+
+        "#consoleOutput",
+
+        ".consoleOutput",
+
+        "#consoleContent",
+
+        ".consoleContent",
+
+        "#terminalOutput",
+
+        ".terminalOutput"
+
+    ];
+
+
+    for (
+        const selector of selectors
+    ) {
+
+        const element =
+            document.querySelector(
+                selector
+            );
+
+
+        if (element) {
+            return element;
+        }
+    }
+
+
+    return null;
+}
+
+
+/* ==========================================================
+   SCROLL CONSOLE
+========================================================== */
+
+function scrollConsoleToBottom() {
+
+    const consoleElement =
+        getConsoleOutputElement();
+
+
+    if (!consoleElement) {
+        return;
+    }
+
+
+    consoleElement.scrollTop =
+        consoleElement.scrollHeight;
+}
+
+
+/* ==========================================================
+   CURSOR
+========================================================== */
+
+/**
+ * Создаёт визуальный курсор MR.SMILE.
+ *
+ * Это отдельный визуальный курсор.
+ *
+ * Настоящий cursor пользователя
+ * не уничтожается.
+ */
 export function createMrSmileControlledCursor() {
 
     if (cursorVisual) {
@@ -970,8 +1066,40 @@ export function createMrSmileControlledCursor() {
     cursorVisual.style.left =
         `${playerMouseX}px`;
 
+
     cursorVisual.style.top =
         `${playerMouseY}px`;
+
+
+    document.body.classList.add(
+        "mrSmileCursorControlled"
+    );
+
+
+    /*
+     * Следим за настоящим курсором.
+     */
+
+    if (!cursorMouseHandler) {
+
+        cursorMouseHandler =
+            event => {
+
+                playerMouseX =
+                    event.clientX;
+
+                playerMouseY =
+                    event.clientY;
+
+            };
+
+
+        document.addEventListener(
+            "mousemove",
+            cursorMouseHandler,
+            true
+        );
+    }
 
 
     return cursorVisual;
@@ -979,7 +1107,7 @@ export function createMrSmileControlledCursor() {
 
 
 /* ==========================================================
-   CURSOR FOLLOW PLAYER
+   FOLLOW PLAYER CURSOR
 ========================================================== */
 
 export function followPlayerCursor() {
@@ -996,6 +1124,7 @@ export function followPlayerCursor() {
 
     cursorVisual.style.left =
         `${playerMouseX}px`;
+
 
     cursorVisual.style.top =
         `${playerMouseY}px`;
@@ -1047,6 +1176,14 @@ export async function moveMrSmileCursor(
                 currentTime
             ) {
 
+                if (!cursorVisual) {
+
+                    resolve();
+
+                    return;
+                }
+
+
                 const elapsed =
                     currentTime -
                     startTime;
@@ -1056,7 +1193,10 @@ export async function moveMrSmileCursor(
                     Math.min(
                         1,
                         elapsed /
-                        duration
+                        Math.max(
+                            duration,
+                            1
+                        )
                     );
 
 
@@ -1091,6 +1231,7 @@ export async function moveMrSmileCursor(
                 cursorVisual.style.left =
                     `${currentX}px`;
 
+
                 cursorVisual.style.top =
                     `${currentY}px`;
 
@@ -1109,14 +1250,12 @@ export async function moveMrSmileCursor(
                     resolve();
 
                 }
-
             }
 
 
             requestAnimationFrame(
                 animate
             );
-
         }
     );
 }
@@ -1138,7 +1277,9 @@ export async function clickMrSmileCursor() {
     );
 
 
-    await sleep(150);
+    await sleep(
+        DEFAULT_TIMING.cursorClickDuration
+    );
 
 
     if (!cursorVisual) {
@@ -1168,7 +1309,9 @@ export async function loseMrSmileCursor() {
     );
 
 
-    await sleep(500);
+    await sleep(
+        DEFAULT_TIMING.cursorLostDuration
+    );
 
 
     if (!cursorVisual) {
@@ -1179,11 +1322,16 @@ export async function loseMrSmileCursor() {
     cursorVisual.remove();
 
     cursorVisual = null;
+
+
+    document.body.classList.remove(
+        "mrSmileCursorControlled"
+    );
 }
 
 
 /* ==========================================================
-   PUBLIC CURSOR CLEANUP
+   CURSOR CLEANUP
 ========================================================== */
 
 export function destroyMrSmileControlledCursor() {
@@ -1193,8 +1341,12 @@ export function destroyMrSmileControlledCursor() {
         cursorVisual.remove();
 
         cursorVisual = null;
-
     }
+
+
+    document.body.classList.remove(
+        "mrSmileCursorControlled"
+    );
 }
 
 
@@ -1202,6 +1354,12 @@ export function destroyMrSmileControlledCursor() {
    SUBTLE SYSTEM DISTORTION
 ========================================================== */
 
+/**
+ * Небольшое временное искажение.
+ *
+ * НЕ является RGB glitch.
+ * НЕ трясёт весь экран.
+ */
 export async function runMrSmileSubtleDistortion() {
 
     document.body.classList.add(
@@ -1235,9 +1393,68 @@ export async function runMrSmileSubtleDistortion() {
 
 
 /* ==========================================================
+   SYSTEM OVERRIDE
+========================================================== */
+
+export async function showMrSmileSystemOverride(
+    message =
+        "SYSTEM CONTROL OVERRIDDEN"
+) {
+
+    await showSystemStatus(
+        "OMEGA",
+        message,
+        "override",
+        1900
+    );
+}
+
+
+/* ==========================================================
+   SECURITY FAILURE
+========================================================== */
+
+export async function showMrSmileSecurityFailure(
+    message =
+        "SECURITY RESPONSE FAILED"
+) {
+
+    await showSystemStatus(
+        "SECURITY FAILURE",
+        message,
+        "error",
+        2100
+    );
+}
+
+
+/* ==========================================================
+   RECOVERY
+========================================================== */
+
+export async function showMrSmileRecovery() {
+
+    await showSystemStatus(
+        "OMEGA",
+        "SYSTEM RECOVERY COMPLETE",
+        "system",
+        DEFAULT_TIMING.recoveryDuration
+    );
+}
+
+
+/* ==========================================================
    PRESENCE TRACE
 ========================================================== */
 
+/**
+ * Маленький системный индикатор.
+ *
+ * Это не декоративный horror overlay.
+ *
+ * Он показывает, что неизвестный
+ * процесс всё ещё существует.
+ */
 export function createMrSmilePresenceTrace() {
 
     if (
@@ -1264,11 +1481,11 @@ export function createMrSmilePresenceTrace() {
     trace.innerHTML = `
 
         <span>
-            OBSERVER
+            UNKNOWN PROCESS
         </span>
 
         <span>
-            01
+            ACTIVE
         </span>
 
     `;
@@ -1316,7 +1533,48 @@ export async function removeMrSmilePresenceTrace() {
     await sleep(650);
 
 
-    trace.remove();
+    if (trace.isConnected) {
+        trace.remove();
+    }
+}
+
+
+/* ==========================================================
+   CLEAR INTRUSION ELEMENTS
+========================================================== */
+
+function removeIntrusionElements() {
+
+    const selectors = [
+
+        "#mrSmileIntrusionLayer",
+
+        "#mrSmileIntrusionNotice",
+
+        "#mrSmileIntrusionDialogue",
+
+        "#mrSmilePresenceTrace"
+
+    ];
+
+
+    selectors.forEach(
+        selector => {
+
+            document
+                .querySelectorAll(selector)
+                .forEach(
+                    element => element.remove()
+                );
+
+        }
+    );
+
+
+    intrusionLayer = null;
+    intrusionConsole = null;
+    intrusionDialogue = null;
+    intrusionNotice = null;
 }
 
 
@@ -1344,29 +1602,23 @@ function cleanupAppearance() {
     destroyMrSmileControlledCursor();
 
 
-    if (manifestationRoot) {
-
-        manifestationRoot.remove();
-
-        manifestationRoot = null;
-    }
-
-
-    faceElement = null;
-    eyesLayer = null;
+    removeIntrusionElements();
 
 
     document.body.classList.remove(
         "mrSmileGeometryDistortion"
     );
 
+
     document.body.classList.remove(
         "mrSmileGeometryDistortionSoft"
     );
 
+
     document.body.classList.remove(
         "mrSmileCursorControlled"
     );
+
 
     document.body.classList.remove(
         "mrSmileCursorObserved"
@@ -1382,7 +1634,9 @@ function clearAppearanceTimers() {
 
     appearanceTimers.forEach(
         timer => {
+
             clearTimeout(timer);
+
         }
     );
 
@@ -1422,9 +1676,40 @@ function sleep(
             appearanceTimers.push(
                 timer
             );
-
         }
     );
+}
+
+
+/* ==========================================================
+   HTML ESCAPE
+========================================================== */
+
+function escapeHtml(
+    value
+) {
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 }
 
 
@@ -1434,7 +1719,155 @@ function sleep(
 
 export function isMrSmileManifestationActive() {
 
-    return manifestationRunning;
+    return appearanceRunning;
+}
+
+
+/* ==========================================================
+   DEBUG API
+========================================================== */
+
+if (!window.MRSMILE_APPEARANCE) {
+
+    window.MRSMILE_APPEARANCE = {
+
+        status() {
+
+            return {
+
+                running:
+                    appearanceRunning,
+
+                cursor:
+                    !!cursorVisual,
+
+                layer:
+                    !!intrusionLayer,
+
+                dialogue:
+                    !!intrusionDialogue,
+
+                notice:
+                    !!intrusionNotice
+
+            };
+        },
+
+
+        notice(
+            message,
+            type = "system"
+        ) {
+
+            return showIntrusionNotice(
+                message,
+                type
+            );
+        },
+
+
+        dialogue(
+            message,
+            sender = "MR.SMILE"
+        ) {
+
+            return showMrSmileDialogue(
+                message,
+                sender
+            );
+        },
+
+
+        system(
+            title,
+            message,
+            type = "system"
+        ) {
+
+            return showSystemStatus(
+                title,
+                message,
+                type
+            );
+        },
+
+
+        command(
+            command
+        ) {
+
+            return typeConsoleCommand(
+                command
+            );
+        },
+
+
+        output(
+            text
+        ) {
+
+            return typeConsoleOutput(
+                text
+            );
+        },
+
+
+        distortion() {
+
+            return runMrSmileSubtleDistortion();
+        },
+
+
+        cursor() {
+
+            return createMrSmileControlledCursor();
+        },
+
+
+        moveCursor(
+            x,
+            y,
+            duration = 700
+        ) {
+
+            return moveMrSmileCursor(
+                x,
+                y,
+                duration
+            );
+        },
+
+
+        clickCursor() {
+
+            return clickMrSmileCursor();
+        },
+
+
+        loseCursor() {
+
+            return loseMrSmileCursor();
+        },
+
+
+        firstContact(
+            mode = "presence"
+        ) {
+
+            return showMrSmileFirstContactFace(
+                mode
+            );
+        },
+
+
+        cleanup() {
+
+            cleanupAppearance();
+
+            appearanceRunning = false;
+        }
+
+    };
 }
 
 
