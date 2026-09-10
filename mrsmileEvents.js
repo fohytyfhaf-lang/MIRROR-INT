@@ -90,6 +90,11 @@ import {
 } from "./mrsmileActions.js";
 
 
+import {
+    initMrSmileContext
+} from "./mrsmileContext.js";
+
+
 /* ==========================================================
    STATE
 ========================================================== */
@@ -236,6 +241,8 @@ export function initMrSmileEvents() {
     initMrSmileBehavior();
 
     initMrSmileActions();
+   
+    initMrSmileContext();
 
 
     /* ------------------------------------------------------
