@@ -1,8 +1,806 @@
+```css
 /* ==========================================================
-   SYSTEM INTRUSION / ACTIVITY
+   MR.SMILE — OMEGA INTRUSION UI
+   ----------------------------------------------------------
+   SYSTEM / INTRUSION VISUAL LAYER
+
+   НЕТ:
+        - лица
+        - глаз
+        - рта
+        - старой manifestation
+        - fullscreen horror overlay
+        - RGB glitch spam
+        - pointer-events blocking
+
+   ЕСТЬ:
+        - system activity
+        - intrusion notices
+        - MR.SMILE dialogue
+        - console intrusion
+        - security failure
+        - controlled cursor
+        - subtle system distortion
+        - persistent process indicator
+========================================================== */
+
+
+/* ==========================================================
+   INTRUSION LAYER
+========================================================== */
+
+#mrSmileIntrusionLayer {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    z-index: 2147482997;
+
+    pointer-events: none;
+    user-select: none;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+}
+
+
+/* ==========================================================
+   SYSTEM STATUS
+========================================================== */
+
+.mrSmileSystemStatus {
+
+    position: fixed;
+
+    left: 50%;
+    top: 50%;
+
+    width:
+        min(430px, calc(100vw - 40px));
+
+    min-height: 90px;
+
+    transform:
+        translate(-50%, -50%)
+        translateY(8px);
+
+    box-sizing: border-box;
+
+    padding:
+        16px 18px;
+
+    background:
+        rgba(8, 8, 8, .94);
+
+    border:
+        1px solid
+        rgba(160,160,160,.18);
+
+    box-shadow:
+        0 12px 35px
+        rgba(0,0,0,.45);
+
+    opacity: 0;
+
+    transition:
+        opacity 350ms ease,
+        transform 350ms ease;
+
+    font:
+        10px/1.6
+        "Consolas",
+        "Courier New",
+        monospace;
+
+    letter-spacing:
+        1.3px;
+
+    color:
+        rgba(190,190,190,.78);
+}
+
+
+.mrSmileSystemStatus.visible {
+
+    opacity: 1;
+
+    transform:
+        translate(-50%, -50%)
+        translateY(0);
+}
+
+
+.mrSmileSystemStatus.fade {
+
+    opacity: 0;
+
+    transform:
+        translate(-50%, -50%)
+        translateY(-5px);
+}
+
+
+/* ==========================================================
+   STATUS HEADER
+========================================================== */
+
+.mrSmileSystemStatusHeader {
+
+    margin-bottom:
+        8px;
+
+    padding-bottom:
+        6px;
+
+    border-bottom:
+        1px solid
+        rgba(170,170,170,.12);
+
+    font-weight:
+        bold;
+
+    letter-spacing:
+        1.8px;
+
+    color:
+        rgba(210,210,210,.65);
+}
+
+
+.mrSmileSystemStatusBody {
+
+    color:
+        rgba(175,175,175,.58);
+
+    white-space:
+        normal;
+
+    word-break:
+        break-word;
+}
+
+
+/* ==========================================================
+   STATUS TYPES
+========================================================== */
+
+.mrSmileSystemStatus-warning {
+
+    border-color:
+        rgba(180,160,100,.22);
+}
+
+
+.mrSmileSystemStatus-warning
+.mrSmileSystemStatusHeader {
+
+    color:
+        rgba(205,190,140,.70);
+}
+
+
+.mrSmileSystemStatus-error {
+
+    border-color:
+        rgba(180,110,110,.25);
+}
+
+
+.mrSmileSystemStatus-error
+.mrSmileSystemStatusHeader {
+
+    color:
+        rgba(205,155,155,.72);
+}
+
+
+.mrSmileSystemStatus-override {
+
+    border-color:
+        rgba(150,150,150,.28);
+}
+
+
+.mrSmileSystemStatus-override
+.mrSmileSystemStatusHeader {
+
+    color:
+        rgba(220,220,220,.78);
+}
+
+
+.mrSmileSystemStatus-system {
+
+    border-color:
+        rgba(150,150,150,.16);
+}
+
+
+/* ==========================================================
+   INTRUSION NOTICE
+========================================================== */
+
+.mrSmileIntrusionNotice {
+
+    position: fixed;
+
+    left: 50%;
+    bottom: 9vh;
+
+    width:
+        min(440px, calc(100vw - 40px));
+
+    transform:
+        translateX(-50%)
+        translateY(6px);
+
+    box-sizing: border-box;
+
+    padding:
+        8px 12px;
+
+    background:
+        rgba(8,8,8,.88);
+
+    border-left:
+        1px solid
+        rgba(170,170,170,.20);
+
+    border-right:
+        1px solid
+        rgba(170,170,170,.08);
+
+    font:
+        9px/1.5
+        "Consolas",
+        "Courier New",
+        monospace;
+
+    letter-spacing:
+        1.4px;
+
+    text-align:
+        center;
+
+    color:
+        rgba(185,185,185,.48);
+
+    opacity: 0;
+
+    transition:
+        opacity 400ms ease,
+        transform 400ms ease;
+}
+
+
+.mrSmileIntrusionNotice.visible {
+
+    opacity: 1;
+
+    transform:
+        translateX(-50%)
+        translateY(0);
+}
+
+
+.mrSmileIntrusionNotice.fade {
+
+    opacity: 0;
+
+    transform:
+        translateX(-50%)
+        translateY(-4px);
+}
+
+
+/* ==========================================================
+   NOTICE TYPES
+========================================================== */
+
+.mrSmileIntrusionNotice-warning {
+
+    color:
+        rgba(205,190,145,.65);
+
+    border-left-color:
+        rgba(190,170,110,.28);
+}
+
+
+.mrSmileIntrusionNotice-console {
+
+    color:
+        rgba(190,190,190,.60);
+
+    letter-spacing:
+        1.2px;
+}
+
+
+.mrSmileIntrusionNotice-system {
+
+    color:
+        rgba(180,180,180,.48);
+}
+
+
+/* ==========================================================
+   MR.SMILE DIALOGUE
+========================================================== */
+
+.mrSmileIntrusionDialogue {
+
+    position: fixed;
+
+    right: 6vw;
+    bottom: 9vh;
+
+    width:
+        min(360px, calc(100vw - 40px));
+
+    box-sizing: border-box;
+
+    padding:
+        12px 14px;
+
+    background:
+        rgba(7,7,7,.93);
+
+    border:
+        1px solid
+        rgba(175,175,175,.16);
+
+    box-shadow:
+        0 10px 30px
+        rgba(0,0,0,.35);
+
+    transform:
+        translateY(8px);
+
+    opacity: 0;
+
+    transition:
+        opacity 500ms ease,
+        transform 500ms ease;
+
+    font:
+        10px/1.65
+        "Consolas",
+        "Courier New",
+        monospace;
+
+    letter-spacing:
+        1px;
+}
+
+
+.mrSmileIntrusionDialogue.visible {
+
+    opacity: 1;
+
+    transform:
+        translateY(0);
+}
+
+
+.mrSmileIntrusionDialogue.fade {
+
+    opacity: 0;
+
+    transform:
+        translateY(-5px);
+}
+
+
+/* ==========================================================
+   DIALOGUE HEADER
+========================================================== */
+
+.mrSmileDialogueHeader {
+
+    margin-bottom:
+        7px;
+
+    padding-bottom:
+        5px;
+
+    border-bottom:
+        1px solid
+        rgba(170,170,170,.10);
+
+    font-weight:
+        bold;
+
+    letter-spacing:
+        1.7px;
+
+    color:
+        rgba(205,205,205,.65);
+}
+
+
+.mrSmileDialogueBody {
+
+    color:
+        rgba(190,190,190,.60);
+
+    white-space:
+        pre-wrap;
+
+    word-break:
+        break-word;
+}
+
+
+/* ==========================================================
+   CONSOLE INTRUSION LINES
+========================================================== */
+
+.mrSmileConsoleLine {
+
+    font:
+        11px/1.55
+        "Consolas",
+        "Courier New",
+        monospace;
+
+    letter-spacing:
+        .7px;
+
+    white-space:
+        pre-wrap;
+
+    word-break:
+        break-word;
+
+    pointer-events:
+        none;
+}
+
+
+/* ----------------------------------------------------------
+   COMMAND
+---------------------------------------------------------- */
+
+.mrSmileConsoleCommand {
+
+    color:
+        rgba(205,205,205,.72);
+
+    opacity: 0;
+
+    animation:
+        mrSmileConsoleLineIn
+        250ms
+        ease
+        forwards;
+}
+
+
+/* ----------------------------------------------------------
+   OUTPUT
+---------------------------------------------------------- */
+
+.mrSmileConsoleOutput {
+
+    color:
+        rgba(165,165,165,.56);
+
+    opacity: 0;
+
+    animation:
+        mrSmileConsoleLineIn
+        300ms
+        ease
+        forwards;
+}
+
+
+@keyframes mrSmileConsoleLineIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateX(-3px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateX(0);
+    }
+}
+
+
+/* ==========================================================
+   CONTROLLED CURSOR
+========================================================== */
+
+#mrSmileControlledCursor {
+
+    position: fixed;
+
+    left: 0;
+    top: 0;
+
+    width: 22px;
+    height: 22px;
+
+    z-index: 2147483000;
+
+    pointer-events:
+        none;
+
+    user-select:
+        none;
+
+    transform:
+        translate(-2px, -2px);
+
+    opacity:
+        .72;
+
+    filter:
+        drop-shadow(
+            0 0 4px
+            rgba(210,210,210,.12)
+        );
+
+    transition:
+        opacity 250ms ease;
+}
+
+
+/* ==========================================================
+   CURSOR ARROW
+========================================================== */
+
+.mrCursorArrow {
+
+    position: absolute;
+
+    left: 1px;
+    top: 1px;
+
+    width: 0;
+    height: 0;
+
+    border-top:
+        9px solid
+        rgba(215,215,215,.78);
+
+    border-right:
+        6px solid
+        transparent;
+
+    border-bottom:
+        0 solid
+        transparent;
+
+    border-left:
+        0 solid
+        transparent;
+
+    transform:
+        rotate(-12deg);
+}
+
+
+/* ==========================================================
+   CURSOR CORE
+========================================================== */
+
+.mrCursorCore {
+
+    position: absolute;
+
+    left: 4px;
+    top: 5px;
+
+    width: 5px;
+    height: 5px;
+
+    border:
+        1px solid
+        rgba(220,220,220,.35);
+
+    opacity:
+        .55;
+}
+
+
+/* ==========================================================
+   CURSOR CONTROLLED
+========================================================== */
+
+body.mrSmileCursorControlled
+#mrSmileControlledCursor {
+
+    opacity:
+        .86;
+}
+
+
+/* ==========================================================
+   CURSOR CLICK
+========================================================== */
+
+.mrSmileCursorClick {
+
+    animation:
+        mrSmileCursorClick
+        150ms
+        ease;
+}
+
+
+@keyframes mrSmileCursorClick {
+
+    0% {
+
+        transform:
+            translate(-2px, -2px)
+            scale(1);
+    }
+
+    45% {
+
+        transform:
+            translate(-2px, -2px)
+            scale(.82);
+    }
+
+    100% {
+
+        transform:
+            translate(-2px, -2px)
+            scale(1);
+    }
+}
+
+
+/* ==========================================================
+   CURSOR LOST
+========================================================== */
+
+.mrSmileCursorLost {
+
+    opacity:
+        0 !important;
+
+    transform:
+        translate(-2px, -2px)
+        scale(.7);
+
+    transition:
+        opacity 500ms ease,
+        transform 500ms ease;
+}
+
+
+/* ==========================================================
+   SYSTEM DISTORTION
+========================================================== */
+
+/*
+ * Очень мягкое вмешательство.
+ *
+ * Не используется:
+ *      RGB
+ *      screen shake
+ *      aggressive glitch
+ */
+
+body.mrSmileGeometryDistortion {
+
+    transition:
+        filter 350ms ease;
+}
+
+
+body.mrSmileGeometryDistortionSoft {
+
+    filter:
+        contrast(.985)
+        brightness(.985);
+}
+
+
+/* ==========================================================
+   PRESENCE TRACE
+========================================================== */
+
+#mrSmilePresenceTrace {
+
+    position: fixed;
+
+    right: 18px;
+    bottom: 15px;
+
+    z-index: 2147482998;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding:
+        4px 7px;
+
+    background:
+        rgba(5,5,5,.72);
+
+    border:
+        1px solid
+        rgba(150,150,150,.09);
+
+    font:
+        8px/1
+        "Consolas",
+        "Courier New",
+        monospace;
+
+    letter-spacing:
+        1.3px;
+
+    color:
+        rgba(175,175,175,.30);
+
+    opacity: 0;
+
+    pointer-events:
+        none;
+
+    user-select:
+        none;
+
+    transition:
+        opacity 800ms ease;
+}
+
+
+#mrSmilePresenceTrace.visible {
+
+    opacity: 1;
+}
+
+
+#mrSmilePresenceTrace.fade {
+
+    opacity: 0;
+
+    transition:
+        opacity 650ms ease;
+}
+
+
+/* ==========================================================
+   PRESENCE TRACE STATUS
+========================================================== */
+
+#mrSmilePresenceTrace span:last-child {
+
+    color:
+        rgba(190,190,190,.42);
+}
+
+
+/* ==========================================================
+   SYSTEM ACTIVITY
 ========================================================== */
 
 .mrSmileSystemActivity {
+
     position: fixed;
 
     left: 50%;
@@ -16,10 +814,14 @@
 
     z-index: 2147482997;
 
-    pointer-events: none;
-    user-select: none;
+    pointer-events:
+        none;
 
-    box-sizing: border-box;
+    user-select:
+        none;
+
+    box-sizing:
+        border-box;
 
     font:
         9px/1.6
@@ -33,14 +835,20 @@
     color:
         rgba(190,190,190,.28);
 
-    opacity: 0;
+    opacity:
+        0;
 
     transition:
         opacity 900ms ease;
 }
 
 
+/* ==========================================================
+   ACTIVITY LINES
+========================================================== */
+
 .mrSmileSystemActivity::before {
+
     content: "";
 
     position: absolute;
@@ -58,6 +866,7 @@
 
 
 .mrSmileSystemActivity::after {
+
     content: "";
 
     position: absolute;
@@ -75,9 +884,11 @@
 
 
 .mrSmileActivityText {
+
     display: flex;
 
     align-items: center;
+
     justify-content:
         space-between;
 
@@ -94,40 +905,45 @@
 
 
 .activityLabel {
+
     min-width: 0;
 
     color:
         rgba(170,170,170,.20);
 
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
 }
 
 
 .activityValue {
+
     min-width: 0;
 
     color:
         rgba(190,190,190,.38);
 
-    text-align: right;
+    text-align:
+        right;
 
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
 }
 
 
-/*
- * Activity lines are generated/controlled by JS.
- *
- * Keep them visually passive.
- * They must not create another interaction layer.
- */
-
 .mrSmileActivityLine {
-    min-height: 14px;
 
-    box-sizing: border-box;
+    min-height:
+        14px;
+
+    box-sizing:
+        border-box;
 
     overflow:
         hidden;
@@ -140,7 +956,9 @@
 
 body.mrSmileInterfaceCollapse
 .mrSmileSystemActivity {
-    opacity: 1;
+
+    opacity:
+        1;
 }
 
 
@@ -149,6 +967,7 @@ body.mrSmileInterfaceCollapse
 ========================================================== */
 
 .mrSmileSystemActivity.activityPulse {
+
     animation:
         mrSmileActivityPulse
         900ms
@@ -159,7 +978,9 @@ body.mrSmileInterfaceCollapse
 @keyframes mrSmileActivityPulse {
 
     0% {
-        opacity: .15;
+
+        opacity:
+            .15;
 
         transform:
             translateX(-50%)
@@ -167,7 +988,9 @@ body.mrSmileInterfaceCollapse
     }
 
     25% {
-        opacity: .85;
+
+        opacity:
+            .85;
 
         transform:
             translateX(-50%)
@@ -175,11 +998,15 @@ body.mrSmileInterfaceCollapse
     }
 
     50% {
-        opacity: .35;
+
+        opacity:
+            .35;
     }
 
     100% {
-        opacity: 1;
+
+        opacity:
+            1;
 
         transform:
             translateX(-50%)
@@ -193,7 +1020,9 @@ body.mrSmileInterfaceCollapse
 ========================================================== */
 
 .mrSmileSystemActivity.activitySilence {
-    opacity: 0;
+
+    opacity:
+        0;
 
     transition:
         opacity 1600ms ease;
@@ -206,44 +1035,76 @@ body.mrSmileInterfaceCollapse
 
 @media (max-width: 700px) {
 
-    #mrSmileManifestation
-    .mrSmileFace {
-        width:
-            88vw;
+    .mrSmileSystemStatus {
 
-        height:
-            48vh;
+        width:
+            calc(100vw - 32px);
+
+        padding:
+            14px 14px;
+
+        font-size:
+            9px;
     }
 
 
-    #mrSmileManifestation
-    .mrSmileEye {
+    .mrSmileIntrusionNotice {
+
         width:
-            84px;
+            calc(100vw - 32px);
 
-        height:
-            60px;
-    }
+        bottom:
+            7vh;
 
-
-    #mrSmileManifestation
-    .mrSmileMouth {
-        width:
-            180px;
-    }
-
-
-    #mrSmileManifestation
-    .mrSmileTeeth span {
-        width:
+        font-size:
             8px;
 
-        height:
-            12px;
+        letter-spacing:
+            1px;
+    }
+
+
+    .mrSmileIntrusionDialogue {
+
+        right:
+            16px;
+
+        bottom:
+            7vh;
+
+        width:
+            calc(100vw - 32px);
+
+        font-size:
+            9px;
+    }
+
+
+    .mrSmileConsoleLine {
+
+        font-size:
+            10px;
+    }
+
+
+    #mrSmilePresenceTrace {
+
+        right:
+            10px;
+
+        bottom:
+            10px;
+
+        font-size:
+            7px;
+
+        gap:
+            8px;
     }
 
 
     .mrSmileSystemActivity {
+
         width:
             calc(100vw - 40px);
 
@@ -259,6 +1120,7 @@ body.mrSmileInterfaceCollapse
 
 
     .mrSmileActivityText {
+
         gap:
             10px;
     }
@@ -271,44 +1133,56 @@ body.mrSmileInterfaceCollapse
 
 @media (max-width: 600px) {
 
-    #mrSmileManifestation
-    .mrSmileFace {
-        width:
-            92vw;
+    .mrSmileSystemStatus {
 
-        height:
-            52vh;
+        width:
+            calc(100vw - 24px);
+
+        min-height:
+            80px;
+
+        padding:
+            12px;
+
+        font-size:
+            8px;
     }
 
 
-    #mrSmileManifestation
-    .mrSmileEye {
-        width:
-            58px;
+    .mrSmileIntrusionDialogue {
 
-        height:
-            22px;
+        right:
+            12px;
+
+        bottom:
+            6vh;
+
+        width:
+            calc(100vw - 24px);
+
+        padding:
+            10px 11px;
+
+        font-size:
+            8px;
     }
 
 
-    #mrSmileManifestation
-    .mrSmileMouth {
-        width:
-            155px;
-    }
+    .mrSmileIntrusionNotice {
 
-
-    #mrSmileManifestation
-    .mrSmileTeeth span {
         width:
+            calc(100vw - 24px);
+
+        bottom:
+            5vh;
+
+        font-size:
             7px;
-
-        height:
-            11px;
     }
 
 
     .mrSmileSystemActivity {
+
         width:
             82vw;
 
@@ -321,7 +1195,46 @@ body.mrSmileInterfaceCollapse
 
 
     .mrSmileActivityText {
+
         gap:
             8px;
     }
+
+
+    #mrSmilePresenceTrace {
+
+        right:
+            7px;
+
+        bottom:
+            7px;
+
+        padding:
+            3px 5px;
+
+        font-size:
+            6px;
+    }
 }
+
+
+/* ==========================================================
+   IMPORTANT
+   ----------------------------------------------------------
+   Старые элементы MR.SMILE больше не используются:
+
+        #mrSmileManifestation
+        .mrSmileFace
+        .mrSmileFaceTrace
+        .mrSmileEye
+        .mrSmileEyeIris
+        .mrSmileEyePupil
+        .mrSmileNose
+        .mrSmileMouth
+        .mrSmileMouthLine
+        .mrSmileTeeth
+        .mrSmileFaceScan
+
+   Они намеренно отсутствуют.
+========================================================== */
+```
