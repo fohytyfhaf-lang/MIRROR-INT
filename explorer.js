@@ -1526,9 +1526,7 @@ function escapeAttribute(
 /* =========================================================
    EXPORTS
 ========================================================= */
-
 export {
     openExplorerItem,
-    goBack,
-    getCurrentExplorerPath
+    goBack
 };
