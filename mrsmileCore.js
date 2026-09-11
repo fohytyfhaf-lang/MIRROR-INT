@@ -83,20 +83,15 @@ const RESPONSE_DELAY = {
 /* ==========================================================
    INITIALIZATION
 ========================================================== */
-
 export function initMrSmileCore() {
 
-    if (
-        initialized
-    ) {
-
+    if (initialized) {
         return;
     }
 
+    initMrSmileLanguage();
 
-    initialized =
-        true;
-
+    initialized = true;
 
     console.log(
         "[MR.SMILE CORE] Initialized."
@@ -105,87 +100,177 @@ export function initMrSmileCore() {
 
 
 /* ==========================================================
-   MAIN
+MAIN
 ========================================================== */
 
 export async function mrSmileSay(
-    text
+text
 ) {
 
-    initMrSmileCore();
+
+initMrSmileCore();
 
 
-    const input =
-        String(
-            text || ""
-        ).trim();
+const input =
+    String(
+        text || ""
+    ).trim();
 
 
-    if (!input) {
+if (!input) {
 
-        return null;
-    }
+    return null;
+}
 
 
-    /*
-     * Remember operator message.
-     */
+/*
+ * Remember operator message.
+ */
 
-    rememberOperatorMessage(
+rememberOperatorMessage(
+    input
+);
+
+
+conversationCount++;
+
+
+/*
+ * Mild attention response.
+ */
+
+changeBehaviorMetric(
+    "attention",
+    1
+);
+
+
+/*
+ * Normalize message.
+ */
+
+const lower =
+    normalizeText(
         input
     );
 
 
-    conversationCount++;
+/*
+ * Detect operator language.
+ *
+ * Examples:
+ *
+ * hello  -> en
+ * привет -> ru
+ * привіт -> uk
+ * hola -> es
+ * bonjour -> fr
+ *
+ * MR.SMILE does not announce this.
+ * He simply answers in that language.
+ */
 
-
-    /*
-     * Mild attention response.
-     */
-
-    changeBehaviorMetric(
-        "attention",
-        1
+const detectedLanguage =
+    detectLanguage(
+        input
     );
 
 
-    const lower =
-        input.toLowerCase();
+console.log(
+    "[MR.SMILE LANGUAGE]",
+    detectedLanguage
+);
 
 
-    /*
-     * Allow the system to have
-     * a little silence.
-     *
-     * Not every message deserves
-     * an immediate reply.
-     */
+/*
+ * Allow the system to have
+ * a little silence.
+ *
+ * Not every message deserves
+ * an immediate reply.
+ */
 
-    if (
-        shouldRemainSilent(
-            lower
-        )
-    ) {
+if (
+    shouldRemainSilent(
+        lower
+    )
+) {
 
-        return null;
-    }
+    return null;
+}
 
 
-    const response =
-        chooseResponse(
-            lower
+/*
+ * Determine what MR.SMILE
+ * wants to say.
+ *
+ * The result may be:
+ *
+ * {
+ *     intent: "greeting"
+ * }
+ *
+ * OR an ordinary string for
+ * categories that have not yet
+ * been localized.
+ */
+
+const decision =
+    chooseResponse(
+        lower
+    );
+
+
+if (!decision) {
+
+    return null;
+}
+
+
+/*
+ * Localized response.
+ *
+ * When an intent has a language
+ * bank, use it.
+ */
+
+if (
+    typeof decision === "object" &&
+    decision.intent
+) {
+
+    const localized =
+        getLocalizedResponse(
+            decision.intent,
+            detectedLanguage
         );
 
 
-    if (!response) {
+    if (
+        localized
+    ) {
 
-        return null;
+        return delayedResponse(
+            localized
+        );
+
     }
+}
 
 
-    return delayedResponse(
-        response
-    );
+/*
+ * Backward compatibility.
+ *
+ * Existing response banks that
+ * still return plain strings
+ * continue to work normally.
+ */
+
+return delayedResponse(
+    decision
+);
+
+
 }
 
 
