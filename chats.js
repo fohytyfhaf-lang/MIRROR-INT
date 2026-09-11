@@ -1,11 +1,10 @@
-/* =========================================================
+/* ==========================================================
    OMEGA INTERNAL CHATS
-   ---------------------------------------------------------
-   REAL OMEGA CHAT SYSTEM
+   ----------------------------------------------------------
+   REAL OMEGA CHAT SYSTEM — REBUILT
 
    RESPONSIBILITIES:
-
-   - chat channels
+   - channels
    - message history
    - chat rendering
    - unread counters
@@ -13,29 +12,36 @@
    - MR.SMILE channel
    - NULL channel
    - chat context
+   - operator input routing
 
    IMPORTANT:
 
-   MR.SMILE PERSONALITY IS NOT GENERATED HERE.
+   MR.SMILE HAS NO PERSONALITY LOGIC HERE.
 
-   MR.SMILE conversation path:
+   MR.SMILE PATH:
 
+       USER INPUT
+           ↓
        chats.js
            ↓
-       chat input
+       mrsmile:operatorMessage
            ↓
        mrsmileChat.js
            ↓
        mrsmileCore.js
            ↓
-       mrsmileMemory.js
+       RESPONSE
+           ↓
+       chats.js / addChatMessage()
 
-   Therefore this file contains NO OLD:
-       generateMrSmileResponse()
+   This prevents multiple MR.SMILE brains
+   from answering simultaneously.
+========================================================== */
 
-   This prevents two different MR.SMILE brains
-   from answering the operator simultaneously.
-========================================================= */
+
+/* ==========================================================
+   IMPORTS
+========================================================== */
 
 import {
     canAccess
@@ -50,8 +56,7 @@ import {
 } from "./personnelAI.js";
 
 import {
-    rememberOperatorMessage,
-    rememberMrSmileMessage
+    rememberOperatorMessage
 } from "./mrsmileMemory.js";
 
 import {
@@ -59,15 +64,124 @@ import {
 } from "./eventManager.js";
 
 
-/* =========================================================
+/* ==========================================================
+   SAFE HELPERS
+========================================================== */
+
+function safeString(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+    return String(value);
+
+}
+
+
+function cleanText(value) {
+
+    return safeString(value)
+        .replace(/\r\n/g, "\n")
+        .trim();
+
+}
+
+
+function escapeHTML(value) {
+
+    return safeString(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+function contains(text, values) {
+
+    const normalized =
+        cleanText(text)
+            .toLowerCase();
+
+    if (!normalized) {
+        return false;
+    }
+
+    return values.some(
+        value =>
+            normalized.includes(
+                String(value).toLowerCase()
+            )
+    );
+
+}
+
+
+function randomPick(array) {
+
+    if (
+        !Array.isArray(array) ||
+        array.length === 0
+    ) {
+        return "";
+    }
+
+    return array[
+        Math.floor(
+            Math.random() *
+            array.length
+        )
+    ];
+
+}
+
+
+function randomBetween(min, max) {
+
+    return Math.floor(
+        Math.random() *
+        (max - min + 1)
+    ) + min;
+
+}
+
+
+function getCurrentTime() {
+
+    try {
+
+        return new Date().toLocaleTimeString(
+            [],
+            {
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
+
+    } catch {
+
+        return "--:--";
+
+    }
+
+}
+
+
+/* ==========================================================
    CHAT DATABASE
-========================================================= */
+========================================================== */
 
 const chats = {
 
-    /* =====================================================
+    /* ======================================================
        GENERAL
-    ===================================================== */
+    ====================================================== */
 
     general: {
 
@@ -123,9 +237,9 @@ const chats = {
     },
 
 
-    /* =====================================================
+    /* ======================================================
        SECURITY
-    ===================================================== */
+    ====================================================== */
 
     security: {
 
@@ -181,9 +295,9 @@ const chats = {
     },
 
 
-    /* =====================================================
+    /* ======================================================
        RESEARCH
-    ===================================================== */
+    ====================================================== */
 
     research: {
 
@@ -250,9 +364,9 @@ const chats = {
     },
 
 
-    /* =====================================================
+    /* ======================================================
        MEDICAL
-    ===================================================== */
+    ====================================================== */
 
     medical: {
 
@@ -297,9 +411,9 @@ const chats = {
     },
 
 
-    /* =====================================================
+    /* ======================================================
        INCIDENTS
-    ===================================================== */
+    ====================================================== */
 
     incidents: {
 
@@ -355,9 +469,9 @@ const chats = {
     },
 
 
-    /* =====================================================
+    /* ======================================================
        ADMINISTRATION
-    ===================================================== */
+    ====================================================== */
 
     admin: {
 
@@ -402,17 +516,13 @@ const chats = {
     },
 
 
-    /* =====================================================
+    /* ======================================================
        MR.SMILE
-       -----------------------------------------------------
-       IMPORTANT:
+       ------------------------------------------------------
+       INITIAL CHANNEL CONTENT ONLY.
 
-       These are only INITIAL channel messages.
-
-       They are NOT his conversational brain.
-
-       All future replies come from mrsmileChat.js.
-    ===================================================== */
+       This is NOT his AI.
+    ====================================================== */
 
     mrsmile: {
 
@@ -496,9 +606,9 @@ const chats = {
     },
 
 
-    /* =====================================================
+    /* ======================================================
        NULL
-    ===================================================== */
+    ====================================================== */
 
     nullEntity: {
 
@@ -551,44 +661,44 @@ const chats = {
 };
 
 
-/* =========================================================
-   CHAT CONTEXT
-========================================================= */
+/* ==========================================================
+   CONTEXT
+========================================================== */
 
-Object.values(
-    chats
-).forEach(
-    chat => {
+for (
+    const chat of Object.values(chats)
+) {
 
-        chat.context = {
+    chat.context = {
 
-            topic:
-                null,
+        topic:
+            null,
 
-            entity:
-                null,
+        entity:
+            null,
 
-            state:
-                null,
+        state:
+            null,
 
-            lastQuestion:
-                null,
+        lastQuestion:
+            null,
 
-            lastMessage:
-                null,
+        lastMessage:
+            null,
 
-            lastMessageTime:
-                null
+        lastMessageTime:
+            0,
 
-        };
+        messageCount:
+            0
+    };
 
-    }
-);
+}
 
 
-/* =========================================================
-   STATE
-========================================================= */
+/* ==========================================================
+   GLOBAL STATE
+========================================================== */
 
 let activeChat =
     "general";
@@ -596,13 +706,16 @@ let activeChat =
 let initialized =
     false;
 
-let sendLocked =
-    false;
+let personnelResponseTimer =
+    null;
+
+let operatorMessageSequence =
+    0;
 
 
-/* =========================================================
-   MESSAGE TIMING
-========================================================= */
+/* ==========================================================
+   TIMING
+========================================================== */
 
 const TIMING = {
 
@@ -610,14 +723,16 @@ const TIMING = {
         900,
 
     personnelMaximum:
-        1800
+        1800,
 
+    mrSmileDispatchPause:
+        20
 };
 
 
-/* =========================================================
-   CHAT CONTEXT
-========================================================= */
+/* ==========================================================
+   UPDATE CONTEXT
+========================================================== */
 
 function updateChatContext(
     chatId,
@@ -627,25 +742,17 @@ function updateChatContext(
     const chat =
         chats[chatId];
 
-
     if (
-        !chat
-        ||
+        !chat ||
         !chat.context
     ) {
-
         return;
-
     }
 
 
     const message =
-        String(
-            text ||
-            ""
-        )
-            .toLowerCase()
-            .trim();
+        cleanText(text)
+            .toLowerCase();
 
 
     const context =
@@ -655,24 +762,35 @@ function updateChatContext(
     context.lastMessage =
         message;
 
-
     context.lastMessageTime =
         Date.now();
 
+    context.messageCount += 1;
 
-    /* =====================================================
-       SHORT QUESTIONS
-    ===================================================== */
+
+    /*
+       Question memory
+    */
 
     if (
-        message ===
-            "почему"
-        ||
-        message ===
-            "почему?"
-        ||
-        message ===
-            "why"
+        message.endsWith("?")
+    ) {
+
+        context.lastQuestion =
+            message;
+
+    }
+
+
+    if (
+        contains(
+            message,
+            [
+                "почему",
+                "why",
+                "чому"
+            ]
+        )
     ) {
 
         context.lastQuestion =
@@ -682,14 +800,14 @@ function updateChatContext(
 
 
     if (
-        message ===
-            "кто"
-        ||
-        message ===
-            "кто?"
-        ||
-        message ===
-            "who"
+        contains(
+            message,
+            [
+                "кто ты",
+                "who are you",
+                "хто ти"
+            ]
+        )
     ) {
 
         context.lastQuestion =
@@ -699,14 +817,14 @@ function updateChatContext(
 
 
     if (
-        message ===
-            "где"
-        ||
-        message ===
-            "где?"
-        ||
-        message ===
-            "where"
+        contains(
+            message,
+            [
+                "где",
+                "where",
+                "де"
+            ]
+        )
     ) {
 
         context.lastQuestion =
@@ -715,43 +833,9 @@ function updateChatContext(
     }
 
 
-    if (
-        message ===
-            "когда"
-        ||
-        message ===
-            "когда?"
-        ||
-        message ===
-            "when"
-    ) {
-
-        context.lastQuestion =
-            "when";
-
-    }
-
-
-    if (
-        message ===
-            "а потом"
-        ||
-        message ===
-            "а потом?"
-        ||
-        message ===
-            "what happened next"
-    ) {
-
-        context.lastQuestion =
-            "after";
-
-    }
-
-
-    /* =====================================================
+    /*
        SECURITY
-    ===================================================== */
+    */
 
     if (
         chatId ===
@@ -783,8 +867,12 @@ function updateChatContext(
 
 
         else if (
-            message.includes(
-                "камера"
+            contains(
+                message,
+                [
+                    "камера",
+                    "camera"
+                ]
             )
         ) {
 
@@ -796,6 +884,223 @@ function updateChatContext(
 
         }
 
+
+        if (
+            contains(
+                message,
+                [
+                    "сектор c",
+                    "sector c",
+                    "сектор с"
+                ]
+            )
+        ) {
+
+            context.topic =
+                "sector_c";
+
+            context.entity =
+                "sector_c";
+
+        }
+
+
+        if (
+            contains(
+                message,
+                [
+                    "доступ",
+                    "проник",
+                    "проникновение",
+                    "access",
+                    "unauthorized"
+                ]
+            )
+        ) {
+
+            context.topic =
+                "unauthorized_access";
+
+            context.state =
+                "access_discussion";
+
+        }
+
+    }
+
+
+    /*
+       RESEARCH
+    */
+
+    if (
+        chatId ===
+        "research"
+    ) {
+
+        if (
+            contains(
+                message,
+                [
+                    "ten",
+                    "эксперимент",
+                    "experiment"
+                ]
+            )
+        ) {
+
+            context.topic =
+                "TEN";
+
+            context.entity =
+                "TEN";
+
+            context.state =
+                "TEN_discussion";
+
+        }
+
+
+        if (
+            contains(
+                message,
+                [
+                    "фаза 3",
+                    "третья фаза",
+                    "phase 3"
+                ]
+            )
+        ) {
+
+            context.topic =
+                "TEN_phase_3";
+
+            context.entity =
+                "TEN_phase_3";
+
+            context.state =
+                "phase_3_discussion";
+
+        }
+
+    }
+
+
+    /*
+       MEDICAL
+    */
+
+    if (
+        chatId ===
+        "medical"
+    ) {
+
+        if (
+            contains(
+                message,
+                [
+                    "пациент",
+                    "пациенты",
+                    "patient",
+                    "patients"
+                ]
+            )
+        ) {
+
+            context.topic =
+                "patients";
+
+            context.entity =
+                "patients";
+
+            context.state =
+                "patient_discussion";
+
+        }
+
+
+        if (
+            contains(
+                message,
+                [
+                    "перевод",
+                    "перевели",
+                    "transfer"
+                ]
+            )
+        ) {
+
+            context.topic =
+                "transfer";
+
+            context.entity =
+                "medical_transfer";
+
+        }
+
+    }
+
+
+    /*
+       INCIDENTS
+    */
+
+    if (
+        chatId ===
+        "incidents"
+    ) {
+
+        if (
+            contains(
+                message,
+                [
+                    "движение",
+                    "перемещение",
+                    "motion",
+                    "movement"
+                ]
+            )
+        ) {
+
+            context.topic =
+                "unknown_movement";
+
+            context.entity =
+                "unknown_movement";
+
+            context.state =
+                "incident_discussion";
+
+        }
+
+
+        if (
+            contains(
+                message,
+                [
+                    "закрыт",
+                    "restricted",
+                    "ограничен"
+                ]
+            )
+        ) {
+
+            context.topic =
+                "restricted_sector";
+
+        }
+
+    }
+
+
+    /*
+       GENERAL
+    */
+
+    if (
+        chatId ===
+        "general"
+    ) {
 
         if (
             contains(
@@ -820,219 +1125,30 @@ function updateChatContext(
             contains(
                 message,
                 [
-                    "доступ",
-                    "проник",
-                    "заходил",
-                    "журнал"
+                    "network",
+                    "сеть",
+                    "терминал",
+                    "terminal"
                 ]
             )
         ) {
 
             context.topic =
-                "unauthorized_access";
-
-        }
-
-    }
-
-
-    /* =====================================================
-       RESEARCH
-    ===================================================== */
-
-    if (
-        chatId ===
-        "research"
-    ) {
-
-        if (
-            contains(
-                message,
-                [
-                    "ten",
-                    "эксперимент"
-                ]
-            )
-        ) {
-
-            context.topic =
-                "TEN";
+                "network";
 
             context.entity =
-                "TEN";
-
-            context.state =
-                "TEN_discussion";
+                "network";
 
         }
-
-
-        if (
-            contains(
-                message,
-                [
-                    "фаза 3",
-                    "третья фаза"
-                ]
-            )
-        ) {
-
-            context.topic =
-                "TEN";
-
-            context.entity =
-                "TEN_phase_3";
-
-            context.state =
-                "phase_3_discussion";
-
-        }
-
-
-        if (
-            contains(
-                message,
-                [
-                    "создал",
-                    "создатель"
-                ]
-            )
-        ) {
-
-            context.topic =
-                "TEN";
-
-            context.state =
-                "TEN_creator";
-
-        }
-
-    }
-
-
-    /* =====================================================
-       MEDICAL
-    ===================================================== */
-
-    if (
-        chatId ===
-        "medical"
-    ) {
-
-        if (
-            contains(
-                message,
-                [
-                    "пациент",
-                    "пациенты",
-                    "пациента"
-                ]
-            )
-        ) {
-
-            context.topic =
-                "patients";
-
-            context.entity =
-                "patients";
-
-            context.state =
-                "patient_discussion";
-
-        }
-
-
-        if (
-            contains(
-                message,
-                [
-                    "перевод",
-                    "перевели",
-                    "поступил"
-                ]
-            )
-        ) {
-
-            context.topic =
-                "transfer";
-
-            context.entity =
-                "medical_transfer";
-
-        }
-
-    }
-
-
-    /* =====================================================
-       INCIDENTS
-    ===================================================== */
-
-    if (
-        chatId ===
-        "incidents"
-    ) {
-
-        if (
-            contains(
-                message,
-                [
-                    "движение",
-                    "перемещение",
-                    "кто-то двигался"
-                ]
-            )
-        ) {
-
-            context.topic =
-                "unknown_movement";
-
-            context.entity =
-                "unknown_movement";
-
-            context.state =
-                "incident_discussion";
-
-        }
-
-
-        if (
-            contains(
-                message,
-                [
-                    "закрыт",
-                    "restricted"
-                ]
-            )
-        ) {
-
-            context.topic =
-                "restricted_sector";
-
-        }
-
-    }
-
-
-    /* =====================================================
-       QUESTION DETECTION
-    ===================================================== */
-
-    if (
-        message.endsWith("?")
-    ) {
-
-        context.lastQuestion =
-            message;
 
     }
 
 }
 
 
-/* =========================================================
+/* ==========================================================
    RENDER CHAT LIST
-========================================================= */
+========================================================== */
 
 function renderChatList() {
 
@@ -1042,177 +1158,133 @@ function renderChatList() {
         );
 
 
-    if (
-        !list
-    ) {
-
+    if (!list) {
         return;
-
     }
 
 
-    list.innerHTML =
+    list.textContent =
         "";
 
 
-    Object.entries(
-        chats
-    ).forEach(
-        (
-            [id, chat]
-        ) => {
+    for (
+        const [id, chat]
+        of Object.entries(chats)
+    ) {
+
+        /*
+           Hidden channels are not shown
+           in normal chat list.
+        */
+
+        if (
+            chat.hidden
+        ) {
+            continue;
+        }
 
 
-            /*
-             * Hidden chats are not listed.
-             */
+        /*
+           Clearance
+        */
 
-            if (
-                chat.hidden
-            ) {
-
-                return;
-
-            }
+        const accessible =
+            canAccess(
+                chat.clearance
+            );
 
 
-            /*
-             * Clearance check.
-             */
-
-            if (
-                !canAccess(
-                    chat.clearance
-                )
-            ) {
-
-                const item =
-                    document.createElement(
-                        "div"
-                    );
+        const item =
+            document.createElement(
+                "div"
+            );
 
 
-                item.className =
-                    "chatListItem chatLocked";
+        item.className =
+            "chatListItem";
 
 
-                item.innerHTML = `
+        if (
+            id ===
+            activeChat
+        ) {
 
-                    <div class="chatAvatar">
-                        🔒
-                    </div>
+            item.classList.add(
+                "active"
+            );
 
-                    <div class="chatListInfo">
-
-                        <div class="chatListName">
-                            RESTRICTED CHANNEL
-                        </div>
-
-                        <div class="chatListStatus">
-                            CLEARANCE ${chat.clearance} REQUIRED
-                        </div>
-
-                    </div>
-                `;
+        }
 
 
-                list.appendChild(
-                    item
-                );
+        if (
+            !accessible
+        ) {
+
+            item.classList.add(
+                "chatLocked"
+            );
 
 
-                return;
-
-            }
-
-
-            /*
-             * Chat item.
-             */
-
-            const item =
+            const avatar =
                 document.createElement(
                     "div"
                 );
 
+            avatar.className =
+                "chatAvatar";
 
-            item.className =
-                "chatListItem";
+            avatar.textContent =
+                "🔒";
 
 
-            if (
-                id ===
-                activeChat
-            ) {
-
-                item.classList.add(
-                    "active"
+            const info =
+                document.createElement(
+                    "div"
                 );
 
-            }
+            info.className =
+                "chatListInfo";
 
 
-            const unread =
-                Number(
-                    chat.unread
-                ) || 0;
+            const name =
+                document.createElement(
+                    "div"
+                );
+
+            name.className =
+                "chatListName";
+
+            name.textContent =
+                "RESTRICTED CHANNEL";
 
 
-            const avatar =
-                chat.special
-                    ? "☻"
-                    : "●";
+            const status =
+                document.createElement(
+                    "div"
+                );
+
+            status.className =
+                "chatListStatus";
+
+            status.textContent =
+                `CLEARANCE ${chat.clearance} REQUIRED`;
 
 
-            item.innerHTML = `
+            info.appendChild(
+                name
+            );
 
-                <div class="chatAvatar">
-                    ${avatar}
-                </div>
-
-                <div class="chatListInfo">
-
-                    <div class="chatListName">
-                        ${escapeHTML(chat.name)}
-                    </div>
-
-                    <div class="chatListStatus">
-                        ${escapeHTML(chat.status)}
-                    </div>
-
-                </div>
-
-                ${
-                    unread > 0
-
-                    ?
-
-                    `
-                    <div class="chatUnread">
-                        ${
-                            unread > 99
-                                ? "99+"
-                                : unread
-                        }
-                    </div>
-                    `
-
-                    :
-
-                    ""
-                }
-            `;
+            info.appendChild(
+                status
+            );
 
 
-            item.addEventListener(
-                "click",
-                () => {
+            item.appendChild(
+                avatar
+            );
 
-                    openChat(
-                        id
-                    );
-
-                }
+            item.appendChild(
+                info
             );
 
 
@@ -1220,78 +1292,132 @@ function renderChatList() {
                 item
             );
 
+
+            continue;
+
         }
-    );
+
+
+        const avatar =
+            document.createElement(
+                "div"
+            );
+
+        avatar.className =
+            "chatAvatar";
+
+        avatar.textContent =
+            chat.special
+                ? "☻"
+                : "●";
+
+
+        const info =
+            document.createElement(
+                "div"
+            );
+
+        info.className =
+            "chatListInfo";
+
+
+        const name =
+            document.createElement(
+                "div"
+            );
+
+        name.className =
+            "chatListName";
+
+        name.textContent =
+            chat.name;
+
+
+        const status =
+            document.createElement(
+                "div"
+            );
+
+        status.className =
+            "chatListStatus";
+
+        status.textContent =
+            chat.status;
+
+
+        info.appendChild(
+            name
+        );
+
+        info.appendChild(
+            status
+        );
+
+
+        item.appendChild(
+            avatar
+        );
+
+        item.appendChild(
+            info
+        );
+
+
+        const unread =
+            Number(
+                chat.unread
+            ) || 0;
+
+
+        if (
+            unread > 0
+        ) {
+
+            const badge =
+                document.createElement(
+                    "div"
+                );
+
+            badge.className =
+                "chatUnread";
+
+            badge.textContent =
+                unread > 99
+                    ? "99+"
+                    : String(unread);
+
+
+            item.appendChild(
+                badge
+            );
+
+        }
+
+
+        item.addEventListener(
+            "click",
+            () => {
+
+                openChat(
+                    id
+                );
+
+            }
+        );
+
+
+        list.appendChild(
+            item
+        );
+
+    }
 
 }
 
 
-/* =========================================================
-   OPEN CHAT
-========================================================= */
-
-export function openChat(
-    chatId
-) {
-
-    const chat =
-        chats[chatId];
-
-
-    if (
-        !chat
-    ) {
-
-        return false;
-
-    }
-
-
-    if (
-        !canAccess(
-            chat.clearance
-        )
-    ) {
-
-        return false;
-
-    }
-
-
-    activeChat =
-        chatId;
-
-
-    chat.unread =
-        0;
-
-
-    renderChatList();
-
-    renderActiveChat();
-
-
-    trigger(
-        "chat:opened",
-        {
-
-            chatId,
-
-            name:
-                chat.name
-
-        }
-    );
-
-
-    return true;
-
-}
-
-
-/* =========================================================
+/* ==========================================================
    RENDER ACTIVE CHAT
-========================================================= */
+========================================================== */
 
 function renderActiveChat() {
 
@@ -1299,12 +1425,8 @@ function renderActiveChat() {
         chats[activeChat];
 
 
-    if (
-        !chat
-    ) {
-
+    if (!chat) {
         return;
-
     }
 
 
@@ -1332,9 +1454,7 @@ function renderActiveChat() {
         );
 
 
-    if (
-        name
-    ) {
+    if (name) {
 
         name.textContent =
             chat.name;
@@ -1342,9 +1462,7 @@ function renderActiveChat() {
     }
 
 
-    if (
-        status
-    ) {
+    if (status) {
 
         status.textContent =
             chat.status;
@@ -1352,9 +1470,7 @@ function renderActiveChat() {
     }
 
 
-    if (
-        clearance
-    ) {
+    if (clearance) {
 
         clearance.textContent =
             `CLEARANCE: ${chat.clearance}`;
@@ -1362,147 +1478,145 @@ function renderActiveChat() {
     }
 
 
-    if (
-        !messages
-    ) {
-
+    if (!messages) {
         return;
-
     }
 
 
-    messages.innerHTML =
+    messages.textContent =
         "";
 
 
-    chat.messages.forEach(
-        message => {
+    for (
+        const message
+        of chat.messages
+    ) {
 
-            const element =
-                document.createElement(
-                    "div"
-                );
-
-
-            element.className =
-                "chatMessage";
+        const element =
+            document.createElement(
+                "div"
+            );
 
 
-            if (
-                message.user ===
-                "MR.SMILE"
-            ) {
+        element.className =
+            "chatMessage";
+
+
+        switch (
+            message.user
+        ) {
+
+            case "MR.SMILE":
 
                 element.classList.add(
                     "mrSmileMessage"
                 );
 
-            }
+                break;
 
 
-            if (
-                message.user ===
-                "SYSTEM"
-            ) {
+            case "SYSTEM":
 
                 element.classList.add(
                     "systemMessage"
                 );
 
-            }
+                break;
 
 
-            if (
-                message.user ===
-                "NULL"
-            ) {
+            case "NULL":
 
                 element.classList.add(
                     "nullMessage"
                 );
 
-            }
+                break;
 
 
-            const meta =
-                document.createElement(
-                    "div"
+            case "YOU":
+
+                element.classList.add(
+                    "operatorMessage"
                 );
 
-
-            meta.className =
-                "messageMeta";
-
-
-            const user =
-                document.createElement(
-                    "span"
-                );
-
-
-            user.className =
-                "messageUser";
-
-
-            user.textContent =
-                message.user;
-
-
-            const time =
-                document.createElement(
-                    "span"
-                );
-
-
-            time.className =
-                "messageTime";
-
-
-            time.textContent =
-                message.time ||
-                "--:--";
-
-
-            meta.appendChild(
-                user
-            );
-
-
-            meta.appendChild(
-                time
-            );
-
-
-            const body =
-                document.createElement(
-                    "div"
-                );
-
-
-            body.className =
-                "messageText";
-
-
-            body.textContent =
-                message.text;
-
-
-            element.appendChild(
-                meta
-            );
-
-
-            element.appendChild(
-                body
-            );
-
-
-            messages.appendChild(
-                element
-            );
+                break;
 
         }
-    );
+
+
+        const meta =
+            document.createElement(
+                "div"
+            );
+
+        meta.className =
+            "messageMeta";
+
+
+        const user =
+            document.createElement(
+                "span"
+            );
+
+        user.className =
+            "messageUser";
+
+        user.textContent =
+            safeString(
+                message.user
+            );
+
+
+        const time =
+            document.createElement(
+                "span"
+            );
+
+        time.className =
+            "messageTime";
+
+        time.textContent =
+            message.time ||
+            "--:--";
+
+
+        meta.appendChild(
+            user
+        );
+
+        meta.appendChild(
+            time
+        );
+
+
+        const body =
+            document.createElement(
+                "div"
+            );
+
+        body.className =
+            "messageText";
+
+        body.textContent =
+            safeString(
+                message.text
+            );
+
+
+        element.appendChild(
+            meta
+        );
+
+        element.appendChild(
+            body
+        );
+
+
+        messages.appendChild(
+            element
+        );
+
+    }
 
 
     messages.scrollTop =
@@ -1511,24 +1625,383 @@ function renderActiveChat() {
 }
 
 
-/* =========================================================
-   SEND MESSAGE
-========================================================= */
+/* ==========================================================
+   OPEN CHAT
+========================================================== */
 
-function sendMessage() {
+export function openChat(
+    chatId
+) {
 
-    /*
-     * Protect against double Enter/click.
-     */
+    const chat =
+        chats[chatId];
 
-    if (
-        sendLocked
-    ) {
 
-        return;
+    if (!chat) {
+
+        console.warn(
+            "[CHAT] Unknown channel:",
+            chatId
+        );
+
+        return false;
 
     }
 
+
+    if (
+        !canAccess(
+            chat.clearance
+        )
+    ) {
+
+        console.warn(
+            "[CHAT] Access denied:",
+            chatId
+        );
+
+        return false;
+
+    }
+
+
+    activeChat =
+        chatId;
+
+
+    chat.unread =
+        0;
+
+
+    renderChatList();
+
+    renderActiveChat();
+
+
+    trigger(
+        "chat:opened",
+        {
+            chatId,
+
+            name:
+                chat.name,
+
+            status:
+                chat.status
+        }
+    );
+
+
+    /*
+       When MR.SMILE channel opens,
+       notify the rest of the system.
+    */
+
+    if (
+        chatId ===
+        "mrsmile"
+    ) {
+
+        trigger(
+            "mrsmile:chatOpened",
+            {
+                chatId:
+                    "mrsmile"
+            }
+        );
+
+    }
+
+
+    return true;
+
+}
+
+
+/* ==========================================================
+   ADD CHAT MESSAGE
+========================================================== */
+
+/*
+   THIS IS THE MAIN CHAT BRIDGE.
+
+   Other modules should use:
+
+       window.addChatMessage(
+           "mrsmile",
+           {
+               user: "MR.SMILE",
+               text: "..."
+           }
+       );
+
+   No second chat database is created.
+*/
+
+export function addChatMessage(
+    chatId,
+    message
+) {
+
+    const chat =
+        chats[chatId];
+
+
+    if (!chat) {
+
+        console.warn(
+            "[CHAT] Cannot add message. Unknown channel:",
+            chatId
+        );
+
+        return false;
+
+    }
+
+
+    if (
+        !message ||
+        typeof message !== "object"
+    ) {
+
+        return false;
+
+    }
+
+
+    const text =
+        cleanText(
+            message.text
+        );
+
+
+    if (!text) {
+
+        return false;
+
+    }
+
+
+    const user =
+        cleanText(
+            message.user
+        ) ||
+        "SYSTEM";
+
+
+    const time =
+        cleanText(
+            message.time
+        ) ||
+        getCurrentTime();
+
+
+    const entry = {
+
+        user,
+
+        time,
+
+        text
+
+    };
+
+
+    chat.messages.push(
+        entry
+    );
+
+
+    updateChatContext(
+        chatId,
+        text
+    );
+
+
+    /*
+       If another channel is currently active,
+       increase unread counter.
+    */
+
+    if (
+        chatId !==
+        activeChat
+    ) {
+
+        chat.unread =
+            (
+                Number(
+                    chat.unread
+                ) || 0
+            ) + 1;
+
+    }
+
+
+    /*
+       Keep chat history sane.
+       This prevents an accidental infinite
+       message loop from destroying memory.
+    */
+
+    const MAX_MESSAGES =
+        500;
+
+
+    if (
+        chat.messages.length >
+        MAX_MESSAGES
+    ) {
+
+        chat.messages.splice(
+            0,
+            chat.messages.length -
+            MAX_MESSAGES
+        );
+
+    }
+
+
+    renderChatList();
+
+
+    if (
+        chatId ===
+        activeChat
+    ) {
+
+        renderActiveChat();
+
+    }
+
+
+    trigger(
+        "chat:messageAdded",
+        {
+            chatId,
+
+            message:
+                entry
+        }
+    );
+
+
+    return true;
+
+}
+
+
+/* ==========================================================
+   GET CHAT
+========================================================== */
+
+export function getChat(
+    chatId
+) {
+
+    return chats[chatId] ||
+        null;
+
+}
+
+
+/* ==========================================================
+   GET ALL CHATS
+========================================================== */
+
+export function getAllChats() {
+
+    return chats;
+
+}
+
+
+/* ==========================================================
+   GET ACTIVE CHAT
+========================================================== */
+
+export function getActiveChat() {
+
+    return activeChat;
+
+}
+
+
+/* ==========================================================
+   GET CHAT CONTEXT
+========================================================== */
+
+export function getChatContext(
+    chatId =
+        activeChat
+) {
+
+    const chat =
+        chats[chatId];
+
+
+    if (!chat) {
+        return null;
+    }
+
+
+    return {
+        ...chat.context
+    };
+
+}
+
+
+/* ==========================================================
+   APPEND MESSAGE
+========================================================== */
+
+export function appendChatMessage(
+    chatId,
+    user,
+    text,
+    time = null
+) {
+
+    return addChatMessage(
+        chatId,
+        {
+            user,
+            text,
+            time:
+                time ||
+                getCurrentTime()
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   OPERATOR MESSAGE
+========================================================== */
+
+/*
+   IMPORTANT:
+
+   This function is used only by the MAIN CHAT UI.
+
+   MR.SMILE itself does NOT answer here.
+
+   For MR.SMILE:
+
+       add YOU
+       ↓
+       save context
+       ↓
+       progress
+       ↓
+       trigger event
+       ↓
+       mrsmileChat.js
+*/
+
+export function sendMessage() {
 
     const input =
         document.getElementById(
@@ -1536,25 +2009,25 @@ function sendMessage() {
         );
 
 
-    if (
-        !input
-    ) {
+    if (!input) {
 
-        return;
+        console.warn(
+            "[CHAT] chatInput not found."
+        );
+
+        return false;
 
     }
 
 
     const text =
-        input.value.trim();
+        cleanText(
+            input.value
+        );
 
 
-    if (
-        !text
-    ) {
-
-        return;
-
+    if (!text) {
+        return false;
     }
 
 
@@ -1562,57 +2035,73 @@ function sendMessage() {
         chats[activeChat];
 
 
-    if (
-        !chat
-    ) {
+    if (!chat) {
 
-        return;
+        console.warn(
+            "[CHAT] Active channel unavailable."
+        );
+
+        return false;
+
+    }
+
+
+    const sequence =
+        ++operatorMessageSequence;
+
+
+    /*
+       Clear input immediately.
+    */
+
+    input.value =
+        "";
+
+
+    /*
+       Add YOU message.
+    */
+
+    addChatMessage(
+        activeChat,
+        {
+            user:
+                "YOU",
+
+            time:
+                getCurrentTime(),
+
+            text
+        }
+    );
+
+
+    /*
+       Global memory.
+       We do it ONCE here.
+       mrsmileChat.js does not add
+       another YOU-memory entry.
+    */
+
+    try {
+
+        rememberOperatorMessage(
+            text
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "[CHAT] Operator memory failed:",
+            error
+        );
 
     }
 
 
     /*
-     * Current time.
-     */
-
-    const time =
-        getCurrentTime();
-
-
-    /*
-     * Add operator message.
-     */
-
-    chat.messages.push({
-
-        user:
-            "YOU",
-
-        time,
-
-        text
-
-    });
-
-
-    updateChatContext(
-        activeChat,
-        text
-    );
-
-
-    /*
-     * Global MR.SMILE memory.
-     */
-
-    rememberOperatorMessage(
-        text
-    );
-
-
-    /*
-     * MR.SMILE progress system.
-     */
+       MR.SMILE progression.
+    */
 
     if (
         activeChat ===
@@ -1625,89 +2114,133 @@ function sendMessage() {
                 text
             );
 
-        } catch (
-            error
-        ) {
+        } catch (error) {
 
             console.warn(
-                "[CHAT] MR.SMILE progress failed:",
+                "[CHAT] MR.SMILE progression failed:",
                 error
             );
 
         }
 
-    }
 
+        /*
+           VERY IMPORTANT:
 
-    input.value =
-        "";
+           Do NOT call the Core directly.
 
+           Do NOT generate a local response.
 
-    renderActiveChat();
+           Do NOT call mrsmileSay() here.
 
+           One event -> one response pipeline.
+        */
 
-    /*
-     * MR.SMILE DOES NOT RESPOND HERE.
-     *
-     * mrsmileChat.js owns his response.
-     */
+        setTimeout(
+            () => {
 
-    if (
-        activeChat ===
-        "mrsmile"
-    ) {
+                trigger(
+                    "mrsmile:operatorMessage",
+                    {
+                        text,
 
-        trigger(
-            "mrsmile:operatorMessage",
-            {
+                        chat:
+                            "mrsmile",
 
-                text,
+                        source:
+                            "operator",
 
-                chat:
-                    "mrsmile",
+                        sequence,
 
-                timestamp:
-                    Date.now()
+                        timestamp:
+                            Date.now()
+                    }
+                );
 
-            }
+            },
+            TIMING.mrSmileDispatchPause
         );
 
 
-        return;
+        return true;
 
     }
 
 
     /*
-     * Normal personnel.
-     */
+       Normal personnel channels.
+    */
+
+    handlePersonnelMessage(
+        activeChat,
+        text,
+        sequence
+    );
+
+
+    return true;
+
+}
+
+
+/* ==========================================================
+   PERSONNEL MESSAGE HANDLER
+========================================================== */
+
+function handlePersonnelMessage(
+    chatId,
+    text,
+    sequence
+) {
+
+    const chat =
+        chats[chatId];
+
+
+    if (!chat) {
+        return;
+    }
+
+
+    /*
+       Cancel previous pending personnel response.
+       This avoids multiple delayed personnel replies
+       after rapid Enter presses.
+    */
+
+    if (
+        personnelResponseTimer
+    ) {
+
+        clearTimeout(
+            personnelResponseTimer
+        );
+
+        personnelResponseTimer =
+            null;
+
+    }
+
 
     const personnel =
-        [
-            ...chat.messages
-        ]
+        [...chat.messages]
             .reverse()
             .find(
                 message =>
                     message.user !==
-                    "YOU"
+                        "YOU"
                     &&
                     message.user !==
-                    "SYSTEM"
+                        "SYSTEM"
+                    &&
+                    message.user !==
+                        "NULL"
             );
 
 
-    if (
-        !personnel
-    ) {
-
+    if (!personnel) {
         return;
-
     }
-
-
-    sendLocked =
-        true;
 
 
     const delay =
@@ -1717,102 +2250,98 @@ function sendMessage() {
         );
 
 
-    setTimeout(
-        () => {
+    personnelResponseTimer =
+        setTimeout(
+            () => {
 
-            try {
-
-                let response =
-                    getContextualResponse(
-                        activeChat,
-                        text
-                    );
+                personnelResponseTimer =
+                    null;
 
 
-                if (
-                    !response
-                ) {
+                try {
 
-                    response =
-                        generateEmployeeResponse(
-                            activeChat,
+                    let response =
+                        getContextualResponse(
+                            chatId,
                             text
                         );
 
+
+                    if (
+                        !response
+                    ) {
+
+                        response =
+                            generateEmployeeResponse(
+                                chatId,
+                                text
+                            );
+
+                    }
+
+
+                    if (
+                        !response
+                    ) {
+                        return;
+                    }
+
+
+                    /*
+                       Ignore stale callback if
+                       the active context changed completely.
+                    */
+
+                    addChatMessage(
+                        chatId,
+                        {
+                            user:
+                                personnel.user,
+
+                            time:
+                                getCurrentTime(),
+
+                            text:
+                                response
+                        }
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "[CHAT] Personnel response failed:",
+                        error
+                    );
+
                 }
 
-
-                if (
-                    response
-                ) {
-
-                    chat.messages.push({
-
-                        user:
-                            personnel.user,
-
-                        time:
-                            getCurrentTime(),
-
-                        text:
-                            response
-
-                    });
-
-                }
-
-
-                renderActiveChat();
-
-
-            } catch (
-                error
-            ) {
-
-                console.error(
-                    "[CHAT] Personnel response failed:",
-                    error
-                );
-
-            } finally {
-
-                sendLocked =
-                    false;
-
-            }
-
-        },
-
-        delay
-
-    );
+            },
+            delay
+        );
 
 }
 
 
-/* =========================================================
-   PERSONNEL RESPONSE SYSTEM
-========================================================= */
+/* ==========================================================
+   CONTEXTUAL PERSONNEL RESPONSES
+========================================================== */
 
-function generateEmployeeResponse(
+function getContextualResponse(
     chatId,
     text
 ) {
 
     const message =
-        String(
-            text ||
-            ""
+        cleanText(
+            text
         )
-            .toLowerCase()
-            .trim();
+            .toLowerCase();
 
 
     /*
-     * =====================================================
-     * GENERAL
-     * =====================================================
-     */
+       GENERAL
+    */
 
     if (
         chatId ===
@@ -1824,6 +2353,8 @@ function generateEmployeeResponse(
                 message,
                 [
                     "привет",
+                    "здравствуй",
+                    "здравствуйте",
                     "hello",
                     "hi"
                 ]
@@ -1831,10 +2362,15 @@ function generateEmployeeResponse(
         ) {
 
             return randomPick([
+
                 "Привет. Как смена?",
-                "Доброе утро. Хотя я уже потерял счёт времени.",
-                "Привет. Здесь пока всё спокойно.",
-                "Здравствуй. Что-то случилось?"
+
+                "Здравствуйте. Пока всё спокойно.",
+
+                "Привет. Что-то случилось?",
+
+                "Добрый день. Что у вас?"
+
             ]);
 
         }
@@ -1845,38 +2381,23 @@ function generateEmployeeResponse(
                 message,
                 [
                     "как дела",
-                    "как ты"
+                    "как ты",
+                    "how are you"
                 ]
             )
         ) {
 
             return randomPick([
+
                 "Нормально. Сижу на смене.",
+
                 "Пока не жалуюсь.",
+
                 "Устал, если честно.",
+
                 "Лучше, чем вчера."
+
             ]);
-
-        }
-
-
-        if (
-            contains(
-                message,
-                [
-                    "как прошел день",
-                    "как прошёл день",
-                    "что делал",
-                    "чем занимался"
-                ]
-            )
-        ) {
-
-            return (
-                "Большую часть смены занимался обычными проверками. " +
-                "Потом несколько терминалов в секторе C начали отключаться. " +
-                "Пока причину не нашли."
-            );
 
         }
 
@@ -1887,14 +2408,33 @@ function generateEmployeeResponse(
                 [
                     "что случилось",
                     "что произошло",
-                    "новости"
+                    "новости",
+                    "what happened"
                 ]
             )
         ) {
 
             return (
-                "Особых новостей нет. Хотя SECURITY снова жалуется " +
-                "на проблемы в секторе C."
+                "Особых новостей нет. Хотя SECURITY снова " +
+                "жалуется на проблемы в секторе C."
+            );
+
+        }
+
+
+        if (
+            contains(
+                message,
+                [
+                    "сектор c",
+                    "sector c"
+                ]
+            )
+        ) {
+
+            return (
+                "Там опять проблемы с терминалами. " +
+                "Пока никто не понял, что именно происходит."
             );
 
         }
@@ -1903,10 +2443,8 @@ function generateEmployeeResponse(
 
 
     /*
-     * =====================================================
-     * SECURITY
-     * =====================================================
-     */
+       SECURITY
+    */
 
     if (
         chatId ===
@@ -1918,6 +2456,7 @@ function generateEmployeeResponse(
                 message,
                 [
                     "привет",
+                    "здравствуйте",
                     "hello",
                     "hi"
                 ]
@@ -1925,9 +2464,13 @@ function generateEmployeeResponse(
         ) {
 
             return randomPick([
+
                 "Привет. SECURITY, пост 03.",
+
                 "Здравствуйте, оператор.",
+
                 "Привет. Сейчас на посту."
+
             ]);
 
         }
@@ -1955,17 +2498,15 @@ function generateEmployeeResponse(
             contains(
                 message,
                 [
-                    "как прошел день",
-                    "как прошёл день",
-                    "что делал"
+                    "что случилось",
+                    "что произошло"
                 ]
             )
         ) {
 
             return (
-                "Проверял камеры, обходил сектор C и разбирался " +
-                "с несколькими ложными тревогами. Одна из них, " +
-                "правда, оказалась не такой уж ложной."
+                "Камера 04 зафиксировала движение в закрытом " +
+                "секторе. Персонала там быть не должно."
             );
 
         }
@@ -1975,33 +2516,46 @@ function generateEmployeeResponse(
             contains(
                 message,
                 [
-                    "что случилось",
-                    "что произошло"
+                    "камера 04",
+                    "camera 04"
                 ]
             )
         ) {
 
             return (
-                "Камера 04 зафиксировала движение в закрытом секторе. " +
-                "Персонала там быть не должно."
+                "Изображение с камеры 04 периодически пропадает. " +
+                "Технический отдел пока не нашёл причину."
             );
 
         }
 
 
         if (
-            message.includes(
-                "кто"
+            contains(
+                message,
+                [
+                    "камера",
+                    "camera"
+                ]
             )
-            &&
-            (
-                message.includes(
-                    "был"
-                )
-                ||
-                message.includes(
-                    "заходил"
-                )
+        ) {
+
+            return (
+                "Камеры работают штатно. Кроме камеры 04 — " +
+                "с ней периодически возникают проблемы."
+            );
+
+        }
+
+
+        if (
+            contains(
+                message,
+                [
+                    "кто заходил",
+                    "кто был",
+                    "кто проник"
+                ]
             )
         ) {
 
@@ -2012,28 +2566,12 @@ function generateEmployeeResponse(
 
         }
 
-
-        if (
-            message.includes(
-                "камера"
-            )
-        ) {
-
-            return (
-                "Камеры работают штатно. Кроме камеры 04 — " +
-                "у неё периодически пропадает изображение."
-            );
-
-        }
-
     }
 
 
     /*
-     * =====================================================
-     * RESEARCH
-     * =====================================================
-     */
+       RESEARCH
+    */
 
     if (
         chatId ===
@@ -2045,6 +2583,7 @@ function generateEmployeeResponse(
                 message,
                 [
                     "привет",
+                    "здравствуйте",
                     "hello"
                 ]
             )
@@ -2080,27 +2619,9 @@ function generateEmployeeResponse(
             contains(
                 message,
                 [
-                    "как прошел день",
-                    "как прошёл день",
-                    "что делал"
-                ]
-            )
-        ) {
-
-            return (
-                "Мы продолжали работу с TEN. Третий этап завершён, " +
-                "но показатели сильно отличаются от предыдущих."
-            );
-
-        }
-
-
-        if (
-            contains(
-                message,
-                [
                     "ten",
-                    "эксперимент"
+                    "эксперимент",
+                    "experiment"
                 ]
             )
         ) {
@@ -2117,15 +2638,16 @@ function generateEmployeeResponse(
             contains(
                 message,
                 [
-                    "что случилось",
-                    "что произошло"
+                    "фаза 3",
+                    "третья фаза",
+                    "phase 3"
                 ]
             )
         ) {
 
             return (
-                "Один из показателей вышел за допустимый диапазон. " +
-                "Пока мы не понимаем почему."
+                "Фаза 3 завершена, но показатели сильно " +
+                "отличаются от предыдущих."
             );
 
         }
@@ -2136,7 +2658,8 @@ function generateEmployeeResponse(
                 message,
                 [
                     "почему",
-                    "зачем"
+                    "зачем",
+                    "why"
                 ]
             )
         ) {
@@ -2152,10 +2675,8 @@ function generateEmployeeResponse(
 
 
     /*
-     * =====================================================
-     * MEDICAL
-     * =====================================================
-     */
+       MEDICAL
+    */
 
     if (
         chatId ===
@@ -2167,6 +2688,7 @@ function generateEmployeeResponse(
                 message,
                 [
                     "привет",
+                    "здравствуйте",
                     "hello",
                     "hi"
                 ]
@@ -2174,10 +2696,15 @@ function generateEmployeeResponse(
         ) {
 
             return randomPick([
+
                 "Здравствуйте. Медицинский сектор на связи.",
+
                 "Привет. Сегодня довольно спокойно.",
-                "Здравствуйте. Если вы не по срочному делу — я вас слушаю.",
+
+                "Здравствуйте. Если это не срочное дело — я вас слушаю.",
+
                 "Привет. Только закончил с обходом."
+
             ]);
 
         }
@@ -2194,31 +2721,15 @@ function generateEmployeeResponse(
         ) {
 
             return randomPick([
+
                 "Нормально. Сегодня пациентов немного.",
+
                 "Пока хорошо. Обход только закончил.",
+
                 "Устал, но ничего критичного.",
+
                 "Неплохо. Медицинский сектор работает штатно."
-            ]);
 
-        }
-
-
-        if (
-            contains(
-                message,
-                [
-                    "смена",
-                    "работа",
-                    "день"
-                ]
-            )
-        ) {
-
-            return randomPick([
-                "Сегодня было довольно спокойно.",
-                "Проверил несколько пациентов и заполнил отчёты.",
-                "Большую часть смены занимались обычными обследованиями.",
-                "День прошёл нормально. Ничего чрезвычайного."
             ]);
 
         }
@@ -2235,10 +2746,15 @@ function generateEmployeeResponse(
         ) {
 
             return randomPick([
+
                 "Сейчас несколько пациентов проходят обследование.",
+
                 "Большинство пациентов уже выписали.",
+
                 "Есть несколько человек под наблюдением.",
+
                 "Сегодня поступило несколько новых пациентов."
+
             ]);
 
         }
@@ -2256,52 +2772,16 @@ function generateEmployeeResponse(
         ) {
 
             return randomPick([
+
                 "Все врачи сейчас заняты.",
+
                 "Медицинская команда сегодня работает почти без перерыва.",
+
                 "Несколько сотрудников ушли на короткий перерыв.",
+
                 "Большинство уже закончило дневной обход."
+
             ]);
-
-        }
-
-
-        if (
-            contains(
-                message,
-                [
-                    "оборудован",
-                    "аппарат",
-                    "сканер",
-                    "терминал"
-                ]
-            )
-        ) {
-
-            return randomPick([
-                "Большая часть оборудования работает нормально.",
-                "Один из сканеров сегодня пришлось перезапустить.",
-                "Технический отдел проверяет несколько медицинских терминалов.",
-                "С оборудованием пока всё в пределах нормы."
-            ]);
-
-        }
-
-
-        if (
-            contains(
-                message,
-                [
-                    "запис",
-                    "документ",
-                    "карта"
-                ]
-            )
-        ) {
-
-            return (
-                "Медицинские записи обновляются после каждого обследования. " +
-                "Если вам нужен конкретный файл, потребуется соответствующий доступ."
-            );
 
         }
 
@@ -2337,10 +2817,15 @@ function generateEmployeeResponse(
         ) {
 
             return randomPick([
+
                 "Ничего серьёзного. В основном небольшие травмы.",
+
                 "Есть несколько лёгких повреждений, но угрозы жизни нет.",
+
                 "Критических травм сегодня не зарегистрировано.",
+
                 "Пока всё под контролем."
+
             ]);
 
         }
@@ -2349,10 +2834,8 @@ function generateEmployeeResponse(
 
 
     /*
-     * =====================================================
-     * INCIDENTS
-     * =====================================================
-     */
+       INCIDENTS
+    */
 
     if (
         chatId ===
@@ -2364,6 +2847,7 @@ function generateEmployeeResponse(
                 message,
                 [
                     "привет",
+                    "здравствуйте",
                     "hello"
                 ]
             )
@@ -2398,24 +2882,6 @@ function generateEmployeeResponse(
             contains(
                 message,
                 [
-                    "как прошел день",
-                    "как прошёл день"
-                ]
-            )
-        ) {
-
-            return (
-                "Было несколько мелких происшествий. " +
-                "Самое странное — движение в закрытом секторе."
-            );
-
-        }
-
-
-        if (
-            contains(
-                message,
-                [
                     "что случилось",
                     "что произошло"
                 ]
@@ -2431,8 +2897,11 @@ function generateEmployeeResponse(
 
 
         if (
-            message.includes(
-                "новости"
+            contains(
+                message,
+                [
+                    "новости"
+                ]
             )
         ) {
 
@@ -2447,10 +2916,8 @@ function generateEmployeeResponse(
 
 
     /*
-     * =====================================================
-     * ADMINISTRATION
-     * =====================================================
-     */
+       ADMIN
+    */
 
     if (
         chatId ===
@@ -2462,6 +2929,7 @@ function generateEmployeeResponse(
                 message,
                 [
                     "привет",
+                    "здравствуйте",
                     "hello"
                 ]
             )
@@ -2478,53 +2946,15 @@ function generateEmployeeResponse(
             contains(
                 message,
                 [
-                    "как дела",
-                    "как ты"
+                    "доступ",
+                    "access"
                 ]
             )
         ) {
 
             return (
-                "Рабочий день проходит штатно."
-            );
-
-        }
-
-
-        if (
-            contains(
-                message,
-                [
-                    "как прошел день",
-                    "как прошёл день",
-                    "что делал"
-                ]
-            )
-        ) {
-
-            return (
-                "Сегодня проверял внутренние отчёты, " +
-                "запросы на доступ и несколько документов " +
-                "исследовательского отдела."
-            );
-
-        }
-
-
-        if (
-            contains(
-                message,
-                [
-                    "новости",
-                    "что случилось"
-                ]
-            )
-        ) {
-
-            return (
-                "Есть несколько незакрытых отчётов. " +
-                "Подробности доступны сотрудникам с соответствующим " +
-                "уровнем допуска."
+                "Для доступа к административным данным требуется " +
+                "соответствующий уровень допуска."
             );
 
         }
@@ -2532,10 +2962,19 @@ function generateEmployeeResponse(
     }
 
 
-    /*
-     * =====================================================
-     * OPTIONAL PERSONNEL AI
-     * ===================================================== */
+    return null;
+
+}
+
+
+/* ==========================================================
+   PERSONNEL WRAPPER
+========================================================== */
+
+function generateEmployeeResponse(
+    chatId,
+    text
+) {
 
     try {
 
@@ -2544,237 +2983,70 @@ function generateEmployeeResponse(
             "function"
         ) {
 
-            const aiResponse =
-                generatePersonnelResponse(
-                    chatId,
-                    text
-                );
-
-
-            if (
-                aiResponse
-                &&
-                typeof aiResponse ===
-                "string"
-            ) {
-
-                return aiResponse;
-
-            }
+            return generatePersonnelResponse(
+                chatId,
+                text
+            );
 
         }
 
-    } catch (
-        error
-    ) {
+    } catch (error) {
 
         console.warn(
-            "[CHAT] Personnel AI fallback failed:",
+            "[CHAT] personnelAI unavailable:",
             error
         );
 
     }
 
 
-    /*
-     * =====================================================
-     * FALLBACK
-     * ===================================================== */
-
-    const fallback = {
-
-        general: [
-
-            "Не уверен. Лучше спросить у соответствующего отдела.",
-
-            "Не слышал об этом.",
-
-            "Могу попробовать узнать.",
-
-            "Хороший вопрос. Я уточню."
-
-        ],
-
-
-        security: [
-
-            "У меня нет этой информации.",
-
-            "Это лучше уточнить у руководителя смены.",
-
-            "Пока не могу подтвердить.",
-
-            "Проверю журналы."
-
-        ],
-
-
-        research: [
-
-            "У нас пока нет достаточных данных.",
-
-            "Я не хочу делать выводы без результатов.",
-
-            "Это требует дополнительного анализа.",
-
-            "Я запишу вопрос."
-
-        ],
-
-
-        medical: [
-
-            "Мне нужно проверить записи.",
-
-            "Не могу подтвердить это сейчас.",
-
-            "Лучше уточнить в медицинском журнале.",
-
-            "Я посмотрю данные."
-
-        ],
-
-
-        incidents: [
-
-            "Информация пока проверяется.",
-
-            "Отчёт ещё не завершён.",
-
-            "Я не могу подтвердить это.",
-
-            "Пока слишком мало данных."
-
-        ],
-
-
-        admin: [
-
-            "Для этого запроса может потребоваться дополнительный допуск.",
-
-            "Я проверю административные записи.",
-
-            "Не могу подтвердить это без документов.",
-
-            "Запрос принят."
-
-        ]
-
-    };
-
-
-    const replies =
-        fallback[chatId] ||
-        fallback.general;
-
-
-    return randomPick(
-        replies
-    );
+    return null;
 
 }
 
 
-/* =========================================================
-   ADD CHAT MESSAGE
-   ---------------------------------------------------------
-   Used by mrsmileChat.js and other OMEGA systems.
-========================================================= */
+/* ==========================================================
+   CHAT ACCESS
+========================================================== */
 
-window.addChatMessage = function(
-    chatId,
-    message
+export function hasChatAccess(
+    chatId
 ) {
 
     const chat =
         chats[chatId];
 
 
-    if (
-        !chat
-        ||
-        !message
-    ) {
-
+    if (!chat) {
         return false;
-
     }
 
 
-    chat.messages.push(
-        message
+    return canAccess(
+        chat.clearance
     );
 
-
-    /*
-     * Unread.
-     */
-
-    if (
-        activeChat !==
-        chatId
-    ) {
-
-        chat.unread =
-            Number(
-                chat.unread
-            ) || 0;
-
-        chat.unread++;
-
-    }
+}
 
 
-    /*
-     * MR.SMILE memory.
-     */
+/* ==========================================================
+   REVEAL HIDDEN CHAT
+========================================================== */
 
-    if (
-        message.user ===
-        "MR.SMILE"
-    ) {
+export function revealChat(
+    chatId
+) {
 
-        rememberMrSmileMessage(
-            message.text
-        );
-
-    }
+    const chat =
+        chats[chatId];
 
 
-    renderChatList();
-
-
-    if (
-        activeChat ===
-        chatId
-    ) {
-
-        renderActiveChat();
-
-    }
-
-
-    return true;
-
-};
-
-
-/* =========================================================
-   REVEAL MR.SMILE
-========================================================= */
-
-export function revealMrSmileChat() {
-
-    if (
-        !chats.mrsmile
-    ) {
-
+    if (!chat) {
         return false;
-
     }
 
 
-    chats.mrsmile.hidden =
+    chat.hidden =
         false;
 
 
@@ -2782,12 +3054,10 @@ export function revealMrSmileChat() {
 
 
     trigger(
-        "mrsmile:chatRevealed"
-    );
-
-
-    console.log(
-        "[MR.SMILE CHAT] Channel unlocked."
+        "chat:revealed",
+        {
+            chatId
+        }
     );
 
 
@@ -2796,413 +3066,56 @@ export function revealMrSmileChat() {
 }
 
 
-/* =========================================================
-   REVEAL NULL
-========================================================= */
+/* ==========================================================
+   HIDE CHAT
+========================================================== */
 
-function revealNullChat() {
+export function hideChat(
+    chatId
+) {
 
-    if (
-        !chats.nullEntity
-    ) {
+    const chat =
+        chats[chatId];
 
-        return;
 
+    if (!chat) {
+        return false;
     }
 
 
-    chats.nullEntity.hidden =
-        false;
-
-
-    chats.nullEntity.unread =
-        1;
-
-
-    chats.nullEntity.messages.push({
-
-        user:
-            "NULL",
-
-        time:
-            "--:--",
-
-        text:
-            "You shouldn't have done that."
-
-    });
+    chat.hidden =
+        true;
 
 
     renderChatList();
 
 
-    setTimeout(
-        () => {
-
-            openChat(
-                "nullEntity"
-            );
-
-        },
-        900
-    );
+    return true;
 
 }
 
 
-/* =========================================================
-   NULL FIRST CONTACT
-========================================================= */
-
-function triggerNullEvent() {
-
-    if (
-        window.nullEventActive
-    ) {
-
-        return;
-
-    }
-
-
-    window.nullEventActive =
-        true;
-
-
-    const messages =
-        document.getElementById(
-            "chatMessages"
-        );
-
-
-    if (
-        !messages
-    ) {
-
-        return;
-
-    }
-
-
-    setTimeout(
-        () => {
-
-            addNullMessage(
-                "SYSTEM",
-                "NULL"
-            );
-
-        },
-        2500
-    );
-
-
-    setTimeout(
-        () => {
-
-            addNullMessage(
-                "SYSTEM",
-                "SCRIPT EXECUTION FAILURE"
-            );
-
-        },
-        4000
-    );
-
-
-    setTimeout(
-        () => {
-
-            addNullMessage(
-                "SYSTEM",
-                "NULL REFERENCE"
-            );
-
-        },
-        4700
-    );
-
-
-    setTimeout(
-        () => {
-
-            addNullMessage(
-                "SYSTEM",
-                "MEMORY ACCESS ERROR"
-            );
-
-        },
-        5400
-    );
-
-
-    setTimeout(
-        () => {
-
-            document.body.classList.add(
-                "nullGlitch"
-            );
-
-        },
-        6000
-    );
-
-
-    setTimeout(
-        () => {
-
-            document.body.classList.add(
-                "nullGlitchHeavy"
-            );
-
-        },
-        7500
-    );
-
-
-    setTimeout(
-        () => {
-
-            addNullMessage(
-                "NULL",
-                "..."
-            );
-
-        },
-        8200
-    );
-
-
-    setTimeout(
-        () => {
-
-            addNullMessage(
-                "NULL",
-                "0x00000000"
-            );
-
-        },
-        8700
-    );
-
-
-    setTimeout(
-        () => {
-
-            document.body.classList.add(
-                "nullGlitchMaximum"
-            );
-
-        },
-        9000
-    );
-
-
-    setTimeout(
-        () => {
-
-            addNullMessage(
-                "NULL",
-
-                "Want to know what happened to them?... " +
-                "Well... it wasn't their fault... " +
-                "they did nothing wrong... " +
-                "I made them like this, because I wanted to... " +
-                "They didn't even have time to react... " +
-                "and that's the beauty of it all... " +
-                "they were just like YOU... so naive..."
-            );
-
-        },
-        9800
-    );
-
-
-    setTimeout(
-        () => {
-
-            document.body.classList.add(
-                "nullFinalFlash"
-            );
-
-        },
-        14500
-    );
-
-
-    setTimeout(
-        () => {
-
-            document.body.classList.remove(
-                "nullGlitch",
-
-                "nullGlitchHeavy",
-
-                "nullGlitchMaximum",
-
-                "nullFinalFlash"
-
-            );
-
-
-            revealNullChat();
-
-        },
-        15100
-    );
-
-}
-
-
-/* =========================================================
-   NULL MESSAGE
-========================================================= */
-
-function addNullMessage(
-    user,
-    text
+/* ==========================================================
+   INITIALIZE CHAT SYSTEM
+========================================================== */
+
+export function initChats(
+    options = {}
 ) {
-
-    const messages =
-        document.getElementById(
-            "chatMessages"
-        );
-
-
-    if (
-        !messages
-    ) {
-
-        return;
-
-    }
-
-
-    const element =
-        document.createElement(
-            "div"
-        );
-
-
-    element.className =
-        "chatMessage systemMessage";
-
-
-    if (
-        user ===
-        "NULL"
-    ) {
-
-        element.classList.add(
-            "nullMessage"
-        );
-
-    }
-
-
-    const meta =
-        document.createElement(
-            "div"
-        );
-
-
-    meta.className =
-        "messageMeta";
-
-
-    const messageUser =
-        document.createElement(
-            "span"
-        );
-
-
-    messageUser.className =
-        "messageUser";
-
-
-    messageUser.textContent =
-        user;
-
-
-    const messageTime =
-        document.createElement(
-            "span"
-        );
-
-
-    messageTime.className =
-        "messageTime";
-
-
-    messageTime.textContent =
-        user ===
-            "NULL"
-
-            ?
-
-            "--:--"
-
-            :
-
-            getCurrentTime();
-
-
-    meta.appendChild(
-        messageUser
-    );
-
-
-    meta.appendChild(
-        messageTime
-    );
-
-
-    const body =
-        document.createElement(
-            "div"
-        );
-
-
-    body.className =
-        "messageText";
-
-
-    body.textContent =
-        text;
-
-
-    element.appendChild(
-        meta
-    );
-
-
-    element.appendChild(
-        body
-    );
-
-
-    messages.appendChild(
-        element
-    );
-
-
-    messages.scrollTop =
-        messages.scrollHeight;
-
-}
-
-
-/* =========================================================
-   INITIALIZATION
-========================================================= */
-
-export function initChats() {
 
     if (
         initialized
     ) {
 
-        return;
+        return {
+            ok:
+                true,
+
+            alreadyInitialized:
+                true,
+
+            activeChat
+        };
 
     }
 
@@ -3212,19 +3125,43 @@ export function initChats() {
 
 
     /*
-     * Reveal MR.SMILE when First Contact
-     * has already been completed.
-     */
+       Window bridge
+    */
 
     if (
-        localStorage.getItem(
-            "mrsmile_first_contact"
-        ) ===
-        "1"
+        typeof window !==
+        "undefined"
     ) {
 
-        chats.mrsmile.hidden =
-            false;
+        window.addChatMessage =
+            addChatMessage;
+
+        window.openChat =
+            openChat;
+
+        window.getChat =
+            getChat;
+
+        window.getAllChats =
+            getAllChats;
+
+        window.getActiveChat =
+            getActiveChat;
+
+        window.getChatContext =
+            getChatContext;
+
+        window.appendChatMessage =
+            appendChatMessage;
+
+        window.revealChat =
+            revealChat;
+
+        window.hasChatAccess =
+            hasChatAccess;
+
+        window.sendChatMessage =
+            sendMessage;
 
     }
 
@@ -3234,11 +3171,49 @@ export function initChats() {
     renderActiveChat();
 
 
-    const send =
-        document.getElementById(
-            "sendBtn"
+    /*
+       Enter handling
+    */
+
+    bindInputEvents();
+
+
+    console.log(
+        "[OMEGA CHAT] Rebuilt chat system initialized."
+    );
+
+
+    if (
+        options.autoOpen
+    ) {
+
+        openChat(
+            options.autoOpen
         );
 
+    }
+
+
+    return {
+
+        ok:
+            true,
+
+        initialized:
+            true,
+
+        activeChat
+
+    };
+
+}
+
+
+/* ==========================================================
+   INPUT EVENTS
+========================================================== */
+
+function bindInputEvents() {
 
     const input =
         document.getElementById(
@@ -3246,141 +3221,136 @@ export function initChats() {
         );
 
 
-    if (
-        send
-    ) {
+    if (!input) {
 
-        send.onclick =
-            sendMessage;
-
-    }
-
-
-    if (
-        input
-    ) {
-
-        input.addEventListener(
-            "keydown",
-            event => {
-
-                if (
-                    event.key ===
-                    "Enter"
-                ) {
-
-                    if (
-                        event.shiftKey
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    event.preventDefault();
-
-
-                    sendMessage();
-
-                }
-
-            }
+        console.warn(
+            "[OMEGA CHAT] chatInput not found."
         );
 
+        return;
+
     }
 
 
-    console.log(
-        "[OMEGA CHATS] Initialized."
+    /*
+       Prevent duplicate listeners.
+    */
+
+    if (
+        input.dataset.omegaChatBound ===
+        "1"
+    ) {
+
+        return;
+
+    }
+
+
+    input.dataset.omegaChatBound =
+        "1";
+
+
+    input.addEventListener(
+        "keydown",
+        event => {
+
+            /*
+               Shift+Enter:
+               new line.
+
+               Enter:
+               send.
+            */
+
+            if (
+                event.key !==
+                "Enter"
+            ) {
+                return;
+            }
+
+
+            if (
+                event.shiftKey
+            ) {
+                return;
+            }
+
+
+            event.preventDefault();
+
+
+            sendMessage();
+
+        }
     );
 
 }
 
 
-/* =========================================================
-   PUBLIC CHAT API
-========================================================= */
+/* ==========================================================
+   STATUS
+========================================================== */
 
-export function getActiveChat() {
+export function getChatSystemStatus() {
 
-    return activeChat;
+    return {
+
+        initialized,
+
+        activeChat,
+
+        chatCount:
+            Object.keys(
+                chats
+            ).length,
+
+        activeMessages:
+            chats[activeChat]
+                ?.messages
+                ?.length || 0,
+
+        mrSmileMessages:
+            chats.mrsmile
+                ?.messages
+                ?.length || 0,
+
+        mrSmileVisible:
+            !chats.mrsmile
+                ?.hidden,
+
+        nullMessages:
+            chats.nullEntity
+                ?.messages
+                ?.length || 0
+
+    };
 
 }
 
 
-export function getChat(
+/* ==========================================================
+   RESET UNREAD
+========================================================== */
+
+export function clearUnread(
     chatId
-) {
-
-    return chats[
-        chatId
-    ] || null;
-
-}
-
-
-export function getAllChats() {
-
-    return chats;
-
-}
-
-
-export function getChatContext(
-    chatId =
-        activeChat
-) {
-
-    return chats[
-        chatId
-    ]?.context || null;
-
-}
-
-
-export function appendChatMessage(
-    chatId,
-    user,
-    text
 ) {
 
     const chat =
         chats[chatId];
 
 
-    if (
-        !chat
-    ) {
-
+    if (!chat) {
         return false;
-
     }
 
 
-    chat.messages.push({
-
-        user,
-
-        time:
-            getCurrentTime(),
-
-        text
-
-    });
+    chat.unread =
+        0;
 
 
     renderChatList();
-
-
-    if (
-        activeChat ===
-        chatId
-    ) {
-
-        renderActiveChat();
-
-    }
 
 
     return true;
@@ -3388,157 +3358,116 @@ export function appendChatMessage(
 }
 
 
-/* =========================================================
-   DEBUG API
-========================================================= */
+/* ==========================================================
+   CLEAR PERSONNEL TIMER
+========================================================== */
+
+export function cancelPendingPersonnelResponse() {
+
+    if (
+        personnelResponseTimer
+    ) {
+
+        clearTimeout(
+            personnelResponseTimer
+        );
+
+        personnelResponseTimer =
+            null;
+
+    }
+
+}
+
+
+/* ==========================================================
+   GLOBAL DEBUG API
+========================================================== */
+
+const API = {
+
+    init:
+        initChats,
+
+    open:
+        openChat,
+
+    send:
+        sendMessage,
+
+    add:
+        addChatMessage,
+
+    append:
+        appendChatMessage,
+
+    get:
+        getChat,
+
+    getAll:
+        getAllChats,
+
+    getActive:
+        getActiveChat,
+
+    context:
+        getChatContext,
+
+    reveal:
+        revealChat,
+
+    hide:
+        hideChat,
+
+    access:
+        hasChatAccess,
+
+    unread:
+        clearUnread,
+
+    cancelPersonnel:
+        cancelPendingPersonnelResponse,
+
+    status:
+        getChatSystemStatus
+
+};
+
 
 if (
     typeof window !==
     "undefined"
 ) {
 
-    window.OMEGA_CHATS = {
+    window.OMEGA_CHATS =
+        API;
 
-        open:
-            openChat,
-
-        active:
-            getActiveChat,
-
-        get:
-            getChat,
-
-        all:
-            getAllChats,
-
-        context:
-            getChatContext,
-
-        append:
-            appendChatMessage,
-
-        revealMrSmile:
-            revealMrSmileChat,
-
-        render:
-            renderActiveChat
-
-    };
+    window.OMEGA_CHAT_STATUS =
+        getChatSystemStatus;
 
 }
 
 
-/* =========================================================
-   HELPERS
-========================================================= */
+/* ==========================================================
+   AUTO INIT
+========================================================== */
 
-function contains(
-    text,
-    values
-) {
+try {
 
-    return values.some(
-        value =>
-            text.includes(
-                value
-            )
+    initChats();
+
+} catch (error) {
+
+    console.error(
+        "[OMEGA CHAT] Initialization failed:",
+        error
     );
 
 }
 
 
-function randomPick(
-    values
-) {
+/* ==========================================================
+   DEFAULT EXPORT
+========================================================== */
 
-    return values[
-        Math.floor(
-            Math.random() *
-            values.length
-        )
-    ];
-
-}
-
-
-function randomBetween(
-    min,
-    max
-) {
-
-    return Math.floor(
-
-        Math.random() *
-        (
-            max -
-            min +
-            1
-        )
-
-    ) + min;
-
-}
-
-
-function getCurrentTime() {
-
-    const now =
-        new Date();
-
-
-    return (
-
-        String(
-            now.getHours()
-        ).padStart(
-            2,
-            "0"
-        )
-
-        +
-
-        ":"
-
-        +
-
-        String(
-            now.getMinutes()
-        ).padStart(
-            2,
-            "0"
-        )
-
-    );
-
-}
-
-
-function escapeHTML(
-    value
-) {
-
-    return String(
-        value ?? ""
-    )
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
+export default API;
