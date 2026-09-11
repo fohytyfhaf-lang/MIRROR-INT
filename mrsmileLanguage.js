@@ -53,7 +53,7 @@ const DEFAULT_LANGUAGE =
 
 const SUPPORTED_LANGUAGES = {
 
-```
+
 en: {
     code: "en",
     name: "English"
@@ -113,7 +113,7 @@ ko: {
     code: "ko",
     name: "한국어"
 }
-```
+
 
 };
 
@@ -133,7 +133,7 @@ language of short operator messages.
 
 const LANGUAGE_PATTERNS = {
 
-```
+
 ru: [
 
     /[А-Яа-яЁё]/,
@@ -224,7 +224,7 @@ en: [
     /\b(hello|hi|hey|good|morning|afternoon|evening|how|who|what|where|why|when|you|your|i|we|thank|thanks|please|can|could|do|does|are|is|yes|no|goodbye|bye)\b/i
 
 ]
-```
+
 
 };
 
@@ -247,7 +247,7 @@ INITIALIZATION
 
 export function initMrSmileLanguage() {
 
-```
+
 const stored =
     readStoredLanguage();
 
@@ -274,7 +274,7 @@ lastDetectedLanguage =
 
 
 return currentLanguage;
-```
+
 
 }
 
@@ -286,7 +286,7 @@ export function detectLanguage(
 text
 ) {
 
-```
+
 const input =
     String(
         text || ""
@@ -455,7 +455,7 @@ if (!bestLanguage) {
 return rememberDetectedLanguage(
     bestLanguage
 );
-```
+
 
 }
 
@@ -467,7 +467,7 @@ function rememberDetectedLanguage(
 language
 ) {
 
-```
+
 const normalized =
     normalizeLanguageCode(
         language
@@ -502,7 +502,7 @@ saveLanguage(
 
 
 return normalized;
-```
+
 
 }
 
@@ -514,7 +514,7 @@ export function setPreferredLanguage(
 language
 ) {
 
-```
+
 const normalized =
     normalizeLanguageCode(
         language
@@ -546,7 +546,7 @@ saveLanguage(
 
 
 return true;
-```
+
 
 }
 
@@ -556,9 +556,9 @@ GET CURRENT LANGUAGE
 
 export function getPreferredLanguage() {
 
-```
+
 return currentLanguage;
-```
+
 
 }
 
@@ -568,9 +568,9 @@ GET LAST DETECTED LANGUAGE
 
 export function getLastDetectedLanguage() {
 
-```
+
 return lastDetectedLanguage;
-```
+
 
 }
 
@@ -582,7 +582,7 @@ export function getLanguageName(
 language
 ) {
 
-```
+
 const normalized =
     normalizeLanguageCode(
         language
@@ -607,7 +607,7 @@ if (
 return SUPPORTED_LANGUAGES[
     normalized
 ].name;
-```
+
 
 }
 
@@ -619,7 +619,7 @@ export function isSupportedLanguage(
 language
 ) {
 
-```
+
 const normalized =
     normalizeLanguageCode(
         language
@@ -631,7 +631,7 @@ return Boolean(
         normalized
     ]
 );
-```
+
 
 }
 
@@ -643,7 +643,7 @@ export function normalizeLanguageCode(
 language
 ) {
 
-```
+
 const value =
     String(
         language || ""
@@ -744,7 +744,7 @@ return (
     aliases[base] ||
     base
 );
-```
+
 
 }
 
@@ -768,7 +768,7 @@ It can be expanded continuously.
 
 const LOCALIZED_RESPONSES = {
 
-```
+
 /* ======================================================
    GREETING
 ====================================================== */
@@ -1271,7 +1271,7 @@ goodbye: {
     ]
 
 }
-```
+
 
 };
 
@@ -1284,7 +1284,7 @@ intent,
 language = currentLanguage
 ) {
 
-```
+
 const normalizedLanguage =
     normalizeLanguageCode(
         language
@@ -1364,7 +1364,7 @@ return (
         ? pick(available)
         : null
 );
-```
+
 
 }
 
@@ -1374,7 +1374,7 @@ LANGUAGE STATUS
 
 export function getMrSmileLanguageStatus() {
 
-```
+
 return {
 
     currentLanguage,
@@ -1399,7 +1399,7 @@ return {
         )
 
 };
-```
+
 
 }
 
@@ -1409,7 +1409,7 @@ STORAGE
 
 function readStoredLanguage() {
 
-```
+
 try {
 
     if (
@@ -1441,7 +1441,7 @@ try {
 
     return DEFAULT_LANGUAGE;
 }
-```
+
 
 }
 
@@ -1449,7 +1449,7 @@ function saveLanguage(
 language
 ) {
 
-```
+
 try {
 
     if (
@@ -1477,7 +1477,7 @@ try {
     );
 
 }
-```
+
 
 }
 
@@ -1489,7 +1489,7 @@ function pick(
 values
 ) {
 
-```
+
 if (
     !Array.isArray(
         values
@@ -1508,7 +1508,7 @@ return values[
         values.length
     )
 ];
-```
+
 
 }
 
@@ -1521,7 +1521,7 @@ typeof window !==
 "undefined"
 ) {
 
-```
+
 window.MRSMILE_LANGUAGE = {
 
     init:
@@ -1555,7 +1555,7 @@ window.MRSMILE_LANGUAGE = {
         getMrSmileLanguageStatus
 
 };
-```
+
 
 }
 
