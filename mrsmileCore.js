@@ -199,17 +199,11 @@ function chooseResponse(
        GREETING
     ------------------------------------------------------ */
 
-    if (
-        /\b(
-            hello|
-            hi|
-            hey|
-            привет|
-            здравствуй
-        )\b/ix.test(
-            text
-        )
-    ) {
+   if (
+    /\b(hello|hi|hey|привет|здравствуй)\b/i.test(
+        text
+    )
+) {
 
         return pick([
 
