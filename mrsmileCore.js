@@ -791,3 +791,27 @@ function sleep(
     );
 
 }
+
+/* ==========================================================
+   NORMALIZE TEXT
+========================================================== */
+
+function normalizeText(
+    text
+) {
+
+    return String(
+        text || ""
+    )
+        .toLowerCase()
+        .replace(
+            /ё/g,
+            "е"
+        )
+        .replace(
+            /\s+/g,
+            " "
+        )
+        .trim();
+
+}
