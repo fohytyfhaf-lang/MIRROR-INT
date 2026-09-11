@@ -57,7 +57,7 @@ import {
 } from "./mrsmileMemory.js";
 
 import {
-    showMrSmileFirstContactFace
+    runFirstContactIntrusion
 } from "./mrsmileAppearance.js";
 
 import {
@@ -725,116 +725,77 @@ async function falseRecovery() {
 /* ==========================================================
    FIRST CONTACT
 ========================================================== */
-
 export async function triggerFirstContact() {
 
     if (firstContactRunning) {
         return;
     }
 
-
     if (
         localStorage.getItem(
             "mrsmile_first_contact"
         ) === "1"
     ) {
+        console.log(
+            "[MR.SMILE] First Contact already completed."
+        );
+
         return;
     }
 
-
     firstContactRunning = true;
-
 
     clearFirstContactTimers();
 
-
     try {
 
-        document.body.classList.add(
-            "mrSmileFirstContact"
+        console.log(
+            "[MR.SMILE] Starting new OMEGA First Contact."
         );
 
+        /*
+         * Новый First Contact полностью передаётся
+         * системе MR.SMILE Appearance.
+         *
+         * Никаких:
+         * - eyes
+         * - face
+         * - cursor takeover legacy
+         * - старого black-screen sequence
+         */
 
-        /* --------------------------------------------------
-           01 — AUTHORIZATION
-        -------------------------------------------------- */
+        await runFirstContactIntrusion();
 
-        await phaseAuthorization();
+        /*
+         * Сохраняем факт первого контакта.
+         */
 
+        localStorage.setItem(
+            "mrsmile_first_contact",
+            "1"
+        );
 
-        /* --------------------------------------------------
-           02 — OMEGA COLLAPSE
-        -------------------------------------------------- */
+        /*
+         * Сообщаем остальным системам OMEGA,
+         * что First Contact произошёл.
+         */
 
-        await phaseOmegaCollapse();
+        trigger(
+            "mrsmile:firstContactCompleted",
+            {
+                source: "mrsmile",
+                type: "system_intrusion"
+            }
+        );
 
-
-        /* --------------------------------------------------
-           03 — DARKNESS
-        -------------------------------------------------- */
-
-        await phaseSystemDarkness();
-
-
-        /* --------------------------------------------------
-           04 — DIAGNOSTICS
-        -------------------------------------------------- */
-
-        await phaseDiagnostics();
-
-
-        /* --------------------------------------------------
-           05 — EYES
-        -------------------------------------------------- */
-
-        await phaseEyes();
-
-
-        /* --------------------------------------------------
-           06 — FACE
-        -------------------------------------------------- */
-
-        await phaseFace();
-
-
-        /* --------------------------------------------------
-           07 — PLAYER INTERACTION
-        -------------------------------------------------- */
-
-        await phasePlayerInteraction();
-
-
-        /* --------------------------------------------------
-           08 — CURSOR TAKEOVER
-        -------------------------------------------------- */
-
-        await phaseCursorTakeover();
-
-
-        /* --------------------------------------------------
-           09 — OMEGA INTRUSION
-        -------------------------------------------------- */
-
-        await phaseOmegaIntrusion();
-
-
-        /* --------------------------------------------------
-           10 — RELEASE
-        -------------------------------------------------- */
-
-        await phaseRelease();
-
-
-        /* --------------------------------------------------
-           11 — FINISH
-        -------------------------------------------------- */
-
-        await finishFirstContact();
+        console.log(
+            "[MR.SMILE] New First Contact completed."
+        );
 
     } catch (error) {
 
         console.error(
-            "[MR.SMILE] First contact failed:",
+            "[MR.SMILE] New First Contact failed:",
             error
         );
 
@@ -845,7 +806,6 @@ export async function triggerFirstContact() {
         firstContactRunning = false;
     }
 }
-
 
 /* ==========================================================
    PHASE 01
