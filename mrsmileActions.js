@@ -1,7 +1,7 @@
-// =======================================
+// ==========================================================
 // MR.SMILE ACTIONS SYSTEM
 // OMEGA SYSTEM
-// =======================================
+// ==========================================================
 //
 // This module EXECUTES decisions made by
 // mrsmileBehavior.js.
@@ -17,25 +17,42 @@
 //
 //     "What exactly happens to OMEGA?"
 //
-// =======================================
+// ==========================================================
 //
 // IMPORTANT:
 //
-// This module should NOT decide whether
-// MR.SMILE is friendly or hostile.
+// This module does NOT decide:
+//
+//     friendly / hostile
+//     trust
+//     respect
+//     irritation
 //
 // That belongs to:
 //
-// mrsmileRelationship.js
-// mrsmileBehavior.js
+//     mrsmileRelationship.js
+//     mrsmileBehavior.js
 //
-// =======================================
+// ==========================================================
+//
+// IMPROVEMENTS:
+//
+// 1. Actions are queued instead of silently discarded.
+// 2. Duplicate "observe" decisions are compressed.
+// 3. Critical actions have priority.
+// 4. An action failure no longer breaks the queue.
+// 5. Reset safely clears pending actions.
+// 6. State exposes queue information.
+// 7. MR.SMILE can process rapid OMEGA activity
+//    without "Action already running" spam.
+// ==========================================================
 
 
 import {
     trigger,
     on
 } from "./eventManager.js";
+
 
 import {
     grantMirrorArchiveAccess,
@@ -46,13 +63,15 @@ import {
 } from "./mrsmileProgress.js";
 
 
-// =======================================
+// ==========================================================
 // STATE
-// =======================================
+// ==========================================================
 
 const state = {
 
     initialized: false,
+
+    processing: false,
 
     actionRunning: false,
 
@@ -60,14 +79,22 @@ const state = {
 
     actionHistory: [],
 
-    maxHistory: 40
+    maxHistory: 40,
+
+    queue: [],
+
+    maxQueue: 30,
+
+    processingPromise: null,
+
+    sequence: 0
 
 };
 
 
-// =======================================
+// ==========================================================
 // TIMING
-// =======================================
+// ==========================================================
 
 const TIMING = {
 
@@ -92,9 +119,63 @@ const TIMING = {
 };
 
 
-// =======================================
+// ==========================================================
+// QUEUE CONFIGURATION
+// ==========================================================
+
+const QUEUE_CONFIG = {
+
+    /*
+     * Observation is intentionally low priority.
+     *
+     * If ten files/windows/cameras are touched quickly,
+     * MR.SMILE does not need ten identical observations.
+     */
+
+    observeDedupWindow: 1400,
+
+    /*
+     * Short-lived background observations are allowed
+     * to accumulate only to a small degree.
+     */
+
+    maxObserveQueue: 3,
+
+    /*
+     * These actions should be processed before ordinary
+     * observation events.
+     */
+
+    priority: {
+
+        sabotage: 100,
+
+        block: 90,
+
+        interfere: 80,
+
+        warn: 70,
+
+        refuse: 60,
+
+        deny: 60,
+
+        grant: 60,
+
+        help: 50,
+
+        delay: 40,
+
+        observe: 10
+
+    }
+
+};
+
+
+// ==========================================================
 // INITIALIZATION
-// =======================================
+// ==========================================================
 
 export function initMrSmileActions() {
 
@@ -107,8 +188,7 @@ export function initMrSmileActions() {
     }
 
 
-    state.initialized =
-        true;
+    state.initialized = true;
 
 
     registerListeners();
@@ -126,9 +206,9 @@ export function initMrSmileActions() {
 }
 
 
-// =======================================
+// ==========================================================
 // EVENT LISTENERS
-// =======================================
+// ==========================================================
 
 function registerListeners() {
 
@@ -137,11 +217,12 @@ function registerListeners() {
 
         decision => {
 
-            if (!decision)
+            if (!decision) {
                 return;
+            }
 
 
-            executeMrSmileAction(
+            enqueueMrSmileAction(
                 decision
             );
 
@@ -152,44 +233,511 @@ function registerListeners() {
 }
 
 
-// =======================================
-// EXECUTE ACTION
-// =======================================
+// ==========================================================
+// ENQUEUE ACTION
+// ==========================================================
 
-export async function executeMrSmileAction(
+export function enqueueMrSmileAction(
     decision
 ) {
 
     initMrSmileActions();
 
 
-    if (!decision)
+    if (!decision) {
         return false;
+    }
 
 
-    // -----------------------------------
-    // Prevent overlapping actions
-    // -----------------------------------
-
-    if (
-        state.actionRunning
-    ) {
-
-        console.warn(
-            "[MR.SMILE ACTIONS] Action already running."
-        );
-
-
-        trigger(
-            "mrsmile:actionBlocked",
+    const normalized =
+        normalizeDecision(
             decision
         );
 
 
+    if (!normalized) {
         return false;
+    }
+
+
+    /*
+     * -----------------------------------------------
+     * Duplicate suppression
+     * -----------------------------------------------
+     */
+
+    if (
+        shouldSuppressDecision(
+            normalized
+        )
+    ) {
+
+        trigger(
+            "mrsmile:actionSuppressed",
+            normalized
+        );
+
+        return false;
+    }
+
+
+    /*
+     * -----------------------------------------------
+     * Queue limit
+     * -----------------------------------------------
+     */
+
+    if (
+        state.queue.length >=
+        state.maxQueue
+    ) {
+
+        /*
+         * Low priority observations are discarded first.
+         */
+
+        if (
+            normalized.action === "observe"
+        ) {
+
+            trigger(
+                "mrsmile:actionDropped",
+                {
+                    decision: normalized,
+                    reason: "queue_full"
+                }
+            );
+
+            return false;
+        }
+
+
+        /*
+         * Remove oldest low-priority observation.
+         */
+
+        const observeIndex =
+            state.queue.findIndex(
+                item =>
+                    item.action === "observe"
+            );
+
+
+        if (
+            observeIndex !== -1
+        ) {
+
+            state.queue.splice(
+                observeIndex,
+                1
+            );
+
+        } else {
+
+            /*
+             * Everything in queue is important.
+             * Do not allow infinite growth.
+             */
+
+            console.warn(
+                "[MR.SMILE ACTIONS] Queue full. Critical action rejected."
+            );
+
+
+            trigger(
+                "mrsmile:actionDropped",
+                {
+                    decision: normalized,
+                    reason: "critical_queue_full"
+                }
+            );
+
+            return false;
+        }
 
     }
 
+
+    normalized._sequence =
+        ++state.sequence;
+
+
+    normalized._queuedAt =
+        Date.now();
+
+
+    state.queue.push(
+        normalized
+    );
+
+
+    rememberQueuedAction(
+        normalized
+    );
+
+
+    sortQueue();
+
+
+    trigger(
+        "mrsmile:actionQueued",
+        normalized
+    );
+
+
+    processQueue();
+
+
+    return true;
+
+}
+
+
+// ==========================================================
+// NORMALIZE DECISION
+// ==========================================================
+
+function normalizeDecision(
+    decision
+) {
+
+    if (
+        typeof decision !== "object"
+        ||
+        decision === null
+    ) {
+
+        console.warn(
+            "[MR.SMILE ACTIONS] Invalid decision:",
+            decision
+        );
+
+        return null;
+
+    }
+
+
+    const action =
+        typeof decision.action === "string"
+            ? decision.action.trim().toLowerCase()
+            : "";
+
+
+    if (!action) {
+
+        console.warn(
+            "[MR.SMILE ACTIONS] Decision has no action:",
+            decision
+        );
+
+        return null;
+
+    }
+
+
+    return {
+
+        ...decision,
+
+        action
+
+    };
+
+}
+
+
+// ==========================================================
+// DUPLICATE SUPPRESSION
+// ==========================================================
+
+function shouldSuppressDecision(
+    decision
+) {
+
+    const now =
+        Date.now();
+
+
+    /*
+     * ------------------------------------------------------
+     * OBSERVE DEDUPLICATION
+     * ------------------------------------------------------
+     *
+     * Example:
+     *
+     * file_open
+     * window_focus
+     * window_move
+     * camera_switch
+     *
+     * can all generate "observe".
+     *
+     * We do not need a dozen simultaneous
+     * observation actions.
+     */
+
+    if (
+        decision.action === "observe"
+    ) {
+
+        let observeCount = 0;
+
+
+        for (
+            const item
+            of state.queue
+        ) {
+
+            if (
+                item.action !== "observe"
+            ) {
+                continue;
+            }
+
+
+            observeCount++;
+
+
+            const queuedAt =
+                Number(
+                    item._queuedAt ||
+                    0
+                );
+
+
+            if (
+                now - queuedAt <
+                QUEUE_CONFIG.observeDedupWindow
+            ) {
+
+                /*
+                 * Same target/reason = exact duplicate.
+                 */
+
+                if (
+                    item.target ===
+                        decision.target
+                    &&
+                    item.reason ===
+                        decision.reason
+                ) {
+
+                    return true;
+                }
+
+            }
+
+        }
+
+
+        /*
+         * Also prevent observation queue flooding.
+         */
+
+        if (
+            observeCount >=
+            QUEUE_CONFIG.maxObserveQueue
+        ) {
+
+            return true;
+        }
+
+    }
+
+
+    /*
+     * ------------------------------------------------------
+     * EXACT DUPLICATE FOR OTHER ACTIONS
+     * ------------------------------------------------------
+     */
+
+    const recent =
+        state.queue.find(
+            item => {
+
+                return (
+
+                    item.action ===
+                        decision.action
+
+                    &&
+
+                    item.target ===
+                        decision.target
+
+                    &&
+
+                    item.reason ===
+                        decision.reason
+
+                );
+
+            }
+        );
+
+
+    if (recent) {
+
+        return true;
+
+    }
+
+
+    return false;
+
+}
+
+
+// ==========================================================
+// SORT QUEUE
+// ==========================================================
+
+function sortQueue() {
+
+    state.queue.sort(
+        (
+            a,
+            b
+        ) => {
+
+            const pa =
+                QUEUE_CONFIG.priority[
+                    a.action
+                ] ??
+                0;
+
+
+            const pb =
+                QUEUE_CONFIG.priority[
+                    b.action
+                ] ??
+                0;
+
+
+            if (
+                pa !== pb
+            ) {
+
+                return (
+                    pb - pa
+                );
+
+            }
+
+
+            return (
+                (a._sequence || 0)
+                -
+                (b._sequence || 0)
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// PROCESS QUEUE
+// ==========================================================
+
+export function processMrSmileActionQueue() {
+
+    initMrSmileActions();
+
+
+    if (
+        state.processing
+    ) {
+
+        return state.processingPromise;
+
+    }
+
+
+    state.processing =
+        true;
+
+
+    state.processingPromise =
+        processQueueInternal();
+
+
+    return state.processingPromise;
+
+}
+
+
+// ==========================================================
+// QUEUE INTERNAL PROCESSOR
+// ==========================================================
+
+async function processQueueInternal() {
+
+    try {
+
+        while (
+            state.queue.length >
+            0
+        ) {
+
+            const decision =
+                state.queue.shift();
+
+
+            if (!decision) {
+                continue;
+            }
+
+
+            await runQueuedAction(
+                decision
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "[MR.SMILE ACTIONS] Queue processor failed:",
+            error
+        );
+
+    } finally {
+
+        state.processing =
+            false;
+
+        state.processingPromise =
+            null;
+
+        state.actionRunning =
+            false;
+
+        state.activeAction =
+            null;
+
+
+        trigger(
+            "mrsmile:actionQueueIdle",
+            {
+                timestamp:
+                    Date.now()
+            }
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// RUN QUEUED ACTION
+// ==========================================================
+
+async function runQueuedAction(
+    decision
+) {
 
     state.actionRunning =
         true;
@@ -313,6 +861,12 @@ export async function executeMrSmileAction(
                     decision.action
                 );
 
+
+                trigger(
+                    "mrsmile:actionUnknown",
+                    decision
+                );
+
                 break;
 
         }
@@ -324,10 +878,7 @@ export async function executeMrSmileAction(
         );
 
 
-        return true;
-
-    }
-    catch (error) {
+    } catch (error) {
 
         console.error(
             "[MR.SMILE ACTIONS] Action failed:",
@@ -338,23 +889,16 @@ export async function executeMrSmileAction(
         trigger(
             "mrsmile:actionFailed",
             {
-
                 decision,
-
                 error
-
             }
         );
 
 
-        return false;
-
-    }
-    finally {
+    } finally {
 
         state.actionRunning =
             false;
-
 
         state.activeAction =
             null;
@@ -364,9 +908,50 @@ export async function executeMrSmileAction(
 }
 
 
-// =======================================
+// ==========================================================
+// BACKWARD-COMPATIBLE DIRECT EXECUTION
+// ==========================================================
+//
+// Existing modules may already call:
+//
+//     executeMrSmileAction(decision)
+//
+// We keep the function.
+//
+// It now ENQUEUES instead of immediately fighting with
+// another running action.
+//
+
+export async function executeMrSmileAction(
+    decision
+) {
+
+    const accepted =
+        enqueueMrSmileAction(
+            decision
+        );
+
+
+    if (!accepted) {
+
+        return false;
+
+    }
+
+
+    /*
+     * For compatibility we return true after successfully
+     * queueing the action.
+     */
+
+    return true;
+
+}
+
+
+// ==========================================================
 // GRANT
-// =======================================
+// ==========================================================
 
 async function executeGrant(
     decision
@@ -423,6 +1008,34 @@ async function executeGrant(
     }
 
 
+    /*
+     * Clear unresolved access request after
+     * a successful grant.
+     */
+
+    try {
+
+        if (
+            typeof clearAccessRequest ===
+            "function"
+        ) {
+
+            clearAccessRequest(
+                decision.target
+            );
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE ACTIONS] Could not clear access request:",
+            error
+        );
+
+    }
+
+
     trigger(
         "mrsmile:helpGranted",
         decision
@@ -431,9 +1044,9 @@ async function executeGrant(
 }
 
 
-// =======================================
+// ==========================================================
 // HELP
-// =======================================
+// ==========================================================
 
 async function executeHelp(
     decision
@@ -443,10 +1056,6 @@ async function executeHelp(
         TIMING.helpDelay
     );
 
-
-    // -----------------------------------
-    // Notify chat
-    // -----------------------------------
 
     trigger(
         "mrsmile:helpRequested",
@@ -462,23 +1071,6 @@ async function executeHelp(
     );
 
 
-    // -----------------------------------
-    // Future action hook
-    // -----------------------------------
-    //
-    // mrsmileBehavior.js says:
-    //
-    // "I want to help."
-    //
-    // Later this can become:
-    //
-    // open restricted file
-    // fix interface
-    // warn about danger
-    // reveal information
-    // protect operator
-    // -----------------------------------
-
     trigger(
         "mrsmile:operatorHelped",
         decision
@@ -487,9 +1079,9 @@ async function executeHelp(
 }
 
 
-// =======================================
+// ==========================================================
 // REFUSE
-// =======================================
+// ==========================================================
 
 async function executeRefuse(
     decision
@@ -513,9 +1105,9 @@ async function executeRefuse(
 }
 
 
-// =======================================
+// ==========================================================
 // DENY
-// =======================================
+// ==========================================================
 
 async function executeDeny(
     decision
@@ -527,18 +1119,47 @@ async function executeDeny(
 
 
     if (
+
         decision.target ===
-        "archive"
+            "archive"
+
         ||
+
         decision.target ===
-        "game"
+            "game"
+
         ||
+
         decision.target ===
-        "truth"
+            "truth"
+
     ) {
 
         denyAccess(
             decision.target
+        );
+
+    }
+
+
+    try {
+
+        if (
+            typeof clearAccessRequest ===
+            "function"
+        ) {
+
+            clearAccessRequest(
+                decision.target
+            );
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE ACTIONS] Could not clear denied request:",
+            error
         );
 
     }
@@ -557,17 +1178,9 @@ async function executeDeny(
 }
 
 
-// =======================================
+// ==========================================================
 // DELAY
-// =======================================
-//
-// MR.SMILE deliberately does not answer
-// immediately.
-//
-// This is important.
-//
-// Silence can itself be a response.
-// =======================================
+// ==========================================================
 
 async function executeDelay(
     decision
@@ -583,20 +1196,12 @@ async function executeDelay(
         decision
     );
 
-
-    // -----------------------------------
-    // Do NOT automatically deny.
-//
-// MR.SMILE can simply leave the request
-// unresolved.
-// -----------------------------------
-
 }
 
 
-// =======================================
+// ==========================================================
 // WARNING
-// =======================================
+// ==========================================================
 
 async function executeWarn(
     decision
@@ -620,9 +1225,9 @@ async function executeWarn(
 }
 
 
-// =======================================
+// ==========================================================
 // OBSERVE
-// =======================================
+// ==========================================================
 
 async function executeObserve(
     decision
@@ -648,21 +1253,9 @@ async function executeObserve(
 }
 
 
-// =======================================
+// ==========================================================
 // INTERFERE
-// =======================================
-//
-// Small interference.
-//
-// MR.SMILE is not attacking OMEGA yet.
-//
-// Examples:
-//
-// - move focus
-// - delay input
-// - switch window
-// - brief cursor interference
-// =======================================
+// ==========================================================
 
 async function executeInterfere(
     decision
@@ -679,10 +1272,6 @@ async function executeInterfere(
     );
 
 
-    // -----------------------------------
-    // Focus interference
-    // -----------------------------------
-
     interfereWithFocus();
 
 
@@ -690,10 +1279,6 @@ async function executeInterfere(
         350
     );
 
-
-    // -----------------------------------
-    // Input delay
-    // -----------------------------------
 
     trigger(
         "mrsmile:inputInterference",
@@ -719,15 +1304,9 @@ async function executeInterfere(
 }
 
 
-// =======================================
+// ==========================================================
 // BLOCK
-// =======================================
-//
-// Stronger than interference.
-//
-// MR.SMILE actively prevents the
-// operator from performing an action.
-// =======================================
+// ==========================================================
 
 async function executeBlock(
     decision
@@ -743,10 +1322,6 @@ async function executeBlock(
         decision
     );
 
-
-    // -----------------------------------
-    // Freeze current interaction
-    // -----------------------------------
 
     blockInteraction();
 
@@ -767,21 +1342,9 @@ async function executeBlock(
 }
 
 
-// =======================================
+// ==========================================================
 // SABOTAGE
-// =======================================
-//
-// This is the hostile action layer.
-//
-// IMPORTANT:
-//
-// Sabotage is intentionally controlled.
-//
-// MR.SMILE should NOT randomly destroy
-// the entire interface.
-//
-// His actions should feel deliberate.
-// =======================================
+// ==========================================================
 
 async function executeSabotage(
     decision
@@ -798,9 +1361,9 @@ async function executeSabotage(
     );
 
 
-    // -----------------------------------
-    // STEP 1
-    // -----------------------------------
+    /*
+     * STEP 1
+     */
 
     sabotageFocus();
 
@@ -810,9 +1373,9 @@ async function executeSabotage(
     );
 
 
-    // -----------------------------------
-    // STEP 2
-    // -----------------------------------
+    /*
+     * STEP 2
+     */
 
     sabotageWindows();
 
@@ -822,9 +1385,9 @@ async function executeSabotage(
     );
 
 
-    // -----------------------------------
-    // STEP 3
-    // -----------------------------------
+    /*
+     * STEP 3
+     */
 
     trigger(
         "mrsmile:systemInterference",
@@ -845,9 +1408,9 @@ async function executeSabotage(
     );
 
 
-    // -----------------------------------
-    // STEP 4
-    // -----------------------------------
+    /*
+     * STEP 4
+     */
 
     restoreAfterSabotage();
 
@@ -860,9 +1423,9 @@ async function executeSabotage(
 }
 
 
-// =======================================
+// ==========================================================
 // RESTRICTED FILE
-// =======================================
+// ==========================================================
 
 function grantRestrictedFile(
     decision
@@ -884,9 +1447,9 @@ function grantRestrictedFile(
 }
 
 
-// =======================================
+// ==========================================================
 // FOCUS INTERFERENCE
-// =======================================
+// ==========================================================
 
 function interfereWithFocus() {
 
@@ -913,9 +1476,15 @@ function interfereWithFocus() {
     setTimeout(
         () => {
 
-            activeWindow.classList.remove(
-                "mrSmileFocusInterference"
-            );
+            if (
+                activeWindow
+            ) {
+
+                activeWindow.classList.remove(
+                    "mrSmileFocusInterference"
+                );
+
+            }
 
         },
 
@@ -926,9 +1495,9 @@ function interfereWithFocus() {
 }
 
 
-// =======================================
+// ==========================================================
 // SABOTAGE FOCUS
-// =======================================
+// ==========================================================
 
 function sabotageFocus() {
 
@@ -958,9 +1527,9 @@ function sabotageFocus() {
 }
 
 
-// =======================================
+// ==========================================================
 // WINDOW SABOTAGE
-// =======================================
+// ==========================================================
 
 function sabotageWindows() {
 
@@ -978,12 +1547,6 @@ function sabotageWindows() {
 
     }
 
-
-    // -----------------------------------
-    // Select one window.
-//
-// Never manipulate everything at once.
-// -----------------------------------
 
     const index =
         Math.floor(
@@ -1039,9 +1602,9 @@ function sabotageWindows() {
 }
 
 
-// =======================================
+// ==========================================================
 // BLOCK INTERACTION
-// =======================================
+// ==========================================================
 
 function blockInteraction() {
 
@@ -1052,9 +1615,9 @@ function blockInteraction() {
 }
 
 
-// =======================================
+// ==========================================================
 // UNBLOCK
-// =======================================
+// ==========================================================
 
 function unblockInteraction() {
 
@@ -1065,9 +1628,9 @@ function unblockInteraction() {
 }
 
 
-// =======================================
+// ==========================================================
 // RESTORE AFTER SABOTAGE
-// =======================================
+// ==========================================================
 
 function restoreAfterSabotage() {
 
@@ -1113,9 +1676,9 @@ function restoreAfterSabotage() {
 }
 
 
-// =======================================
+// ==========================================================
 // SYSTEM NOTICE
-// =======================================
+// ==========================================================
 
 function showSystemNotice(
     text
@@ -1133,10 +1696,6 @@ function showSystemNotice(
         }
     );
 
-
-    // -----------------------------------
-    // Existing notification area
-    // -----------------------------------
 
     const area =
         document.querySelector(
@@ -1175,9 +1734,15 @@ function showSystemNotice(
     setTimeout(
         () => {
 
-            notice.classList.add(
-                "fade"
-            );
+            if (
+                notice.parentNode
+            ) {
+
+                notice.classList.add(
+                    "fade"
+                );
+
+            }
 
         },
 
@@ -1189,7 +1754,13 @@ function showSystemNotice(
     setTimeout(
         () => {
 
-            notice.remove();
+            if (
+                notice.parentNode
+            ) {
+
+                notice.remove();
+
+            }
 
         },
 
@@ -1200,9 +1771,9 @@ function showSystemNotice(
 }
 
 
-// =======================================
+// ==========================================================
 // ACTION HISTORY
-// =======================================
+// ==========================================================
 
 function rememberAction(
     decision
@@ -1214,7 +1785,10 @@ function rememberAction(
             ...decision,
 
             timestamp:
-                Date.now()
+                Date.now(),
+
+            executed:
+                true
 
         }
     );
@@ -1232,9 +1806,42 @@ function rememberAction(
 }
 
 
-// =======================================
+// ==========================================================
+// QUEUED ACTION HISTORY
+// ==========================================================
+
+function rememberQueuedAction(
+    decision
+) {
+
+    trigger(
+        "mrsmile:actionRemembered",
+        {
+
+            action:
+                decision.action,
+
+            target:
+                decision.target,
+
+            reason:
+                decision.reason,
+
+            sequence:
+                decision._sequence,
+
+            timestamp:
+                Date.now()
+
+        }
+    );
+
+}
+
+
+// ==========================================================
 // GET ACTIVE ACTION
-// =======================================
+// ==========================================================
 
 export function getActiveMrSmileAction() {
 
@@ -1246,9 +1853,9 @@ export function getActiveMrSmileAction() {
 }
 
 
-// =======================================
+// ==========================================================
 // GET ACTION HISTORY
-// =======================================
+// ==========================================================
 
 export function getMrSmileActionHistory() {
 
@@ -1262,9 +1869,9 @@ export function getMrSmileActionHistory() {
 }
 
 
-// =======================================
+// ==========================================================
 // IS ACTION RUNNING
-// =======================================
+// ==========================================================
 
 export function isMrSmileActionRunning() {
 
@@ -1275,9 +1882,67 @@ export function isMrSmileActionRunning() {
 }
 
 
-// =======================================
+// ==========================================================
+// QUEUE STATUS
+// ==========================================================
+
+export function getMrSmileActionQueue() {
+
+    initMrSmileActions();
+
+
+    return [
+        ...state.queue
+    ];
+
+}
+
+
+// ==========================================================
+// FULL STATUS
+// ==========================================================
+
+export function getMrSmileActionsStatus() {
+
+    initMrSmileActions();
+
+
+    return {
+
+        initialized:
+            state.initialized,
+
+        processing:
+            state.processing,
+
+        actionRunning:
+            state.actionRunning,
+
+        activeAction:
+            state.activeAction,
+
+        queueLength:
+            state.queue.length,
+
+        queue:
+            [
+                ...state.queue
+            ],
+
+        historyLength:
+            state.actionHistory.length,
+
+        sequence:
+            state.sequence
+
+    };
+
+}
+
+
+// ==========================================================
 // CLEAR HISTORY
-// =======================================
+// ==========================================================
 
 export function clearMrSmileActionHistory() {
 
@@ -1292,11 +1957,31 @@ export function clearMrSmileActionHistory() {
 }
 
 
-// =======================================
+// ==========================================================
+// CLEAR QUEUE
+// ==========================================================
+
+export function clearMrSmileActionQueue() {
+
+    state.queue =
+        [];
+
+
+    console.log(
+        "[MR.SMILE ACTIONS] Queue cleared."
+    );
+
+
+    trigger(
+        "mrsmile:actionQueueCleared"
+    );
+
+}
+
+
+// ==========================================================
 // MANUAL ACTION
-// =======================================
-//
-// Useful for testing.
+// ==========================================================
 //
 // Example:
 //
@@ -1305,26 +1990,32 @@ export function clearMrSmileActionHistory() {
 //     target: "operator",
 //     reason: "test"
 // });
-// =======================================
+//
 
 export function performMrSmileAction(
     decision
 ) {
 
-    return executeMrSmileAction(
+    return enqueueMrSmileAction(
         decision
     );
 
 }
 
 
-// =======================================
+// ==========================================================
 // RESET
-// =======================================
+// ==========================================================
 
 export function resetMrSmileActions() {
 
+    clearMrSmileActionQueue();
+
+
     restoreAfterSabotage();
+
+
+    unblockInteraction();
 
 
     state.actionRunning =
@@ -1333,6 +2024,10 @@ export function resetMrSmileActions() {
 
     state.activeAction =
         null;
+
+
+    state.processing =
+        false;
 
 
     state.actionHistory =
@@ -1351,9 +2046,9 @@ export function resetMrSmileActions() {
 }
 
 
-// =======================================
+// ==========================================================
 // SLEEP
-// =======================================
+// ==========================================================
 
 function sleep(
     ms
