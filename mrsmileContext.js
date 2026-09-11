@@ -1,6 +1,16 @@
 /* ==========================================================
    MR.SMILE CONTEXT
-   Context Collection / Normalization Layer
+   OMEGA SYSTEM
+
+   Context does not decide behavior.
+
+   It answers:
+
+       WHAT happened?
+       WHERE?
+       WHO caused it?
+       HOW important is it?
+       Is it meaningful?
 ========================================================== */
 
 import {
@@ -14,6 +24,14 @@ import {
 } from "./mrsmileRelationship.js";
 
 import {
+    initMemory,
+    rememberContext,
+    rememberFile,
+    rememberCommand,
+    rememberPage
+} from "./mrsmileMemory.js";
+
+import {
     requestMrSmileBehavior
 } from "./mrsmileBehavior.js";
 
@@ -23,89 +41,125 @@ import {
 ========================================================== */
 
 const state = {
+
     initialized: false,
+
+    processing: false,
+
+    queue: [],
 
     currentContext: null,
 
-    contextHistory: [],
+    history: [],
 
-    maxHistory: 50,
+    maxHistory: 60
 
-    processing: false
 };
 
 
 /* ==========================================================
-   CONTEXT TYPES
+   IMPORTANCE
 ========================================================== */
 
-const CONTEXT_TYPES = [
+const IMPORTANCE = {
 
-    // Explorer
-    "file_open",
-    "restricted_file",
-    "file_close",
-    "folder_open",
-    "folder_close",
+    file_open: 2,
+    file_close: 1,
 
-    // Console
-    "console_command",
-    "console_open",
+    folder_open: 1,
+    folder_close: 1,
 
-    // Camera
-    "camera_open",
-    "camera_switch",
-    "camera_close",
+    restricted_file: 8,
 
-    // Windows
-    "window_open",
-    "window_close",
-    "window_focus",
-    "window_move",
+    console_command: 3,
+    console_open: 1,
 
-    // System
-    "system_action",
-    "settings_change",
-    "navigation",
+    camera_open: 2,
+    camera_switch: 2,
+    camera_close: 1,
 
-    // MR.SMILE
-    "operator_help_request",
-    "operator_attack",
-    "mrsmile_message",
-    "mrsmile_interaction",
+    window_open: 1,
+    window_close: 1,
+    window_focus: 1,
+    window_move: 1,
 
-    // Access
-    "access_request",
-    "archive_access",
-    "game_access",
-    "truth_access",
+    settings_change: 1,
 
-    // General
-    "operator_action",
-    "unknown"
+    navigation: 1,
+
+    operator_help_request: 6,
+
+    operator_attack: 10,
+
+    archive_access: 6,
+    game_access: 6,
+    truth_access: 9,
+
+    access_request: 7,
+
+    operator_action: 2,
+
+    unknown: 1
+
+};
+
+
+/* ==========================================================
+   IMPORTANT TARGET KEYWORDS
+========================================================== */
+
+const IMPORTANT_TARGETS = [
+
+    "truth",
+    "mirror",
+    "mirror-00",
+    "mirror_00",
+
+    "sys_00",
+    "sys00",
+
+    "restricted",
+    "classified",
+
+    "mrsmile",
+    "smile",
+
+    "secret"
+
 ];
 
 
 /* ==========================================================
-   INIT
+   INITIALIZATION
 ========================================================== */
 
 export function initMrSmileContext() {
 
-    if (state.initialized) {
+    if (
+        state.initialized
+    ) {
+
         return;
     }
 
-    state.initialized = true;
+
+    state.initialized =
+        true;
+
 
     initMrSmileRelationship();
 
+    initMemory();
+
     registerListeners();
-    exposeDebugAPI();
+
+    exposeDebug();
+
 
     console.log(
         "[MR.SMILE CONTEXT] Initialized."
     );
+
 
     trigger(
         "mrsmile:contextInitialized"
@@ -114,46 +168,37 @@ export function initMrSmileContext() {
 
 
 /* ==========================================================
-   EVENT LISTENERS
+   LISTENERS
 ========================================================== */
 
 function registerListeners() {
 
-    /*
-        Real OMEGA systems should emit:
-
-        mrsmile:operatorAction
-
-        with data such as:
-
-        {
-            type: "file_open",
-            target: "MIRROR-00",
-            source: "explorer"
-        }
-    */
-
     on(
         "mrsmile:operatorAction",
-        handleOperatorAction
+        data => {
+
+            enqueueContext(
+                data || {}
+            );
+
+        }
     );
 
-
-    /*
-        Compatibility listeners.
-        These allow existing systems to report
-        actions without having to manually call
-        createContext().
-    */
 
     on(
         "mrsmile:operatorHelpRequest",
         data => {
 
-            handleOperatorAction({
-                type: "operator_help_request",
-                source: "system",
-                ...normalizeEventData(data)
+            enqueueContext({
+
+                ...(data || {}),
+
+                type:
+                    "operator_help_request",
+
+                source:
+                    "system"
+
             });
 
         }
@@ -164,10 +209,16 @@ function registerListeners() {
         "mrsmile:restrictedFileOpened",
         data => {
 
-            handleOperatorAction({
-                type: "restricted_file",
-                source: "explorer",
-                ...normalizeEventData(data)
+            enqueueContext({
+
+                ...(data || {}),
+
+                type:
+                    "restricted_file",
+
+                source:
+                    "explorer"
+
             });
 
         }
@@ -178,10 +229,16 @@ function registerListeners() {
         "mrsmile:cameraChanged",
         data => {
 
-            handleOperatorAction({
-                type: "camera_switch",
-                source: "camera",
-                ...normalizeEventData(data)
+            enqueueContext({
+
+                ...(data || {}),
+
+                type:
+                    "camera_switch",
+
+                source:
+                    "camera"
+
             });
 
         }
@@ -192,10 +249,16 @@ function registerListeners() {
         "mrsmile:consoleCommand",
         data => {
 
-            handleOperatorAction({
-                type: "console_command",
-                source: "console",
-                ...normalizeEventData(data)
+            enqueueContext({
+
+                ...(data || {}),
+
+                type:
+                    "console_command",
+
+                source:
+                    "console"
+
             });
 
         }
@@ -206,10 +269,16 @@ function registerListeners() {
         "mrsmile:windowOpened",
         data => {
 
-            handleOperatorAction({
-                type: "window_open",
-                source: "window_manager",
-                ...normalizeEventData(data)
+            enqueueContext({
+
+                ...(data || {}),
+
+                type:
+                    "window_open",
+
+                source:
+                    "window_manager"
+
             });
 
         }
@@ -220,102 +289,312 @@ function registerListeners() {
         "mrsmile:windowClosed",
         data => {
 
-            handleOperatorAction({
-                type: "window_close",
-                source: "window_manager",
-                ...normalizeEventData(data)
+            enqueueContext({
+
+                ...(data || {}),
+
+                type:
+                    "window_close",
+
+                source:
+                    "window_manager"
+
             });
 
         }
     );
+
+
+    on(
+        "mrsmile:windowFocused",
+        data => {
+
+            enqueueContext({
+
+                ...(data || {}),
+
+                type:
+                    "window_focus",
+
+                source:
+                    "window_manager"
+
+            });
+
+        }
+    );
+
+
+    on(
+        "mrsmile:windowMoved",
+        data => {
+
+            enqueueContext({
+
+                ...(data || {}),
+
+                type:
+                    "window_move",
+
+                source:
+                    "window_manager"
+
+            });
+
+        }
+    );
+
+
+    on(
+        "mrsmile:settingsChanged",
+        data => {
+
+            enqueueContext({
+
+                ...(data || {}),
+
+                type:
+                    "settings_change",
+
+                source:
+                    "settings"
+
+            });
+
+        }
+    );
+
 }
 
 
 /* ==========================================================
-   MAIN ACTION HANDLER
+   QUEUE
 ========================================================== */
 
-function handleOperatorAction(data = {}) {
+function enqueueContext(
+    data
+) {
 
-    if (state.processing) {
-        return null;
+    if (
+        !data
+    ) {
+
+        return false;
     }
 
-    state.processing = true;
+
+    /*
+     * MR.SMILE itself must never be treated
+     * as an operator.
+     */
+
+    if (
+        data.source ===
+        "mrsmile"
+    ) {
+
+        return false;
+    }
+
+
+    state.queue.push(
+        data
+    );
+
+
+    if (
+        state.queue.length >
+        40
+    ) {
+
+        state.queue.shift();
+
+    }
+
+
+    processQueue();
+
+
+    return true;
+}
+
+
+/* ==========================================================
+   PROCESS QUEUE
+========================================================== */
+
+async function processQueue() {
+
+    if (
+        state.processing
+    ) {
+
+        return;
+    }
+
+
+    state.processing =
+        true;
+
 
     try {
 
-        const context =
-            createMrSmileContext(data);
+        while (
+            state.queue.length
+        ) {
 
-        state.currentContext = context;
-
-        saveContext(context);
-
-        trigger(
-            "mrsmile:contextCreated",
-            context
-        );
-
-        console.log(
-            "[MR.SMILE CONTEXT] Context created:",
-            context
-        );
+            const raw =
+                state.queue.shift();
 
 
-        /*
-            Send the context to Behavior.
-
-            IMPORTANT:
-            Context does not decide anything.
-
-            Behavior receives the information
-            and decides what MR.SMILE should do.
-        */
-
-        const decision =
-            requestMrSmileBehavior(context);
+            if (!raw) {
+                continue;
+            }
 
 
-        if (decision) {
+            const context =
+                createMrSmileContext(
+                    raw
+                );
 
-            trigger(
-                "mrsmile:contextDecision",
-                {
-                    context,
-                    decision
-                }
+
+            state.currentContext =
+                context;
+
+
+            state.history.push(
+                context
             );
 
-        }
 
-        return {
-            context,
-            decision
-        };
+            while (
+                state.history.length >
+                state.maxHistory
+            ) {
+
+                state.history.shift();
+
+            }
+
+
+            /*
+             * Memory
+             */
+
+            rememberContext(
+                context
+            );
+
+
+            if (
+                context.page
+            ) {
+
+                rememberPage(
+                    context.page
+                );
+
+            }
+
+
+            if (
+                context.type ===
+                "file_open"
+                &&
+                context.target
+            ) {
+
+                rememberFile(
+                    context.target,
+                    {
+                        name:
+                            context.metadata?.name
+                    }
+                );
+
+            }
+
+
+            if (
+                context.type ===
+                "console_command"
+            ) {
+
+                rememberCommand(
+                    context.target ||
+                    context.metadata?.command ||
+                    "",
+                    {
+                        source:
+                            context.source
+                    }
+                );
+
+            }
+
+
+            trigger(
+                "mrsmile:contextCreated",
+                context
+            );
+
+
+            /*
+             * Behavior
+             */
+
+            const decision =
+                requestMrSmileBehavior(
+                    context
+                );
+
+
+            if (
+                decision
+            ) {
+
+                trigger(
+                    "mrsmile:contextDecision",
+                    {
+                        context,
+                        decision
+                    }
+                );
+
+            }
+
+
+            /*
+             * Give browser event loop
+             * a chance to breathe.
+             */
+
+            await tick();
+
+        }
 
     } catch (error) {
 
         console.error(
-            "[MR.SMILE CONTEXT] Processing error:",
+            "[MR.SMILE CONTEXT] Queue error:",
             error
         );
+
 
         trigger(
             "mrsmile:contextError",
             {
-                error,
-                data
+                error
             }
         );
 
-        return null;
-
     } finally {
 
-        state.processing = false;
+        state.processing =
+            false;
 
     }
+
 }
 
 
@@ -323,56 +602,81 @@ function handleOperatorAction(data = {}) {
    CREATE CONTEXT
 ========================================================== */
 
-export function createMrSmileContext(data = {}) {
+export function createMrSmileContext(
+    data = {}
+) {
 
     const relationship =
         getRelationshipStatus();
 
 
-    const context = {
+    const type =
+        normalizeType(
+            data.type
+        );
 
-        /* --------------------------------------------------
-           ACTION
-        -------------------------------------------------- */
 
-        type:
-            normalizeType(
-                data.type
-            ),
+    const importance =
+        Number.isFinite(
+            data.importance
+        )
+
+            ? Number(
+                data.importance
+            )
+
+            : calculateImportance(
+                type,
+                data
+            );
+
+
+    const significant =
+        data.significant ===
+            true
+
+        ||
+
+        importance >= 6
+
+        ||
+
+        isImportantTarget(
+            data.target
+        );
+
+
+    return {
+
+        type,
 
         target:
             data.target ??
             null,
 
         source:
-            data.source ??
+            data.source ||
             "unknown",
 
         page:
-            data.page ??
+            data.page ||
             getCurrentPage(),
 
         action:
-            data.action ??
+            data.action ||
             null,
 
         reason:
-            data.reason ??
+            data.reason ||
             "operator_action",
 
-
-        /* --------------------------------------------------
-           OPERATOR
-        -------------------------------------------------- */
-
         operator:
-            data.operator ??
+            data.operator ||
             "operator",
 
 
-        /* --------------------------------------------------
-           RELATIONSHIP
-        -------------------------------------------------- */
+        relationship:
+            relationship.level,
 
         trust:
             relationship.trust,
@@ -386,41 +690,115 @@ export function createMrSmileContext(data = {}) {
         score:
             relationship.score,
 
-        relationship:
-            relationship.level,
 
+        importance,
 
-        /* --------------------------------------------------
-           SYSTEM STATE
-        -------------------------------------------------- */
+        significant,
+
 
         activeWindow:
-            data.activeWindow ??
+            data.activeWindow ||
             getActiveWindow(),
 
+
         currentUrl:
-            getCurrentUrl(),
+            safe(
+                () =>
+                    window.location.href,
+                null
+            ),
+
 
         timestamp:
             Date.now(),
 
 
-        /* --------------------------------------------------
-           EXTRA INFORMATION
-        -------------------------------------------------- */
-
         metadata:
-            data.metadata ??
+            data.metadata ||
             {},
 
+
         raw:
-            data.raw ??
+            data.raw ||
             null
 
     };
 
+}
 
-    return context;
+
+/* ==========================================================
+   IMPORTANCE
+========================================================== */
+
+function calculateImportance(
+    type,
+    data
+) {
+
+    let importance =
+        IMPORTANCE[type] ??
+        1;
+
+
+    const target =
+        String(
+            data.target ||
+            ""
+        ).toLowerCase();
+
+
+    if (
+        isImportantTarget(
+            target
+        )
+    ) {
+
+        importance += 3;
+
+    }
+
+
+    if (
+        data.metadata?.restricted ===
+        true
+    ) {
+
+        importance += 4;
+
+    }
+
+
+    return Math.min(
+        10,
+        importance
+    );
+
+}
+
+
+/* ==========================================================
+   IMPORTANT TARGET
+========================================================== */
+
+function isImportantTarget(
+    target
+) {
+
+    const value =
+        String(
+            target ||
+            ""
+        ).toLowerCase();
+
+
+    return IMPORTANT_TARGETS.some(
+        keyword =>
+            value.includes(
+                keyword
+            )
+    );
+
 }
 
 
@@ -428,59 +806,21 @@ export function createMrSmileContext(data = {}) {
    NORMALIZE TYPE
 ========================================================== */
 
-function normalizeType(type) {
+function normalizeType(
+    type
+) {
 
-    if (!type) {
-        return "unknown";
-    }
+    return String(
+        type ||
+        "unknown"
+    )
+        .trim()
+        .toLowerCase()
+        .replace(
+            /\s+/g,
+            "_"
+        );
 
-    const normalized =
-        String(type)
-            .trim()
-            .toLowerCase()
-            .replace(/\s+/g, "_");
-
-
-    if (
-        CONTEXT_TYPES.includes(
-            normalized
-        )
-    ) {
-
-        return normalized;
-
-    }
-
-
-    return normalized || "unknown";
-}
-
-
-/* ==========================================================
-   NORMALIZE EVENT DATA
-========================================================== */
-
-function normalizeEventData(data) {
-
-    if (!data) {
-        return {};
-    }
-
-
-    if (
-        typeof data !== "object"
-    ) {
-
-        return {
-            target: data
-        };
-
-    }
-
-
-    return {
-        ...data
-    };
 }
 
 
@@ -492,37 +832,28 @@ function getCurrentPage() {
 
     try {
 
-        /*
-            Try common OMEGA page/window identifiers.
-        */
+        return (
 
-        const bodyPage =
-            document.body?.dataset?.page;
+            document.body?.dataset?.page
 
-        if (bodyPage) {
-            return bodyPage;
-        }
+            ||
 
-
-        const activePage =
             document.querySelector(
                 ".page.active"
-            );
+            )?.id
 
-        if (
-            activePage &&
-            activePage.id
-        ) {
+            ||
 
-            return activePage.id;
+            window.location.hash
 
-        }
+            ||
 
+            window.location.pathname
 
-        return (
-            window.location.hash ||
-            window.location.pathname ||
+            ||
+
             "omega"
+
         );
 
     } catch {
@@ -530,24 +861,7 @@ function getCurrentPage() {
         return "unknown";
 
     }
-}
 
-
-/* ==========================================================
-   CURRENT URL
-========================================================== */
-
-function getCurrentUrl() {
-
-    try {
-
-        return window.location.href;
-
-    } catch {
-
-        return null;
-
-    }
 }
 
 
@@ -559,298 +873,89 @@ function getActiveWindow() {
 
     try {
 
-        /*
-            Common OMEGA window selectors.
-        */
-
-        const selectors = [
-
-            ".omegaWindow.active",
-
-            ".window.active",
-
-            ".window.focused",
-
-            ".window.activeWindow",
-
-            "[data-window-active='true']",
-
-            ".appWindow.active"
-
-        ];
+        const element =
+            document.querySelector(
+                ".window.active"
+            )
 
 
-        for (
-            const selector
-            of selectors
+            ||
+
+            document.querySelector(
+                ".window.focused"
+            );
+
+
+        if (
+            !element
         ) {
 
-            const element =
-                document.querySelector(
-                    selector
-                );
-
-
-            if (!element) {
-                continue;
-            }
-
-
-            return {
-
-                id:
-                    element.id ||
-                    null,
-
-                title:
-                    element.dataset?.title ||
-                    element.querySelector(
-                        ".windowTitle"
-                    )?.textContent?.trim() ||
-                    element.querySelector(
-                        ".windowHeader"
-                    )?.textContent?.trim() ||
-                    null
-
-            };
+            return null;
 
         }
 
 
-        return null;
+        return {
+
+            id:
+                element.id ||
+                null,
+
+            title:
+                element
+                    .querySelector(
+                        ".windowTitle"
+                    )
+                    ?.textContent
+                    ?.trim()
+                    ||
+                null
+
+        };
 
     } catch {
 
         return null;
 
     }
+
 }
 
 
 /* ==========================================================
-   SAVE CONTEXT
-========================================================== */
-
-function saveContext(context) {
-
-    state.contextHistory.push(
-        context
-    );
-
-
-    if (
-        state.contextHistory.length >
-        state.maxHistory
-    ) {
-
-        state.contextHistory.shift();
-
-    }
-
-
-    /*
-        Session-level storage only.
-
-        We deliberately do not make this
-        permanent user-account storage yet.
-    */
-
-    try {
-
-        sessionStorage.setItem(
-            "mrsmile_last_context",
-            JSON.stringify(context)
-        );
-
-    } catch (error) {
-
-        console.warn(
-            "[MR.SMILE CONTEXT] Could not save session context:",
-            error
-        );
-
-    }
-}
-
-
-/* ==========================================================
-   PUBLIC ACTION REPORTER
+   PUBLIC REPORT
 ========================================================== */
 
 export function reportMrSmileOperatorAction(
     data = {}
 ) {
 
-    return handleOperatorAction(
+    return enqueueContext(
         data
     );
+
 }
 
 
 /* ==========================================================
-   SIMPLE ACTION API
-========================================================== */
-
-export function reportAction(
-    type,
-    target = null,
-    options = {}
-) {
-
-    return reportMrSmileOperatorAction({
-
-        type,
-
-        target,
-
-        ...options
-
-    });
-}
-
-
-/* ==========================================================
-   LAST CONTEXT
+   STATUS
 ========================================================== */
 
 export function getLastMrSmileContext() {
 
     return state.currentContext;
+
 }
 
-
-/* ==========================================================
-   CONTEXT HISTORY
-========================================================== */
 
 export function getMrSmileContextHistory() {
 
     return [
-        ...state.contextHistory
+        ...state.history
     ];
 
 }
 
-
-/* ==========================================================
-   LAST N CONTEXTS
-========================================================== */
-
-export function getRecentMrSmileContexts(
-    amount = 10
-) {
-
-    const safeAmount =
-        Math.max(
-            1,
-            Math.min(
-                Number(amount) || 10,
-                state.maxHistory
-            )
-        );
-
-
-    return state.contextHistory.slice(
-        -safeAmount
-    );
-
-}
-
-
-/* ==========================================================
-   FIND CONTEXTS
-========================================================== */
-
-export function findMrSmileContexts(
-    filter = {}
-) {
-
-    return state.contextHistory.filter(
-        context => {
-
-            if (
-                filter.type &&
-                context.type !== filter.type
-            ) {
-
-                return false;
-
-            }
-
-
-            if (
-                filter.source &&
-                context.source !== filter.source
-            ) {
-
-                return false;
-
-            }
-
-
-            if (
-                filter.target &&
-                context.target !== filter.target
-            ) {
-
-                return false;
-
-            }
-
-
-            return true;
-
-        }
-    );
-
-}
-
-
-/* ==========================================================
-   CLEAR HISTORY
-========================================================== */
-
-export function clearMrSmileContextHistory() {
-
-    state.contextHistory = [];
-
-    state.currentContext = null;
-
-    try {
-
-        sessionStorage.removeItem(
-            "mrsmile_last_context"
-        );
-
-    } catch {}
-
-    trigger(
-        "mrsmile:contextHistoryCleared"
-    );
-
-}
-
-
-/* ==========================================================
-   RESET
-========================================================== */
-
-export function resetMrSmileContext() {
-
-    clearMrSmileContextHistory();
-
-    state.processing = false;
-
-    console.log(
-        "[MR.SMILE CONTEXT] Reset."
-    );
-
-}
-
-
-/* ==========================================================
-   CONTEXT STATUS
-========================================================== */
 
 export function getMrSmileContextStatus() {
 
@@ -862,16 +967,44 @@ export function getMrSmileContextStatus() {
         processing:
             state.processing,
 
-        current:
-            state.currentContext,
+        queued:
+            state.queue.length,
 
         historyLength:
-            state.contextHistory.length,
+            state.history.length,
 
-        maxHistory:
-            state.maxHistory
+        current:
+            state.currentContext
 
     };
+
+}
+
+
+/* ==========================================================
+   RESET
+========================================================== */
+
+export function clearMrSmileContextHistory() {
+
+    state.history =
+        [];
+
+    state.currentContext =
+        null;
+
+    state.queue =
+        [];
+
+}
+
+
+export function resetMrSmileContext() {
+
+    clearMrSmileContextHistory();
+
+    state.processing =
+        false;
 
 }
 
@@ -880,159 +1013,72 @@ export function getMrSmileContextStatus() {
    DEBUG API
 ========================================================== */
 
-function exposeDebugAPI() {
+function exposeDebug() {
 
     if (
-        typeof window === "undefined"
+        typeof window ===
+        "undefined"
     ) {
 
         return;
-
     }
 
 
-    if (
-        !window.MRSMILE
-    ) {
+    window.MRSMILE_CONTEXT = {
 
-        window.MRSMILE = {};
+        status:
+            getMrSmileContextStatus,
 
-    }
+        current:
+            getLastMrSmileContext,
 
+        history:
+            getMrSmileContextHistory,
 
-    window.MRSMILE.context =
-        function(
-            type,
-            target = null,
-            options = {}
-        ) {
+        report:
+            reportMrSmileOperatorAction,
 
-            console.log(
-                "[MR.SMILE DEBUG] Context test:",
-                type,
-                target,
-                options
-            );
+        clear:
+            clearMrSmileContextHistory,
 
+        reset:
+            resetMrSmileContext
 
-            return reportAction(
-                type,
-                target,
-                {
-                    ...options,
-                    reason:
-                        options.reason ||
-                        "debug_test"
-                }
-            );
-
-        };
-
-
-    window.MRSMILE.contextStatus =
-        function() {
-
-            const status =
-                getMrSmileContextStatus();
-
-
-            console.log(
-                "[MR.SMILE DEBUG] CONTEXT STATUS",
-                status
-            );
-
-
-            return status;
-
-        };
-
-
-    window.MRSMILE.contextHistory =
-        function(
-            amount = null
-        ) {
-
-            const history =
-                amount === null
-                    ? getMrSmileContextHistory()
-                    : getRecentMrSmileContexts(
-                        amount
-                    );
-
-
-            console.log(
-                "[MR.SMILE DEBUG] CONTEXT HISTORY",
-                history
-            );
-
-
-            return history;
-
-        };
-
-
-    window.MRSMILE.clearContextHistory =
-        function() {
-
-            clearMrSmileContextHistory();
-
-            console.log(
-                "[MR.SMILE DEBUG] Context history cleared."
-            );
-
-        };
-
-
-    window.MRSMILE.reportAction =
-        function(
-            data = {}
-        ) {
-
-            return reportMrSmileOperatorAction(
-                data
-            );
-
-        };
-
-
-    console.log(
-        "[MR.SMILE CONTEXT] Debug API ready."
-    );
+    };
 
 }
 
 
 /* ==========================================================
-   AUTO INITIALIZATION
+   HELPERS
 ========================================================== */
 
-if (
-    typeof window !== "undefined"
+function safe(
+    fn,
+    fallback
 ) {
 
-    /*
-        Do not initialize immediately if the
-        event system is still loading.
+    try {
 
-        The main MR.SMILE event system should
-        normally initialize this module.
-    */
+        return fn();
 
-    setTimeout(() => {
+    } catch {
 
-        try {
+        return fallback;
 
-            initMrSmileContext();
+    }
 
-        } catch (error) {
+}
 
-            console.error(
-                "[MR.SMILE CONTEXT] Auto-init failed:",
-                error
-            );
 
-        }
+function tick() {
 
-    }, 0);
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                0
+            )
+    );
 
 }
