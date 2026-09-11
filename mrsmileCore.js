@@ -123,9 +123,6 @@ if (!input) {
 }
 
 
-/*
- * Remember operator message.
- */
 
 rememberOperatorMessage(
     input
@@ -135,9 +132,6 @@ rememberOperatorMessage(
 conversationCount++;
 
 
-/*
- * Mild attention response.
- */
 
 changeBehaviorMetric(
     "attention",
@@ -145,30 +139,11 @@ changeBehaviorMetric(
 );
 
 
-/*
- * Normalize message.
- */
-
 const lower =
     normalizeText(
         input
     );
 
-
-/*
- * Detect operator language.
- *
- * Examples:
- *
- * hello  -> en
- * привет -> ru
- * привіт -> uk
- * hola -> es
- * bonjour -> fr
- *
- * MR.SMILE does not announce this.
- * He simply answers in that language.
- */
 
 const detectedLanguage =
     detectLanguage(
@@ -182,13 +157,7 @@ console.log(
 );
 
 
-/*
- * Allow the system to have
- * a little silence.
- *
- * Not every message deserves
- * an immediate reply.
- */
+
 
 if (
     shouldRemainSilent(
@@ -200,20 +169,6 @@ if (
 }
 
 
-/*
- * Determine what MR.SMILE
- * wants to say.
- *
- * The result may be:
- *
- * {
- *     intent: "greeting"
- * }
- *
- * OR an ordinary string for
- * categories that have not yet
- * been localized.
- */
 
 const decision =
     chooseResponse(
@@ -226,13 +181,6 @@ if (!decision) {
     return null;
 }
 
-
-/*
- * Localized response.
- *
- * When an intent has a language
- * bank, use it.
- */
 
 if (
     typeof decision === "object" &&
@@ -258,13 +206,6 @@ if (
 }
 
 
-/*
- * Backward compatibility.
- *
- * Existing response banks that
- * still return plain strings
- * continue to work normally.
- */
 
 return delayedResponse(
     decision
