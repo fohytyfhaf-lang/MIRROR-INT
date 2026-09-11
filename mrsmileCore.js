@@ -22,7 +22,7 @@ import {
 
 import {
     getRelationshipLevel,
-    getRelationshipState
+    getRelationshipStatus
 } from "./mrsmileRelationship.js";
 
 import {
@@ -1801,22 +1801,69 @@ function understand(text) {
 function getCurrentRelationship() {
 
     try {
-        const level = getRelationshipLevel?.();
-        const state = getRelationshipState?.();
+
+        const level =
+            getRelationshipLevel?.();
+
+        const status =
+            getRelationshipStatus?.();
 
         return {
-            level: level || "neutral",
-            state: state || null
+
+            level:
+                level ||
+                status?.level ||
+                "neutral",
+
+            state:
+                status || null,
+
+            trust:
+                Number(status?.trust) || 0,
+
+            respect:
+                Number(status?.respect) || 50,
+
+            irritation:
+                Number(status?.irritation) || 0,
+
+            score:
+                Number(status?.score) || 0
+
         };
 
-    } catch {
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE CORE] Relationship read failed:",
+            error
+        );
+
         return {
-            level: "neutral",
-            state: null
+
+            level:
+                "neutral",
+
+            state:
+                null,
+
+            trust:
+                0,
+
+            respect:
+                50,
+
+            irritation:
+                0,
+
+            score:
+                0
+
         };
+
     }
-}
 
+}
 
 /* ==========================================================
    RESPONSE SELECTION
