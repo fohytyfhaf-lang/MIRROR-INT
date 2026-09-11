@@ -36,6 +36,12 @@ import {
     getRelationshipStatus
 } from "./mrsmileRelationship.js";
 
+import {
+    initMrSmileLanguage,
+    detectLanguage,
+    getPreferredLanguage
+} from "./mrsmileLanguage.js";
+
 
 let initialized =
     false;
