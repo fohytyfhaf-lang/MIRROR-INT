@@ -1,44 +1,40 @@
 /* ==========================================================
    MR.SMILE — OMEGA FIRST CONTACT EVENTS
    ----------------------------------------------------------
-   MR.SMILE не "ломает экран".
-   Он получает контроль над OMEGA.
+   ACTIVE ARCHITECTURE:
 
-   FIRST CONTACT:
+       OMEGA
+          ↓
+       SYS_00
+          ↓
+       mrsmile:firstContact
+          ↓
+       State + Presence synchronization
+          ↓
+       MR.SMILE Appearance intrusion
+          ↓
+       OMEGA recovery
+          ↓
+       First Contact completed
 
-   NORMAL OMEGA
-        ↓
-   UNAUTHORIZED AUTHORIZATION
-        ↓
-   MR_SMILE ACCOUNT
-        ↓
-   ACCESS GRANTED
-        ↓
-   OMEGA BEGINS LOSING CONTROL
-        ↓
-   INTERFACE COLLAPSE
-        ↓
-   BLACK / DIAGNOSTICS
-        ↓
-   EYES
-        ↓
-   FACE
-        ↓
-   PLAYER INTERACTION
-        ↓
-   CURSOR OBSERVED
-        ↓
-   CURSOR CONTROL
-        ↓
-   OMEGA WINDOW
-        ↓
-   SUBTLE DISTORTION
-        ↓
-   MR.SMILE DISAPPEARS
-        ↓
-   INPUT LOST
-        ↓
-   OMEGA RESTORED
+   IMPORTANT:
+
+   Старый визуальный First Contact больше НЕ используется.
+
+   Никаких:
+   - giant face
+   - eyes
+   - black-screen takeover
+   - legacy cursor takeover
+   - старого полного collapse sequence
+
+   Визуальный First Contact полностью передан
+   mrsmileAppearance.js.
+========================================================== */
+
+
+/* ==========================================================
+   IMPORTS
 ========================================================== */
 
 import {
@@ -53,14 +49,6 @@ import {
 } from "./mrsmileTrust.js";
 
 import {
-    getMemory
-} from "./mrsmileMemory.js";
-
-import {
-    showMrSmileFirstContactFace
-} from "./mrsmileAppearance.js";
-
-import {
     revealMrSmileChat
 } from "./chats.js";
 
@@ -70,8 +58,11 @@ import {
 } from "./mrsmileProgress.js";
 
 import {
+    showMrSmileFirstContactFace
+} from "./mrsmileAppearance.js";
+
+import {
     on,
-    once,
     trigger
 } from "./eventManager.js";
 
@@ -93,10 +84,11 @@ import {
 
 
 /* ==========================================================
-   STATE
+   MODULE STATE
 ========================================================== */
 
 let running = false;
+
 let firstContactRunning = false;
 
 let sys00HandshakeArmed = false;
@@ -106,11 +98,6 @@ let integrityEventRunning = false;
 let falseRecoveryRunning = false;
 
 let firstContactTimers = [];
-
-let originalCursor = "";
-
-let controlledCursor = null;
-let cursorMouseHandler = null;
 
 
 /* ==========================================================
@@ -124,62 +111,23 @@ const AMBIENT_COOLDOWN = 45000;
 
 
 /* ==========================================================
-   OPERATOR REACTION STATE
+   LEGACY OPERATOR STATE
    ----------------------------------------------------------
-   ВАЖНО:
+   Оставлено только для совместимости со старыми событиями.
 
-   Контекстные реакции оператора теперь обрабатываются
-   через:
+   Explorer / Camera / Console / Window Manager должны
+   проходить через:
 
-       Explorer / OMEGA action
-              ↓
-       mrsmile:operatorAction
+       operatorAction
               ↓
        mrsmileContext
               ↓
        mrsmileBehavior
               ↓
        mrsmileActions
-
-   Этот модуль больше НЕ должен повторно вызывать
-   requestMrSmileBehavior() для тех же действий.
-
-   mrSmileReactionRunning сохраняется для блокировки
-   ambient-событий во время legacy/contextual процессов.
 ========================================================== */
 
 let mrSmileReactionRunning = false;
-
-
-/* ==========================================================
-   TIMING
-========================================================== */
-
-const TIMING = {
-
-    authAppear: 900,
-    authAccount: 900,
-    authPassword: 700,
-    authProcess: 1000,
-    authGranted: 900,
-
-    collapseStep: 550,
-
-    darkness: 1000,
-    diagnostics: 2100,
-
-    eyesAppear: 1700,
-    faceAppear: 2200,
-
-    playerInteraction: 2600,
-    cursorTransfer: 1800,
-
-    intrusionWindow: 1600,
-    distortion: 1200,
-
-    inputLost: 1000,
-    recovery: 2500
-};
 
 
 /* ==========================================================
@@ -191,7 +139,6 @@ export function initMrSmileEvents() {
     if (running) {
         return;
     }
-
 
     running = true;
 
@@ -231,7 +178,7 @@ export function initMrSmileEvents() {
 
 
     /* ------------------------------------------------------
-       BACKGROUND BEHAVIOUR
+       BACKGROUND LOOPS
     ------------------------------------------------------ */
 
     nightLoop();
@@ -243,13 +190,9 @@ export function initMrSmileEvents() {
 
 
     /* ------------------------------------------------------
-       MR.SMILE CORE SYSTEMS
-
-       IMPORTANT:
-       Инициализация идёт один раз.
+       CORE MR.SMILE SYSTEMS
 
        Context → Behavior → Actions
-       является основной системой реакций.
     ------------------------------------------------------ */
 
     initMrSmileIntrusionUI();
@@ -261,49 +204,37 @@ export function initMrSmileEvents() {
     initMrSmileContext();
 
 
-    /* ------------------------------------------------------
-       FIRST CONTACT
-    ------------------------------------------------------ */
+    /* ======================================================
+       FIRST CONTACT EVENT
 
-    once(
+       ВАЖНО:
+
+       Здесь используется ON, а не ONCE.
+
+       Причина:
+       resetMrSmileFirstContact() должен позволять
+       тестировать First Contact повторно в рамках
+       одной загрузки страницы.
+
+       Сам runner защищён firstContactRunning +
+       localStorage.
+    ====================================================== */
+
+    on(
         "mrsmile:firstContact",
-        () => {
+        data => {
 
-            triggerFirstContact();
+            synchronizeFirstContactState(data);
+
+            void startFirstContact(data);
 
         }
     );
 
 
-    /* ======================================================
+    /* ------------------------------------------------------
        OPERATOR — READ FILE
-
-       ВАЖНО:
-
-       Этот listener НЕ вызывает Behavior.
-
-       Раньше здесь было:
-
-           requestMrSmileBehavior(...)
-
-       Это создавало вторую реакцию одновременно
-       с новой системой Context.
-
-       Теперь здесь остаётся только Trust-логика
-       для чтения файлов.
-
-       Само действие уже проходит через:
-
-           explorer
-               ↓
-           operatorAction
-               ↓
-           mrsmileContext
-               ↓
-           behavior
-               ↓
-           actions
-    ====================================================== */
+    ------------------------------------------------------ */
 
     on(
         "mrsmile:operatorReadFile",
@@ -350,19 +281,120 @@ export function initMrSmileEvents() {
 
 
 /* ==========================================================
+   FIRST CONTACT STATE SYNCHRONIZATION
+   ----------------------------------------------------------
+   Гарантирует, что прямой вызов:
+
+       window.triggerMrSmileFirstContact()
+
+   проходит через тот же State/Presence flow, что и
+   автоматический event path.
+========================================================== */
+
+function synchronizeFirstContactState(data = null) {
+
+    /* ------------------------------------------------------
+       MASTER STATE
+    ------------------------------------------------------ */
+
+    try {
+
+        const state =
+            window.MRSMILE_STATE?.get?.();
+
+        if (
+            state &&
+            !state.firstContact &&
+            typeof window.MRSMILE_STATE?.firstContact ===
+                "function"
+        ) {
+
+            window.MRSMILE_STATE.firstContact(false);
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE] State synchronization failed:",
+            error
+        );
+    }
+
+
+    /* ------------------------------------------------------
+       PRESENCE
+    ------------------------------------------------------ */
+
+    try {
+
+        const presenceStatus =
+            window.MRSMILE_PRESENCE?.status?.();
+
+        const presenceState =
+            presenceStatus?.state;
+
+        if (
+            presenceState &&
+            !presenceState.firstContact &&
+            typeof window.MRSMILE_PRESENCE?.firstContact ===
+                "function"
+        ) {
+
+            /*
+             * false = контакт произошёл,
+             * но оператор ещё НЕ "accepted" MR.SMILE.
+             */
+
+            window.MRSMILE_PRESENCE.firstContact(false);
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE] Presence synchronization failed:",
+            error
+        );
+    }
+
+
+    /* ------------------------------------------------------
+       DEBUG EVENT
+    ------------------------------------------------------ */
+
+    trigger(
+        "mrsmile:firstContactStateSynchronized",
+        {
+            source:
+                data?.source ||
+                "event",
+
+            timestamp:
+                Date.now()
+        }
+    );
+}
+
+
+/* ==========================================================
    OPERATOR — READ FILE
    ----------------------------------------------------------
-   LEGACY TRUST HANDLER
+   TRUST ONLY
 
-   Этот обработчик больше НЕ вызывает Behavior.
+   Behavior НЕ вызывается здесь.
 
-   Он нужен только для старой механики Trust:
+   Основной путь:
 
-       обычный файл  → +1 Trust
-       entity_mrsmile → +2 Trust
-
-   Реакция MR.SMILE теперь полностью проходит
-   через mrsmileContext.
+       Explorer
+           ↓
+       operatorAction
+           ↓
+       mrsmileContext
+           ↓
+       mrsmileBehavior
+           ↓
+       mrsmileActions
 ========================================================== */
 
 function handleOperatorReadFile(data) {
@@ -371,10 +403,8 @@ function handleOperatorReadFile(data) {
         return;
     }
 
-
     const path =
         data.path || "";
-
 
     console.log(
         "[MR.SMILE] Operator read file:",
@@ -402,27 +432,11 @@ function handleOperatorReadFile(data) {
             `READ_FILE: ${path}`
         );
     }
-
-
-    /*
-     * НИЧЕГО БОЛЬШЕ ЗДЕСЬ НЕ ДЕЛАЕМ.
-     *
-     * Особенно НЕ вызываем:
-     *
-     * requestMrSmileBehavior(...)
-     *
-     * потому что Explorer уже отправляет:
-     *
-     * mrsmile:operatorAction
-     *
-     * а mrsmileContext сам передаёт его
-     * в Behavior.
-     */
 }
 
 
 /* ==========================================================
-   SYS_00
+   SYS_00 ACCEPTED
 ========================================================== */
 
 function handleSys00Accepted() {
@@ -450,7 +464,6 @@ function handleSys00Accepted() {
                 return;
             }
 
-
             triggerSys00Handshake();
 
         },
@@ -469,7 +482,6 @@ async function triggerSys00Handshake() {
         return;
     }
 
-
     sys00HandshakeTriggered = true;
 
 
@@ -480,7 +492,11 @@ async function triggerSys00Handshake() {
 
 
     trigger(
-        "mrsmile:handshakeDetected"
+        "mrsmile:handshakeDetected",
+        {
+            source: "sys00",
+            timestamp: Date.now()
+        }
     );
 
 
@@ -488,7 +504,11 @@ async function triggerSys00Handshake() {
 
 
     trigger(
-        "mrsmile:handshakeAccepted"
+        "mrsmile:handshakeAccepted",
+        {
+            source: "sys00",
+            timestamp: Date.now()
+        }
     );
 }
 
@@ -543,7 +563,9 @@ async function showHandshakeSequence() {
     await sleep(500);
 
 
-    overlay.remove();
+    if (overlay.parentNode) {
+        overlay.remove();
+    }
 
 
     await systemMessage(
@@ -569,7 +591,6 @@ function handleHandshakeAccepted() {
     if (integrityEventRunning) {
         return;
     }
-
 
     startOmegaIntegrityEvent();
 }
@@ -711,8 +732,21 @@ async function falseRecovery() {
         await sleep(3000);
 
 
+        /*
+         * ВАЖНО:
+
+         * Не вызываем startFirstContact() напрямую.
+         *
+         * Мы создаём единый официальный event path.
+         */
+
         trigger(
-            "mrsmile:firstContact"
+            "mrsmile:firstContact",
+            {
+                source: "sys00",
+                type: "first_contact",
+                timestamp: Date.now()
+            }
         );
 
     } finally {
@@ -723,19 +757,38 @@ async function falseRecovery() {
 
 
 /* ==========================================================
-   FIRST CONTACT
+   FIRST CONTACT — INTERNAL RUNNER
+   ----------------------------------------------------------
+   Единственная функция, которая реально выполняет
+   последовательность First Contact.
 ========================================================== */
-export async function triggerFirstContact() {
+
+async function startFirstContact(data = null) {
+
+    /* ------------------------------------------------------
+       DUPLICATE GUARD
+    ------------------------------------------------------ */
 
     if (firstContactRunning) {
+
+        console.log(
+            "[MR.SMILE] First Contact already running."
+        );
+
         return;
     }
+
+
+    /* ------------------------------------------------------
+       PERSISTENT COMPLETION GUARD
+    ------------------------------------------------------ */
 
     if (
         localStorage.getItem(
             "mrsmile_first_contact"
         ) === "1"
     ) {
+
         console.log(
             "[MR.SMILE] First Contact already completed."
         );
@@ -743,1447 +796,250 @@ export async function triggerFirstContact() {
         return;
     }
 
+
     firstContactRunning = true;
 
+    mrSmileReactionRunning = true;
+
     clearFirstContactTimers();
+
 
     try {
 
         console.log(
-            "[MR.SMILE] Starting new OMEGA First Contact."
+            "[MR.SMILE] Starting new OMEGA First Contact.",
+            data
         );
 
-        /*
-         * Новый First Contact полностью передаётся
-         * системе MR.SMILE Appearance.
-         *
-         * Никаких:
-         * - eyes
-         * - face
-         * - cursor takeover legacy
-         * - старого black-screen sequence
-         */
 
-       await showMrSmileFirstContactFace("presence");
+        /* --------------------------------------------------
+           EVENT
+        -------------------------------------------------- */
 
-        /*
-         * Сохраняем факт первого контакта.
-         */
+        trigger(
+            "mrsmile:firstContactStarted",
+            {
+                source:
+                    data?.source ||
+                    "event",
+
+                type:
+                    data?.type ||
+                    "system_intrusion",
+
+                timestamp:
+                    Date.now()
+            }
+        );
+
+
+        /* --------------------------------------------------
+           VISUAL / SYSTEM INTRUSION
+
+           Вся новая визуальная логика находится здесь:
+
+               mrsmileAppearance.js
+
+           Никаких legacy face/eyes phases.
+        -------------------------------------------------- */
+
+        await showMrSmileFirstContactFace(
+            "presence"
+        );
+
+
+        /* --------------------------------------------------
+           PROGRESS
+        -------------------------------------------------- */
+
+        try {
+
+            evaluateProgress();
+
+        } catch (error) {
+
+            console.warn(
+                "[MR.SMILE] Progress evaluation failed:",
+                error
+            );
+        }
+
+
+        /* --------------------------------------------------
+           CHAT REVEAL
+        -------------------------------------------------- */
+
+        try {
+
+            revealMrSmileChat();
+
+        } catch (error) {
+
+            console.warn(
+                "[MR.SMILE] Chat reveal failed:",
+                error
+            );
+        }
+
+
+        /* --------------------------------------------------
+           FIRST CONTACT CHAT MESSAGE
+        -------------------------------------------------- */
+
+        await sleep(700);
+
+
+        try {
+
+            playFirstContactMessage();
+
+        } catch (error) {
+
+            console.warn(
+                "[MR.SMILE] First contact message failed:",
+                error
+            );
+        }
+
+
+        /* --------------------------------------------------
+           PERSIST COMPLETION
+
+           Флаг ставится только ПОСЛЕ успешного завершения
+           основного intrusion sequence.
+        -------------------------------------------------- */
 
         localStorage.setItem(
             "mrsmile_first_contact",
             "1"
         );
 
-        /*
-         * Сообщаем остальным системам OMEGA,
-         * что First Contact произошёл.
-         */
+
+        /* --------------------------------------------------
+           COMPLETED EVENT
+        -------------------------------------------------- */
 
         trigger(
             "mrsmile:firstContactCompleted",
             {
-                source: "mrsmile",
-                type: "system_intrusion"
+                source:
+                    data?.source ||
+                    "mrsmile",
+
+                type:
+                    data?.type ||
+                    "system_intrusion",
+
+                timestamp:
+                    Date.now()
             }
         );
+
 
         console.log(
             "[MR.SMILE] New First Contact completed."
         );
 
+
     } catch (error) {
 
         console.error(
-            "[MR.SMILE] New First Contact failed:",
+            "[MR.SMILE] First Contact failed:",
             error
         );
+
+
+        /*
+         * ВАЖНО:
+
+         * При ошибке НЕ устанавливаем
+         * mrsmile_first_contact = 1.
+         *
+         * Благодаря этому First Contact можно
+         * повторить после устранения ошибки.
+         */
+
+        trigger(
+            "mrsmile:firstContactFailed",
+            {
+                source:
+                    data?.source ||
+                    "mrsmile",
+
+                error:
+                    error?.message ||
+                    String(error),
+
+                timestamp:
+                    Date.now()
+            }
+        );
+
 
     } finally {
 
         cleanupFirstContact();
 
+        mrSmileReactionRunning = false;
+
         firstContactRunning = false;
     }
 }
 
-/* ==========================================================
-   PHASE 01
-   UNAUTHORIZED AUTHORIZATION
-========================================================== */
-
-async function phaseAuthorization() {
-
-    document.body.classList.add(
-        "mrSmileAuthPhase"
-    );
-
-
-    const auth =
-        createMrSmileAuthorization();
-
-
-    await sleep(
-        TIMING.authAppear
-    );
-
-
-    /* ------------------------------------------------------
-       ACCOUNT
-    ------------------------------------------------------ */
-
-    const account =
-        auth.querySelector(
-            "[data-mrsmile-account]"
-        );
-
-
-    await typeIntoElement(
-        account,
-        "MR_SMILE",
-        115
-    );
-
-
-    await sleep(450);
-
-
-    /* ------------------------------------------------------
-       PASSWORD
-    ------------------------------------------------------ */
-
-    const password =
-        auth.querySelector(
-            "[data-mrsmile-password]"
-        );
-
-
-    await typeIntoElement(
-        password,
-        "••••••••",
-        120
-    );
-
-
-    await sleep(
-        TIMING.authProcess
-    );
-
-
-    /* ------------------------------------------------------
-       AUTHORIZATION
-    ------------------------------------------------------ */
-
-    const status =
-        auth.querySelector(
-            "[data-mrsmile-status]"
-        );
-
-
-    status.textContent =
-        "AUTHORIZING...";
-
-
-    await sleep(700);
-
-
-    status.textContent =
-        "AUTHENTICATION SUCCESSFUL";
-
-
-    status.classList.add(
-        "success"
-    );
-
-
-    await sleep(450);
-
-
-    status.textContent =
-        "ACCESS GRANTED";
-
-
-    await sleep(
-        TIMING.authGranted
-    );
-
-
-    /* ------------------------------------------------------
-       ACCOUNT OWNER
-    ------------------------------------------------------ */
-
-    const warning =
-        auth.querySelector(
-            "[data-mrsmile-warning]"
-        );
-
-
-    warning.textContent =
-        "ACCOUNT OWNER: UNKNOWN";
-
-
-    warning.classList.add(
-        "warning"
-    );
-
-
-    await sleep(1300);
-
-
-    document.body.classList.add(
-        "mrSmileSystemTaken"
-    );
-
-
-    await sleep(700);
-}
-
 
 /* ==========================================================
-   AUTHORIZATION UI
-========================================================== */
+   PUBLIC FIRST CONTACT TRIGGER
+   ----------------------------------------------------------
+   ВАЖНО:
 
-function createMrSmileAuthorization() {
+   Это НЕ запускает runner напрямую.
 
-    const old =
-        document.querySelector(
-            "#mrSmileAuthorization"
-        );
+   Он создаёт событие.
 
+   Поэтому:
 
-    if (old) {
-        old.remove();
-    }
+       window.triggerMrSmileFirstContact()
 
+   и:
 
-    const auth =
-        document.createElement("div");
+       trigger("mrsmile:firstContact")
 
-
-    auth.id =
-        "mrSmileAuthorization";
-
-
-    auth.className =
-        "mrSmileAuthorization";
-
-
-    auth.innerHTML = `
-
-        <div class="mrSmileAuthorizationHeader">
-
-            <span>
-                OMEGA SECURE AUTHENTICATION
-            </span>
-
-            <span class="mrSmileAuthCode">
-                AUTH-REMOTE
-            </span>
-
-        </div>
-
-
-        <div class="mrSmileAuthorizationBody">
-
-            <div class="mrSmileAuthLogo">
-                OMEGA
-            </div>
-
-
-            <div class="mrSmileAuthField">
-
-                <label>
-                    ACCOUNT
-                </label>
-
-                <div
-                    class="mrSmileAuthInput"
-                    data-mrsmile-account
-                ></div>
-
-            </div>
-
-
-            <div class="mrSmileAuthField">
-
-                <label>
-                    PASSWORD
-                </label>
-
-                <div
-                    class="mrSmileAuthInput password"
-                    data-mrsmile-password
-                ></div>
-
-            </div>
-
-
-            <div
-                class="mrSmileAuthStatus"
-                data-mrsmile-status
-            >
-                WAITING...
-            </div>
-
-
-            <div
-                class="mrSmileAuthWarning"
-                data-mrsmile-warning
-            >
-                AUTHORIZATION REQUEST RECEIVED
-            </div>
-
-        </div>
-    `;
-
-
-    document.body.appendChild(
-        auth
-    );
-
-
-    return auth;
-}
-
-
-/* ==========================================================
-   PHASE 02
-   OMEGA COLLAPSE
-========================================================== */
-
-async function phaseOmegaCollapse() {
-
-    document.body.classList.add(
-        "mrSmileCollapsePhase"
-    );
-
-
-    const targets = [
-
-        "#notificationArea",
-        "#icons",
-        ".desktopWatermark",
-        "#sidebar",
-        "#topBar",
-        "#desktopBackground"
-
-    ];
-
-
-    for (const selector of targets) {
-
-        const elements =
-            document.querySelectorAll(
-                selector
-            );
-
-
-        if (!elements.length) {
-            continue;
-        }
-
-
-        elements.forEach(
-            element => {
-
-                element.classList.add(
-                    "mrSmileSystemDisappearing"
-                );
-
-            }
-        );
-
-
-        await sleep(
-            TIMING.collapseStep
-        );
-    }
-
-
-    /* ------------------------------------------------------
-       WORKSPACE
-    ------------------------------------------------------ */
-
-    const workspace =
-        document.querySelector(
-            "#workspace"
-        );
-
-
-    if (workspace) {
-
-        workspace.classList.add(
-            "mrSmileSystemDisappearing"
-        );
-
-
-        await sleep(
-            TIMING.collapseStep
-        );
-    }
-
-
-    /* ------------------------------------------------------
-       WINDOWS
-    ------------------------------------------------------ */
-
-    const windows =
-        document.querySelectorAll(
-            ".window"
-        );
-
-
-    for (const windowElement of windows) {
-
-        if (
-            windowElement.id ===
-            "mrSmileAuthorization"
-        ) {
-            continue;
-        }
-
-
-        windowElement.classList.add(
-            "mrSmileSystemDisappearing"
-        );
-
-
-        await sleep(300);
-    }
-
-
-    await sleep(700);
-}
-
-
-/* ==========================================================
-   PHASE 03
-   SYSTEM DARKNESS
-========================================================== */
-
-async function phaseSystemDarkness() {
-
-    document.body.classList.add(
-        "mrSmileSystemDarkness"
-    );
-
-
-    await sleep(
-        TIMING.darkness
-    );
-
-
-    const auth =
-        document.querySelector(
-            "#mrSmileAuthorization"
-        );
-
-
-    if (auth) {
-
-        auth.classList.add(
-            "mrSmileSystemDisappearing"
-        );
-
-
-        await sleep(850);
-
-
-        auth.remove();
-    }
-
-
-    await sleep(500);
-}
-
-
-/* ==========================================================
-   PHASE 04
-   DIAGNOSTICS
-========================================================== */
-
-async function phaseDiagnostics() {
-
-    const diagnostics =
-        createDiagnostics();
-
-
-    document.body.appendChild(
-        diagnostics
-    );
-
-
-    const lines = [
-
-        "OMEGA CORE",
-        "--------------------------------",
-        "",
-        "DISPLAY............. OK",
-        "INPUT............... OK",
-        "NETWORK............. OK",
-        "AUTH................ UNKNOWN",
-        "",
-        "PROCESS............. UNKNOWN",
-        "SOURCE.............. UNKNOWN",
-        "",
-        "SYSTEM CONTROL...... LOST",
-        "",
-        "OBSERVER............"
-
-    ];
-
-
-    for (const line of lines) {
-
-        const row =
-            document.createElement("div");
-
-
-        row.textContent =
-            line;
-
-
-        diagnostics.appendChild(
-            row
-        );
-
-
-        await sleep(90);
-    }
-
-
-    await sleep(550);
-
-
-    const present =
-        document.createElement("div");
-
-
-    present.textContent =
-        "PRESENT";
-
-
-    present.className =
-        "mrSmileDiagnosticPresent";
-
-
-    diagnostics.appendChild(
-        present
-    );
-
-
-    await sleep(
-        TIMING.diagnostics
-    );
-}
-
-
-/* ==========================================================
-   DIAGNOSTICS
-========================================================== */
-
-function createDiagnostics() {
-
-    const diagnostics =
-        document.createElement("div");
-
-
-    diagnostics.id =
-        "mrSmileDiagnostics";
-
-
-    diagnostics.className =
-        "mrSmileDiagnostics";
-
-
-    return diagnostics;
-}
-
-
-/* ==========================================================
-   PHASE 05
-   EYES
-========================================================== */
-
-async function phaseEyes() {
-
-    document.body.classList.add(
-        "mrSmileEyesPhase"
-    );
-
-
-    await sleep(400);
-
-
-    await showMrSmileFirstContactFace(
-        "presence"
-    );
-
-
-    await sleep(
-        TIMING.eyesAppear
-    );
-}
-
-
-/* ==========================================================
-   PHASE 06
-   FACE
-========================================================== */
-
-async function phaseFace() {
-
-    document.body.classList.add(
-        "mrSmileFacePhase"
-    );
-
-
-    await sleep(
-        TIMING.faceAppear
-    );
-}
-
-
-/* ==========================================================
-   PHASE 07
-   PLAYER INTERACTION
-========================================================== */
-
-async function phasePlayerInteraction() {
-
-    document.body.classList.add(
-        "mrSmileInteractionPhase"
-    );
-
-
-    /*
-     * ВАЖНО:
-     *
-     * Здесь интерфейс НЕ блокируется.
-     *
-     * Игрок действительно может:
-     *
-     * - двигать мышью;
-     * - нажимать кнопки;
-     * - открывать окна;
-     * - пытаться восстановить OMEGA.
-     *
-     * MR.SMILE пока только наблюдает.
-     */
-
-
-    await sleep(
-        TIMING.playerInteraction
-    );
-}
-
-
-/* ==========================================================
-   PHASE 08
-   CURSOR TAKEOVER
-========================================================== */
-
-async function phaseCursorTakeover() {
-
-    document.body.classList.add(
-        "mrSmileCursorTransfer"
-    );
-
-
-    await observeCursor();
-
-
-    await sleep(500);
-
-
-    await transferCursorControl();
-
-
-    await sleep(
-        TIMING.cursorTransfer
-    );
-}
-
-
-/* ==========================================================
-   CURSOR OBSERVATION
-========================================================== */
-
-async function observeCursor() {
-
-    const face =
-        document.querySelector(
-            ".mrSmileFace"
-        );
-
-
-    if (!face) {
-
-        await sleep(700);
-
-        return;
-    }
-
-
-    face.classList.add(
-        "mrSmileCursorNoticed"
-    );
-
-
-    await sleep(900);
-
-
-    face.classList.remove(
-        "mrSmileCursorNoticed"
-    );
-}
-
-
-/* ==========================================================
-   CURSOR CONTROL
-========================================================== */
-
-async function transferCursorControl() {
-
-    createControlledCursor();
-
-
-    document.body.classList.add(
-        "mrSmileCursorObserved"
-    );
-
-
-    await sleep(700);
-
-
-    originalCursor =
-        document.body.style.cursor || "";
-
-
-    document.body.style.cursor =
-        "none";
-
-
-    document.body.classList.add(
-        "mrSmileCursorControlled"
-    );
-
-
-    await animateControlledCursor();
-
-
-    await sleep(350);
-}
-
-
-/* ==========================================================
-   CREATE CONTROLLED CURSOR
-========================================================== */
-
-function createControlledCursor() {
-
-    if (controlledCursor) {
-        controlledCursor.remove();
-    }
-
-
-    controlledCursor =
-        document.createElement("div");
-
-
-    controlledCursor.id =
-        "mrSmileControlledCursor";
-
-
-    controlledCursor.className =
-        "mrSmileControlledCursor";
-
-
-    controlledCursor.innerHTML = `
-
-        <div class="mrCursorArrow"></div>
-
-        <div class="mrCursorCore"></div>
-
-    `;
-
-
-    document.body.appendChild(
-        controlledCursor
-    );
-
-
-    cursorMouseHandler =
-        event => {
-
-            if (
-                !document.body.classList.contains(
-                    "mrSmileCursorControlled"
-                )
-            ) {
-
-                controlledCursor.style.left =
-                    `${event.clientX}px`;
-
-                controlledCursor.style.top =
-                    `${event.clientY}px`;
-            }
-        };
-
-
-    document.addEventListener(
-        "mousemove",
-        cursorMouseHandler,
-        true
-    );
-}
-
-
-/* ==========================================================
-   CONTROLLED CURSOR MOVEMENT
-========================================================== */
-
-async function animateControlledCursor() {
-
-    if (!controlledCursor) {
-        return;
-    }
-
-
-    const startX =
-        window.innerWidth * 0.5;
-
-
-    const startY =
-        window.innerHeight * 0.55;
-
-
-    moveControlledCursor(
-        startX,
-        startY
-    );
-
-
-    await sleep(500);
-
-
-    moveControlledCursor(
-        window.innerWidth * 0.38,
-        window.innerHeight * 0.48
-    );
-
-
-    await sleep(650);
-
-
-    moveControlledCursor(
-        window.innerWidth * 0.62,
-        window.innerHeight * 0.48
-    );
-
-
-    await sleep(650);
-
-
-    moveControlledCursor(
-        window.innerWidth * 0.5,
-        window.innerHeight * 0.5
-    );
-
-
-    await sleep(600);
-}
-
-
-/* ==========================================================
-   MOVE CONTROLLED CURSOR
-========================================================== */
-
-function moveControlledCursor(
-    x,
-    y
-) {
-
-    if (!controlledCursor) {
-        return;
-    }
-
-
-    controlledCursor.style.left =
-        `${x}px`;
-
-
-    controlledCursor.style.top =
-        `${y}px`;
-}
-
-
-/* ==========================================================
-   PHASE 09
-   OMEGA INTRUSION
-========================================================== */
-
-async function phaseOmegaIntrusion() {
-
-    document.body.classList.add(
-        "mrSmileIntrusionPhase"
-    );
-
-
-    await sleep(450);
-
-
-    const target =
-        createIntrusionWindow();
-
-
-    document.body.appendChild(
-        target
-    );
-
-
-    await sleep(
-        TIMING.intrusionWindow
-    );
-
-
-    document.body.classList.add(
-        "mrSmileGeometryDistortion"
-    );
-
-
-    await sleep(
-        TIMING.distortion
-    );
-
-
-    document.body.classList.remove(
-        "mrSmileGeometryDistortion"
-    );
-
-
-    if (controlledCursor) {
-
-        controlledCursor.classList.add(
-            "mrSmileCursorClick"
-        );
-
-
-        await sleep(180);
-
-
-        controlledCursor.classList.remove(
-            "mrSmileCursorClick"
-        );
-    }
-
-
-    await sleep(450);
-
-
-    target.classList.add(
-        "mrSmileIntrusionClosing"
-    );
-
-
-    await sleep(650);
-
-
-    target.remove();
-}
-
-
-/* ==========================================================
-   INTRUSION WINDOW
-========================================================== */
-
-function createIntrusionWindow() {
-
-    const windowElement =
-        document.createElement("div");
-
-
-    windowElement.className =
-        "window mrSmileIntrusionWindow";
-
-
-    windowElement.innerHTML = `
-
-        <div class="windowHeader">
-
-            <div class="windowTitle">
-
-                <span class="windowIcon">
-                    ▣
-                </span>
-
-                SYSTEM CONSOLE
-
-            </div>
-
-
-            <div class="windowControls">
-
-                <button
-                    type="button"
-                    disabled
-                >
-                    —
-                </button>
-
-                <button
-                    type="button"
-                    disabled
-                >
-                    ×
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="windowBody">
-
-            <div class="mrSmileIntrusionContent">
-
-                <div>
-                    OMEGA SYSTEM CONSOLE
-                </div>
-
-                <div>
-                    INPUT CHANNEL: LOCAL
-                </div>
-
-                <div>
-                    RESPONSE: DELAYED
-                </div>
-
-                <div>
-                    SESSION: SYS_00
-                </div>
-
-                <div>
-                    PROCESS: UNKNOWN
-                </div>
-
-                <div>
-                    CONTROL OWNER: UNKNOWN
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="windowStatus">
-
-            CONNECTION: ACTIVE
-
-        </div>
-
-    `;
-
-
-    windowElement.style.left =
-        "50%";
-
-
-    windowElement.style.top =
-        "50%";
-
-
-    windowElement.style.transform =
-        "translate(-50%, -50%)";
-
-
-    windowElement.classList.add(
-        "mrSmileIntrusionTarget"
-    );
-
-
-    return windowElement;
-}
-
-
-/* ==========================================================
-   PHASE 10
-   RELEASE
-========================================================== */
-
-async function phaseRelease() {
-
-    document.body.classList.add(
-        "mrSmileReleasePhase"
-    );
-
-
-    await sleep(500);
-
-
-    if (controlledCursor) {
-
-        controlledCursor.classList.add(
-            "mrSmileCursorLost"
-        );
-    }
-
-
-    await sleep(
-        TIMING.inputLost
-    );
-
-
-    await releaseCursorControl();
-
-
-    await sleep(
-        TIMING.recovery
-    );
-}
-
-
-/* ==========================================================
-   RELEASE CURSOR
-========================================================== */
-
-async function releaseCursorControl() {
-
-    document.body.classList.remove(
-        "mrSmileCursorControlled"
-    );
-
-
-    document.body.classList.remove(
-        "mrSmileCursorObserved"
-    );
-
-
-    document.body.style.cursor =
-        originalCursor;
-
-
-    if (cursorMouseHandler) {
-
-        document.removeEventListener(
-            "mousemove",
-            cursorMouseHandler,
-            true
-        );
-
-
-        cursorMouseHandler = null;
-    }
-
-
-    if (controlledCursor) {
-
-        controlledCursor.classList.add(
-            "mrSmileCursorRelease"
-        );
-
-
-        await sleep(500);
-
-
-        controlledCursor.remove();
-
-
-        controlledCursor = null;
-    }
-}
-
-
-/* ==========================================================
-   FINISH
-========================================================== */
-
-async function finishFirstContact() {
-
-    restoreOmegaInterface();
-
-
-    await sleep(1000);
-
-
-    localStorage.setItem(
-        "mrsmile_first_contact",
-        "1"
-    );
-
-
-    try {
-
-        evaluateProgress();
-
-    } catch (error) {
-
-        console.warn(
-            "[MR.SMILE] Progress evaluation failed:",
-            error
-        );
-    }
-
-
-    await sleep(1500);
-
-
-    try {
-
-        revealMrSmileChat();
-
-    } catch (error) {
-
-        console.warn(
-            "[MR.SMILE] Chat reveal failed:",
-            error
-        );
-    }
-
-
-    await sleep(1000);
-
-
-    try {
-
-        playFirstContactMessage();
-
-    } catch (error) {
-
-        console.warn(
-            "[MR.SMILE] First contact message failed:",
-            error
-        );
-    }
-
-
-    await sleep(1300);
-
-
-    createObserverTrace();
-
-
-    await sleep(2500);
-
-
-    removeObserverTrace();
-}
-
-
-/* ==========================================================
-   RESTORE OMEGA
-========================================================== */
-
-function restoreOmegaInterface() {
-
-    const disappearing =
-        document.querySelectorAll(
-            ".mrSmileSystemDisappearing"
-        );
-
-
-    disappearing.forEach(
-        element => {
-
-            element.classList.remove(
-                "mrSmileSystemDisappearing"
-            );
-
-
-            element.style.removeProperty(
-                "opacity"
-            );
-
-
-            element.style.removeProperty(
-                "visibility"
-            );
-
-
-            element.style.removeProperty(
-                "transform"
-            );
-
-        }
-    );
-
-
-    document.body.classList.remove(
-        "mrSmileSystemTaken"
-    );
-
-
-    document.body.classList.remove(
-        "mrSmileSystemDarkness"
-    );
-}
-
-
-/* ==========================================================
-   OBSERVER TRACE
-========================================================== */
-
-function createObserverTrace() {
-
-    if (
-        document.querySelector(
-            "#mrSmileObserverTrace"
-        )
-    ) {
-        return;
-    }
-
-
-    const trace =
-        document.createElement("div");
-
-
-    trace.id =
-        "mrSmileObserverTrace";
-
-
-    trace.className =
-        "mrSmileObserverTrace";
-
-
-    trace.textContent =
-        "OBSERVER: 01";
-
-
-    document.body.appendChild(
-        trace
-    );
-
-
-    requestAnimationFrame(
-        () => {
-
-            trace.classList.add(
-                "visible"
-            );
-
-        }
-    );
-}
-
-
-function removeObserverTrace() {
-
-    const trace =
-        document.querySelector(
-            "#mrSmileObserverTrace"
-        );
-
-
-    if (!trace) {
-        return;
-    }
-
-
-    trace.classList.add(
-        "fade"
-    );
-
-
-    scheduleFirstContactTimer(
-        () => {
-
-            trace.remove();
-
-        },
-        700
-    );
-}
-
-
-/* ==========================================================
-   CLEANUP
-========================================================== */
-
-function cleanupFirstContact() {
-
-    const classes = [
-
-        "mrSmileFirstContact",
-        "mrSmileAuthPhase",
-        "mrSmileSystemTaken",
-        "mrSmileCollapsePhase",
-        "mrSmileSystemDarkness",
-        "mrSmileEyesPhase",
-        "mrSmileFacePhase",
-        "mrSmileInteractionPhase",
-        "mrSmileCursorTransfer",
-        "mrSmileCursorObserved",
-        "mrSmileCursorControlled",
-        "mrSmileIntrusionPhase",
-        "mrSmileGeometryDistortion",
-        "mrSmileReleasePhase"
-
-    ];
-
-
-    classes.forEach(
-        className => {
-
-            document.body.classList.remove(
-                className
-            );
-
-        }
-    );
-
-
-    releaseCursorControl();
-
-
-    const auth =
-        document.querySelector(
-            "#mrSmileAuthorization"
-        );
-
-
-    if (auth) {
-        auth.remove();
-    }
-
-
-    const diagnostics =
-        document.querySelector(
-            "#mrSmileDiagnostics"
-        );
-
-
-    if (diagnostics) {
-        diagnostics.remove();
-    }
-
-
-    const intrusion =
-        document.querySelector(
-            ".mrSmileIntrusionWindow"
-        );
-
-
-    if (intrusion) {
-        intrusion.remove();
-    }
-
-
-    restoreOmegaInterface();
-
-
-    clearFirstContactTimers();
-}
-
-
-/* ==========================================================
-   PUBLIC TRIGGER
+   используют один и тот же путь.
 ========================================================== */
 
 export function triggerMrSmileFirstContact() {
 
+    if (firstContactRunning) {
+
+        console.log(
+            "[MR.SMILE] First Contact is already running."
+        );
+
+        return;
+    }
+
+
+    if (
+        localStorage.getItem(
+            "mrsmile_first_contact"
+        ) === "1"
+    ) {
+
+        console.log(
+            "[MR.SMILE] First Contact already completed."
+        );
+
+        return;
+    }
+
+
     trigger(
-        "mrsmile:firstContact"
+        "mrsmile:firstContact",
+        {
+            source: "manual",
+            type: "debug",
+            timestamp: Date.now()
+        }
     );
 }
 
@@ -2205,6 +1061,7 @@ export function resetMrSmileFirstContact() {
 
 
     sys00HandshakeArmed = false;
+
     sys00HandshakeTriggered = false;
 
 
@@ -2214,17 +1071,20 @@ export function resetMrSmileFirstContact() {
     console.log(
         "[MR.SMILE] First contact state reset."
     );
+
+
+    trigger(
+        "mrsmile:firstContactReset",
+        {
+            source: "debug",
+            timestamp: Date.now()
+        }
+    );
 }
 
 
 /* ==========================================================
    AMBIENT EVENTS
-   ----------------------------------------------------------
-   Небольшие появления MR.SMILE после FIRST CONTACT.
-
-   Эти события не должны ломать OMEGA.
-
-   Они создают ощущение постоянного присутствия.
 ========================================================== */
 
 function initAmbientEvents() {
@@ -2236,7 +1096,6 @@ function initAmbientEvents() {
             runAmbientEvent(
                 ambientNightEvent
             );
-
         }
     );
 
@@ -2248,7 +1107,6 @@ function initAmbientEvents() {
             runAmbientEvent(
                 ambientGlitchEvent
             );
-
         }
     );
 
@@ -2260,7 +1118,6 @@ function initAmbientEvents() {
             runAmbientEvent(
                 ambientIdleEvent
             );
-
         }
     );
 
@@ -2272,7 +1129,6 @@ function initAmbientEvents() {
             runAmbientEvent(
                 ambientObservationEvent
             );
-
         }
     );
 
@@ -2309,6 +1165,7 @@ async function runAmbientEvent(
             "mrsmile_first_contact"
         ) !== "1"
     ) {
+
         return;
     }
 
@@ -2323,7 +1180,7 @@ async function runAmbientEvent(
 
 
     /* ------------------------------------------------------
-       NO OVERLAPPING EVENTS
+       NO OVERLAPPING AMBIENT EVENTS
     ------------------------------------------------------ */
 
     if (ambientEventRunning) {
@@ -2343,11 +1200,13 @@ async function runAmbientEvent(
         now - lastAmbientEventTime <
         AMBIENT_COOLDOWN
     ) {
+
         return;
     }
 
 
     ambientEventRunning = true;
+
     lastAmbientEventTime = now;
 
 
@@ -2370,15 +1229,7 @@ async function runAmbientEvent(
 
 
 /* ==========================================================
-   OPERATOR REACTION RUNNER
-   ----------------------------------------------------------
-   LEGACY COMPATIBILITY
-
-   Эта функция больше не используется для Explorer
-   после перехода на mrsmileContext.
-
-   Оставлена здесь для совместимости с другими
-   старыми событиями, если они используют её.
+   LEGACY OPERATOR REACTION RUNNER
 ========================================================== */
 
 async function runMrSmileOperatorReaction(
@@ -2389,35 +1240,25 @@ async function runMrSmileOperatorReaction(
         typeof reactionFunction !==
         "function"
     ) {
+
         return;
     }
 
-
-    /* ------------------------------------------------------
-       FIRST CONTACT
-    ------------------------------------------------------ */
 
     if (firstContactRunning) {
         return;
     }
 
 
-    /* ------------------------------------------------------
-       ONLY AFTER FIRST CONTACT
-    ------------------------------------------------------ */
-
     if (
         localStorage.getItem(
             "mrsmile_first_contact"
         ) !== "1"
     ) {
+
         return;
     }
 
-
-    /* ------------------------------------------------------
-       NO OVERLAPPING OPERATOR REACTIONS
-    ------------------------------------------------------ */
 
     if (mrSmileReactionRunning) {
         return;
@@ -2517,7 +1358,6 @@ async function ambientObservationEvent() {
             trace.classList.add(
                 "visible"
             );
-
         }
     );
 
@@ -2805,6 +1645,7 @@ function safeTrust() {
             typeof trust ===
             "number"
         ) {
+
             return trust;
         }
 
@@ -2963,7 +1804,6 @@ function clearFirstContactTimers() {
             clearTimeout(
                 timer
             );
-
         }
     );
 
@@ -3065,6 +1905,52 @@ export function mrSmileNightEvent() {
 
 
 /* ==========================================================
-   END
+   DEBUG STATUS
 ========================================================== */
-window.triggerMrSmileFirstContact = triggerFirstContact;
+
+export function getMrSmileFirstContactStatus() {
+
+    return {
+
+        running,
+
+        firstContactRunning,
+
+        completed:
+            localStorage.getItem(
+                "mrsmile_first_contact"
+            ) === "1",
+
+        handshakeTriggered:
+            sys00HandshakeTriggered,
+
+        integrityEventRunning,
+
+        ambientEventRunning
+    };
+}
+
+
+/* ==========================================================
+   GLOBAL DEBUG API
+========================================================== */
+
+window.triggerMrSmileFirstContact =
+    triggerMrSmileFirstContact;
+
+
+window.resetMrSmileFirstContact =
+    resetMrSmileFirstContact;
+
+
+window.MRSMILE_FIRST_CONTACT = {
+
+    status:
+        getMrSmileFirstContactStatus,
+
+    start:
+        triggerMrSmileFirstContact,
+
+    reset:
+        resetMrSmileFirstContact
+};
