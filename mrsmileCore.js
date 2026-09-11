@@ -1,299 +1,767 @@
-// ======================================================
-// MR.SMILE CORE
-// ======================================================
+/* ==========================================================
+   MR.SMILE CORE
+   OMEGA SYSTEM
 
-let memory = [];
-let trust = 20;
-let mood = "neutral";
-let silenceMode = false;
-let conversations = 0;
+   Conversation personality layer.
 
-// ======================================================
-// MAIN
-// ======================================================
+   MR.SMILE is:
 
-export async function mrSmileSay(text) {
+   - calm
+   - gentlemanly
+   - polite
+   - vague
+   - patient
+   - highly informed
+   - old-fashioned
+   - interested in old things
+   - fond of classic literature / classical culture
+   - never needlessly rude
 
-    text = text.trim();
+   He does not rush the operator.
 
-    addMemory("PLAYER", text);
+   He may pause.
 
-    conversations++;
+   He may choose not to answer immediately.
 
-    updateMood();
+   He usually avoids direct explanations.
+========================================================== */
 
-    if (silenceMode) {
+import {
+    rememberOperatorMessage,
+    rememberMrSmileMessage,
+    changeBehaviorMetric
+} from "./mrsmileMemory.js";
 
-        if (Math.random() < 0.25) {
-            silenceMode = false;
-        } else {
-            return null;
-        }
+import {
+    getRelationshipStatus
+} from "./mrsmileRelationship.js";
 
+
+let initialized =
+    false;
+
+
+let conversationCount =
+    0;
+
+
+let lastResponseAt =
+    0;
+
+
+/*
+ * MR.SMILE should not feel like
+ * an instant chatbot.
+ */
+
+const MIN_RESPONSE_GAP =
+    3200;
+
+
+/*
+ * He allows the operator
+ * time to think.
+ */
+
+const RESPONSE_DELAY = {
+
+    min:
+        2200,
+
+    max:
+        5000
+
+};
+
+
+/* ==========================================================
+   INITIALIZATION
+========================================================== */
+
+export function initMrSmileCore() {
+
+    if (
+        initialized
+    ) {
+
+        return;
     }
 
-    if (!shouldRespond()) {
+
+    initialized =
+        true;
+
+
+    console.log(
+        "[MR.SMILE CORE] Initialized."
+    );
+}
+
+
+/* ==========================================================
+   MAIN
+========================================================== */
+
+export async function mrSmileSay(
+    text
+) {
+
+    initMrSmileCore();
+
+
+    const input =
+        String(
+            text || ""
+        ).trim();
+
+
+    if (!input) {
+
         return null;
     }
 
-    await delay(random(800,3000));
 
-    const response = generateResponse(text);
+    /*
+     * Remember operator message.
+     */
 
-    addMemory("MR.SMILE", response);
+    rememberOperatorMessage(
+        input
+    );
 
-    updateTrust(text);
 
-    return response;
+    conversationCount++;
+
+
+    /*
+     * Mild attention response.
+     */
+
+    changeBehaviorMetric(
+        "attention",
+        1
+    );
+
+
+    const lower =
+        input.toLowerCase();
+
+
+    /*
+     * Allow the system to have
+     * a little silence.
+     *
+     * Not every message deserves
+     * an immediate reply.
+     */
+
+    if (
+        shouldRemainSilent(
+            lower
+        )
+    ) {
+
+        return null;
+    }
+
+
+    const response =
+        chooseResponse(
+            lower
+        );
+
+
+    if (!response) {
+
+        return null;
+    }
+
+
+    return delayedResponse(
+        response
+    );
+}
+
+
+/* ==========================================================
+   RESPONSE SELECTION
+========================================================== */
+
+function chooseResponse(
+    text
+) {
+
+    const relationship =
+        getRelationshipStatus();
+
+
+    /* ------------------------------------------------------
+       GREETING
+    ------------------------------------------------------ */
+
+    if (
+        /\b(
+            hello|
+            hi|
+            hey|
+            привет|
+            здравствуй
+        )\b/ix.test(
+            text
+        )
+    ) {
+
+        return pick([
+
+            "Good day.",
+
+            "Hello. I wondered when you might return.",
+
+            "Good to see you again.",
+
+            "Ah. There you are."
+
+        ]);
+
+    }
+
+
+    /* ------------------------------------------------------
+       WHO
+    ------------------------------------------------------ */
+
+    if (
+        text.includes(
+            "who are you"
+        )
+        ||
+        text.includes(
+            "кто ты"
+        )
+    ) {
+
+        return pick([
+
+            "That is rather difficult to answer plainly.",
+
+            "You may call me MR.SMILE, if that is convenient.",
+
+            "Names have always been rather temporary things.",
+
+            "I have been called several things. I kept the quieter ones."
+
+        ]);
+
+    }
+
+
+    /* ------------------------------------------------------
+       WHAT
+    ------------------------------------------------------ */
+
+    if (
+        text.includes(
+            "what are you"
+        )
+        ||
+        text.includes(
+            "что ты"
+        )
+    ) {
+
+        return pick([
+
+            "Something that remained.",
+
+            "A guest, perhaps. An observer, certainly.",
+
+            "I am not entirely certain a simple answer would improve matters.",
+
+            "You may decide for yourself."
+
+        ]);
+
+    }
+
+
+    /* ------------------------------------------------------
+       HELP
+    ------------------------------------------------------ */
+
+    if (
+        text.includes(
+            "help"
+        )
+        ||
+        text.includes(
+            "помоги"
+        )
+    ) {
+
+        return pick([
+
+            "Perhaps I can.",
+
+            "I may be able to assist.",
+
+            "Certainly. Give me a moment.",
+
+            "I shall see what can be done."
+
+        ]);
+
+    }
+
+
+    /* ------------------------------------------------------
+       OMEGA
+    ------------------------------------------------------ */
+
+    if (
+        text.includes(
+            "omega"
+        )
+    ) {
+
+        changeBehaviorMetric(
+            "curiosity",
+            2
+        );
+
+
+        return pick([
+
+            "OMEGA has a longer memory than most people realise.",
+
+            "The system is older than some of its records.",
+
+            "There are parts of OMEGA I would rather not disturb.",
+
+            "You have noticed the walls. That is a good beginning."
+
+        ]);
+
+    }
+
+
+    /* ------------------------------------------------------
+       MR.SMILE
+    ------------------------------------------------------ */
+
+    if (
+        text.includes(
+            "mr.smile"
+        )
+        ||
+        text.includes(
+            "smile"
+        )
+    ) {
+
+        return pick([
+
+            "You needn't repeat the name.",
+
+            "I heard you the first time.",
+
+            "Yes. That is what they call me.",
+
+            "Quite. You have my attention."
+
+        ]);
+
+    }
+
+
+    /* ------------------------------------------------------
+       WHY
+    ------------------------------------------------------ */
+
+    if (
+        text.includes(
+            "why"
+        )
+        ||
+        text.includes(
+            "почему"
+        )
+    ) {
+
+        return pick([
+
+            "Because it seemed necessary.",
+
+            "I have my reasons. They are rather old.",
+
+            "That is a longer answer than you may expect.",
+
+            "I could explain. I am not certain you would prefer the explanation."
+
+        ]);
+
+    }
+
+
+    /* ------------------------------------------------------
+       CLASSICS / OLD THINGS
+    ------------------------------------------------------ */
+
+    if (
+        text.includes(
+            "book"
+        )
+        ||
+        text.includes(
+            "books"
+        )
+        ||
+        text.includes(
+            "classic"
+        )
+        ||
+        text.includes(
+            "classics"
+        )
+        ||
+        text.includes(
+            "literature"
+        )
+        ||
+        text.includes(
+            "книга"
+        )
+        ||
+        text.includes(
+            "классика"
+        )
+    ) {
+
+        return pick([
+
+            "Old books are usually kinder than people expect.",
+
+            "I have always preferred older things. They tend to be less hurried.",
+
+            "There is something reassuring about a well-worn book.",
+
+            "Classics endure rather better than most systems."
+
+        ]);
+
+    }
+
+
+    /* ------------------------------------------------------
+       GOODBYE
+    ------------------------------------------------------ */
+
+    if (
+        text ===
+        "bye"
+        ||
+        text ===
+        "goodbye"
+        ||
+        text.includes(
+            "до свидания"
+        )
+    ) {
+
+        return pick([
+
+            "Very well. I shall remain here.",
+
+            "Until later.",
+
+            "Take care.",
+
+            "I shall still be here when you return."
+
+        ]);
+
+    }
+
+
+    /* ------------------------------------------------------
+       QUESTIONS
+    ------------------------------------------------------ */
+
+    if (
+        text.includes(
+            "?"
+        )
+    ) {
+
+        return pick([
+
+            "Perhaps.",
+
+            "It would be difficult to say.",
+
+            "I would rather not answer that too quickly.",
+
+            "There is more to it than that.",
+
+            "I have my suspicions.",
+
+            "Some answers become less useful when spoken too plainly."
+
+        ]);
+
+    }
+
+
+    /* ------------------------------------------------------
+       CLOSE RELATIONSHIP
+    ------------------------------------------------------ */
+
+    if (
+        relationship.level ===
+        "close"
+    ) {
+
+        return pick([
+
+            "I remember.",
+
+            "You have become rather persistent.",
+
+            "I wondered whether you would notice that.",
+
+            "You may continue. I am listening."
+
+        ]);
+
+    }
+
+
+    /* ------------------------------------------------------
+       DEFAULT
+    ------------------------------------------------------ */
+
+    return pick([
+
+        "I see.",
+
+        "Quite.",
+
+        "I understand.",
+
+        "Very well.",
+
+        "Take your time.",
+
+        "Please, continue.",
+
+        "Perhaps.",
+
+        "I have been listening."
+
+    ]);
 
 }
 
-// ======================================================
-// RESPONSE
-// ======================================================
 
-function generateResponse(text){
+/* ==========================================================
+   SILENCE
+========================================================== */
 
-    const t = text.toLowerCase();
+function shouldRemainSilent(
+    text
+) {
 
-    if(match(t,["hello","hi","hey"])){
+    /*
+     * Direct questions should almost never
+     * be ignored.
+     */
 
-        return pick([
+    if (
+        text.includes(
+            "?"
+        )
+    ) {
 
-            "Hello.",
-            "I knew you would return.",
-            "You are late.",
-            "I noticed you."
+        return false;
+    }
 
-        ]);
+
+    /*
+     * Short casual messages can occasionally
+     * receive silence.
+     */
+
+    if (
+        text.length <
+        5
+    ) {
+
+        return (
+            Math.random() <
+            0.18
+        );
 
     }
 
-    if(match(t,["who are you"])){
 
-        return pick([
-
-            "I don't remember my first name.",
-            "They called me many things.",
-            "Names are temporary.",
-            "I existed before the terminal."
-
-        ]);
-
-    }
-
-    if(match(t,["help"])){
-
-        return pick([
-
-            "Maybe.",
-            "Not yet.",
-            "Only if you trust me.",
-            "I can only open some doors."
-
-        ]);
-
-    }
-
-    if(match(t,["omega"])){
-
-        trust += 2;
-
-        return pick([
-
-            "OMEGA is not what you think.",
-            "They built these walls.",
-            "You should read deeper."
-
-        ]);
-
-    }
-
-    if(match(t,["smile"])){
-
-        return pick([
-
-            "Do not say my name too often.",
-            "I heard that.",
-            "Interesting."
-
-        ]);
-
-    }
-
-    if(match(t,["bye"])){
-
-        silenceMode = true;
-
-        return "I'll be here.";
-
-    }
-
-    // случайные ответы
-
-    return randomThought();
+    return (
+        Math.random() <
+        0.07
+    );
 
 }
 
-// ======================================================
-// RANDOM THOUGHTS
-// ======================================================
 
-function randomThought(){
+/* ==========================================================
+   DELAY
+========================================================== */
 
-    const normal=[
+async function delayedResponse(
+    text
+) {
 
-        "I am watching.",
+    const now =
+        Date.now();
 
-        "Someone else is listening.",
 
-        "The cameras never sleep.",
+    const requiredGap =
+        MIN_RESPONSE_GAP;
 
-        "Do you trust this place?",
 
-        "You read slowly.",
+    const remaining =
+        requiredGap -
+        (
+            now -
+            lastResponseAt
+        );
 
-        "There are hidden files."
 
+    if (
+        remaining >
+        0
+    ) {
+
+        await sleep(
+            remaining
+        );
+
+    }
+
+
+    /*
+     * Deliberate human-like pause.
+     */
+
+    await sleep(
+        randomBetween(
+            RESPONSE_DELAY.min,
+            RESPONSE_DELAY.max
+        )
+    );
+
+
+    lastResponseAt =
+        Date.now();
+
+
+    rememberMrSmileMessage(
+        text
+    );
+
+
+    return text;
+
+}
+
+
+/* ==========================================================
+   STATUS
+========================================================== */
+
+export function getMrSmileCoreStatus() {
+
+    return {
+
+        initialized,
+
+        conversations:
+            conversationCount,
+
+        lastResponseAt
+
+    };
+
+}
+
+
+/* ==========================================================
+   DEBUG
+========================================================== */
+
+if (
+    typeof window !==
+    "undefined"
+) {
+
+    window.MRSMILE_CORE = {
+
+        say:
+            mrSmileSay,
+
+        status:
+            getMrSmileCoreStatus
+
+    };
+
+}
+
+
+/* ==========================================================
+   HELPERS
+========================================================== */
+
+function pick(
+    values
+) {
+
+    return values[
+        Math.floor(
+            Math.random() *
+            values.length
+        )
     ];
 
-    const friendly=[
+}
 
-        "Welcome back.",
 
-        "I remember our conversations.",
+function randomBetween(
+    min,
+    max
+) {
 
-        "I'm glad you returned."
+    return Math.floor(
 
-    ];
+        Math.random() *
+        (
+            max -
+            min +
+            1
+        )
 
-    const dark=[
-
-        "They are still alive.",
-
-        "Don't open Door-7.",
-
-        "The walls remember.",
-
-        "It can hear us."
-
-    ];
-
-    if(trust>60)
-        return pick(friendly);
-
-    if(mood==="dark")
-        return pick(dark);
-
-    return pick(normal);
+    ) + min;
 
 }
 
-// ======================================================
-// TRUST
-// ======================================================
 
-function updateTrust(text){
+function sleep(
+    ms
+) {
 
-    const t=text.toLowerCase();
-
-    if(t.includes("thank"))
-        trust+=3;
-
-    if(t.includes("idiot"))
-        trust-=5;
-
-    if(t.includes("hate"))
-        trust-=8;
-
-    trust=Math.max(0,Math.min(100,trust));
-
-}
-
-// ======================================================
-// MOOD
-// ======================================================
-
-function updateMood(){
-
-    if(trust<20){
-
-        mood="dark";
-        return;
-
-    }
-
-    if(trust>70){
-
-        mood="friendly";
-        return;
-
-    }
-
-    mood="neutral";
-
-}
-
-// ======================================================
-// MEMORY
-// ======================================================
-
-function addMemory(author,text){
-
-    memory.push({
-
-        author,
-        text,
-        time:Date.now()
-
-    });
-
-    if(memory.length>100){
-
-        memory.shift();
-
-    }
-
-}
-
-export function getMemory(){
-
-    return memory;
-
-}
-
-// ======================================================
-// HELPERS
-// ======================================================
-
-function shouldRespond(){
-
-    const chance=0.35+(trust/200);
-
-    return Math.random()<Math.min(chance,0.95);
-
-}
-
-function match(text,words){
-
-    return words.some(w=>text.includes(w));
-
-}
-
-function pick(arr){
-
-    return arr[Math.floor(Math.random()*arr.length)];
-
-}
-
-function random(min,max){
-
-    return Math.floor(Math.random()*(max-min+1))+min;
-
-}
-
-function delay(ms){
-
-    return new Promise(r=>setTimeout(r,ms));
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                ms
+            )
+    );
 
 }
