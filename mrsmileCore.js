@@ -103,117 +103,159 @@ export function initMrSmileCore() {
 /* ==========================================================
 MAIN
 ========================================================== */
-
 export async function mrSmileSay(
-text
+    text
 ) {
 
-
-initMrSmileCore();
-
-
-const input =
-    String(
-        text || ""
-    ).trim();
+    initMrSmileCore();
 
 
-if (!input) {
-
-    return null;
-}
-
-
-
-rememberOperatorMessage(
-    input
-);
+    const input =
+        String(
+            text || ""
+        ).trim();
 
 
-conversationCount++;
+    if (!input) {
+        return null;
+    }
 
 
-
-changeBehaviorMetric(
-    "attention",
-    1
-);
-
-
-const lower =
-    normalizeText(
+    rememberOperatorMessage(
         input
     );
 
 
-const detectedLanguage =
-    detectLanguage(
-        input
+    conversationCount++;
+
+
+    changeBehaviorMetric(
+        "attention",
+        1
     );
 
 
-console.log(
-    "[MR.SMILE LANGUAGE]",
-    detectedLanguage
-);
+    /*
+       Normalize text for understanding.
+    */
 
-
-
-
-if (
-    shouldRemainSilent(
-        lower
-    )
-) {
-
-    return null;
-}
-
-
-
-const decision =
-    chooseResponse(
-        lower
-    );
-
-
-if (!decision) {
-
-    return null;
-}
-
-
-if (
-    typeof decision === "object" &&
-    decision.intent
-) {
-
-    const localized =
-        getLocalizedResponse(
-            decision.intent,
-            detectedLanguage
+    const lower =
+        normalizeText(
+            input
         );
 
 
+    /*
+       Detect the language of THIS message.
+
+       MR.SMILE does not announce it.
+       He simply changes language.
+    */
+
+    const detectedLanguage =
+        detectLanguage(
+            input
+        );
+
+
+    console.log(
+        "[MR.SMILE LANGUAGE]",
+        detectedLanguage
+    );
+
+
+    /*
+       Short casual messages may occasionally
+       receive silence.
+
+       Questions are normally answered.
+    */
+
     if (
-        localized
+        shouldRemainSilent(
+            lower
+        )
+    ) {
+
+        return null;
+    }
+
+
+    /*
+       Understand operator intention.
+    */
+
+    const decision =
+        chooseResponse(
+            lower
+        );
+
+
+    if (!decision) {
+        return null;
+    }
+
+
+    /*
+       Localized intent.
+
+       Example:
+
+           {
+               intent: "greeting"
+           }
+
+       becomes:
+
+           ru → "Добрый вечер."
+           en → "Good evening."
+           uk → "Добрий вечір."
+    */
+
+    if (
+        typeof decision === "object" &&
+        decision.intent
+    ) {
+
+        const localized =
+            getLocalizedResponse(
+                decision.intent,
+                detectedLanguage
+            );
+
+
+        if (
+            localized
+        ) {
+
+            return delayedResponse(
+                localized
+            );
+        }
+    }
+
+
+    /*
+       Old response banks remain compatible.
+
+       This means we can gradually localize
+       more and more intents without breaking
+       the existing system.
+    */
+
+    if (
+        typeof decision === "string"
     ) {
 
         return delayedResponse(
-            localized
+            decision
         );
-
     }
+
+
+    return null;
 }
 
-
-
-return delayedResponse(
-    decision
-);
-
-
-}
 
 
 /* ==========================================================
