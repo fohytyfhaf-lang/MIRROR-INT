@@ -308,19 +308,22 @@ export async function typeSystemMessage(text) {
 
 export async function playFirstContactMessage() {
 
-    await sleep(600);
-
+    await sleep(900);
 
     addMrSmileChatMessage(
-        ":)"
+        "Good evening."
     );
 
-
-    await sleep(1200);
-
+    await sleep(1600);
 
     addMrSmileChatMessage(
-        "Hello, operator."
+        "I believe we have interrupted one another."
+    );
+
+    await sleep(1800);
+
+    addMrSmileChatMessage(
+        "Please, take your time."
     );
 
 }
@@ -454,27 +457,37 @@ function sendMessage() {
 
 const idleMessages = [
 
-    ":)",
+    "There is no need to hurry.",
 
-    "I'm still here.",
+    "You may continue when you are ready.",
 
-    "You are looking in the wrong place.",
+    "Some things become clearer with time.",
 
-    "I can see this.",
+    "I have been thinking.",
 
-    "Nothing is wrong.",
+    "It is rather quiet here.",
 
-    "Continue.",
+    "There is plenty of time.",
 
-    "You didn't close the channel.",
+    "I have no objection to waiting.",
 
-    "I remember.",
+    "The older records are often the more interesting ones.",
 
-    "Closer than you think."
+    "One learns a great deal by simply waiting.",
+
+    "I wondered whether you would return.",
+
+    "You have been rather thorough.",
+
+    "Quite a patient system, this.",
+
+    "I was reminded of an old book.",
+
+    "Perhaps another moment will make matters clearer.",
+
+    "You needn't hurry on my account."
 
 ];
-
-
 /* ==========================================================
    IDLE STATE
 ========================================================== */
