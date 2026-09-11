@@ -3067,3 +3067,4 @@ export function mrSmileNightEvent() {
 /* ==========================================================
    END
 ========================================================== */
+window.triggerMrSmileFirstContact = triggerFirstContact;
