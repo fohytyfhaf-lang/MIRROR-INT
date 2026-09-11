@@ -442,7 +442,7 @@ function sendMessage() {
             );
 
         },
-        700
+        1200
     );
 
 }
