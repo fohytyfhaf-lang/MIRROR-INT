@@ -38,6 +38,10 @@ import {
 } from "./systemConfig.js";
 import { CONFIG } from "./config.js";
 import { trigger, on } from "./eventManager.js";
+import "./mrsmileState.js";
+import "./mrsmilePresence.js";
+import "./mrsmileSecretEnding.js";
+import "./mrsmileSecretEndingSequence.js";
 import { initFakeSite } from "./public/fakeSite.js";
 import {initLanguage,changeLanguage} from "./languageManager4.js";
 import {
