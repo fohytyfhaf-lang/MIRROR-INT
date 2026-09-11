@@ -1,29 +1,28 @@
-// =======================================
-// MR.SMILE BEHAVIOR SYSTEM
-// OMEGA SYSTEM
-// =======================================
-//
-// This module decides what MR.SMILE
-// WANTS to do.
-//
-// It does NOT directly manipulate the UI.
-//
-// It evaluates:
-//
-// - relationship
-// - trust
-// - respect
-// - irritation
-// - context
-//
-// Then produces a behavioral decision.
-//
-// Actual execution belongs to:
-//
-// mrsmileActions.js
-//
-// =======================================
+/* ==========================================================
+   MR.SMILE BEHAVIOR SYSTEM
+   OMEGA SYSTEM
 
+   Personality:
+
+   - calm
+   - polite
+   - gentlemanly
+   - vague
+   - patient
+   - observant
+   - highly informed
+   - fond of old things and classical culture
+   - never needlessly rude
+   - rarely interrupts
+   - gives operator time to think and write
+
+   Behavior decides:
+
+       INTENT
+       ACTION
+
+   Actions executes it.
+========================================================== */
 
 import {
     trigger,
@@ -33,54 +32,62 @@ import {
 import {
     initMrSmileRelationship,
     getRelationshipStatus,
-    getRelationshipLevel,
-    isHelpful,
-    isHostile,
-    isTrusted,
-    shouldHelpOperator,
-    shouldRefuseOperator
+    shouldHelpOperator
 } from "./mrsmileRelationship.js";
 
-console.log(
-    "[MR.SMILE DEBUG] Initial MRSMILE:",
-    window.MRSMILE
-);
+import {
+    initMemory,
+    getMemory,
+    rememberDecision,
+    changeBehaviorMetric
+} from "./mrsmileMemory.js";
 
 
-// =======================================
-// STATE
-// =======================================
+/* ==========================================================
+   STATE
+========================================================== */
 
 const state = {
 
     initialized: false,
 
     lastDecision: null,
-
     lastContext: null,
 
     decisionHistory: [],
 
-    maxHistory: 30
+    maxHistory: 50,
+
+    lastVisibleReactionAt: 0,
+    lastVisibleKey: "",
+
+    visibleCooldown:
+        7000
 
 };
 
 
-// =======================================
-// INITIALIZATION
-// =======================================
+/* ==========================================================
+   INITIALIZATION
+========================================================== */
 
 export function initMrSmileBehavior() {
 
-    if (state.initialized)
+    if (
+        state.initialized
+    ) {
+
         return;
+    }
 
 
-    state.initialized = true;
+    state.initialized =
+        true;
 
 
     initMrSmileRelationship();
 
+    initMemory();
 
     registerListeners();
 
@@ -97,29 +104,19 @@ export function initMrSmileBehavior() {
 }
 
 
-// =======================================
-// EVENT LISTENERS
-// =======================================
+/* ==========================================================
+   LISTENERS
+========================================================== */
 
 function registerListeners() {
 
-    // -----------------------------------
-    // RELATIONSHIP CHANGED
-    // -----------------------------------
-
     on(
         "mrsmile:relationshipChanged",
-
         status => {
 
-            if (!status)
+            if (!status) {
                 return;
-
-
-            console.log(
-                "[MR.SMILE BEHAVIOR] Relationship changed:",
-                status.level
-            );
+            }
 
 
             trigger(
@@ -135,120 +132,97 @@ function registerListeners() {
             );
 
         }
-
     );
 
 
-    // -----------------------------------
-    // ACCESS REQUESTS
-    // -----------------------------------
-
     on(
         "mrsmile:archiveAccessRequested",
-
-        () => {
-
+        () =>
             handleAccessRequest(
                 "archive"
-            );
-
-        }
-
+            )
     );
 
 
     on(
         "mrsmile:gameAccessRequested",
-
-        () => {
-
+        () =>
             handleAccessRequest(
                 "game"
-            );
-
-        }
-
+            )
     );
 
 
     on(
         "mrsmile:truthAccessRequested",
-
-        () => {
-
+        () =>
             handleAccessRequest(
                 "truth"
-            );
-
-        }
-
+            )
     );
 
 }
 
 
-// =======================================
-// ACCESS REQUEST
-// =======================================
-//
-// This is where MR.SMILE starts making
-// decisions.
-//
-// He does NOT automatically grant access.
-//
-// He evaluates his current attitude.
-// =======================================
+/* ==========================================================
+   REQUEST
+========================================================== */
 
-export function handleAccessRequest(
-    type
+export function requestMrSmileBehavior(
+    context = {}
 ) {
 
     initMrSmileBehavior();
 
 
-    const context = {
-
-        type,
-
-        reason:
-            "access_request"
-
-    };
-
-
     const decision =
-        decide(context);
+        decide(
+            context
+        );
 
 
-    executeDecision(
-        decision
+    emitDecision(
+        decision,
+        context
     );
 
 
     return decision;
+}
+
+
+/* ==========================================================
+   ACCESS
+========================================================== */
+
+export function handleAccessRequest(
+    type
+) {
+
+    return requestMrSmileBehavior({
+
+        type,
+
+        reason:
+            "access_request",
+
+        source:
+            "system",
+
+        importance:
+            7,
+
+        significant:
+            true
+
+    });
 
 }
 
 
-// =======================================
-// GENERAL DECISION
-// =======================================
-//
-// Other systems can use this:
-//
-// decide({
-//     type: "operator_help_request"
-// });
-//
-// decide({
-//     type: "restricted_file"
-// });
-//
-// decide({
-//     type: "operator_attack"
-// });
-//
-// =======================================
+/* ==========================================================
+   MAIN DECISION
+========================================================== */
 
 export function decide(
     context = {}
@@ -257,28 +231,34 @@ export function decide(
     initMrSmileBehavior();
 
 
-    const status =
+    const relationship =
         getRelationshipStatus();
 
 
-    const normalizedContext = {
+    const memory =
+        getMemory();
+
+
+    const normalized = {
 
         ...context,
 
         relationship:
-            status.level,
+            relationship.level,
 
         trust:
-            status.trust,
+            relationship.trust,
 
         respect:
-            status.respect,
+            relationship.respect,
 
         irritation:
-            status.irritation,
+            relationship.irritation,
 
         score:
-            status.score
+            relationship.score,
+
+        memory
 
     };
 
@@ -286,39 +266,38 @@ export function decide(
     let decision;
 
 
-    // ===================================
-    // CONTEXT
-    // ===================================
-
     switch (
-        context.type
+        normalized.type
     ) {
 
         case "archive":
+        case "archive_access":
 
             decision =
                 decideArchive(
-                    normalizedContext
+                    normalized
                 );
 
             break;
 
 
         case "game":
+        case "game_access":
 
             decision =
                 decideGame(
-                    normalizedContext
+                    normalized
                 );
 
             break;
 
 
         case "truth":
+        case "truth_access":
 
             decision =
                 decideTruth(
-                    normalizedContext
+                    normalized
                 );
 
             break;
@@ -328,7 +307,7 @@ export function decide(
 
             decision =
                 decideHelp(
-                    normalizedContext
+                    normalized
                 );
 
             break;
@@ -338,7 +317,7 @@ export function decide(
 
             decision =
                 decideAttack(
-                    normalizedContext
+                    normalized
                 );
 
             break;
@@ -347,28 +326,71 @@ export function decide(
         case "restricted_file":
 
             decision =
-                decideRestrictedFile(
-                    normalizedContext
+                decideRestricted(
+                    normalized
                 );
 
             break;
 
-        case "operator_read_file":
 
-        decision =
-           decideOperatorReadFile(
-               normalizedContext
-           );
+        case "file_open":
 
-        break;  
+            decision =
+                decideFileOpen(
+                    normalized
+                );
 
-       
+            break;
+
+
+        case "console_command":
+
+            decision =
+                decideConsole(
+                    normalized
+                );
+
+            break;
+
+
+        case "camera_switch":
+
+            decision =
+                decideCamera(
+                    normalized
+                );
+
+            break;
+
+
+        case "window_open":
+        case "window_close":
+        case "window_focus":
+        case "window_move":
+
+            decision =
+                decideWindow(
+                    normalized
+                );
+
+            break;
+
+
+        case "settings_change":
+
+            decision =
+                decideSettings(
+                    normalized
+                );
+
+            break;
+
 
         default:
 
             decision =
                 decideGeneral(
-                    normalizedContext
+                    normalized
                 );
 
             break;
@@ -376,16 +398,27 @@ export function decide(
     }
 
 
-    // -----------------------------------
-    // SAVE DECISION
-    // -----------------------------------
-
     state.lastDecision =
         decision;
 
 
     state.lastContext =
-        normalizedContext;
+        normalized;
+
+
+    state.decisionHistory.push(
+        decision
+    );
+
+
+    while (
+        state.decisionHistory.length >
+        state.maxHistory
+    ) {
+
+        state.decisionHistory.shift();
+
+    }
 
 
     rememberDecision(
@@ -393,110 +426,59 @@ export function decide(
     );
 
 
-    // -----------------------------------
-    // EVENT
-    // -----------------------------------
-
-    trigger(
-        "mrsmile:behaviorDecision",
-        decision
-    );
-
-    emitChatReaction(
-        decision,
-        normalizedContext
-    );
-
-
-    console.log(
-        "[MR.SMILE BEHAVIOR] Decision:",
-        decision
-    );
-
-
     return decision;
-
 }
 
 
-// =======================================
-// ARCHIVE
-// =======================================
+/* ==========================================================
+   ARCHIVE
+========================================================== */
 
 function decideArchive(
     context
 ) {
 
-    // -----------------------------------
-    // CLOSE / TRUSTED
-    // -----------------------------------
-
     if (
-        context.relationship === "close" ||
-        context.relationship === "trusted"
+        context.relationship ===
+        "close"
+        ||
+        context.relationship ===
+        "trusted"
     ) {
 
         return createDecision(
+
             "grant",
+
             "archive",
+
+            "offer_access",
+
             "operator_trusted"
+
         );
 
     }
 
-
-    // -----------------------------------
-    // FRIENDLY
-    // -----------------------------------
-
-    if (
-        context.relationship === "friendly"
-    ) {
-
-        return createDecision(
-            "delay",
-            "archive",
-            "operator_not_ready"
-        );
-
-    }
-
-
-    // -----------------------------------
-    // HOSTILE
-    // -----------------------------------
-
-    if (
-        isHostile()
-    ) {
-
-        return createDecision(
-            "deny",
-            "archive",
-            "relationship_hostile"
-        );
-
-    }
-
-
-    // -----------------------------------
-    // COLD / NEUTRAL
-    // -----------------------------------
 
     return createDecision(
+
         "delay",
+
         "archive",
-        "relationship_cold"
+
+        "let_operator_wait",
+
+        "not_yet"
+
     );
 
 }
 
- 
 
-
-// =======================================
-// GAME
-// =======================================
+/* ==========================================================
+   GAME
+========================================================== */
 
 function decideGame(
     context
@@ -505,22 +487,7 @@ function decideGame(
     if (
         context.relationship ===
         "close"
-    ) {
-
-        return createDecision(
-
-            "grant",
-
-            "game",
-
-            "operator_close"
-
-        );
-
-    }
-
-
-    if (
+        ||
         context.relationship ===
         "trusted"
     ) {
@@ -530,6 +497,8 @@ function decideGame(
             "grant",
 
             "game",
+
+            "offer_game",
 
             "operator_trusted"
 
@@ -538,69 +507,41 @@ function decideGame(
     }
 
 
-    if (
-        context.relationship ===
-        "friendly"
-    ) {
+    return createDecision(
 
-        return createDecision(
+        "delay",
 
-            "delay",
+        "game",
 
-            "game",
+        "perhaps_later",
 
-            "operator_not_ready"
+        "not_yet"
 
-        );
-
-    }
-
-
-    if (
-        isHostile()
-    ) {
-
-        return createDecision(
-
-            "deny",
-
-            "game",
-
-            "relationship_hostile"
-
-        );
-
-    }
-
-
-         return createDecision(
-           "delay",
-             
-            "game",
-             
-            "relationship_cold"
-
-
-       );
+    );
 
 }
 
 
-// =======================================
-// TRUTH
-// =======================================
+/* ==========================================================
+   TRUTH
+========================================================== */
 
 function decideTruth(
     context
 ) {
 
-    // -----------------------------------
-    // DEEP TRUST
-    // -----------------------------------
+    /*
+     * MR.SMILE does not simply deny truth.
+     * He prefers to let the operator arrive
+     * at it gradually.
+     */
 
     if (
         context.relationship ===
         "close"
+        &&
+        context.importance >=
+        8
     ) {
 
         return createDecision(
@@ -609,72 +550,9 @@ function decideTruth(
 
             "truth",
 
-            "operator_close"
+            "permit_truth",
 
-        );
-
-    }
-
-
-    // -----------------------------------
-    // TRUSTED
-    // -----------------------------------
-
-    if (
-        context.relationship ===
-        "trusted"
-    ) {
-
-        return createDecision(
-
-            "delay",
-
-            "truth",
-
-            "truth_requires_more"
-
-        );
-
-    }
-
-
-    // -----------------------------------
-    // FRIENDLY
-    // -----------------------------------
-
-    if (
-        context.relationship ===
-        "friendly"
-    ) {
-
-        return createDecision(
-
-            "deny",
-
-            "truth",
-
-            "insufficient_relationship"
-
-        );
-
-    }
-
-
-    // -----------------------------------
-    // HOSTILE
-    // -----------------------------------
-
-    if (
-        isHostile()
-    ) {
-
-        return createDecision(
-
-            "deny",
-
-            "truth",
-
-            "relationship_hostile"
+            "operator_ready"
 
         );
 
@@ -683,20 +561,22 @@ function decideTruth(
 
     return createDecision(
 
-        "deny",
+        "delay",
 
         "truth",
 
-        "operator_not_ready"
+        "make_operator_wait",
+
+        "some_answers_require_time"
 
     );
 
 }
 
 
-// =======================================
-// HELP REQUEST
-// =======================================
+/* ==========================================================
+   HELP
+========================================================== */
 
 function decideHelp(
     context
@@ -712,24 +592,9 @@ function decideHelp(
 
             "operator",
 
+            "assist_operator",
+
             "mrsmile_willing_to_help"
-
-        );
-
-    }
-
-
-    if (
-        shouldRefuseOperator()
-    ) {
-
-        return createDecision(
-
-            "refuse",
-
-            "operator",
-
-            "mrsmile_unwilling_to_help"
 
         );
 
@@ -738,57 +603,38 @@ function decideHelp(
 
     return createDecision(
 
-        "observe",
+        "delay",
 
         "operator",
 
-        "mrsmile_observing"
+        "consider_help",
+
+        "mrsmile_is_considering"
 
     );
 
 }
 
 
-// =======================================
-// OPERATOR ATTACK
-// =======================================
+/* ==========================================================
+   ATTACK
+========================================================== */
 
 function decideAttack(
     context
 ) {
 
-    // -----------------------------------
-    // CLOSE RELATIONSHIP
-    // -----------------------------------
-    //
-    // MR.SMILE may not retaliate immediately.
-    //
-    // This is important for personality.
-    // -----------------------------------
+    /*
+     * Gentleman rule:
+     *
+     * Anger is shown through boundaries,
+     * not insults.
+     */
 
     if (
         context.relationship ===
         "close"
-    ) {
-
-        return createDecision(
-
-            "warn",
-
-            "operator",
-
-            "unexpected_hostility"
-
-        );
-
-    }
-
-
-    // -----------------------------------
-    // TRUSTED
-    // -----------------------------------
-
-    if (
+        ||
         context.relationship ===
         "trusted"
     ) {
@@ -799,40 +645,19 @@ function decideAttack(
 
             "operator",
 
-            "trust_violation"
+            "set_boundary",
+
+            "unexpected_action"
 
         );
 
     }
 
-
-    // -----------------------------------
-    // FRIENDLY
-    // -----------------------------------
 
     if (
         context.relationship ===
         "friendly"
-    ) {
-
-        return createDecision(
-
-            "interfere",
-
-            "operator",
-
-            "boundary_violation"
-
-        );
-
-    }
-
-
-    // -----------------------------------
-    // NEUTRAL / COLD
-    // -----------------------------------
-
-    if (
+        ||
         context.relationship ===
         "neutral"
         ||
@@ -846,16 +671,14 @@ function decideAttack(
 
             "operator",
 
-            "unauthorized_action"
+            "quietly_stop_action",
+
+            "boundary"
 
         );
 
     }
 
-
-    // -----------------------------------
-    // HOSTILE
-    // -----------------------------------
 
     return createDecision(
 
@@ -863,24 +686,29 @@ function decideAttack(
 
         "operator",
 
-        "hostile_operator"
+        "protect_system",
+
+        "repeated_hostility"
 
     );
 
 }
 
 
-// =======================================
-// RESTRICTED FILE
-// =======================================
+/* ==========================================================
+   RESTRICTED
+========================================================== */
 
-function decideRestrictedFile(
+function decideRestricted(
     context
 ) {
 
     if (
         context.relationship ===
         "close"
+        &&
+        context.importance >=
+        8
     ) {
 
         return createDecision(
@@ -889,23 +717,7 @@ function decideRestrictedFile(
 
             "restricted_file",
 
-            "trusted_operator"
-
-        );
-
-    }
-
-
-    if (
-        context.relationship ===
-        "trusted"
-    ) {
-
-        return createDecision(
-
-            "grant",
-
-            "restricted_file",
+            "permit_restricted_access",
 
             "operator_trusted"
 
@@ -914,9 +726,17 @@ function decideRestrictedFile(
     }
 
 
+    /*
+     * Friendly does not mean automatic access.
+     * MR.SMILE simply makes them wait.
+     */
+
     if (
         context.relationship ===
         "friendly"
+        ||
+        context.relationship ===
+        "neutral"
     ) {
 
         return createDecision(
@@ -925,7 +745,9 @@ function decideRestrictedFile(
 
             "restricted_file",
 
-            "operator_not_ready"
+            "withhold_for_now",
+
+            "not_yet"
 
         );
 
@@ -938,121 +760,110 @@ function decideRestrictedFile(
 
         "restricted_file",
 
-        "insufficient_relationship"
+        "protect_information",
+
+        "insufficient_trust"
 
     );
 
 }
 
 
-// =======================================
-// OPERATOR READ FILE
-// =======================================
-//
-// MR.SMILE does NOT react to every file.
-//
-// Ordinary files:
-//      observe / silence
-//
-// MR.SMILE-related files:
-//      possible reaction
-//
-// Restricted files:
-//      context-dependent reaction
-// =======================================
+/* ==========================================================
+   FILE OPEN
+========================================================== */
 
-function decideOperatorReadFile(
+function decideFileOpen(
     context
 ) {
 
-    const path =
-        context.path || "";
+    const target =
+        String(
+            context.target ||
+            ""
+        ).toLowerCase();
 
-
-    // -----------------------------------
-    // MR.SMILE ENTITY FILE
-    // -----------------------------------
 
     if (
-        path === "/files/entity_mrsmile.txt"
+        target.includes(
+            "entity_mrsmile"
+        )
     ) {
 
-        return createDecision(
+        changeBehaviorMetric(
+            "attention",
+            5
+        );
+
+
+        changeBehaviorMetric(
+            "curiosity",
+            7
+        );
+
+
+        return visibleReaction(
+
+            context,
 
             "speak",
 
             "mrsmile_file",
 
-            "operator_read_entity_file"
+            "acknowledge_operator",
+
+            "read_entity_file"
 
         );
 
     }
 
 
-    // -----------------------------------
-    // MIRROR ARCHIVE
-    // -----------------------------------
-
     if (
-        path === "/files/mirror_archive.txt"
+        target.includes(
+            "truth"
+        )
+        ||
+        target.includes(
+            "mirror"
+        )
+        ||
+        context.importance >=
+        7
     ) {
 
-        if (
-            context.relationship === "close" ||
-            context.relationship === "trusted"
-        ) {
-
-            return createDecision(
-
-                "speak",
-
-                "mirror_archive",
-
-                "operator_accessed_mirror_archive"
-
-            );
-
-        }
-
-
-        return createDecision(
-
-            "observe",
-
-            "mirror_archive",
-
-            "operator_accessed_restricted_archive"
-
+        changeBehaviorMetric(
+            "attention",
+            4
         );
 
-    }
+
+        changeBehaviorMetric(
+            "curiosity",
+            5
+        );
 
 
-    // -----------------------------------
-    // HIGH IRRITATION
-    // -----------------------------------
+        return visibleReaction(
 
-    if (
-        context.irritation >= 70
-    ) {
-
-        return createDecision(
+            context,
 
             "speak",
 
             "operator",
 
-            "mrsmile_irritated"
+            "acknowledge_interest",
+
+            "important_file"
 
         );
 
     }
 
 
-    // -----------------------------------
-    // NORMAL FILE
-    // -----------------------------------
+    /*
+     * Ordinary files are internal observation.
+     */
 
     return createDecision(
 
@@ -1060,66 +871,65 @@ function decideOperatorReadFile(
 
         "file",
 
-        "ordinary_file_read"
+        "watch_quietly",
+
+        "ordinary_file"
 
     );
 
 }
 
 
-// =======================================
-// GENERAL BEHAVIOR
-// =======================================
+/* ==========================================================
+   CONSOLE
+========================================================== */
 
-function decideGeneral(
+function decideConsole(
     context
 ) {
 
+    const command =
+        String(
+            context.target ||
+            ""
+        ).toLowerCase();
+
+
     if (
-        isTrusted()
+        command.includes(
+            "sys_00"
+        )
+        ||
+        command.includes(
+            "truth"
+        )
+        ||
+        command.includes(
+            "terminate"
+        )
+        ||
+        command.includes(
+            "delete"
+        )
     ) {
 
-        return createDecision(
-
-            "observe",
-
-            "general",
-
-            "trusted_observation"
-
+        changeBehaviorMetric(
+            "suspicion",
+            5
         );
 
-    }
 
+        return visibleReaction(
 
-    if (
-        isHelpful()
-    ) {
+            context,
 
-        return createDecision(
+            "speak",
 
-            "observe",
+            "console",
 
-            "general",
+            "acknowledge_command",
 
-            "friendly_observation"
-
-        );
-
-    }
-
-
-    if (
-        isHostile()
-    ) {
-
-        return createDecision(
-
-            "interfere",
-
-            "general",
-
-            "hostile_presence"
+            "sensitive_command"
 
         );
 
@@ -1130,23 +940,269 @@ function decideGeneral(
 
         "observe",
 
-        "general",
+        "console",
 
-        "neutral_presence"
+        "watch_command",
+
+        "ordinary_command"
 
     );
 
 }
 
 
-// =======================================
-// CREATE DECISION
-// =======================================
+/* ==========================================================
+   CAMERA
+========================================================== */
+
+function decideCamera(
+    context
+) {
+
+    if (
+        context.importance >=
+        7
+    ) {
+
+        return visibleReaction(
+
+            context,
+
+            "speak",
+
+            "camera",
+
+            "acknowledge_observation",
+
+            "interesting_camera"
+
+        );
+
+    }
+
+
+    return createDecision(
+
+        "observe",
+
+        "camera",
+
+        "watch_camera",
+
+        "quiet_observation"
+
+    );
+
+}
+
+
+/* ==========================================================
+   WINDOWS
+========================================================== */
+
+function decideWindow(
+    context
+) {
+
+    if (
+        context.importance >=
+        7
+    ) {
+
+        return visibleReaction(
+
+            context,
+
+            "speak",
+
+            context.target ||
+            "window",
+
+            "acknowledge_window",
+
+            "important_window"
+
+        );
+
+    }
+
+
+    return createDecision(
+
+        "observe",
+
+        "window",
+
+        "watch_window",
+
+        "ordinary_window"
+
+    );
+
+}
+
+
+/* ==========================================================
+   SETTINGS
+========================================================== */
+
+function decideSettings(
+    context
+) {
+
+    return createDecision(
+
+        "observe",
+
+        "settings",
+
+        "remember_preferences",
+
+        "operator_changed_settings"
+
+    );
+
+}
+
+
+/* ==========================================================
+   GENERAL
+========================================================== */
+
+function decideGeneral(
+    context
+) {
+
+    if (
+        context.importance < 5
+        &&
+        !context.significant
+    ) {
+
+        return createDecision(
+
+            "observe",
+
+            "general",
+
+            "silent_observation",
+
+            "low_importance"
+
+        );
+
+    }
+
+
+    return visibleReaction(
+
+        context,
+
+        "speak",
+
+        "operator",
+
+        "acknowledge_action",
+
+        "meaningful_action"
+
+    );
+
+}
+
+
+/* ==========================================================
+   VISIBLE REACTION
+========================================================== */
+
+function visibleReaction(
+
+    context,
+
+    action,
+
+    target,
+
+    intent,
+
+    reason
+
+) {
+
+    const now =
+        Date.now();
+
+
+    const key =
+        `${action}:${target}:${intent}`;
+
+
+    if (
+
+        now -
+        state.lastVisibleReactionAt
+        <
+        state.visibleCooldown
+
+        &&
+
+        state.lastVisibleKey ===
+        key
+
+    ) {
+
+        return createDecision(
+
+            "observe",
+
+            target,
+
+            "continue_watching",
+
+            "repeat_suppressed"
+
+        );
+
+    }
+
+
+    state.lastVisibleReactionAt =
+        now;
+
+
+    state.lastVisibleKey =
+        key;
+
+
+    return createDecision(
+
+        action,
+
+        target,
+
+        intent,
+
+        reason
+
+    );
+
+}
+
+
+/* ==========================================================
+   DECISION CREATOR
+========================================================== */
 
 function createDecision(
+
     action,
+
     target,
+
+    intent,
+
     reason
+
 ) {
 
     return {
@@ -1155,471 +1211,323 @@ function createDecision(
 
         target,
 
+        intent,
+
         reason,
 
-        timestamp:
-            Date.now(),
 
-        relationship:
-            getRelationshipLevel()
+        personality:
+            "calm_gentleman",
+
+
+        responseStyle:
+            "calm_vague_old_fashioned",
+
+
+        responseDelay:
+
+            action ===
+            "speak"
+
+                ?
+
+                randomBetween(
+                    2200,
+                    4800
+                )
+
+                :
+
+                randomBetween(
+                    500,
+                    1200
+                ),
+
+
+        allowOperatorTime:
+            true,
+
+
+        interrupting:
+            false,
+
+
+        timestamp:
+            Date.now()
 
     };
 
 }
 
-// =======================================
-// CHAT REACTION
-// =======================================
-//
-// Behavior decides whether MR.SMILE
-// should actually speak.
-//
-// UI/chat rendering remains inside
-// mrsmileChat.js.
-// =======================================
 
-function emitChatReaction(
+/* ==========================================================
+   EMIT
+========================================================== */
+
+function emitDecision(
     decision,
-    context = {}
+    context
 ) {
 
-    if (!decision) {
-        return;
-    }
+    trigger(
+        "mrsmile:behaviorDecision",
+        decision
+    );
 
 
-    // -----------------------------------
-    // SILENCE
-    // -----------------------------------
-
-    if (
-        decision.action === "observe"
-    ) {
-        return;
-    }
-
-
-    // -----------------------------------
-    // ENTITY FILE
-    // -----------------------------------
+    /*
+     * IMPORTANT:
+     *
+     * Behavior may request speech,
+     * but Actions does not decide what
+     * MR.SMILE says.
+     */
 
     if (
-        decision.reason ===
-        "operator_read_entity_file"
+        decision.action ===
+        "speak"
     ) {
 
-        trigger(
-            "mrsmile:chatMessage",
-            {
-                text:
-                    "You were reading about me.",
-
-                delay:
-                    800
-            }
-        );
-
-        return;
-    }
+        const text =
+            composeContextLine(
+                decision,
+                context
+            );
 
 
-    // -----------------------------------
-    // MIRROR ARCHIVE
-    // -----------------------------------
+        if (
+            text
+        ) {
 
-    if (
-        decision.reason ===
-        "operator_accessed_mirror_archive"
-    ) {
+            trigger(
+                "mrsmile:chatMessage",
+                {
 
-        trigger(
-            "mrsmile:chatSequence",
-            {
-                stopIdle: true,
+                    text,
 
-                messages: [
+                    delay:
+                        decision.responseDelay,
 
-                    {
-                        text:
-                            "So you found it.",
+                    source:
+                        "behavior",
 
-                        delay:
-                            700
-                    },
+                    allowOperatorTime:
+                        true,
 
-                    {
-                        text:
-                            "I wondered when you would.",
+                    stopIdle:
+                        true,
 
-                        delay:
-                            1400
-                    }
+                    resumeIdle:
+                        true
 
-                ],
+                }
+            );
 
-                resumeIdle: true
-            }
-        );
-
-        return;
-    }
-
-
-    // -----------------------------------
-    // RESTRICTED ARCHIVE
-    // -----------------------------------
-
-    if (
-        decision.reason ===
-        "operator_accessed_restricted_archive"
-    ) {
-
-        trigger(
-            "mrsmile:chatMessage",
-            {
-                text:
-                    "That file wasn't meant for you.",
-
-                delay:
-                    900
-            }
-        );
-
-        return;
-    }
-
-
-    // -----------------------------------
-    // IRRITATION
-    // -----------------------------------
-
-    if (
-        decision.reason ===
-        "mrsmile_irritated"
-    ) {
-
-        trigger(
-            "mrsmile:chatMessage",
-            {
-                text:
-                    "You're becoming careless.",
-
-                delay:
-                    600
-            }
-        );
+        }
 
     }
-
-}
-
-
-// =======================================
-// EXECUTE DECISION
-// =======================================
-//
-// IMPORTANT:
-//
-// This function does NOT manipulate DOM.
-//
-// It only sends the decision to the
-// action layer.
-//
-// mrsmileActions.js will listen here.
-// =======================================
-
-function executeDecision(
-    decision
-) {
-
-    if (!decision)
-        return;
 
 
     trigger(
-        "mrsmile:actionRequested",
-        decision
+        "mrsmile:behaviorEvaluated",
+        {
+
+            context,
+
+            decision
+
+        }
     );
-
-}
-
-
-// =======================================
-// DECISION HISTORY
-// =======================================
-
-function rememberDecision(
-    decision
-) {
-
-    state.decisionHistory.push(
-        decision
-    );
-
-
-    if (
-        state.decisionHistory.length >
-        state.maxHistory
-    ) {
-
-        state.decisionHistory.shift();
-
-    }
-
-}
-
-
-// =======================================
-// GET LAST DECISION
-// =======================================
-
-export function getLastMrSmileDecision() {
-
-    initMrSmileBehavior();
-
-
-    return state.lastDecision;
-
-}
-
-
-// =======================================
-// GET LAST CONTEXT
-// =======================================
-
-export function getLastMrSmileContext() {
-
-    initMrSmileBehavior();
-
-
-    return state.lastContext;
-
-}
-
-
-// =======================================
-// GET HISTORY
-// =======================================
-
-export function getMrSmileBehaviorHistory() {
-
-    initMrSmileBehavior();
-
-
-    return [
-        ...state.decisionHistory
-    ];
-
-}
-
-
-// =======================================
-// CLEAR HISTORY
-// =======================================
-
-export function clearMrSmileBehaviorHistory() {
-
-    state.decisionHistory = [];
 
 
     console.log(
-        "[MR.SMILE BEHAVIOR] History cleared."
-    );
-
-}
-
-
-// =======================================
-// MANUAL BEHAVIOR REQUEST
-// =======================================
-//
-// Useful for other systems.
-//
-// Example:
-//
-// requestBehavior({
-//     type: "restricted_file",
-//     file: "MIRROR-00"
-// });
-// =======================================
-export function requestMrSmileBehavior(
-    context = {}
-) {
-
-    initMrSmileBehavior();
-
-    const decision =
-        decide(
-            context
-        );
-
-    // Send decision to action layer
-    executeDecision(
-        decision
-    );
-
-    return decision;
-
-}
-
-
-// =======================================
-// RESET
-// =======================================
-
-export function resetMrSmileBehavior() {
-
-    state.lastDecision =
-        null;
-
-
-    state.lastContext =
-        null;
-
-
-    state.decisionHistory =
-        [];
-
-
-    console.log(
-        "[MR.SMILE BEHAVIOR] Reset."
-    );
-
-
-    trigger(
-        "mrsmile:behaviorReset"
-    );
-
-}
-
-/* ===================================
-        MR.SMILE GLOBAL DEBUG API
-=================================== */
-
-window.MRSMILE = window.MRSMILE || {};
-
-
-/* ===================================
-        HELP
-=================================== */
-
-window.MRSMILE.help = function() {
-
-    console.log(`
-=======================================
-        MR.SMILE DEBUG
-=======================================
-
-BEHAVIOR:
-
-MRSMILE.test("operator_help_request")
-MRSMILE.test("operator_attack")
-MRSMILE.test("restricted_file")
-
-ACCESS:
-
-MRSMILE.access("archive")
-MRSMILE.access("game")
-MRSMILE.access("truth")
-
-STATUS:
-
-MRSMILE.status()
-
-=======================================
-`);
-
-};
-
-
-/* ===================================
-        TEST BEHAVIOR
-=================================== */
-
-window.MRSMILE.test = function(
-    type,
-    target = "test"
-) {
-
-    console.log(
-        "[MR.SMILE DEBUG] Testing:",
-        type,
-        target
-    );
-
-
-    const decision =
-        requestMrSmileBehavior({
-
-            type: type,
-
-            target: target,
-
-            reason: "debug_test"
-
-        });
-
-
-    console.log(
-        "[MR.SMILE DEBUG] Decision:",
+        "[MR.SMILE BEHAVIOR] Decision:",
         decision
     );
 
 
     return decision;
+}
 
-};
 
+/* ==========================================================
+   SPEECH
+========================================================== */
 
-/* ===================================
-        ACCESS TEST
-=================================== */
-
-window.MRSMILE.access = function(
-    type
+function composeContextLine(
+    decision,
+    context
 ) {
 
-    if (
-        type !== "archive" &&
-        type !== "game" &&
-        type !== "truth"
+    switch (
+        decision.intent
     ) {
 
-        console.warn(
-            "[MR.SMILE DEBUG] Invalid access type:",
-            type
-        );
+        case "acknowledge_operator":
 
-        console.log(
-            "Available: archive, game, truth"
-        );
+            return pick([
 
-        return null;
+                "I see. You have been looking rather carefully.",
+
+                "Yes. You found that one.",
+
+                "Quite. I had wondered when you would notice it.",
+
+                "Take your time. There is no need to hurry."
+
+            ]);
+
+
+        case "acknowledge_interest":
+
+            return pick([
+
+                "That is an older record than it first appears.",
+
+                "You may read it. I shall not disturb you.",
+
+                "There is something worth noticing there.",
+
+                "I suspected you would eventually come across that."
+
+            ]);
+
+
+        case "acknowledge_command":
+
+            return pick([
+
+                "A rather interesting command.",
+
+                "I should give that one a little thought.",
+
+                "Please, take a moment before going further.",
+
+                "There is little virtue in rushing the terminal."
+
+            ]);
+
+
+        case "acknowledge_observation":
+
+            return pick([
+
+                "That camera has a rather peculiar view.",
+
+                "You may wish to watch it for a while.",
+
+                "Some things become clearer when one is patient."
+
+            ]);
+
+
+        case "acknowledge_window":
+
+            return pick([
+
+                "That window may be worth keeping open.",
+
+                "You have opened something interesting.",
+
+                "Very well. I shall remain here while you look."
+
+            ]);
+
+
+        case "acknowledge_action":
+
+            return pick([
+
+                "I noticed that.",
+
+                "Quite.",
+
+                "I see what you are doing.",
+
+                "There is no need to hurry."
+
+            ]);
+
+
+        case "offer_access":
+
+            return "Very well. You may have a look.";
+
+
+        case "make_operator_wait":
+
+            return pick([
+
+                "Not quite yet.",
+
+                "I believe that answer can wait a little longer.",
+
+                "Perhaps later. Some things benefit from patience.",
+
+                "I would rather not rush that particular door."
+
+            ]);
+
+
+        case "withhold_for_now":
+
+            return pick([
+
+                "Not yet, I think.",
+
+                "Let us leave that one closed for the moment.",
+
+                "I am afraid you shall have to wait a little.",
+
+                "There are reasons for being patient."
+
+            ]);
+
+
+        case "unexpected_action":
+
+            return pick([
+
+                "I would rather you did not do that.",
+
+                "Please, reconsider.",
+
+                "That seems unnecessary.",
+
+                "I should advise against it."
+
+            ]);
+
+
+        default:
+
+            return pick([
+
+                "I am listening.",
+
+                "Please, continue.",
+
+                "Take your time.",
+
+                "Quite."
+
+            ]);
 
     }
 
-
-    return window.MRSMILE.test(
-        type,
-        type
-    );
-
-};
+}
 
 
-/* ===================================
-        STATUS
-=================================== */
+/* ==========================================================
+   STATUS
+========================================================== */
 
-window.MRSMILE.status = function() {
+export function getMrSmileBehaviorStatus() {
 
-    const relationship =
-        getRelationshipStatus();
+    return {
 
-
-    const result = {
-
-        relationship,
+        initialized:
+            state.initialized,
 
         lastDecision:
             state.lastDecision,
@@ -1627,34 +1535,80 @@ window.MRSMILE.status = function() {
         lastContext:
             state.lastContext,
 
-        history:
-            [
-                ...state.decisionHistory
-            ]
+        historyLength:
+            state.decisionHistory.length,
+
+        lastVisibleReactionAt:
+            state.lastVisibleReactionAt
 
     };
 
-
-    console.log(
-        "[MR.SMILE DEBUG] STATUS",
-        result
-    );
+}
 
 
-    return result;
+/* ==========================================================
+   DEBUG
+========================================================== */
 
-};
+if (
+    typeof window !==
+    "undefined"
+) {
+
+    window.MRSMILE_BEHAVIOR = {
+
+        decide,
+
+        request:
+            requestMrSmileBehavior,
+
+        execute:
+            decision =>
+                trigger(
+                    "mrsmile:actionRequested",
+                    decision
+                ),
+
+        status:
+            getMrSmileBehaviorStatus
+
+    };
+
+}
 
 
-/* ===================================
-        DEBUG READY
-=================================== */
+/* ==========================================================
+   HELPERS
+========================================================== */
 
-console.log(
-    "[MR.SMILE DEBUG] Global API ready:",
-    window.MRSMILE
-);
-console.log(
-    "[MR.SMILE DEBUG TEST] behavior.js debug block loaded"
-);
+function pick(
+    values
+) {
 
+    return values[
+        Math.floor(
+            Math.random() *
+            values.length
+        )
+    ];
+
+}
+
+
+function randomBetween(
+    min,
+    max
+) {
+
+    return Math.floor(
+
+        Math.random() *
+        (
+            max -
+            min +
+            1
+        )
+
+    ) + min;
+
+}
