@@ -39,7 +39,8 @@ import {
 import {
     initMrSmileLanguage,
     detectLanguage,
-    getPreferredLanguage
+    getPreferredLanguage,
+    getLocalizedResponse
 } from "./mrsmileLanguage.js";
 
 
