@@ -57,7 +57,7 @@ import {
 } from "./mrsmileMemory.js";
 
 import {
-    runFirstContactIntrusion
+    showMrSmileFirstContactFace
 } from "./mrsmileAppearance.js";
 
 import {
@@ -764,7 +764,7 @@ export async function triggerFirstContact() {
          * - старого black-screen sequence
          */
 
-        await runFirstContactIntrusion();
+       await showMrSmileFirstContactFace("presence");
 
         /*
          * Сохраняем факт первого контакта.
