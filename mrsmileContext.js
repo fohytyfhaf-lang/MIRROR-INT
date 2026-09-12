@@ -1,16 +1,5 @@
 /* ==========================================================
-   MR.SMILE CONTEXT
-   OMEGA SYSTEM
-
-   Context does not decide behavior.
-
-   It answers:
-
-       WHAT happened?
-       WHERE?
-       WHO caused it?
-       HOW important is it?
-       Is it meaningful?
+   MR.SMILE CONTEXT — REBUILT / SINGLE PIPELINE
 ========================================================== */
 
 import {
@@ -48,13 +37,18 @@ const state = {
 
     queue: [],
 
-    currentContext: null,
+    current: null,
 
     history: [],
 
-    maxHistory: 60
+    maxHistory: 80,
+
+    listeners: false
 
 };
+
+
+const MAX_QUEUE = 50;
 
 
 /* ==========================================================
@@ -65,9 +59,6 @@ const IMPORTANCE = {
 
     file_open: 2,
     file_close: 1,
-
-    folder_open: 1,
-    folder_close: 1,
 
     restricted_file: 8,
 
@@ -105,10 +96,10 @@ const IMPORTANCE = {
 
 
 /* ==========================================================
-   IMPORTANT TARGET KEYWORDS
+   IMPORTANT TARGETS
 ========================================================== */
 
-const IMPORTANT_TARGETS = [
+const IMPORTANT = [
 
     "truth",
     "mirror",
@@ -124,13 +115,15 @@ const IMPORTANT_TARGETS = [
     "mrsmile",
     "smile",
 
-    "secret"
+    "secret",
+
+    "333"
 
 ];
 
 
 /* ==========================================================
-   INITIALIZATION
+   INIT
 ========================================================== */
 
 export function initMrSmileContext() {
@@ -138,7 +131,6 @@ export function initMrSmileContext() {
     if (
         state.initialized
     ) {
-
         return;
     }
 
@@ -153,17 +145,22 @@ export function initMrSmileContext() {
 
     registerListeners();
 
-    exposeDebug();
-
-
-    console.log(
-        "[MR.SMILE CONTEXT] Initialized."
-    );
+    expose();
 
 
     trigger(
-        "mrsmile:contextInitialized"
+        "mrsmile:contextInitialized",
+        {
+            timestamp:
+                Date.now()
+        }
     );
+
+
+    console.log(
+        "[MR.SMILE CONTEXT] Rebuilt context initialized."
+    );
+
 }
 
 
@@ -173,23 +170,30 @@ export function initMrSmileContext() {
 
 function registerListeners() {
 
+    if (
+        state.listeners
+    ) {
+        return;
+    }
+
+
+    state.listeners =
+        true;
+
+
     on(
         "mrsmile:operatorAction",
-        data => {
-
-            enqueueContext(
-                data || {}
-            );
-
-        }
+        data =>
+            enqueue(
+                data
+            )
     );
 
 
     on(
         "mrsmile:operatorHelpRequest",
-        data => {
-
-            enqueueContext({
+        data =>
+            enqueue({
 
                 ...(data || {}),
 
@@ -199,17 +203,14 @@ function registerListeners() {
                 source:
                     "system"
 
-            });
-
-        }
+            })
     );
 
 
     on(
         "mrsmile:restrictedFileOpened",
-        data => {
-
-            enqueueContext({
+        data =>
+            enqueue({
 
                 ...(data || {}),
 
@@ -219,17 +220,14 @@ function registerListeners() {
                 source:
                     "explorer"
 
-            });
-
-        }
+            })
     );
 
 
     on(
         "mrsmile:cameraChanged",
-        data => {
-
-            enqueueContext({
+        data =>
+            enqueue({
 
                 ...(data || {}),
 
@@ -239,17 +237,14 @@ function registerListeners() {
                 source:
                     "camera"
 
-            });
-
-        }
+            })
     );
 
 
     on(
         "mrsmile:consoleCommand",
-        data => {
-
-            enqueueContext({
+        data =>
+            enqueue({
 
                 ...(data || {}),
 
@@ -259,17 +254,14 @@ function registerListeners() {
                 source:
                     "console"
 
-            });
-
-        }
+            })
     );
 
 
     on(
         "mrsmile:windowOpened",
-        data => {
-
-            enqueueContext({
+        data =>
+            enqueue({
 
                 ...(data || {}),
 
@@ -279,17 +271,14 @@ function registerListeners() {
                 source:
                     "window_manager"
 
-            });
-
-        }
+            })
     );
 
 
     on(
         "mrsmile:windowClosed",
-        data => {
-
-            enqueueContext({
+        data =>
+            enqueue({
 
                 ...(data || {}),
 
@@ -299,17 +288,14 @@ function registerListeners() {
                 source:
                     "window_manager"
 
-            });
-
-        }
+            })
     );
 
 
     on(
         "mrsmile:windowFocused",
-        data => {
-
-            enqueueContext({
+        data =>
+            enqueue({
 
                 ...(data || {}),
 
@@ -319,17 +305,14 @@ function registerListeners() {
                 source:
                     "window_manager"
 
-            });
-
-        }
+            })
     );
 
 
     on(
         "mrsmile:windowMoved",
-        data => {
-
-            enqueueContext({
+        data =>
+            enqueue({
 
                 ...(data || {}),
 
@@ -339,17 +322,14 @@ function registerListeners() {
                 source:
                     "window_manager"
 
-            });
-
-        }
+            })
     );
 
 
     on(
         "mrsmile:settingsChanged",
-        data => {
-
-            enqueueContext({
+        data =>
+            enqueue({
 
                 ...(data || {}),
 
@@ -359,34 +339,30 @@ function registerListeners() {
                 source:
                     "settings"
 
-            });
-
-        }
+            })
     );
 
 }
 
 
 /* ==========================================================
-   QUEUE
+   ENQUEUE
 ========================================================== */
 
-function enqueueContext(
-    data
+function enqueue(
+    data = {}
 ) {
 
     if (
         !data
     ) {
-
         return false;
     }
 
 
     /*
-     * MR.SMILE itself must never be treated
-     * as an operator.
-     */
+       Never process MR.SMILE as operator.
+    */
 
     if (
         data.source ===
@@ -394,28 +370,102 @@ function enqueueContext(
     ) {
 
         return false;
+
+    }
+
+
+    const item = {
+
+        ...data,
+
+        type:
+            normalizeType(
+                data.type
+            )
+
+    };
+
+
+    /*
+       Prevent identical rapid events.
+    */
+
+    if (
+        state.queue.some(
+            previous =>
+                sameAction(
+                    previous,
+                    item
+                )
+                &&
+                Date.now() -
+                    (
+                        previous._queuedAt ||
+                        0
+                    )
+                <
+                    1200
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    item._queuedAt =
+        Date.now();
+
+
+    /*
+       Queue protection.
+    */
+
+    if (
+        state.queue.length >=
+        MAX_QUEUE
+    ) {
+
+        const lowIndex =
+            state.queue.findIndex(
+                queued =>
+                    (
+                        IMPORTANCE[
+                            queued.type
+                        ] ||
+                        1
+                    ) <= 2
+            );
+
+
+        if (
+            lowIndex >= 0
+        ) {
+
+            state.queue.splice(
+                lowIndex,
+                1
+            );
+
+        } else {
+
+            return false;
+
+        }
+
     }
 
 
     state.queue.push(
-        data
+        item
     );
-
-
-    if (
-        state.queue.length >
-        40
-    ) {
-
-        state.queue.shift();
-
-    }
 
 
     processQueue();
 
 
     return true;
+
 }
 
 
@@ -428,7 +478,6 @@ async function processQueue() {
     if (
         state.processing
     ) {
-
         return;
     }
 
@@ -447,7 +496,9 @@ async function processQueue() {
                 state.queue.shift();
 
 
-            if (!raw) {
+            if (
+                !raw
+            ) {
                 continue;
             }
 
@@ -458,7 +509,7 @@ async function processQueue() {
                 );
 
 
-            state.currentContext =
+            state.current =
                 context;
 
 
@@ -467,7 +518,7 @@ async function processQueue() {
             );
 
 
-            while (
+            if (
                 state.history.length >
                 state.maxHistory
             ) {
@@ -477,58 +528,101 @@ async function processQueue() {
             }
 
 
-            /*
-             * Memory
-             */
+            try {
 
-            rememberContext(
-                context
-            );
+                rememberContext(
+                    context
+                );
+
+            } catch (error) {
+
+                console.warn(
+                    "[MR.SMILE CONTEXT] rememberContext failed:",
+                    error
+                );
+
+            }
 
 
             if (
                 context.page
             ) {
 
-                rememberPage(
-                    context.page
-                );
+                try {
+
+                    rememberPage(
+                        context.page
+                    );
+
+                } catch {
+                    // optional
+                }
 
             }
 
 
             if (
+
                 context.type ===
-                "file_open"
+                    "file_open"
+
                 &&
+
                 context.target
+
             ) {
 
-                rememberFile(
-                    context.target,
-                    {
-                        name:
-                            context.metadata?.name
-                    }
-                );
+                try {
+
+                    rememberFile(
+
+                        context.target,
+
+                        {
+                            name:
+                                context.metadata
+                                    ?.name
+                        }
+
+                    );
+
+                } catch {
+                    // optional
+                }
 
             }
 
 
             if (
                 context.type ===
-                "console_command"
+                    "console_command"
             ) {
 
-                rememberCommand(
-                    context.target ||
-                    context.metadata?.command ||
-                    "",
-                    {
-                        source:
-                            context.source
-                    }
-                );
+                try {
+
+                    rememberCommand(
+
+                        context.target ||
+
+                        context.metadata
+                            ?.command ||
+
+                        "",
+
+                        {
+                            source:
+                                context.source,
+
+                            allowed:
+                                true
+
+                        }
+
+                    );
+
+                } catch {
+                    // optional
+                }
 
             }
 
@@ -538,10 +632,6 @@ async function processQueue() {
                 context
             );
 
-
-            /*
-             * Behavior
-             */
 
             const decision =
                 requestMrSmileBehavior(
@@ -563,11 +653,6 @@ async function processQueue() {
 
             }
 
-
-            /*
-             * Give browser event loop
-             * a chance to breathe.
-             */
 
             await tick();
 
@@ -606,7 +691,7 @@ export function createMrSmileContext(
     data = {}
 ) {
 
-    const relationship =
+    const rel =
         getRelationshipStatus();
 
 
@@ -616,7 +701,8 @@ export function createMrSmileContext(
         );
 
 
-    const importance =
+    let importance =
+
         Number.isFinite(
             data.importance
         )
@@ -625,25 +711,39 @@ export function createMrSmileContext(
                 data.importance
             )
 
-            : calculateImportance(
-                type,
-                data
+            : (
+                IMPORTANCE[type] ??
+                1
             );
 
 
-    const significant =
-        data.significant ===
-            true
-
-        ||
-
-        importance >= 6
-
-        ||
-
-        isImportantTarget(
+    if (
+        isImportant(
             data.target
-        );
+        )
+    ) {
+
+        importance =
+            Math.min(
+                10,
+                importance + 3
+            );
+
+    }
+
+
+    if (
+        data.metadata
+            ?.restricted === true
+    ) {
+
+        importance =
+            Math.min(
+                10,
+                importance + 4
+            );
+
+    }
 
 
     return {
@@ -660,7 +760,7 @@ export function createMrSmileContext(
 
         page:
             data.page ||
-            getCurrentPage(),
+            getPage(),
 
         action:
             data.action ||
@@ -674,49 +774,41 @@ export function createMrSmileContext(
             data.operator ||
             "operator",
 
-
         relationship:
-            relationship.level,
+            rel.level,
 
         trust:
-            relationship.trust,
+            rel.trust,
 
         respect:
-            relationship.respect,
+            rel.respect,
 
         irritation:
-            relationship.irritation,
+            rel.irritation,
 
         score:
-            relationship.score,
-
+            rel.score,
 
         importance,
 
-        significant,
-
-
-        activeWindow:
-            data.activeWindow ||
-            getActiveWindow(),
-
-
-        currentUrl:
-            safe(
-                () =>
-                    window.location.href,
-                null
+        significant:
+            data.significant === true
+            ||
+            importance >= 6
+            ||
+            isImportant(
+                data.target
             ),
 
+        activeWindow:
+            getWindow(),
 
         timestamp:
             Date.now(),
 
-
         metadata:
             data.metadata ||
             {},
-
 
         raw:
             data.raw ||
@@ -728,60 +820,53 @@ export function createMrSmileContext(
 
 
 /* ==========================================================
-   IMPORTANCE
+   DUPLICATE ACTION
 ========================================================== */
 
-function calculateImportance(
-    type,
-    data
+function sameAction(
+    a,
+    b
 ) {
 
-    let importance =
-        IMPORTANCE[type] ??
-        1;
+    return (
 
+        a.type ===
+            b.type
 
-    const target =
+        &&
+
         String(
-            data.target ||
+            a.target ||
             ""
-        ).toLowerCase();
+        ) ===
 
-
-    if (
-        isImportantTarget(
-            target
+        String(
+            b.target ||
+            ""
         )
-    ) {
 
-        importance += 3;
+        &&
 
-    }
+        String(
+            a.action ||
+            ""
+        ) ===
 
+        String(
+            b.action ||
+            ""
+        )
 
-    if (
-        data.metadata?.restricted ===
-        true
-    ) {
-
-        importance += 4;
-
-    }
-
-
-    return Math.min(
-        10,
-        importance
     );
 
 }
 
 
 /* ==========================================================
-   IMPORTANT TARGET
+   IMPORTANT TARGET CHECK
 ========================================================== */
 
-function isImportantTarget(
+function isImportant(
     target
 ) {
 
@@ -789,10 +874,11 @@ function isImportantTarget(
         String(
             target ||
             ""
-        ).toLowerCase();
+        )
+        .toLowerCase();
 
 
-    return IMPORTANT_TARGETS.some(
+    return IMPORTANT.some(
         keyword =>
             value.includes(
                 keyword
@@ -803,7 +889,7 @@ function isImportantTarget(
 
 
 /* ==========================================================
-   NORMALIZE TYPE
+   TYPE
 ========================================================== */
 
 function normalizeType(
@@ -828,27 +914,30 @@ function normalizeType(
    CURRENT PAGE
 ========================================================== */
 
-function getCurrentPage() {
+function getPage() {
 
     try {
 
         return (
 
-            document.body?.dataset?.page
+            document.body
+                ?.dataset
+                ?.page
 
             ||
 
             document.querySelector(
                 ".page.active"
-            )?.id
+            )
+                ?.id
 
             ||
 
-            window.location.hash
+            location.hash
 
             ||
 
-            window.location.pathname
+            location.pathname
 
             ||
 
@@ -869,20 +958,14 @@ function getCurrentPage() {
    ACTIVE WINDOW
 ========================================================== */
 
-function getActiveWindow() {
+function getWindow() {
 
     try {
 
         const element =
-            document.querySelector(
-                ".window.active"
-            )
-
-
-            ||
 
             document.querySelector(
-                ".window.focused"
+                ".window.active,.window.focused"
             );
 
 
@@ -908,7 +991,8 @@ function getActiveWindow() {
                     )
                     ?.textContent
                     ?.trim()
-                    ||
+                ||
+
                 null
 
         };
@@ -923,14 +1007,14 @@ function getActiveWindow() {
 
 
 /* ==========================================================
-   PUBLIC REPORT
+   PUBLIC ACTION REPORT
 ========================================================== */
 
 export function reportMrSmileOperatorAction(
-    data = {}
+    data
 ) {
 
-    return enqueueContext(
+    return enqueue(
         data
     );
 
@@ -943,7 +1027,7 @@ export function reportMrSmileOperatorAction(
 
 export function getLastMrSmileContext() {
 
-    return state.currentContext;
+    return state.current;
 
 }
 
@@ -974,7 +1058,7 @@ export function getMrSmileContextStatus() {
             state.history.length,
 
         current:
-            state.currentContext
+            state.current
 
     };
 
@@ -982,19 +1066,16 @@ export function getMrSmileContextStatus() {
 
 
 /* ==========================================================
-   RESET
+   CLEAR
 ========================================================== */
 
 export function clearMrSmileContextHistory() {
 
-    state.history =
-        [];
+    state.queue = [];
 
-    state.currentContext =
-        null;
+    state.history = [];
 
-    state.queue =
-        [];
+    state.current = null;
 
 }
 
@@ -1010,16 +1091,15 @@ export function resetMrSmileContext() {
 
 
 /* ==========================================================
-   DEBUG API
+   DEBUG
 ========================================================== */
 
-function exposeDebug() {
+function expose() {
 
     if (
         typeof window ===
         "undefined"
     ) {
-
         return;
     }
 
@@ -1050,26 +1130,8 @@ function exposeDebug() {
 
 
 /* ==========================================================
-   HELPERS
+   TICK
 ========================================================== */
-
-function safe(
-    fn,
-    fallback
-) {
-
-    try {
-
-        return fn();
-
-    } catch {
-
-        return fallback;
-
-    }
-
-}
-
 
 function tick() {
 
@@ -1082,3 +1144,36 @@ function tick() {
     );
 
 }
+
+
+/* ==========================================================
+   INITIAL GLOBAL
+========================================================== */
+
+if (
+    typeof window !==
+    "undefined"
+) {
+
+    window.MRSMILE_CONTEXT =
+        window.MRSMILE_CONTEXT ||
+        {};
+
+}
+
+
+/* ==========================================================
+   DEFAULT
+========================================================== */
+
+export default {
+
+    initMrSmileContext,
+
+    createMrSmileContext,
+
+    reportMrSmileOperatorAction,
+
+    getMrSmileContextStatus
+
+};
