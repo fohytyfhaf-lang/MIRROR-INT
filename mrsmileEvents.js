@@ -1,46 +1,76 @@
 /* ==========================================================
-   MR.SMILE EVENTS — COMPLETE REBUILD
+   MR.SMILE EVENTS — FINAL ORCHESTRATOR
    OMEGA / MIRROR-INT
 
-   RESPONSIBILITY:
+   RESPONSIBILITY
    ----------------------------------------------------------
-   This module is the EVENT ORCHESTRATOR.
+   This module is ONLY the event orchestrator.
 
    It does NOT contain:
-   - MR.SMILE personality
-   - conversation generation
+   - personality
+   - language understanding
+   - response generation
    - idle message generation
    - relationship calculations
    - behavior decisions
    - action execution
    - chat rendering
-   - visual personality logic
+   - visual generation
 
-   Those responsibilities belong to:
+   RESPONSIBILITY MAP
+   ----------------------------------------------------------
 
-       mrsmileCore.js
-       mrsmileChat.js
-       mrsmileMemory.js
-       mrsmileRelationship.js
-       mrsmileBehavior.js
-       mrsmileActions.js
-       mrsmileAppearance.js
-       mrsmileContext.js
+   mrsmileCore.js
+       → understanding / personality / responses
 
-   This module only connects them.
+   mrsmileChat.js
+       → chat bridge / output / First Contact chat / idle
 
-   MAIN ARCHITECTURE:
+   mrsmileMemory.js
+       → persistent memory
 
-       OMEGA EVENT
-           ↓
-       mrsmileEvents.js
-           ↓
-       State / Presence / Progress
-           ↓
-       Appearance / Chat / Behavior / Actions
+   mrsmileRelationship.js
+       → trust / respect / irritation / relationship
 
-   IMPORTANT:
-   There is ONE official First Contact path.
+   mrsmileProgress.js
+       → unlock requirements / access requests
+
+   mrsmileContext.js
+       → OMEGA context collection
+
+   mrsmileBehavior.js
+       → behavioral decisions
+
+   mrsmileActions.js
+       → executable actions
+
+   mrsmileAppearance.js
+       → visual manifestation
+
+   mrsmileIntrusionUI.js
+       → UI intrusion layer
+
+   mrsmileEvents.js
+       → EVENT ORCHESTRATION ONLY
+
+
+   MAIN PIPELINE
+   ----------------------------------------------------------
+
+   OMEGA EVENT
+        ↓
+   mrsmileEvents.js
+        ↓
+   state synchronization
+        ↓
+   dependent systems
+        ↓
+   chat / progress / context / behavior / actions
+
+
+   IMPORTANT
+   ----------------------------------------------------------
+   There must be only ONE official First Contact path.
 ========================================================== */
 
 
@@ -113,6 +143,12 @@ const STATE = {
     initialized:
         false,
 
+    listenersRegistered:
+        false,
+
+    trustListenersRegistered:
+        false,
+
     firstContactRunning:
         false,
 
@@ -137,12 +173,6 @@ const STATE = {
     operatorReactionRunning:
         false,
 
-    listenersRegistered:
-        false,
-
-    trustListenersRegistered:
-        false,
-
     currentEventId:
         0,
 
@@ -156,13 +186,16 @@ const STATE = {
         null,
 
     lastFileRead:
+        null,
+
+    lastSystemEvent:
         null
 
 };
 
 
 /* ==========================================================
-   CONSTANTS
+   STORAGE
 ========================================================== */
 
 const STORAGE = {
@@ -170,14 +203,18 @@ const STORAGE = {
     firstContact:
         "mrsmile_first_contact",
 
-    handshake:
-        "mrsmile_handshake",
-
     firstContactStarted:
-        "mrsmile_first_contact_started"
+        "mrsmile_first_contact_started",
+
+    handshake:
+        "mrsmile_handshake"
 
 };
 
+
+/* ==========================================================
+   TIMING
+========================================================== */
 
 const TIMING = {
 
@@ -363,6 +400,84 @@ function safeCall(
 }
 
 
+async function safeAsyncCall(
+    label,
+    callback,
+    fallback = null
+) {
+
+    try {
+
+        if (
+            typeof callback !==
+            "function"
+        ) {
+            return fallback;
+        }
+
+        return await callback();
+
+    } catch (error) {
+
+        console.warn(
+            `[MR.SMILE EVENTS] ${label} failed:`,
+            error
+        );
+
+        return fallback;
+
+    }
+
+}
+
+
+/* ==========================================================
+   EVENT ID
+========================================================== */
+
+function nextEventId() {
+
+    STATE.currentEventId += 1;
+
+    STATE.lastEventTime =
+        Date.now();
+
+    return STATE.currentEventId;
+
+}
+
+
+/* ==========================================================
+   EVENT DUPLICATE GUARD
+========================================================== */
+
+function isDuplicateEvent(
+    key
+) {
+
+    const now =
+        Date.now();
+
+    const previous =
+        STATE[`_event_${key}`] || 0;
+
+    if (
+        now - previous <
+        TIMING.duplicateEventWindow
+    ) {
+
+        return true;
+
+    }
+
+    STATE[`_event_${key}`] =
+        now;
+
+    return false;
+
+}
+
+
 /* ==========================================================
    MASTER STATE SYNCHRONIZATION
 ========================================================== */
@@ -373,24 +488,50 @@ function synchronizeMasterState(
 
     try {
 
-        const state =
-            window.MRSMILE_STATE?.get?.();
+        if (
+            typeof window ===
+            "undefined"
+        ) {
+            return;
+        }
 
+        const api =
+            window.MRSMILE_STATE;
 
         if (
-            state &&
-            state.firstContact !==
-                firstContact &&
-            typeof window
-                .MRSMILE_STATE
-                ?.firstContact ===
-                "function"
+            !api
+        ) {
+            return;
+        }
+
+        let current = null;
+
+        if (
+            typeof api.get ===
+            "function"
         ) {
 
-            window.MRSMILE_STATE
-                .firstContact(
-                    firstContact
-                );
+            current =
+                api.get();
+
+        }
+
+        if (
+            current &&
+            current.firstContact ===
+            firstContact
+        ) {
+            return;
+        }
+
+        if (
+            typeof api.firstContact ===
+            "function"
+        ) {
+
+            api.firstContact(
+                firstContact
+            );
 
         }
 
@@ -416,31 +557,55 @@ function synchronizePresence(
 
     try {
 
-        const status =
-            window.MRSMILE_PRESENCE
-                ?.status
-                ?.();
+        if (
+            typeof window ===
+            "undefined"
+        ) {
+            return;
+        }
 
-
-        const current =
-            status
-                ?.state
-                ?.firstContact;
-
+        const api =
+            window.MRSMILE_PRESENCE;
 
         if (
-            current !==
-            firstContact &&
-            typeof window
-                .MRSMILE_PRESENCE
-                ?.firstContact ===
-                "function"
+            !api
+        ) {
+            return;
+        }
+
+        let current = null;
+
+        if (
+            api.status &&
+            typeof api.status ===
+            "function"
         ) {
 
-            window.MRSMILE_PRESENCE
-                .firstContact(
-                    firstContact
-                );
+            const status =
+                api.status();
+
+            current =
+                status
+                    ?.state
+                    ?.firstContact;
+
+        }
+
+        if (
+            current ===
+            firstContact
+        ) {
+            return;
+        }
+
+        if (
+            typeof api.firstContact ===
+            "function"
+        ) {
+
+            api.firstContact(
+                firstContact
+            );
 
         }
 
@@ -457,7 +622,7 @@ function synchronizePresence(
 
 
 /* ==========================================================
-   FIRST CONTACT STATE SYNCHRONIZATION
+   FIRST CONTACT STATE SYNC
 ========================================================== */
 
 function synchronizeFirstContactState(
@@ -471,7 +636,6 @@ function synchronizeFirstContactState(
     synchronizePresence(
         false
     );
-
 
     trigger(
         "mrsmile:firstContactStateSynchronized",
@@ -494,7 +658,7 @@ function synchronizeFirstContactState(
 
 
 /* ==========================================================
-   FIRST CONTACT CHECK
+   FIRST CONTACT STORAGE
 ========================================================== */
 
 function isFirstContactCompleted() {
@@ -508,10 +672,6 @@ function isFirstContactCompleted() {
 }
 
 
-/* ==========================================================
-   FIRST CONTACT STARTED CHECK
-========================================================== */
-
 function wasFirstContactStarted() {
 
     return (
@@ -523,10 +683,6 @@ function wasFirstContactStarted() {
 }
 
 
-/* ==========================================================
-   MARK FIRST CONTACT STARTED
-========================================================== */
-
 function markFirstContactStarted() {
 
     storageSet(
@@ -537,10 +693,6 @@ function markFirstContactStarted() {
 }
 
 
-/* ==========================================================
-   MARK FIRST CONTACT COMPLETE
-========================================================== */
-
 function markFirstContactCompleted() {
 
     storageSet(
@@ -548,20 +700,16 @@ function markFirstContactCompleted() {
         "1"
     );
 
-
     STATE.firstContactCompleted =
         true;
-
 
     synchronizeMasterState(
         true
     );
 
-
     synchronizePresence(
         false
     );
-
 
     trigger(
         "mrsmile:firstContactCompleted",
@@ -580,9 +728,35 @@ function markFirstContactCompleted() {
 
 
 /* ==========================================================
-   CLEAR FIRST CONTACT
-   ----------------------------------------------------------
-   DEBUG / TEST ONLY
+   HANDSHAKE STORAGE
+========================================================== */
+
+function isHandshakeCompleted() {
+
+    return (
+        storageGet(
+            STORAGE.handshake
+        ) === "1"
+    );
+
+}
+
+
+function markHandshakeCompleted() {
+
+    storageSet(
+        STORAGE.handshake,
+        "1"
+    );
+
+    STATE.handshakeCompleted =
+        true;
+
+}
+
+
+/* ==========================================================
+   FIRST CONTACT RESET
 ========================================================== */
 
 export function resetMrSmileFirstContact() {
@@ -621,11 +795,25 @@ export function resetMrSmileFirstContact() {
     STATE.recoveryRunning =
         false;
 
+    STATE.operatorReactionRunning =
+        false;
+
+    STATE.currentEventId =
+        0;
+
+    STATE.lastOperatorAction =
+        null;
+
+    STATE.lastFileRead =
+        null;
+
+    STATE.lastSystemEvent =
+        null;
+
 
     synchronizeMasterState(
         false
     );
-
 
     synchronizePresence(
         false
@@ -635,8 +823,10 @@ export function resetMrSmileFirstContact() {
     trigger(
         "mrsmile:firstContactReset",
         {
+
             timestamp:
                 Date.now()
+
         }
     );
 
@@ -659,10 +849,8 @@ export function triggerMrSmileFirstContact(
     data = {}
 ) {
 
-    STATE.currentEventId += 1;
-
-    STATE.lastEventTime =
-        Date.now();
+    const eventId =
+        nextEventId();
 
 
     const payload = {
@@ -681,15 +869,14 @@ export function triggerMrSmileFirstContact(
         timestamp:
             Date.now(),
 
-        eventId:
-            STATE.currentEventId
+        eventId
 
     };
 
 
-    /*
-       Normal persistent guard.
-    */
+    /* ------------------------------------------------------
+       Persistent guard
+    ------------------------------------------------------ */
 
     if (
         isFirstContactCompleted() &&
@@ -705,9 +892,9 @@ export function triggerMrSmileFirstContact(
     }
 
 
-    /*
-       Do not start two First Contacts at once.
-    */
+    /* ------------------------------------------------------
+       Runtime guard
+    ------------------------------------------------------ */
 
     if (
         STATE.firstContactRunning
@@ -722,9 +909,9 @@ export function triggerMrSmileFirstContact(
     }
 
 
-    /*
-       Queue protection.
-    */
+    /* ------------------------------------------------------
+       Queue guard
+    ------------------------------------------------------ */
 
     if (
         STATE.firstContactQueued
@@ -739,13 +926,6 @@ export function triggerMrSmileFirstContact(
         true;
 
 
-    /*
-       Official event path.
-
-       Nobody should directly call
-       startFirstContact().
-    */
-
     trigger(
         "mrsmile:firstContact",
         payload
@@ -758,7 +938,7 @@ export function triggerMrSmileFirstContact(
 
 
 /* ==========================================================
-   GLOBAL FIRST CONTACT API
+   GLOBAL API
 ========================================================== */
 
 function exposeGlobalAPI() {
@@ -777,6 +957,10 @@ function exposeGlobalAPI() {
 
     window.resetMrSmileFirstContact =
         resetMrSmileFirstContact;
+
+
+    window.getMrSmileEventsStatus =
+        getMrSmileEventsStatus;
 
 
     window.MRSMILE_EVENTS = {
@@ -802,10 +986,6 @@ function exposeGlobalAPI() {
 async function runFirstContact(
     data = {}
 ) {
-
-    /*
-       Hard protection.
-    */
 
     if (
         STATE.firstContactRunning
@@ -849,10 +1029,6 @@ async function runFirstContact(
         );
 
 
-        /*
-           Notify every dependent system.
-        */
-
         trigger(
             "mrsmile:firstContactStarted",
             {
@@ -876,13 +1052,9 @@ async function runFirstContact(
         );
 
 
-        /*
-           Stop autonomous chat idle while
-           First Contact is happening.
-
-           This prevents old idle text from
-           appearing between important messages.
-        */
+        /* --------------------------------------------------
+           STOP IDLE CHAT
+        -------------------------------------------------- */
 
         safeCall(
             "pause idle",
@@ -894,49 +1066,24 @@ async function runFirstContact(
         );
 
 
-        /*
-           Small synchronization delay.
-        */
-
         await sleep(
             TIMING.firstContactDelay
         );
 
 
         /* --------------------------------------------------
-           VISUAL / SYSTEM INTRUSION
-
-           Appearance module owns the visual event.
-           No face generation exists here.
+           VISUAL FIRST CONTACT
         -------------------------------------------------- */
 
-        let appearanceResult = null;
-
-
-        try {
-
-            appearanceResult =
-                await showMrSmileFirstContactFace(
-                    "presence"
-                );
-
-        } catch (error) {
-
-            console.error(
-                "[MR.SMILE EVENTS] Appearance First Contact failed:",
-                error
+        const appearanceResult =
+            await safeAsyncCall(
+                "First Contact appearance",
+                () =>
+                    showMrSmileFirstContactFace(
+                        "presence"
+                    ),
+                false
             );
-
-        }
-
-
-        /*
-           Even if appearance fails,
-           continue to Chat.
-
-           This prevents one visual error from
-           breaking the entire MR.SMILE system.
-        */
 
 
         trigger(
@@ -959,78 +1106,80 @@ async function runFirstContact(
 
         /* --------------------------------------------------
            CHAT FIRST CONTACT
-
-           Chat module owns actual message rendering.
         -------------------------------------------------- */
 
-        try {
+        await safeAsyncCall(
+            "First Contact chat",
+            () =>
+                playFirstContactMessage({
 
-            await playFirstContactMessage({
+                    eventId:
+                        STATE.currentEventId,
 
-                eventId:
-                    STATE.currentEventId,
+                    source:
+                        data.source ||
+                        "event",
 
-                source:
-                    data.source ||
-                    "event",
+                    startIdle:
+                        false
 
-                startIdle:
-                    false
-
-            });
-
-        } catch (error) {
-
-            console.error(
-                "[MR.SMILE EVENTS] First Contact chat failed:",
-                error
-            );
-
-        }
+                }),
+            null
+        );
 
 
         /* --------------------------------------------------
            REVEAL PRIVATE CHANNEL
         -------------------------------------------------- */
 
-        try {
+        safeCall(
+            "reveal MR.SMILE chat",
+            () => {
 
-            revealMrSmileChat();
+                revealMrSmileChat();
 
-        } catch (error) {
+            }
+        );
 
-            console.warn(
-                "[MR.SMILE EVENTS] Could not reveal MR.SMILE chat:",
-                error
-            );
 
-        }
+        trigger(
+            "mrsmile:firstContactChatCompleted",
+            {
+
+                timestamp:
+                    Date.now(),
+
+                eventId:
+                    STATE.currentEventId
+
+            }
+        );
 
 
         /* --------------------------------------------------
-           PROGRESS
+           PROGRESSION
         -------------------------------------------------- */
 
-        try {
+        safeCall(
+            "evaluate progress",
+            () => {
 
-            evaluateProgress();
+                evaluateProgress();
 
-        } catch (error) {
-
-            console.warn(
-                "[MR.SMILE EVENTS] Progress evaluation failed:",
-                error
-            );
-
-        }
+            }
+        );
 
 
-        /*
-           Persist completion ONLY after the whole sequence
-           has had a chance to run.
-        */
+        /* --------------------------------------------------
+           COMPLETE
+        -------------------------------------------------- */
 
         markFirstContactCompleted();
+
+
+        console.log(
+            "[MR.SMILE EVENTS] FIRST CONTACT COMPLETED."
+        );
 
 
         trigger(
@@ -1047,42 +1196,17 @@ async function runFirstContact(
         );
 
 
-        /*
-           Return idle only after First Contact.
-        */
-
-        await sleep(
-            800
-        );
-
-
-        safeCall(
-            "resume idle",
-            () => {
-
-                resumeIdleMessages();
-
-            }
-        );
-
-
-        console.log(
-            "[MR.SMILE EVENTS] FIRST CONTACT COMPLETED."
-        );
-
-
         return true;
 
     } catch (error) {
 
         console.error(
-            "[MR.SMILE EVENTS] First Contact crashed:",
+            "[MR.SMILE EVENTS] First Contact failed:",
             error
         );
 
-
         trigger(
-            "mrsmile:firstContactError",
+            "mrsmile:firstContactFailed",
             {
 
                 error,
@@ -1096,25 +1220,6 @@ async function runFirstContact(
             }
         );
 
-
-        /*
-           Do NOT mark First Contact completed
-           after a fatal error.
-
-           This allows another proper attempt.
-        */
-
-
-        safeCall(
-            "resume idle after error",
-            () => {
-
-                resumeIdleMessages();
-
-            }
-        );
-
-
         return false;
 
     } finally {
@@ -1122,176 +1227,43 @@ async function runFirstContact(
         STATE.firstContactRunning =
             false;
 
+        STATE.firstContactQueued =
+            false;
+
+
+        safeCall(
+            "resume idle",
+            () => {
+
+                resumeIdleMessages();
+
+            }
+        );
+
     }
 
 }
 
 
 /* ==========================================================
-   EVENT: FIRST CONTACT
+   HANDSHAKE
 ========================================================== */
 
-function registerFirstContactEvent() {
-
-    on(
-        "mrsmile:firstContact",
-        data => {
-
-            void runFirstContact(
-                data || {}
-            );
-
-        }
-    );
-
-}
-
-
-/* ==========================================================
-   EVENT: OPERATOR READ FILE
-========================================================== */
-
-function registerFileReadEvent() {
-
-    on(
-        "mrsmile:operatorReadFile",
-        data => {
-
-            handleOperatorReadFile(
-                data
-            );
-
-        }
-    );
-
-}
-
-
-function handleOperatorReadFile(
+async function runHandshake(
     data = {}
 ) {
-
-    const path =
-        cleanText(
-            data.path ||
-            data.file ||
-            data.target
-        );
-
-
-    if (!path) {
-        return;
-    }
-
-
-    STATE.lastFileRead =
-        path;
-
-
-    console.log(
-        "[MR.SMILE EVENTS] Operator read file:",
-        path
-    );
-
-
-    /*
-       Trust handling is kept here because
-       this is a concrete operator event.
-
-       Conversation/behavior remains elsewhere.
-    */
-
-    try {
-
-        if (
-            path ===
-            "/files/entity_mrsmile.txt"
-        ) {
-
-            addTrust(
-                2,
-                `READ_SECRET: ${path}`
-            );
-
-        } else {
-
-            addTrust(
-                1,
-                `READ_FILE: ${path}`
-            );
-
-        }
-
-    } catch (error) {
-
-        console.warn(
-            "[MR.SMILE EVENTS] Trust update failed:",
-            error
-        );
-
-    }
-
-
-    trigger(
-        "mrsmile:fileReadProcessed",
-        {
-
-            path,
-
-            timestamp:
-                Date.now()
-
-        }
-    );
-
-}
-
-
-/* ==========================================================
-   EVENT: SYS_00 ACCEPTED
-========================================================== */
-
-function registerSys00Event() {
-
-    on(
-        "mrsmile:sys00Accepted",
-        () => {
-
-            void handleSys00Accepted();
-
-        }
-    );
-
-}
-
-
-async function handleSys00Accepted() {
 
     if (
         STATE.handshakeRunning
     ) {
-        return;
+        return false;
     }
 
 
     if (
-        STATE.handshakeCompleted
+        isHandshakeCompleted()
     ) {
-        return;
-    }
-
-
-    if (
-        storageGet(
-            STORAGE.handshake
-        ) === "1"
-    ) {
-
-        STATE.handshakeCompleted =
-            true;
-
-        return;
-
+        return false;
     }
 
 
@@ -1299,13 +1271,25 @@ async function handleSys00Accepted() {
         true;
 
 
+    const eventId =
+        nextEventId();
+
+
     try {
 
         trigger(
             "mrsmile:handshakeStarted",
             {
+
+                source:
+                    data.source ||
+                    "system",
+
                 timestamp:
-                    Date.now()
+                    Date.now(),
+
+                eventId
+
             }
         );
 
@@ -1315,45 +1299,46 @@ async function handleSys00Accepted() {
         );
 
 
-        await runHandshakeSequence();
-
-
-        STATE.handshakeCompleted =
-            true;
-
-
-        storageSet(
-            STORAGE.handshake,
-            "1"
-        );
+        markHandshakeCompleted();
 
 
         trigger(
             "mrsmile:handshakeCompleted",
             {
+
                 timestamp:
-                    Date.now()
+                    Date.now(),
+
+                eventId
+
             }
         );
 
 
+        return true;
+
     } catch (error) {
 
-        console.error(
+        console.warn(
             "[MR.SMILE EVENTS] Handshake failed:",
             error
         );
 
-
         trigger(
-            "mrsmile:handshakeError",
+            "mrsmile:handshakeFailed",
             {
+
                 error,
 
                 timestamp:
-                    Date.now()
+                    Date.now(),
+
+                eventId
+
             }
         );
+
+        return false;
 
     } finally {
 
@@ -1366,112 +1351,24 @@ async function handleSys00Accepted() {
 
 
 /* ==========================================================
-   HANDSHAKE SEQUENCE
+   INTEGRITY SEQUENCE
 ========================================================== */
 
-async function runHandshakeSequence() {
-
-    addSystemEventMessage(
-        "SYSTEM NOTICE: Unauthorized handshake detected."
-    );
-
-
-    await sleep(500);
-
-
-    addSystemEventMessage(
-        "CHANNEL: SYS_00"
-    );
-
-
-    await sleep(400);
-
-
-    addSystemEventMessage(
-        "SOURCE: UNKNOWN"
-    );
-
-
-    await sleep(600);
-
-
-    addSystemEventMessage(
-        "HANDSHAKE ANALYSIS IN PROGRESS."
-    );
-
-
-    await sleep(700);
-
-
-    addSystemEventMessage(
-        "REMOTE SIGNATURE ACCEPTED."
-    );
-
-
-    await sleep(500);
-
-
-    addSystemEventMessage(
-        "CONNECTION STATUS: ACTIVE."
-    );
-
-
-    trigger(
-        "mrsmile:handshakeDetected",
-        {
-
-            source:
-                "sys00",
-
-            timestamp:
-                Date.now()
-
-        }
-    );
-
-}
-
-
-/* ==========================================================
-   EVENT: HANDSHAKE ACCEPTED
-========================================================== */
-
-function registerHandshakeEvent() {
-
-    on(
-        "mrsmile:handshakeAccepted",
-        () => {
-
-            void handleHandshakeAccepted();
-
-        }
-    );
-
-}
-
-
-async function handleHandshakeAccepted() {
+async function runIntegritySequence(
+    data = {}
+) {
 
     if (
         STATE.integrityRunning
     ) {
-        return;
+        return false;
     }
 
 
-    await runIntegritySequence();
-
-}
-
-
-/* ==========================================================
-   INTEGRITY EVENT
-========================================================== */
-
-async function runIntegritySequence() {
-
     if (
-        STATE.integrityRunning
+        isDuplicateEvent(
+            "integrity"
+        )
     ) {
         return false;
     }
@@ -1481,10 +1378,8 @@ async function runIntegritySequence() {
         true;
 
 
-    safeCall(
-        "pause idle",
-        () => stopIdleMessages()
-    );
+    const eventId =
+        nextEventId();
 
 
     try {
@@ -1492,68 +1387,76 @@ async function runIntegritySequence() {
         trigger(
             "mrsmile:integrityStarted",
             {
+
+                source:
+                    data.source ||
+                    "system",
+
                 timestamp:
-                    Date.now()
+                    Date.now(),
+
+                eventId
+
             }
         );
 
 
-        await systemStep(
-            "OMEGA SYSTEM INTEGRITY: 99.8%",
-            900
+        await sleep(
+            300
         );
 
 
-        await systemStep(
-            "OMEGA SYSTEM INTEGRITY: 99.6%",
-            850
+        trigger(
+            "mrsmile:integrityStep",
+            {
+
+                step:
+                    1,
+
+                timestamp:
+                    Date.now(),
+
+                eventId
+
+            }
         );
 
 
-        await systemStep(
-            "OMEGA SYSTEM INTEGRITY: 99.3%",
-            700
+        await sleep(
+            450
         );
 
 
-        await systemStep(
-            "BACKGROUND PROCESS: UNKNOWN",
-            650
+        trigger(
+            "mrsmile:integrityStep",
+            {
+
+                step:
+                    2,
+
+                timestamp:
+                    Date.now(),
+
+                eventId
+
+            }
         );
 
 
-        await systemStep(
-            "REMOTE PROCESS DETECTED.",
-            900
+        await sleep(
+            450
         );
-
-
-        await systemStep(
-            "PROCESS TERMINATION REQUESTED.",
-            800
-        );
-
-
-        await systemStep(
-            "PROCESS TERMINATED.",
-            900
-        );
-
-
-        await systemStep(
-            "SYSTEM INTEGRITY: NORMAL",
-            1500
-        );
-
-
-        await runFalseRecovery();
 
 
         trigger(
             "mrsmile:integrityCompleted",
             {
+
                 timestamp:
-                    Date.now()
+                    Date.now(),
+
+                eventId
+
             }
         );
 
@@ -1562,21 +1465,24 @@ async function runIntegritySequence() {
 
     } catch (error) {
 
-        console.error(
+        console.warn(
             "[MR.SMILE EVENTS] Integrity sequence failed:",
             error
         );
 
-
         trigger(
-            "mrsmile:integrityError",
+            "mrsmile:integrityFailed",
             {
+
                 error,
+
                 timestamp:
-                    Date.now()
+                    Date.now(),
+
+                eventId
+
             }
         );
-
 
         return false;
 
@@ -1585,112 +1491,30 @@ async function runIntegritySequence() {
         STATE.integrityRunning =
             false;
 
-        safeCall(
-            "resume idle",
-            () => resumeIdleMessages()
-        );
-
     }
 
 }
 
 
 /* ==========================================================
-   SYSTEM EVENT MESSAGE
+   RECOVERY SEQUENCE
 ========================================================== */
 
-function addSystemEventMessage(
-    text
+async function runRecovery(
+    data = {}
 ) {
 
-    const message =
-        cleanText(text);
-
-
-    if (!message) {
+    if (
+        STATE.recoveryRunning
+    ) {
         return false;
     }
 
 
-    try {
-
-        if (
-            typeof window.addChatMessage ===
-            "function"
-        ) {
-
-            return window.addChatMessage(
-                "mrsmile",
-                {
-
-                    user:
-                        "SYSTEM",
-
-                    time:
-                        new Date()
-                            .toLocaleTimeString(
-                                [],
-                                {
-                                    hour:
-                                        "2-digit",
-
-                                    minute:
-                                        "2-digit"
-                                }
-                            ),
-
-                    text:
-                        message
-
-                }
-            );
-
-        }
-
-    } catch (error) {
-
-        console.warn(
-            "[MR.SMILE EVENTS] System chat output failed:",
-            error
-        );
-
-    }
-
-
-    return false;
-
-}
-
-
-/* ==========================================================
-   SYSTEM STEP
-========================================================== */
-
-async function systemStep(
-    message,
-    delay = 700
-) {
-
-    addSystemEventMessage(
-        message
-    );
-
-
-    await sleep(
-        delay
-    );
-
-}
-
-
-/* ==========================================================
-   FALSE RECOVERY
-========================================================== */
-
-async function runFalseRecovery() {
-
     if (
-        STATE.recoveryRunning
+        isDuplicateEvent(
+            "recovery"
+        )
     ) {
         return false;
     }
@@ -1700,23 +1524,26 @@ async function runFalseRecovery() {
         true;
 
 
+    const eventId =
+        nextEventId();
+
+
     try {
 
-        await systemStep(
-            "BACKGROUND PROCESS: 01 UNKNOWN",
-            800
-        );
+        trigger(
+            "mrsmile:recoveryStarted",
+            {
 
+                source:
+                    data.source ||
+                    "system",
 
-        await systemStep(
-            "BACKGROUND PROCESS: 00 UNKNOWN",
-            900
-        );
+                timestamp:
+                    Date.now(),
 
+                eventId
 
-        await systemStep(
-            "SYSTEM INTEGRITY: NORMAL",
-            1200
+            }
         );
 
 
@@ -1725,47 +1552,53 @@ async function runFalseRecovery() {
         );
 
 
-        trigger(
-            "mrsmile:recoveryCompleted",
-            {
-                timestamp:
-                    Date.now()
+        safeCall(
+            "recover progress",
+            () => {
+
+                evaluateProgress();
+
             }
         );
 
 
-        /*
-           IMPORTANT:
+        trigger(
+            "mrsmile:recoveryCompleted",
+            {
 
-           Recovery does NOT directly call
-           First Contact.
+                timestamp:
+                    Date.now(),
 
-           Instead it goes through the
-           official event path.
-        */
+                eventId
 
-        if (
-            !isFirstContactCompleted()
-        ) {
-
-            triggerMrSmileFirstContact(
-                {
-                    source:
-                        "sys00_recovery",
-
-                    type:
-                        "first_contact",
-
-                    force:
-                        false
-
-                }
-            );
-
-        }
+            }
+        );
 
 
         return true;
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE EVENTS] Recovery failed:",
+            error
+        );
+
+        trigger(
+            "mrsmile:recoveryFailed",
+            {
+
+                error,
+
+                timestamp:
+                    Date.now(),
+
+                eventId
+
+            }
+        );
+
+        return false;
 
     } finally {
 
@@ -1778,410 +1611,52 @@ async function runFalseRecovery() {
 
 
 /* ==========================================================
-   EVENT: OPERATOR ACTION
+   OPERATOR ACTION NORMALIZATION
 ========================================================== */
 
-function registerOperatorActionEvent() {
-
-    on(
-        "mrsmile:operatorAction",
-        data => {
-
-            handleOperatorAction(
-                data
-            );
-
-        }
-    );
-
-}
-
-
-async function handleOperatorAction(
+function normalizeOperatorAction(
     data = {}
 ) {
 
     if (
-        !data ||
-        typeof data !==
-        "object"
-    ) {
-        return;
-    }
-
-
-    /*
-       Prevent MR.SMILE-originated actions
-       from returning into this event system.
-    */
-
-    if (
-        data.source ===
-        "mrsmile"
-    ) {
-        return;
-    }
-
-
-    const timestamp =
-        Date.now();
-
-
-    /*
-       Small duplicate protection.
-    */
-
-    if (
-        STATE.operatorReactionRunning
-    ) {
-
-        /*
-           Do not execute multiple identical
-           action events simultaneously.
-        */
-
-        return;
-
-    }
-
-
-    STATE.operatorReactionRunning =
-        true;
-
-
-    STATE.lastOperatorAction =
-        {
-
-            type:
-                data.type ||
-                data.action ||
-                "unknown",
-
-            target:
-                data.target ||
-                data.path ||
-                "",
-
-            timestamp
-
-        };
-
-
-    try {
-
-        /*
-           Progress first.
-        */
-
-        try {
-
-            evaluateProgress();
-
-        } catch (error) {
-
-            console.warn(
-                "[MR.SMILE EVENTS] Progress evaluation failed:",
-                error
-            );
-
-        }
-
-
-        /*
-           Behavior / Action system receives
-           the original event.
-
-           This module does NOT decide what
-           MR.SMILE should say.
-        */
-
-        trigger(
-            "mrsmile:operatorActionProcessed",
-            {
-
-                ...data,
-
-                timestamp
-
-            }
-        );
-
-
-    } finally {
-
-        await sleep(
-            TIMING.operatorReactionCooldown
-        );
-
-
-        STATE.operatorReactionRunning =
-            false;
-
-    }
-
-}
-
-
-/* ==========================================================
-   EVENT: TRUST CHANGE
-========================================================== */
-
-function registerTrustEvents() {
-
-    if (
-        STATE.trustListenersRegistered
-    ) {
-        return;
-    }
-
-
-    STATE.trustListenersRegistered =
-        true;
-
-
-    on(
-        "mrsmile:trustChanged",
-        data => {
-
-            trigger(
-                "mrsmile:relationshipUpdateRequested",
-                {
-
-                    trust:
-                        getTrust(),
-
-                    source:
-                        "trust_changed",
-
-                    original:
-                        data || null,
-
-                    timestamp:
-                        Date.now()
-
-                }
-            );
-
-        }
-    );
-
-}
-
-
-/* ==========================================================
-   EVENT: PROGRESS
-========================================================== */
-
-function registerProgressEvents() {
-
-    on(
-        "mrsmile:progressChanged",
-        data => {
-
-            try {
-
-                evaluateProgress();
-
-            } catch (error) {
-
-                console.warn(
-                    "[MR.SMILE EVENTS] Progress event failed:",
-                    error
-                );
-
-            }
-
-
-            trigger(
-                "mrsmile:progressEvaluated",
-                {
-
-                    original:
-                        data || null,
-
-                    timestamp:
-                        Date.now()
-
-                }
-            );
-
-        }
-    );
-
-}
-
-
-/* ==========================================================
-   INITIALIZATION
-========================================================== */
-
-export function initMrSmileEvents(
-    options = {}
-) {
-
-    if (
-        STATE.initialized
+        typeof data ===
+        "string"
     ) {
 
         return {
-            ok:
-                true,
 
-            alreadyInitialized:
-                true,
+            action:
+                cleanText(data),
 
-            status:
-                getMrSmileEventsStatus()
+            source:
+                "operator",
+
+            timestamp:
+                Date.now()
 
         };
 
     }
-
-
-    STATE.initialized =
-        true;
-
-
-    /*
-       Existing persistent state.
-    */
-
-    STATE.firstContactCompleted =
-        isFirstContactCompleted();
-
-
-    STATE.handshakeCompleted =
-        storageGet(
-            STORAGE.handshake
-        ) === "1";
-
-
-    /*
-       Trust.
-    */
-
-    safeCall(
-        "load trust",
-        () => loadTrust()
-    );
-
-
-    /*
-       Progress.
-    */
-
-    safeCall(
-        "initialize progress",
-        () => initMrSmileProgress()
-    );
-
-
-    /*
-       UI.
-    */
-
-    safeCall(
-        "initialize intrusion UI",
-        () =>
-            initMrSmileIntrusionUI()
-    );
-
-
-    /*
-       Behavior.
-    */
-
-    safeCall(
-        "initialize behavior",
-        () =>
-            initMrSmileBehavior()
-    );
-
-
-    /*
-       Actions.
-    */
-
-    safeCall(
-        "initialize actions",
-        () =>
-            initMrSmileActions()
-    );
-
-
-    /*
-       Context.
-    */
-
-    safeCall(
-        "initialize context",
-        () =>
-            initMrSmileContext()
-    );
-
-
-    /*
-       Event registration.
-    */
-
-    if (
-        !STATE.listenersRegistered
-    ) {
-
-        registerFirstContactEvent();
-
-        registerFileReadEvent();
-
-        registerSys00Event();
-
-        registerHandshakeEvent();
-
-        registerOperatorActionEvent();
-
-        registerTrustEvents();
-
-        registerProgressEvents();
-
-
-        STATE.listenersRegistered =
-            true;
-
-    }
-
-
-    exposeGlobalAPI();
-
-
-    /*
-       First Contact state restoration.
-    */
-
-    if (
-        STATE.firstContactCompleted
-    ) {
-
-        synchronizeMasterState(
-            true
-        );
-
-    }
-
-
-    console.log(
-        "[MR.SMILE EVENTS] Complete event system initialized."
-    );
 
 
     return {
 
-        ok:
-            true,
+        ...data,
 
-        initialized:
-            true,
+        action:
+            cleanText(
+                data.action ||
+                data.type ||
+                data.name
+            ),
 
-        status:
-            getMrSmileEventsStatus()
+        source:
+            data.source ||
+            "operator",
+
+        timestamp:
+            data.timestamp ||
+            Date.now()
 
     };
 
@@ -2189,7 +1664,781 @@ export function initMrSmileEvents(
 
 
 /* ==========================================================
-   STATUS
+   OPERATOR ACTION EVENT
+========================================================== */
+
+function handleOperatorAction(
+    data = {}
+) {
+
+    const action =
+        normalizeOperatorAction(
+            data
+        );
+
+
+    if (
+        !action.action
+    ) {
+        return;
+    }
+
+
+    STATE.lastOperatorAction =
+        action;
+
+
+    trigger(
+        "mrsmile:operatorActionProcessed",
+        {
+
+            ...action,
+
+            eventId:
+                STATE.currentEventId
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   OPERATOR FILE READ
+========================================================== */
+
+function handleOperatorFileRead(
+    data = {}
+) {
+
+    const file = {
+
+        id:
+            data.id ||
+            data.fileId ||
+            null,
+
+        name:
+            data.name ||
+            data.fileName ||
+            "unknown",
+
+        path:
+            data.path ||
+            "",
+
+        restricted:
+            data.restricted === true,
+
+        timestamp:
+            Date.now()
+
+    };
+
+
+    STATE.lastFileRead =
+        file;
+
+
+    trigger(
+        "mrsmile:fileReadProcessed",
+        {
+
+            ...file,
+
+            eventId:
+                STATE.currentEventId
+
+        }
+    );
+
+
+    if (
+        file.restricted
+    ) {
+
+        trigger(
+            "mrsmile:restrictedFileOpened",
+            {
+
+                ...file,
+
+                eventId:
+                    STATE.currentEventId
+
+            }
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   SYS00 ACCEPTED
+========================================================== */
+
+function handleSys00Accepted(
+    data = {}
+) {
+
+    trigger(
+        "mrsmile:sys00Accepted",
+        {
+
+            ...data,
+
+            timestamp:
+                Date.now(),
+
+            eventId:
+                STATE.currentEventId
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   TRUST CHANGE
+========================================================== */
+
+function handleTrustChanged(
+    data = {}
+) {
+
+    const amount =
+        Number(
+            data.amount ??
+            data.delta ??
+            0
+        );
+
+
+    if (
+        Number.isFinite(amount) &&
+        amount !== 0
+    ) {
+
+        safeCall(
+            "apply trust change",
+            () => {
+
+                addTrust(
+                    amount
+                );
+
+            }
+        );
+
+    }
+
+
+    trigger(
+        "mrsmile:trustChangedProcessed",
+        {
+
+            amount,
+
+            trust:
+                safeCall(
+                    "get trust",
+                    () =>
+                        getTrust()
+                ),
+
+            timestamp:
+                Date.now(),
+
+            eventId:
+                STATE.currentEventId
+
+        }
+    );
+
+
+    safeCall(
+        "evaluate progress after trust",
+        () => {
+
+            evaluateProgress();
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   TRUST INITIALIZATION
+========================================================== */
+
+function initializeTrust() {
+
+    safeCall(
+        "load trust",
+        () => {
+
+            loadTrust();
+
+        }
+    );
+
+
+    const trust =
+        safeCall(
+            "read trust",
+            () =>
+                getTrust(),
+            0
+        );
+
+
+    trigger(
+        "mrsmile:trustInitialized",
+        {
+
+            trust,
+
+            timestamp:
+                Date.now()
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   PROGRESS INITIALIZATION
+========================================================== */
+
+function initializeProgress() {
+
+    safeCall(
+        "initialize progress",
+        () => {
+
+            initMrSmileProgress();
+
+        }
+    );
+
+
+    safeCall(
+        "evaluate initial progress",
+        () => {
+
+            evaluateProgress();
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   SUBSYSTEM INITIALIZATION
+========================================================== */
+
+function initializeSubsystems() {
+
+    safeCall(
+        "initialize context",
+        () => {
+
+            initMrSmileContext();
+
+        }
+    );
+
+
+    safeCall(
+        "initialize behavior",
+        () => {
+
+            initMrSmileBehavior();
+
+        }
+    );
+
+
+    safeCall(
+        "initialize actions",
+        () => {
+
+            initMrSmileActions();
+
+        }
+    );
+
+
+    safeCall(
+        "initialize intrusion UI",
+        () => {
+
+            initMrSmileIntrusionUI();
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   FIRST CONTACT EVENT LISTENER
+========================================================== */
+
+function registerFirstContactListener() {
+
+    on(
+        "mrsmile:firstContact",
+        data => {
+
+            runFirstContact(
+                data || {}
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   OPERATOR LISTENERS
+========================================================== */
+
+function registerOperatorListeners() {
+
+    on(
+        "mrsmile:operatorAction",
+        handleOperatorAction
+    );
+
+
+    on(
+        "mrsmile:operatorFileRead",
+        handleOperatorFileRead
+    );
+
+
+    on(
+        "mrsmile:fileRead",
+        handleOperatorFileRead
+    );
+
+
+    on(
+        "mrsmile:sys00Accepted",
+        handleSys00Accepted
+    );
+
+
+    on(
+        "mrsmile:trustChanged",
+        handleTrustChanged
+    );
+
+}
+
+
+/* ==========================================================
+   HANDSHAKE LISTENERS
+========================================================== */
+
+function registerHandshakeListeners() {
+
+    on(
+        "mrsmile:handshakeRequested",
+        data => {
+
+            runHandshake(
+                data || {}
+            );
+
+        }
+    );
+
+
+    on(
+        "mrsmile:startHandshake",
+        data => {
+
+            runHandshake(
+                data || {}
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   INTEGRITY LISTENERS
+========================================================== */
+
+function registerIntegrityListeners() {
+
+    on(
+        "mrsmile:integrityRequested",
+        data => {
+
+            runIntegritySequence(
+                data || {}
+            );
+
+        }
+    );
+
+
+    on(
+        "mrsmile:integrityCheckRequested",
+        data => {
+
+            runIntegritySequence(
+                data || {}
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   RECOVERY LISTENERS
+========================================================== */
+
+function registerRecoveryListeners() {
+
+    on(
+        "mrsmile:recoveryRequested",
+        data => {
+
+            runRecovery(
+                data || {}
+            );
+
+        }
+    );
+
+
+    on(
+        "mrsmile:systemRecoveryRequested",
+        data => {
+
+            runRecovery(
+                data || {}
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   PROGRESS LISTENERS
+========================================================== */
+
+function registerProgressListeners() {
+
+    on(
+        "mrsmile:progressChanged",
+        data => {
+
+            safeCall(
+                "progress evaluation",
+                () => {
+
+                    evaluateProgress(
+                        data
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    on(
+        "mrsmile:accessRequestCreated",
+        data => {
+
+            trigger(
+                "mrsmile:progressAccessRequestObserved",
+                {
+
+                    ...(
+                        data ||
+                        {}
+                    ),
+
+                    timestamp:
+                        Date.now(),
+
+                    eventId:
+                        STATE.currentEventId
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   SYSTEM EVENT LISTENERS
+========================================================== */
+
+function registerSystemListeners() {
+
+    on(
+        "mrsmile:recovery",
+        data => {
+
+            runRecovery(
+                data || {}
+            );
+
+        }
+    );
+
+
+    on(
+        "mrsmile:integrity",
+        data => {
+
+            runIntegritySequence(
+                data || {}
+            );
+
+        }
+    );
+
+
+    on(
+        "mrsmile:handshake",
+        data => {
+
+            runHandshake(
+                data || {}
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   LISTENER REGISTRATION
+========================================================== */
+
+function registerListeners() {
+
+    if (
+        STATE.listenersRegistered
+    ) {
+        return;
+    }
+
+
+    registerFirstContactListener();
+
+    registerOperatorListeners();
+
+    registerHandshakeListeners();
+
+    registerIntegrityListeners();
+
+    registerRecoveryListeners();
+
+    registerProgressListeners();
+
+    registerSystemListeners();
+
+
+    STATE.listenersRegistered =
+        true;
+
+
+    trigger(
+        "mrsmile:eventListenersRegistered",
+        {
+
+            timestamp:
+                Date.now(),
+
+            eventId:
+                STATE.currentEventId
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   INITIAL FIRST CONTACT STATE
+========================================================== */
+
+function initializeFirstContactState() {
+
+    const completed =
+        isFirstContactCompleted();
+
+
+    STATE.firstContactCompleted =
+        completed;
+
+
+    if (
+        completed
+    ) {
+
+        synchronizeMasterState(
+            true
+        );
+
+        synchronizePresence(
+            false
+        );
+
+    } else {
+
+        synchronizeMasterState(
+            false
+        );
+
+        synchronizePresence(
+            false
+        );
+
+    }
+
+
+    trigger(
+        "mrsmile:firstContactStateInitialized",
+        {
+
+            completed,
+
+            started:
+                wasFirstContactStarted(),
+
+            timestamp:
+                Date.now()
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BOOT
+========================================================== */
+
+export function initMrSmileEvents() {
+
+    if (
+        STATE.initialized
+    ) {
+
+        return getMrSmileEventsStatus();
+
+    }
+
+
+    console.log(
+        "[MR.SMILE EVENTS] Initializing..."
+    );
+
+
+    initializeTrust();
+
+    initializeProgress();
+
+    initializeSubsystems();
+
+    initializeFirstContactState();
+
+    registerListeners();
+
+    exposeGlobalAPI();
+
+
+    STATE.initialized =
+        true;
+
+
+    trigger(
+        "mrsmile:eventsInitialized",
+        {
+
+            timestamp:
+                Date.now()
+
+        }
+    );
+
+
+    console.log(
+        "[MR.SMILE EVENTS] Initialized."
+    );
+
+
+    return getMrSmileEventsStatus();
+
+}
+
+
+/* ==========================================================
+   MANUAL EVENTS
+========================================================== */
+
+export function triggerMrSmileHandshake(
+    data = {}
+) {
+
+    return runHandshake(
+        data
+    );
+
+}
+
+
+export function triggerMrSmileIntegrity(
+    data = {}
+) {
+
+    return runIntegritySequence(
+        data
+    );
+
+}
+
+
+export function triggerMrSmileRecovery(
+    data = {}
+) {
+
+    return runRecovery(
+        data
+    );
+
+}
+
+
+/* ==========================================================
+   EVENT STATUS
 ========================================================== */
 
 export function getMrSmileEventsStatus() {
@@ -2199,12 +2448,18 @@ export function getMrSmileEventsStatus() {
         initialized:
             STATE.initialized,
 
+        listenersRegistered:
+            STATE.listenersRegistered,
+
         firstContactRunning:
             STATE.firstContactRunning,
 
         firstContactCompleted:
             STATE.firstContactCompleted ||
             isFirstContactCompleted(),
+
+        firstContactStarted:
+            wasFirstContactStarted(),
 
         firstContactQueued:
             STATE.firstContactQueued,
@@ -2214,9 +2469,7 @@ export function getMrSmileEventsStatus() {
 
         handshakeCompleted:
             STATE.handshakeCompleted ||
-            storageGet(
-                STORAGE.handshake
-            ) === "1",
+            isHandshakeCompleted(),
 
         integrityRunning:
             STATE.integrityRunning,
@@ -2227,12 +2480,6 @@ export function getMrSmileEventsStatus() {
         operatorReactionRunning:
             STATE.operatorReactionRunning,
 
-        lastOperatorAction:
-            STATE.lastOperatorAction,
-
-        lastFileRead:
-            STATE.lastFileRead,
-
         currentEventId:
             STATE.currentEventId,
 
@@ -2242,8 +2489,14 @@ export function getMrSmileEventsStatus() {
         lastEventTime:
             STATE.lastEventTime,
 
-        listenersRegistered:
-            STATE.listenersRegistered
+        lastOperatorAction:
+            STATE.lastOperatorAction,
+
+        lastFileRead:
+            STATE.lastFileRead,
+
+        lastSystemEvent:
+            STATE.lastSystemEvent
 
     };
 
@@ -2251,37 +2504,7 @@ export function getMrSmileEventsStatus() {
 
 
 /* ==========================================================
-   DEBUG API
-========================================================== */
-
-export function debugTriggerFirstContact() {
-
-    return triggerMrSmileFirstContact(
-        {
-            source:
-                "debug",
-
-            type:
-                "debug_first_contact",
-
-            force:
-                true
-
-        }
-    );
-
-}
-
-
-export function debugResetFirstContact() {
-
-    return resetMrSmileFirstContact();
-
-}
-
-
-/* ==========================================================
-   GLOBAL DEBUG HELPERS
+   GLOBAL INITIALIZATION
 ========================================================== */
 
 if (
@@ -2289,43 +2512,37 @@ if (
     "undefined"
 ) {
 
-    window.debugTriggerMrSmileFirstContact =
-        debugTriggerFirstContact;
+    window.addEventListener(
+        "load",
+        () => {
 
+            try {
 
-    window.debugResetMrSmileFirstContact =
-        debugResetFirstContact;
+                initMrSmileEvents();
 
+            } catch (error) {
 
-    window.getMrSmileEventsStatus =
-        getMrSmileEventsStatus;
+                console.error(
+                    "[MR.SMILE EVENTS] Boot failed:",
+                    error
+                );
 
-}
+            }
 
-
-/* ==========================================================
-   AUTO INIT
-========================================================== */
-
-try {
-
-    initMrSmileEvents();
-
-} catch (error) {
-
-    console.error(
-        "[MR.SMILE EVENTS] Initialization failed:",
-        error
+        },
+        {
+            once: true
+        }
     );
 
 }
 
 
 /* ==========================================================
-   DEFAULT EXPORT
+   EXPORT
 ========================================================== */
 
-const MRSMILE_EVENTS_API = {
+export default {
 
     init:
         initMrSmileEvents,
@@ -2336,14 +2553,16 @@ const MRSMILE_EVENTS_API = {
     resetFirstContact:
         resetMrSmileFirstContact,
 
-    debugTriggerFirstContact,
+    triggerHandshake:
+        triggerMrSmileHandshake,
 
-    debugResetFirstContact,
+    triggerIntegrity:
+        triggerMrSmileIntegrity,
+
+    triggerRecovery:
+        triggerMrSmileRecovery,
 
     status:
         getMrSmileEventsStatus
 
 };
-
-
-export default MRSMILE_EVENTS_API;
