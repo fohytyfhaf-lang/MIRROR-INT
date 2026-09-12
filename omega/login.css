@@ -1,17 +1,38 @@
-/* =========================================================
-   OMEGA LOGIN SCREEN
-========================================================= */
+/* ==========================================================
+   OMEGA LOGIN / ACCOUNT INTERFACE
+   MIRROR-INT / OMEGA
 
-/* ---------------------------------------------------------
+   RESPONSIBILITY
+   ----------------------------------------------------------
+   Visual layer for:
+
+   - login screen
+   - account creation
+   - account selector
+   - profile information
+   - session information
+   - authentication status
+   - validation states
+
+   This stylesheet intentionally supports both the
+   current login HTML and future account interfaces.
+========================================================== */
+
+
+/* ==========================================================
    LOGIN SCREEN
---------------------------------------------------------- */
+========================================================== */
 
 #loginScreen {
+
     position: fixed;
+
     inset: 0;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     overflow: hidden;
@@ -26,21 +47,27 @@
     color: #dff6ff;
 
     z-index: 9000;
+
 }
 
-/* Когда скрыт */
+
+/* Hidden state */
 
 #loginScreen.hidden {
+
     display: none !important;
+
 }
 
 
-/* ---------------------------------------------------------
-   BACKGROUND
---------------------------------------------------------- */
+/* ==========================================================
+   LOGIN BACKGROUND
+========================================================== */
 
 #loginBackground {
+
     position: absolute;
+
     inset: 0;
 
     background:
@@ -54,20 +81,26 @@
             transparent 1px
         );
 
-    background-size: 40px 40px;
+    background-size:
+        40px 40px;
 
-    opacity: 0.35;
+    opacity:
+        0.35;
 
-    pointer-events: none;
+    pointer-events:
+        none;
+
 }
 
 
-/* Затемнение по краям */
+/* Edge darkness */
 
 #loginBackground::after {
+
     content: "";
 
     position: absolute;
+
     inset: 0;
 
     background:
@@ -76,20 +109,24 @@
             transparent 20%,
             rgba(0, 0, 0, 0.75) 100%
         );
+
 }
 
 
-/* ---------------------------------------------------------
+/* ==========================================================
    SCANLINES
---------------------------------------------------------- */
+========================================================== */
 
 #loginScreen::before {
+
     content: "";
 
     position: absolute;
+
     inset: 0;
 
-    pointer-events: none;
+    pointer-events:
+        none;
 
     background:
         repeating-linear-gradient(
@@ -100,22 +137,34 @@
             transparent 4px
         );
 
-    opacity: 0.35;
+    opacity:
+        0.35;
 
-    z-index: 2;
+    z-index:
+        2;
+
 }
 
 
-/* ---------------------------------------------------------
-   LOGIN BOX
---------------------------------------------------------- */
+/* ==========================================================
+   LOGIN / ACCOUNT CONTAINER
+========================================================== */
 
 #loginBox {
+
     position: relative;
 
-    width: min(440px, calc(100vw - 40px));
+    width:
+        min(
+            440px,
+            calc(100vw - 40px)
+        );
 
-    padding: 42px 40px 36px;
+    padding:
+        42px 40px 36px;
+
+    box-sizing:
+        border-box;
 
     background:
         linear-gradient(
@@ -124,346 +173,1805 @@
             rgba(4, 12, 19, 0.98)
         );
 
-    border: 1px solid #24536b;
+    border:
+        1px solid #24536b;
 
     box-shadow:
-        0 0 0 1px rgba(0, 180, 255, 0.04),
-        0 0 30px rgba(0, 180, 255, 0.12),
-        inset 0 0 30px rgba(0, 130, 180, 0.04);
 
-    z-index: 3;
+        0 0 0 1px
+            rgba(0, 180, 255, 0.04),
 
-    animation: omegaLoginAppear 0.6s ease-out;
+        0 0 30px
+            rgba(0, 180, 255, 0.12),
+
+        inset 0 0 30px
+            rgba(0, 130, 180, 0.04);
+
+    z-index:
+        3;
+
+    animation:
+        omegaLoginAppear
+        0.6s
+        ease-out;
+
 }
 
 
-/* Верхняя линия */
+/* ==========================================================
+   TOP SYSTEM LINE
+========================================================== */
 
 #loginBox::before {
+
     content: "";
 
     position: absolute;
 
     top: 0;
+
     left: 25px;
+
     right: 25px;
 
     height: 1px;
 
-    background: #4fd8ff;
+    background:
+        #4fd8ff;
 
     box-shadow:
-        0 0 8px rgba(79, 216, 255, 0.8);
+        0 0 8px
+        rgba(79, 216, 255, 0.8);
 
-    opacity: 0.8;
+    opacity:
+        0.8;
+
 }
 
 
-/* Угловые элементы */
+/* ==========================================================
+   CORNER MARK
+========================================================== */
 
 #loginBox::after {
+
     content: "";
 
     position: absolute;
 
     left: 12px;
+
     bottom: 12px;
 
     width: 20px;
+
     height: 20px;
 
-    border-left: 1px solid #31718e;
-    border-bottom: 1px solid #31718e;
+    border-left:
+        1px solid #31718e;
 
-    opacity: 0.7;
+    border-bottom:
+        1px solid #31718e;
+
+    opacity:
+        0.7;
+
 }
 
 
-/* ---------------------------------------------------------
+/* ==========================================================
    LOGO
---------------------------------------------------------- */
+========================================================== */
 
 .loginLogo {
-    text-align: center;
 
-    margin-bottom: 32px;
+    text-align:
+        center;
+
+    margin-bottom:
+        32px;
+
 }
 
+
 .loginLogo img {
-    display: block;
 
-    width: 110px;
-    height: 110px;
+    display:
+        block;
 
-    object-fit: contain;
+    width:
+        110px;
 
-    margin: 0 auto 18px;
+    height:
+        110px;
+
+    object-fit:
+        contain;
+
+    margin:
+        0 auto 18px;
 
     filter:
         drop-shadow(
-            0 0 12px rgba(0, 210, 255, 0.35)
+            0 0 12px
+            rgba(0, 210, 255, 0.35)
         );
+
 }
+
 
 .loginLogo h1 {
-    margin: 0;
 
-    color: #e5f8ff;
+    margin:
+        0;
 
-    font-size: 25px;
-    font-weight: 600;
+    color:
+        #e5f8ff;
 
-    letter-spacing: 5px;
+    font-size:
+        25px;
 
-    text-transform: uppercase;
+    font-weight:
+        600;
+
+    letter-spacing:
+        5px;
+
+    text-transform:
+        uppercase;
 
     text-shadow:
-        0 0 12px rgba(80, 210, 255, 0.2);
+        0 0 12px
+        rgba(80, 210, 255, 0.2);
+
 }
+
 
 .loginLogo p {
-    margin: 10px 0 0;
 
-    color: #6f9aae;
+    margin:
+        10px 0 0;
 
-    font-size: 11px;
+    color:
+        #6f9aae;
 
-    letter-spacing: 2px;
+    font-size:
+        11px;
 
-    text-transform: uppercase;
+    letter-spacing:
+        2px;
+
+    text-transform:
+        uppercase;
+
 }
 
 
-/* ---------------------------------------------------------
-   INPUT AREA
---------------------------------------------------------- */
+/* ==========================================================
+   ACCOUNT MODE HEADER
+   ----------------------------------------------------------
+   Future elements such as:
+
+   <div class="accountMode">
+       AUTHENTICATE ACCOUNT
+   </div>
+
+   <div class="accountMode">
+       CREATE ACCOUNT
+   </div>
+========================================================== */
+
+.accountMode {
+
+    margin-bottom:
+        18px;
+
+    color:
+        #6394aa;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        2px;
+
+    text-transform:
+        uppercase;
+
+    text-align:
+        left;
+
+}
+
+
+.accountMode.active {
+
+    color:
+        #8fdfff;
+
+}
+
+
+/* ==========================================================
+   FORM
+========================================================== */
 
 .loginFields {
-    display: flex;
 
-    flex-direction: column;
+    display:
+        flex;
 
-    gap: 12px;
+    flex-direction:
+        column;
+
+    gap:
+        12px;
+
 }
 
 
-/* ---------------------------------------------------------
+.loginFields label {
+
+    color:
+        #638b9d;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        1.5px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+/* ==========================================================
    INPUTS
---------------------------------------------------------- */
+========================================================== */
 
-.loginFields input {
-    width: 100%;
+.loginFields input,
+.loginFields select,
+.loginFields textarea {
 
-    box-sizing: border-box;
+    width:
+        100%;
 
-    padding: 13px 14px;
+    box-sizing:
+        border-box;
 
-    background: #07131d;
+    padding:
+        13px 14px;
 
-    border: 1px solid #21465b;
+    background:
+        #07131d;
 
-    outline: none;
+    border:
+        1px solid #21465b;
 
-    color: #dff8ff;
+    outline:
+        none;
 
-    font-family: inherit;
+    color:
+        #dff8ff;
 
-    font-size: 13px;
+    font-family:
+        inherit;
 
-    letter-spacing: 1px;
+    font-size:
+        13px;
+
+    letter-spacing:
+        1px;
 
     transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
+        border-color
+        0.2s
+        ease,
+
+        box-shadow
+        0.2s
+        ease,
+
+        background
+        0.2s
+        ease;
+
 }
 
-.loginFields input::placeholder {
-    color: #527488;
 
-    letter-spacing: 2px;
+.loginFields input::placeholder,
+.loginFields textarea::placeholder {
+
+    color:
+        #527488;
+
+    letter-spacing:
+        1.5px;
+
 }
 
-.loginFields input:hover {
-    border-color: #32677f;
+
+.loginFields input:hover,
+.loginFields select:hover,
+.loginFields textarea:hover {
+
+    border-color:
+        #32677f;
+
 }
 
-.loginFields input:focus {
-    background: #091a26;
 
-    border-color: #4fd8ff;
+.loginFields input:focus,
+.loginFields select:focus,
+.loginFields textarea:focus {
+
+    background:
+        #091a26;
+
+    border-color:
+        #4fd8ff;
 
     box-shadow:
-        0 0 0 1px rgba(79, 216, 255, 0.08),
-        0 0 14px rgba(0, 180, 255, 0.1);
+
+        0 0 0 1px
+        rgba(79, 216, 255, 0.08),
+
+        0 0 14px
+        rgba(0, 180, 255, 0.1);
+
 }
 
 
-/* ---------------------------------------------------------
+/* ==========================================================
+   SELECT
+========================================================== */
+
+.loginFields select {
+
+    appearance:
+        none;
+
+    background-image:
+        linear-gradient(
+            45deg,
+            transparent 50%,
+            #5c8da2 50%
+        ),
+        linear-gradient(
+            135deg,
+            #5c8da2 50%,
+            transparent 50%
+        );
+
+    background-position:
+        calc(100% - 16px) 50%,
+        calc(100% - 11px) 50%;
+
+    background-size:
+        5px 5px,
+        5px 5px;
+
+    background-repeat:
+        no-repeat;
+
+}
+
+
+/* ==========================================================
+   CHECKBOX / TOGGLE
+========================================================== */
+
+.accountOption {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        9px;
+
+    color:
+        #668b9b;
+
+    font-size:
+        10px;
+
+    letter-spacing:
+        0.8px;
+
+}
+
+
+.accountOption input[type="checkbox"] {
+
+    appearance:
+        none;
+
+    width:
+        14px;
+
+    height:
+        14px;
+
+    padding:
+        0;
+
+    background:
+        #07131d;
+
+    border:
+        1px solid #285369;
+
+    cursor:
+        pointer;
+
+}
+
+
+.accountOption input[type="checkbox"]:checked {
+
+    background:
+        #10394c;
+
+    border-color:
+        #4fd8ff;
+
+    box-shadow:
+        inset
+        0 0 0
+        2px
+        #07131d;
+
+}
+
+
+/* ==========================================================
    LOGIN BUTTON
---------------------------------------------------------- */
+========================================================== */
 
-#loginBtn {
-    position: relative;
+#loginBtn,
+.accountPrimaryButton {
 
-    width: 100%;
+    position:
+        relative;
 
-    margin-top: 8px;
+    width:
+        100%;
 
-    padding: 13px 16px;
+    margin-top:
+        8px;
 
-    background: #0d2838;
+    padding:
+        13px 16px;
 
-    border: 1px solid #32738e;
+    background:
+        #0d2838;
 
-    color: #bdeeff;
+    border:
+        1px solid #32738e;
 
-    font-family: inherit;
+    color:
+        #bdeeff;
 
-    font-size: 12px;
+    font-family:
+        inherit;
 
-    font-weight: 600;
+    font-size:
+        12px;
 
-    letter-spacing: 3px;
+    font-weight:
+        600;
 
-    cursor: pointer;
+    letter-spacing:
+        3px;
 
-    text-transform: uppercase;
+    cursor:
+        pointer;
+
+    text-transform:
+        uppercase;
 
     transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        color 0.2s ease;
+
+        background
+        0.2s
+        ease,
+
+        border-color
+        0.2s
+        ease,
+
+        box-shadow
+        0.2s
+        ease,
+
+        color
+        0.2s
+        ease;
+
 }
 
-#loginBtn:hover {
-    background: #12394d;
 
-    border-color: #4fd8ff;
+#loginBtn:hover,
+.accountPrimaryButton:hover {
 
-    color: #ffffff;
+    background:
+        #12394d;
+
+    border-color:
+        #4fd8ff;
+
+    color:
+        #ffffff;
 
     box-shadow:
-        0 0 16px rgba(0, 200, 255, 0.14);
-}
+        0 0 16px
+        rgba(0, 200, 255, 0.14);
 
-#loginBtn:active {
-    background: #0a202e;
-
-    transform: translateY(1px);
 }
 
 
-/* ---------------------------------------------------------
+#loginBtn:active,
+.accountPrimaryButton:active {
+
+    background:
+        #0a202e;
+
+    transform:
+        translateY(1px);
+
+}
+
+
+#loginBtn:disabled,
+.accountPrimaryButton:disabled {
+
+    opacity:
+        0.45;
+
+    cursor:
+        not-allowed;
+
+    box-shadow:
+        none;
+
+}
+
+
+/* ==========================================================
+   SECONDARY BUTTON
+========================================================== */
+
+.accountSecondaryButton {
+
+    width:
+        100%;
+
+    padding:
+        11px 16px;
+
+    background:
+        rgba(8, 21, 30, 0.75);
+
+    border:
+        1px solid #24495d;
+
+    color:
+        #7198a9;
+
+    font-family:
+        inherit;
+
+    font-size:
+        10px;
+
+    letter-spacing:
+        2px;
+
+    text-transform:
+        uppercase;
+
+    cursor:
+        pointer;
+
+    transition:
+        border-color
+        0.2s
+        ease,
+
+        color
+        0.2s
+        ease,
+
+        background
+        0.2s
+        ease;
+
+}
+
+
+.accountSecondaryButton:hover {
+
+    border-color:
+        #3c7189;
+
+    color:
+        #b8e8f8;
+
+    background:
+        #0c2534;
+
+}
+
+
+/* ==========================================================
+   ACCOUNT ACTION ROW
+========================================================== */
+
+.accountActions {
+
+    display:
+        flex;
+
+    gap:
+        8px;
+
+    margin-top:
+        14px;
+
+}
+
+
+.accountActions > * {
+
+    flex:
+        1;
+
+}
+
+
+/* ==========================================================
    STATUS
---------------------------------------------------------- */
+========================================================== */
 
 #status {
-    min-height: 18px;
 
-    margin: 8px 0 0;
+    min-height:
+        18px;
 
-    color: #64899b;
+    margin:
+        8px 0 0;
 
-    font-size: 10px;
+    color:
+        #64899b;
 
-    letter-spacing: 1.5px;
+    font-size:
+        10px;
 
-    text-align: center;
+    letter-spacing:
+        1.5px;
 
-    text-transform: uppercase;
+    text-align:
+        center;
+
+    text-transform:
+        uppercase;
 
     transition:
-        color 0.2s ease,
-        text-shadow 0.2s ease;
+
+        color
+        0.2s
+        ease,
+
+        text-shadow
+        0.2s
+        ease,
+
+        opacity
+        0.2s
+        ease;
+
 }
 
-
-/* Если JS добавляет классы */
 
 #status.success {
-    color: #4dffb0;
+
+    color:
+        #4dffb0;
 
     text-shadow:
-        0 0 8px rgba(77, 255, 176, 0.35);
+        0 0 8px
+        rgba(77, 255, 176, 0.35);
+
 }
+
 
 #status.error {
-    color: #ff667a;
+
+    color:
+        #ff667a;
 
     text-shadow:
-        0 0 8px rgba(255, 70, 100, 0.3);
+        0 0 8px
+        rgba(255, 70, 100, 0.3);
+
 }
+
 
 #status.warning {
-    color: #ffd166;
+
+    color:
+        #ffd166;
 
     text-shadow:
-        0 0 8px rgba(255, 209, 102, 0.3);
+        0 0 8px
+        rgba(255, 209, 102, 0.3);
+
 }
 
 
-/* ---------------------------------------------------------
+#status.info {
+
+    color:
+        #71cfee;
+
+}
+
+
+/* ==========================================================
+   INPUT VALIDATION
+========================================================== */
+
+.loginFields input.valid {
+
+    border-color:
+        #3b9972;
+
+    box-shadow:
+        0 0 8px
+        rgba(59, 153, 114, 0.12);
+
+}
+
+
+.loginFields input.invalid {
+
+    border-color:
+        #9d4657;
+
+    box-shadow:
+        0 0 8px
+        rgba(157, 70, 87, 0.12);
+
+}
+
+
+/* ==========================================================
+   FIELD MESSAGE
+========================================================== */
+
+.fieldMessage {
+
+    min-height:
+        14px;
+
+    margin-top:
+        -5px;
+
+    color:
+        #547486;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        0.6px;
+
+}
+
+
+.fieldMessage.error {
+
+    color:
+        #c85a69;
+
+}
+
+
+.fieldMessage.success {
+
+    color:
+        #5dbd90;
+
+}
+
+
+/* ==========================================================
+   ACCOUNT CREATION PANEL
+========================================================== */
+
+#accountCreation,
+.accountCreationPanel {
+
+    display:
+        none;
+
+    margin-top:
+        18px;
+
+    padding:
+        16px;
+
+    background:
+        rgba(4, 16, 24, 0.7);
+
+    border:
+        1px solid #1f4558;
+
+}
+
+
+#accountCreation.active,
+.accountCreationPanel.active {
+
+    display:
+        block;
+
+}
+
+
+/* ==========================================================
+   ACCOUNT PROFILE
+========================================================== */
+
+.accountProfile {
+
+    padding:
+        16px;
+
+    background:
+        rgba(4, 16, 24, 0.76);
+
+    border:
+        1px solid #21495d;
+
+}
+
+
+.accountProfileHeader {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        14px;
+
+    margin-bottom:
+        14px;
+
+}
+
+
+.accountIdentity {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        4px;
+
+}
+
+
+.accountUsername {
+
+    color:
+        #d9f6ff;
+
+    font-size:
+        14px;
+
+    letter-spacing:
+        2px;
+
+}
+
+
+.accountDisplayName {
+
+    color:
+        #60899b;
+
+    font-size:
+        10px;
+
+    letter-spacing:
+        1px;
+
+}
+
+
+.accountRole {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        5px 8px;
+
+    background:
+        #0b2534;
+
+    border:
+        1px solid #28586e;
+
+    color:
+        #8ddcff;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        1.5px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+/* ==========================================================
+   CLEARANCE DISPLAY
+========================================================== */
+
+.accountClearance {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    margin-top:
+        10px;
+
+    color:
+        #648da0;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        1.5px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.accountClearanceValue {
+
+    color:
+        #b9eaff;
+
+}
+
+
+/* ==========================================================
+   ACCOUNT STATUS
+========================================================== */
+
+.accountStatus {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    gap:
+        6px;
+
+    color:
+        #6f96a6;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        1.2px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.accountStatus::before {
+
+    content:
+        "";
+
+    width:
+        6px;
+
+    height:
+        6px;
+
+    border-radius:
+        50%;
+
+    background:
+        #54717c;
+
+}
+
+
+.accountStatus.active {
+
+    color:
+        #63bd91;
+
+}
+
+
+.accountStatus.active::before {
+
+    background:
+        #4dffb0;
+
+    box-shadow:
+        0 0 7px
+        rgba(77, 255, 176, 0.5);
+
+}
+
+
+.accountStatus.locked {
+
+    color:
+        #c85a69;
+
+}
+
+
+.accountStatus.locked::before {
+
+    background:
+        #ff667a;
+
+}
+
+
+/* ==========================================================
+   ACCOUNT STATISTICS
+========================================================== */
+
+.accountStatistics {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        8px;
+
+    margin-top:
+        16px;
+
+}
+
+
+.accountStatistic {
+
+    padding:
+        10px;
+
+    background:
+        rgba(7, 19, 29, 0.8);
+
+    border:
+        1px solid #1b3b4b;
+
+}
+
+
+.accountStatisticLabel {
+
+    color:
+        #507487;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        1.2px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.accountStatisticValue {
+
+    margin-top:
+        5px;
+
+    color:
+        #beeafa;
+
+    font-size:
+        15px;
+
+    letter-spacing:
+        1px;
+
+}
+
+
+/* ==========================================================
+   ACCOUNT SELECTOR
+========================================================== */
+
+.accountSelector {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        7px;
+
+}
+
+
+.accountSelectorItem {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    width:
+        100%;
+
+    padding:
+        11px 12px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        rgba(7, 19, 29, 0.78);
+
+    border:
+        1px solid #1e4253;
+
+    color:
+        #89b0bf;
+
+    cursor:
+        pointer;
+
+    text-align:
+        left;
+
+    transition:
+
+        border-color
+        0.2s
+        ease,
+
+        background
+        0.2s
+        ease,
+
+        color
+        0.2s
+        ease;
+
+}
+
+
+.accountSelectorItem:hover {
+
+    background:
+        #0b2331;
+
+    border-color:
+        #32738e;
+
+    color:
+        #c6f1ff;
+
+}
+
+
+.accountSelectorItem.selected {
+
+    background:
+        #0d2b3b;
+
+    border-color:
+        #4dacc8;
+
+    color:
+        #dff8ff;
+
+}
+
+
+.accountSelectorIdentity {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        3px;
+
+}
+
+
+.accountSelectorUsername {
+
+    font-size:
+        11px;
+
+    letter-spacing:
+        1px;
+
+}
+
+
+.accountSelectorMeta {
+
+    color:
+        #547789;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        1px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+/* ==========================================================
+   SESSION INFORMATION
+========================================================== */
+
+.sessionInfo {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        8px;
+
+    margin-top:
+        12px;
+
+}
+
+
+.sessionItem {
+
+    padding:
+        9px 10px;
+
+    background:
+        rgba(5, 15, 22, 0.75);
+
+    border:
+        1px solid #1a3948;
+
+}
+
+
+.sessionLabel {
+
+    color:
+        #4e7180;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        1px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.sessionValue {
+
+    margin-top:
+        4px;
+
+    color:
+        #9fd7e8;
+
+    font-size:
+        10px;
+
+}
+
+
+/* ==========================================================
+   ACCOUNT NOTICE
+========================================================== */
+
+.accountNotice {
+
+    margin-top:
+        12px;
+
+    padding:
+        10px 12px;
+
+    background:
+        rgba(12, 33, 44, 0.6);
+
+    border-left:
+        2px solid #34728b;
+
+    color:
+        #62899b;
+
+    font-size:
+        9px;
+
+    line-height:
+        1.6;
+
+    letter-spacing:
+        0.4px;
+
+}
+
+
+.accountNotice.warning {
+
+    border-left-color:
+        #bd8f38;
+
+    color:
+        #b59c69;
+
+}
+
+
+.accountNotice.danger {
+
+    border-left-color:
+        #aa4658;
+
+    color:
+        #c26a78;
+
+}
+
+
+/* ==========================================================
    DECORATIVE SYSTEM TEXT
---------------------------------------------------------- */
+========================================================== */
 
 #loginBox .loginFields::after {
-    content: "OMEGA SECURE AUTHENTICATION";
 
-    display: block;
+    content:
+        "OMEGA SECURE AUTHENTICATION";
 
-    margin-top: 12px;
+    display:
+        block;
 
-    color: #35596b;
+    margin-top:
+        12px;
 
-    font-size: 8px;
+    color:
+        #35596b;
 
-    letter-spacing: 2px;
+    font-size:
+        8px;
 
-    text-align: center;
+    letter-spacing:
+        2px;
+
+    text-align:
+        center;
+
 }
 
 
-/* ---------------------------------------------------------
-   ANIMATION
---------------------------------------------------------- */
+/* ==========================================================
+   FUTURE REGISTRATION FOOTER
+========================================================== */
+
+.accountFooter {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        10px;
+
+    margin-top:
+        16px;
+
+    padding-top:
+        12px;
+
+    border-top:
+        1px solid
+        rgba(
+            49,
+            93,
+            111,
+            0.35
+        );
+
+}
+
+
+.accountFooterText {
+
+    color:
+        #4d6f7e;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        1px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.accountFooterLink {
+
+    color:
+        #6ca7bd;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        1.2px;
+
+    text-transform:
+        uppercase;
+
+    cursor:
+        pointer;
+
+}
+
+
+.accountFooterLink:hover {
+
+    color:
+        #a9e7f7;
+
+}
+
+
+/* ==========================================================
+   LOADING STATE
+========================================================== */
+
+.loginLoading {
+
+    position:
+        relative;
+
+    pointer-events:
+        none;
+
+    opacity:
+        0.65;
+
+}
+
+
+.loginLoading::after {
+
+    content:
+        "AUTHENTICATING";
+
+    display:
+        block;
+
+    margin-top:
+        8px;
+
+    color:
+        #6fb9d1;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        2px;
+
+    text-align:
+        center;
+
+    animation:
+        omegaLoginPulse
+        1.2s
+        ease-in-out
+        infinite;
+
+}
+
+
+/* ==========================================================
+   ANIMATIONS
+========================================================== */
 
 @keyframes omegaLoginAppear {
 
     from {
-        opacity: 0;
-        transform: translateY(12px) scale(0.98);
-        filter: blur(3px);
+
+        opacity:
+            0;
+
+        transform:
+            translateY(12px)
+            scale(0.98);
+
+        filter:
+            blur(3px);
+
     }
 
     to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0);
+
+        opacity:
+            1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+        filter:
+            blur(0);
+
     }
 
 }
 
 
-/* ---------------------------------------------------------
-   RESPONSIVE
---------------------------------------------------------- */
+@keyframes omegaLoginPulse {
 
-@media (max-width: 600px) {
+    0%,
+    100% {
+
+        opacity:
+            0.35;
+
+    }
+
+    50% {
+
+        opacity:
+            1;
+
+    }
+
+}
+
+
+/* ==========================================================
+   REDUCED MOTION
+========================================================== */
+
+@media (
+    prefers-reduced-motion: reduce
+) {
 
     #loginBox {
-        padding: 32px 24px 28px;
+
+        animation:
+            none;
+
     }
+
+    .loginLoading::after {
+
+        animation:
+            none;
+
+    }
+
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (
+    max-width: 600px
+) {
+
+    #loginBox {
+
+        width:
+            min(
+                440px,
+                calc(100vw - 24px)
+            );
+
+        padding:
+            32px 24px 28px;
+
+    }
+
 
     .loginLogo img {
-        width: 85px;
-        height: 85px;
+
+        width:
+            85px;
+
+        height:
+            85px;
+
     }
 
+
     .loginLogo h1 {
-        font-size: 20px;
-        letter-spacing: 3px;
+
+        font-size:
+            20px;
+
+        letter-spacing:
+            3px;
+
+    }
+
+
+    .accountStatistics,
+    .sessionInfo {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .accountActions {
+
+        flex-direction:
+            column;
+
+    }
+
+}
+
+
+/* ==========================================================
+   VERY SMALL SCREENS
+========================================================== */
+
+@media (
+    max-width: 380px
+) {
+
+    #loginBox {
+
+        padding:
+            26px 18px 24px;
+
+    }
+
+
+    .loginLogo {
+
+        margin-bottom:
+            22px;
+
+    }
+
+
+    .loginLogo img {
+
+        width:
+            70px;
+
+        height:
+            70px;
+
+    }
+
+
+    .loginLogo h1 {
+
+        font-size:
+            17px;
+
+        letter-spacing:
+            2px;
+
+    }
+
+
+    .loginFields input,
+    .loginFields select {
+
+        padding:
+            12px;
+
+        font-size:
+            12px;
+
     }
 
 }
