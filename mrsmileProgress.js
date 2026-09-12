@@ -1,33 +1,6 @@
-// =======================================
-// MR.SMILE PROGRESSION SYSTEM
-// OMEGA SYSTEM
-// =======================================
-//
-// RESPONSIBILITY:
-//
-// This module tracks:
-// - discovered keywords
-// - progression requirements
-// - access requests
-// - unlocked content
-//
-// IMPORTANT:
-//
-// This module does NOT decide what MR.SMILE
-// wants to do.
-//
-// It only detects:
-//
-// "The operator has reached the requirements."
-//
-// MR.SMILE can then decide:
-//
-// GRANT
-// DENY
-// DELAY
-//
-// =======================================
-
+/* ==========================================================
+   MR.SMILE PROGRESS — REBUILT / SINGLE SOURCE OF ACCESS
+========================================================== */
 
 import {
     trigger,
@@ -40,112 +13,160 @@ import {
 } from "./mrsmileTrust.js";
 
 
-// =======================================
-// STORAGE
-// =======================================
+/* ==========================================================
+   STORAGE
+========================================================== */
 
 const STORAGE_KEY =
-    "mrsmile_progress";
-
-const ARCHIVE_PENDING_KEY =
-    "mrsmile_archive_access_pending";
-
-const GAME_PENDING_KEY =
-    "mrsmile_game_access_pending";
-
-const TRUTH_PENDING_KEY =
-    "mrsmile_truth_access_pending";
+    "mrsmile_progress_v2";
 
 
-// =======================================
-// STATE
-// =======================================
+const PENDING_KEYS = {
+
+    archive:
+        "mrsmile_archive_access_pending",
+
+    game:
+        "mrsmile_game_access_pending",
+
+    truth:
+        "mrsmile_truth_access_pending"
+
+};
+
+
+/* ==========================================================
+   STATE
+========================================================== */
 
 const state = {
 
-    keywords: [],
+    initialized:
+        false,
+
+    keywords:
+        [],
 
     flags: {
 
-        archiveUnlocked: false,
+        archiveUnlocked:
+            false,
 
-        gameUnlocked: false,
+        gameUnlocked:
+            false,
 
-        truthUnlocked: false
+        truthUnlocked:
+            false
 
     },
 
     requests: {
 
-        archive: false,
+        archive:
+            false,
 
-        game: false,
+        game:
+            false,
 
-        truth: false
+        truth:
+            false
+
+    },
+
+    listeners:
+        false
+
+};
+
+
+/* ==========================================================
+   REQUIREMENTS
+========================================================== */
+
+const requirements = {
+
+    archive: {
+
+        trust:
+            30,
+
+        keyword:
+            "mirror"
+
+    },
+
+    game: {
+
+        trust:
+            40,
+
+        keyword:
+            "play"
+
+    },
+
+    truth: {
+
+        trust:
+            60,
+
+        keyword:
+            "truth"
 
     }
 
 };
 
 
-// =======================================
-// INITIALIZATION
-// =======================================
-
-let initialized = false;
-
-let trustListenerRegistered = false;
-
-
-// =======================================
-// KEYWORD RULES
-// =======================================
-//
-// Hidden from the operator.
-//
-// These are not unlock commands.
-//
-// They only indicate that the operator
-// has shown interest in a specific subject.
-// =======================================
+/* ==========================================================
+   KEYWORDS
+========================================================== */
 
 const keywordRules = [
 
     {
-        id: "mirror",
+
+        id:
+            "mirror",
 
         words: [
 
             "mirror",
-            "зеркало",
-            "зеркал"
+            "зеркал",
+            "дзеркал"
 
         ]
 
     },
 
     {
-        id: "truth",
+
+        id:
+            "truth",
 
         words: [
 
             "truth",
-            "правда",
-            "истина"
+            "правд",
+            "истин",
+            "істин"
 
         ]
 
     },
 
     {
-        id: "play",
+
+        id:
+            "play",
 
         words: [
 
             "play",
-            "играть",
-            "игра",
-            "game"
+            "game",
+            "игр",
+            "грай",
+            "грати"
 
         ]
 
@@ -154,46 +175,15 @@ const keywordRules = [
 ];
 
 
-// =======================================
-// REQUIREMENTS
-// =======================================
-
-const REQUIREMENTS = {
-
-    archive: {
-
-        trust: 30,
-
-        keyword: "mirror"
-
-    },
-
-    game: {
-
-        trust: 40,
-
-        keyword: "play"
-
-    },
-
-    truth: {
-
-        trust: 60,
-
-        keyword: "truth"
-
-    }
-
-};
-
-
-// =======================================
-// INIT
-// =======================================
+/* ==========================================================
+   INIT
+========================================================== */
 
 export function initMrSmileProgress() {
 
-    if (initialized) {
+    if (
+        state.initialized
+    ) {
 
         evaluateProgress();
 
@@ -202,55 +192,43 @@ export function initMrSmileProgress() {
     }
 
 
-    initialized = true;
+    state.initialized =
+        true;
 
-
-    // -----------------------------------
-    // TRUST
-    // -----------------------------------
 
     initTrust();
 
+    load();
 
-    // -----------------------------------
-    // LOAD
-    // -----------------------------------
-
-    loadProgress();
-
-
-    // -----------------------------------
-    // TRUST LISTENER
-    // -----------------------------------
-
-    registerTrustListener();
-
-
-    // -----------------------------------
-    // INITIAL EVALUATION
-    // -----------------------------------
+    register();
 
     evaluateProgress();
 
 
     console.log(
-        "[MR.SMILE PROGRESS] Initialized"
+        "[MR.SMILE PROGRESS] Rebuilt progress initialized."
     );
 
 }
 
 
-// =======================================
-// TRUST LISTENER
-// =======================================
+/* ==========================================================
+   EVENT LISTENERS
+========================================================== */
 
-function registerTrustListener() {
+function register() {
 
-    if (trustListenerRegistered)
+    if (
+        state.listeners
+    ) {
+
         return;
 
+    }
 
-    trustListenerRegistered = true;
+
+    state.listeners =
+        true;
 
 
     on(
@@ -258,10 +236,17 @@ function registerTrustListener() {
 
         () => {
 
-            console.log(
-                "[MR.SMILE PROGRESS] Trust changed. Re-evaluating."
-            );
+            evaluateProgress();
 
+        }
+
+    );
+
+
+    on(
+        "mrsmile:firstContactCompleted",
+
+        () => {
 
             evaluateProgress();
 
@@ -272,41 +257,39 @@ function registerTrustListener() {
 }
 
 
-// =======================================
-// PROCESS MR.SMILE INPUT
-// =======================================
-//
-// Called by MR.SMILE chat.
-//
-// Example:
-//
-// processMrSmileInput("I want to know the truth.")
-//
-// =======================================
+/* ==========================================================
+   PROCESS OPERATOR INPUT
+========================================================== */
 
-export function processMrSmileInput(text) {
-
-    if (!text)
-        return;
-
+export function processMrSmileInput(
+    text
+) {
 
     initMrSmileProgress();
 
 
     const normalized =
-        normalize(text);
+        normalize(
+            text
+        );
 
 
-    let changed = false;
+    if (!normalized) {
+
+        return false;
+
+    }
 
 
-    // ===================================
-    // KEYWORD DETECTION
-    // ===================================
+    let changed =
+        false;
 
-    for (const rule of keywordRules) {
 
-        // Already discovered
+    for (
+        const rule
+        of keywordRules
+    ) {
+
         if (
             state.keywords.includes(
                 rule.id
@@ -318,192 +301,157 @@ export function processMrSmileInput(text) {
         }
 
 
-        if (
-            !matchesKeyword(
-                normalized,
-                rule.words
-            )
-        ) {
+        const matched =
+            rule.words.some(
+                word =>
+                    normalized.includes(
+                        word
+                    )
+            );
+
+
+        if (!matched) {
 
             continue;
 
         }
 
 
-        // --------------------------------
-        // SAVE DISCOVERY
-        // --------------------------------
-
         state.keywords.push(
             rule.id
         );
 
 
-        changed = true;
+        changed =
+            true;
 
-
-        console.log(
-            "[MR.SMILE PROGRESS] Keyword recognized:",
-            rule.id
-        );
-
-
-        // --------------------------------
-        // EVENT
-        // --------------------------------
 
         trigger(
+
             "mrsmile:keywordRecognized",
+
             {
-                keyword: rule.id
+
+                keyword:
+                    rule.id,
+
+                timestamp:
+                    Date.now()
+
             }
+
         );
 
     }
 
 
-    // ===================================
-    // SAVE
-    // ===================================
+    if (
+        changed
+    ) {
 
-    if (changed) {
-
-        saveProgress();
+        save();
 
     }
 
 
-    // ===================================
-    // EVALUATE
-    // ===================================
-
     evaluateProgress();
+
+
+    return changed;
 
 }
 
 
-// =======================================
-// EVALUATE PROGRESS
-// =======================================
-//
-// This function NEVER directly grants
-// content.
-//
-// It only creates a request when the
-// operator satisfies the requirements.
-// =======================================
+/* ==========================================================
+   EVALUATE
+========================================================== */
 
 export function evaluateProgress() {
 
     initTrust();
 
 
-    const trust =
-        getTrust();
-
-
     const firstContact =
         localStorage.getItem(
             "mrsmile_first_contact"
-        ) === "1";
+        ) ===
+        "1";
 
 
-    // ===================================
-    // BEFORE FIRST CONTACT
-    // ===================================
-    //
-    // MR.SMILE progression does not begin
-    // before First Contact.
-// =======================================
+    /*
+       Progress only begins after First Contact.
+    */
 
-    if (!firstContact) {
+    if (
+        !firstContact
+    ) {
 
         return;
 
     }
 
 
-    // ===================================
-    // ARCHIVE
-    // ===================================
+    for (
+        const type
+        of Object.keys(
+            requirements
+        )
+    ) {
 
-    evaluateAccessRequest(
-        "archive",
-        trust
-    );
+        evaluate(
+            type
+        );
 
-
-    // ===================================
-    // GAME
-    // ===================================
-
-    evaluateAccessRequest(
-        "game",
-        trust
-    );
-
-
-    // ===================================
-    // TRUTH
-    // ===================================
-
-    evaluateAccessRequest(
-        "truth",
-        trust
-    );
+    }
 
 }
 
 
-// =======================================
-// EVALUATE SINGLE ACCESS REQUEST
-// =======================================
+/* ==========================================================
+   EVALUATE ACCESS
+========================================================== */
 
-function evaluateAccessRequest(
-    type,
-    trust
+function evaluate(
+    type
 ) {
 
+    if (
+        isUnlocked(
+            type
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        hasPendingAccess(
+            type
+        )
+    ) {
+
+        return;
+
+    }
+
+
     const requirement =
-        REQUIREMENTS[type];
+        requirements[
+            type
+        ];
 
 
-    if (!requirement)
-        return;
-
-
-    // -----------------------------------
-    // Already unlocked
-    // -----------------------------------
-
-    if (
-        isUnlocked(type)
-    ) {
+    if (!requirement) {
 
         return;
 
     }
 
 
-    // -----------------------------------
-    // Already waiting
-    // -----------------------------------
-
     if (
-        hasPendingAccess(type)
-    ) {
-
-        return;
-
-    }
-
-
-    // -----------------------------------
-    // Trust requirement
-    // -----------------------------------
-
-    if (
-        trust <
+        getTrust() <
         requirement.trust
     ) {
 
@@ -511,10 +459,6 @@ function evaluateAccessRequest(
 
     }
 
-
-    // -----------------------------------
-    // Keyword requirement
-    // -----------------------------------
 
     if (
         !state.keywords.includes(
@@ -527,32 +471,25 @@ function evaluateAccessRequest(
     }
 
 
-    // -----------------------------------
-    // Requirements satisfied
-    // -----------------------------------
-
-    createAccessRequest(type);
+    createAccessRequest(
+        type
+    );
 
 }
 
 
-// =======================================
-// CREATE ACCESS REQUEST
-// =======================================
-//
-// This is the important difference from
-// the old system.
-//
-// Meeting requirements does NOT unlock
-// anything.
-//
-// It creates a request for MR.SMILE.
-// =======================================
+/* ==========================================================
+   CREATE ACCESS REQUEST
+========================================================== */
 
-function createAccessRequest(type) {
+function createAccessRequest(
+    type
+) {
 
     if (
-        isUnlocked(type)
+        isUnlocked(
+            type
+        )
     ) {
 
         return false;
@@ -561,7 +498,9 @@ function createAccessRequest(type) {
 
 
     if (
-        hasPendingAccess(type)
+        hasPendingAccess(
+            type
+        )
     ) {
 
         return false;
@@ -573,23 +512,33 @@ function createAccessRequest(type) {
         true;
 
 
-    setPendingStorage(
+    setPending(
         type,
         true
     );
 
 
-    saveProgress();
-
-
-    console.log(
-        "[MR.SMILE PROGRESS] Access request created:",
-        type
-    );
+    save();
 
 
     trigger(
-        getRequestEvent(type)
+
+        requestEvent(
+            type
+        ),
+
+        {
+
+            type,
+
+            source:
+                "progress",
+
+            timestamp:
+                Date.now()
+
+        }
+
     );
 
 
@@ -598,46 +547,154 @@ function createAccessRequest(type) {
 }
 
 
-// =======================================
-// REQUEST EVENT
-// =======================================
+/* ==========================================================
+   EVENT NAMES
+========================================================== */
 
-function getRequestEvent(type) {
+function requestEvent(
+    type
+) {
 
-    switch (type) {
+    if (
+        type ===
+        "archive"
+    ) {
 
-        case "archive":
-
-            return "mrsmile:archiveAccessRequested";
-
-
-        case "game":
-
-            return "mrsmile:gameAccessRequested";
-
-
-        case "truth":
-
-            return "mrsmile:truthAccessRequested";
-
-
-        default:
-
-            return "mrsmile:accessRequested";
+        return (
+            "mrsmile:archiveAccessRequested"
+        );
 
     }
+
+
+    if (
+        type ===
+        "game"
+    ) {
+
+        return (
+            "mrsmile:gameAccessRequested"
+        );
+
+    }
+
+
+    if (
+        type ===
+        "truth"
+    ) {
+
+        return (
+            "mrsmile:truthAccessRequested"
+        );
+
+    }
+
+
+    return (
+        "mrsmile:accessRequested"
+    );
 
 }
 
 
-// =======================================
-// GRANT ACCESS
-// =======================================
-//
-// These functions are called by MR.SMILE.
-//
-// Progress itself does not make the decision.
-// =======================================
+function unlockedEvent(
+    type
+) {
+
+    if (
+        type ===
+        "archive"
+    ) {
+
+        return (
+            "mrsmile:archiveUnlocked"
+        );
+
+    }
+
+
+    if (
+        type ===
+        "game"
+    ) {
+
+        return (
+            "mrsmile:gameUnlocked"
+        );
+
+    }
+
+
+    if (
+        type ===
+        "truth"
+    ) {
+
+        return (
+            "mrsmile:truthUnlocked"
+        );
+
+    }
+
+
+    return (
+        "mrsmile:accessUnlocked"
+    );
+
+}
+
+
+function deniedEvent(
+    type
+) {
+
+    if (
+        type ===
+        "archive"
+    ) {
+
+        return (
+            "mrsmile:archiveAccessDenied"
+        );
+
+    }
+
+
+    if (
+        type ===
+        "game"
+    ) {
+
+        return (
+            "mrsmile:gameAccessDenied"
+        );
+
+    }
+
+
+    if (
+        type ===
+        "truth"
+    ) {
+
+        return (
+            "mrsmile:truthAccessDenied"
+        );
+
+    }
+
+
+    return (
+        "mrsmile:accessDenied"
+    );
+
+}
+
+
+/* ==========================================================
+   GRANT ACCESS
+========================================================== */
 
 export function grantMirrorArchiveAccess() {
 
@@ -666,412 +723,173 @@ export function grantTruthAccess() {
 }
 
 
-// =======================================
-// GENERIC GRANT
-// =======================================
-
-function grantAccess(type) {
-
-    if (
-        isUnlocked(type)
-    ) {
-
-        return false;
-
-    }
-
-
-    state.flags[
-        getFlagName(type)
-    ] = true;
-
-
-    state.requests[type] =
-        false;
-
-
-    setPendingStorage(
-        type,
-        false
-    );
-
-
-    saveProgress();
-
-
-    console.log(
-        "[MR.SMILE] Access granted:",
-        type
-    );
-
-
-    trigger(
-        getUnlockedEvent(type)
-    );
-
-
-    return true;
-
-}
-
-
-// =======================================
-// DENY ACCESS
-// =======================================
-//
-// Denial does not erase progression.
-//
-// The operator can potentially request
-// access again later if MR.SMILE changes
-// his decision.
-// =======================================
-
-export function denyAccess(type) {
-
-    if (
-        !isKnownAccessType(type)
-    ) {
-
-        return false;
-
-    }
-
-
-    state.requests[type] =
-        false;
-
-
-    setPendingStorage(
-        type,
-        false
-    );
-
-
-    saveProgress();
-
-
-    console.log(
-        "[MR.SMILE] Access denied:",
-        type
-    );
-
-
-    trigger(
-        getDeniedEvent(type)
-    );
-
-
-    return true;
-
-}
-
-
-// =======================================
-// CLEAR ACCESS REQUEST
-// =======================================
-//
-// Useful when MR.SMILE wants to postpone
-// a decision without permanently denying.
-// =======================================
-
-export function clearAccessRequest(type) {
-
-    if (
-        !isKnownAccessType(type)
-    ) {
-
-        return false;
-
-    }
-
-
-    state.requests[type] =
-        false;
-
-
-    setPendingStorage(
-        type,
-        false
-    );
-
-
-    saveProgress();
-
-
-    return true;
-
-}
-
-
-// =======================================
-// REQUEST EVENT NAMES
-// =======================================
-
-function getDeniedEvent(type) {
-
-    switch (type) {
-
-        case "archive":
-
-            return "mrsmile:archiveAccessDenied";
-
-
-        case "game":
-
-            return "mrsmile:gameAccessDenied";
-
-
-        case "truth":
-
-            return "mrsmile:truthAccessDenied";
-
-
-        default:
-
-            return "mrsmile:accessDenied";
-
-    }
-
-}
-
-
-// =======================================
-// UNLOCK EVENT NAMES
-// =======================================
-
-function getUnlockedEvent(type) {
-
-    switch (type) {
-
-        case "archive":
-
-            return "mrsmile:archiveUnlocked";
-
-
-        case "game":
-
-            return "mrsmile:gameUnlocked";
-
-
-        case "truth":
-
-            return "mrsmile:truthUnlocked";
-
-
-        default:
-
-            return "mrsmile:accessUnlocked";
-
-    }
-
-}
-
-
-// =======================================
-// FLAG NAME
-// =======================================
-
-function getFlagName(type) {
-
-    switch (type) {
-
-        case "archive":
-
-            return "archiveUnlocked";
-
-
-        case "game":
-
-            return "gameUnlocked";
-
-
-        case "truth":
-
-            return "truthUnlocked";
-
-
-        default:
-
-            return null;
-
-    }
-
-}
-
-
-// =======================================
-// ACCESS TYPE CHECK
-// =======================================
-
-function isKnownAccessType(type) {
-
-    return (
-
-        type === "archive" ||
-
-        type === "game" ||
-
-        type === "truth"
-
-    );
-
-}
-
-
-// =======================================
-// UNLOCK CHECK
-// =======================================
-
-function isUnlocked(type) {
-
-    const flag =
-        getFlagName(type);
-
-
-    if (!flag)
-        return false;
-
-
-    return (
-        state.flags[flag] === true
-    );
-
-}
-
-
-// =======================================
-// PENDING CHECK
-// =======================================
-
-function hasPendingAccess(type) {
-
-    if (
-        !isKnownAccessType(type)
-    ) {
-
-        return false;
-
-    }
-
-
-    return (
-        state.requests[type] === true
-        ||
-        getPendingStorage(type)
-    );
-
-}
-
-
-// =======================================
-// STORAGE PENDING
-// =======================================
-
-function setPendingStorage(
-    type,
-    value
+function grantAccess(
+    type
 ) {
 
-    const key =
-        getPendingStorageKey(type);
+    if (
+        !known(
+            type
+        )
+    ) {
 
-
-    if (!key)
-        return;
-
-
-    if (value) {
-
-        localStorage.setItem(
-            key,
-            "1"
-        );
-
-    }
-    else {
-
-        localStorage.removeItem(
-            key
-        );
-
-    }
-
-}
-
-
-// =======================================
-// GET PENDING STORAGE
-// =======================================
-
-function getPendingStorage(type) {
-
-    const key =
-        getPendingStorageKey(type);
-
-
-    if (!key)
         return false;
 
-
-    return (
-        localStorage.getItem(key)
-        === "1"
-    );
-
-}
+    }
 
 
-// =======================================
-// PENDING STORAGE KEY
-// =======================================
+    if (
+        isUnlocked(
+            type
+        )
+    ) {
 
-function getPendingStorageKey(type) {
-
-    switch (type) {
-
-        case "archive":
-
-            return ARCHIVE_PENDING_KEY;
-
-
-        case "game":
-
-            return GAME_PENDING_KEY;
-
-
-        case "truth":
-
-            return TRUTH_PENDING_KEY;
-
-
-        default:
-
-            return null;
+        return false;
 
     }
 
-}
+
+    const key =
+        flag(
+            type
+        );
 
 
-// =======================================
-// LEGACY ARCHIVE API
-// =======================================
-//
-// Kept for compatibility with existing
-// MR.SMILE modules.
-// =======================================
-
-export function requestMirrorArchiveAccess() {
-
-    initMrSmileProgress();
+    state.flags[key] =
+        true;
 
 
-    return createAccessRequest(
-        "archive"
+    state.requests[type] =
+        false;
+
+
+    setPending(
+        type,
+        false
     );
 
+
+    save();
+
+
+    trigger(
+
+        unlockedEvent(
+            type
+        ),
+
+        {
+
+            type,
+
+            timestamp:
+                Date.now()
+
+        }
+
+    );
+
+
+    return true;
+
 }
 
+
+/* ==========================================================
+   DENY ACCESS
+========================================================== */
+
+export function denyAccess(
+    type
+) {
+
+    if (
+        !known(
+            type
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    state.requests[type] =
+        false;
+
+
+    setPending(
+        type,
+        false
+    );
+
+
+    save();
+
+
+    trigger(
+
+        deniedEvent(
+            type
+        ),
+
+        {
+
+            type,
+
+            timestamp:
+                Date.now()
+
+        }
+
+    );
+
+
+    return true;
+
+}
+
+
+/* ==========================================================
+   CLEAR REQUEST
+========================================================== */
+
+export function clearAccessRequest(
+    type
+) {
+
+    if (
+        !known(
+            type
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    state.requests[type] =
+        false;
+
+
+    setPending(
+        type,
+        false
+    );
+
+
+    save();
+
+
+    return true;
+
+}
+
+
+/* ==========================================================
+   PENDING HELPERS
+========================================================== */
 
 export function hasPendingMirrorArchiveAccess() {
 
@@ -1082,313 +900,201 @@ export function hasPendingMirrorArchiveAccess() {
 }
 
 
-// =======================================
-// GENERIC REQUEST STATUS
-// =======================================
+export function hasPendingGameAccess() {
 
-export function hasPendingAccessRequest(
+    return hasPendingAccess(
+        "game"
+    );
+
+}
+
+
+export function hasPendingTruthAccess() {
+
+    return hasPendingAccess(
+        "truth"
+    );
+
+}
+
+
+function hasPendingAccess(
     type
 ) {
 
-    initMrSmileProgress();
+    return (
 
+        state.requests[type] ===
+            true
 
-    return hasPendingAccess(
-        type
+        ||
+
+        localStorage.getItem(
+            PENDING_KEYS[type]
+        ) ===
+            "1"
+
     );
 
 }
 
 
-// =======================================
-// KEYWORD CHECK
-// =======================================
-
-export function hasKeyword(
-    keyword
+function setPending(
+    type,
+    value
 ) {
 
-    initMrSmileProgress();
+    const key =
+        PENDING_KEYS[type];
 
 
-    return state.keywords.includes(
-        keyword
-    );
+    if (!key) {
 
-}
+        return;
 
-
-// =======================================
-// PROGRESS UNLOCK CHECK
-// =======================================
-
-export function isProgressUnlocked(
-    flag
-) {
-
-    initMrSmileProgress();
+    }
 
 
-    switch (flag) {
+    if (
+        value
+    ) {
 
-        case "archive":
+        localStorage.setItem(
+            key,
+            "1"
+        );
 
-            return state.flags.archiveUnlocked;
+    } else {
 
-
-        case "game":
-
-            return state.flags.gameUnlocked;
-
-
-        case "truth":
-
-            return state.flags.truthUnlocked;
-
-
-        default:
-
-            return false;
+        localStorage.removeItem(
+            key
+        );
 
     }
 
 }
 
 
-// =======================================
-// GET COMPLETE PROGRESS
-// =======================================
+/* ==========================================================
+   UNLOCK STATUS
+========================================================== */
 
-export function getMrSmileProgress() {
+export function isArchiveUnlocked() {
 
-    initMrSmileProgress();
-
-
-    return {
-
-        keywords: [
-            ...state.keywords
-        ],
-
-        flags: {
-
-            ...state.flags
-
-        },
-
-        requests: {
-
-            archive:
-                hasPendingAccess("archive"),
-
-            game:
-                hasPendingAccess("game"),
-
-            truth:
-                hasPendingAccess("truth")
-
-        }
-
-    };
-
-}
-
-
-// =======================================
-// GET PROGRESS STATUS
-// =======================================
-
-export function getMrSmileProgressStatus() {
-
-    initMrSmileProgress();
-
-
-    return {
-
-        trust:
-            getTrust(),
-
-        firstContact:
-            localStorage.getItem(
-                "mrsmile_first_contact"
-            ) === "1",
-
-
-        keywords: [
-            ...state.keywords
-        ],
-
-
-        archiveAccessPending:
-            hasPendingAccess(
-                "archive"
-            ),
-
-        gameAccessPending:
-            hasPendingAccess(
-                "game"
-            ),
-
-        truthAccessPending:
-            hasPendingAccess(
-                "truth"
-            ),
-
-
-        archiveUnlocked:
-            state.flags.archiveUnlocked,
-
-        gameUnlocked:
-            state.flags.gameUnlocked,
-
-        truthUnlocked:
-            state.flags.truthUnlocked
-
-    };
-
-}
-
-
-// =======================================
-// RESET PROGRESS
-// =======================================
-
-export function resetMrSmileProgress() {
-
-    state.keywords = [];
-
-
-    state.flags.archiveUnlocked =
-        false;
-
-    state.flags.gameUnlocked =
-        false;
-
-    state.flags.truthUnlocked =
-        false;
-
-
-    state.requests.archive =
-        false;
-
-    state.requests.game =
-        false;
-
-    state.requests.truth =
-        false;
-
-
-    localStorage.removeItem(
-        STORAGE_KEY
-    );
-
-
-    localStorage.removeItem(
-        ARCHIVE_PENDING_KEY
-    );
-
-
-    localStorage.removeItem(
-        GAME_PENDING_KEY
-    );
-
-
-    localStorage.removeItem(
-        TRUTH_PENDING_KEY
-    );
-
-
-    console.log(
-        "[MR.SMILE PROGRESS] Progress reset."
-    );
-
-
-    trigger(
-        "mrsmile:progressReset"
+    return (
+        state.flags
+            .archiveUnlocked ===
+        true
     );
 
 }
 
 
-// =======================================
-// NORMALIZE TEXT
-// =======================================
+export function isGameUnlocked() {
 
-function normalize(text) {
+    return (
+        state.flags
+            .gameUnlocked ===
+        true
+    );
 
-    return String(text)
+}
 
-        .toLowerCase()
 
-        .replace(
-            /[.,!?;:()[\]{}"'`]/g,
-            " "
+export function isTruthUnlocked() {
+
+    return (
+        state.flags
+            .truthUnlocked ===
+        true
+    );
+
+}
+
+
+function isUnlocked(
+    type
+) {
+
+    const key =
+        flag(
+            type
+        );
+
+
+    return (
+        state.flags[key] ===
+        true
+    );
+
+}
+
+
+/* ==========================================================
+   HELPERS
+========================================================== */
+
+function flag(
+    type
+) {
+
+    return (
+        `${type}Unlocked`
+    );
+
+}
+
+
+function known(
+    type
+) {
+
+    return (
+
+        type ===
+            "archive"
+
+        ||
+
+        type ===
+            "game"
+
+        ||
+
+        type ===
+            "truth"
+
+    );
+
+}
+
+
+function normalize(
+    text
+) {
+
+    return String(
+        text ||
+        ""
+    )
+        .normalize(
+            "NFKC"
         )
-
+        .toLowerCase()
         .replace(
             /\s+/g,
             " "
         )
-
         .trim();
 
 }
 
 
-// =======================================
-// MATCH KEYWORD
-// =======================================
+/* ==========================================================
+   SAVE
+========================================================== */
 
-function matchesKeyword(
-    text,
-    words
-) {
-
-    return words.some(word => {
-
-        const normalizedWord =
-            normalize(word);
-
-
-        return (
-
-            text ===
-            normalizedWord
-
-            ||
-
-            text.includes(
-                " " +
-                normalizedWord +
-                " "
-            )
-
-            ||
-
-            text.startsWith(
-                normalizedWord +
-                " "
-            )
-
-            ||
-
-            text.endsWith(
-                " " +
-                normalizedWord
-            )
-
-        );
-
-    });
-
-}
-
-
-// =======================================
-// SAVE PROGRESS
-// =======================================
-
-function saveProgress() {
+function save() {
 
     try {
 
@@ -1401,41 +1107,20 @@ function saveProgress() {
                 keywords:
                     state.keywords,
 
-                flags: {
+                flags:
+                    state.flags,
 
-                    archiveUnlocked:
-                        state.flags.archiveUnlocked,
-
-                    gameUnlocked:
-                        state.flags.gameUnlocked,
-
-                    truthUnlocked:
-                        state.flags.truthUnlocked
-
-                },
-
-                requests: {
-
-                    archive:
-                        state.requests.archive,
-
-                    game:
-                        state.requests.game,
-
-                    truth:
-                        state.requests.truth
-
-                }
+                requests:
+                    state.requests
 
             })
 
         );
 
-    }
-    catch (error) {
+    } catch (error) {
 
-        console.error(
-            "[MR.SMILE PROGRESS] Failed to save progress.",
+        console.warn(
+            "[MR.SMILE PROGRESS] Save failed:",
             error
         );
 
@@ -1444,31 +1129,34 @@ function saveProgress() {
 }
 
 
-// =======================================
-// LOAD PROGRESS
-// =======================================
+/* ==========================================================
+   LOAD
+========================================================== */
 
-function loadProgress() {
-
-    const raw =
-        localStorage.getItem(
-            STORAGE_KEY
-        );
-
-
-    if (!raw)
-        return;
-
+function load() {
 
     try {
 
+        const raw =
+            localStorage.getItem(
+                STORAGE_KEY
+            );
+
+
+        if (
+            !raw
+        ) {
+
+            return;
+
+        }
+
+
         const saved =
-            JSON.parse(raw);
+            JSON.parse(
+                raw
+            );
 
-
-        // --------------------------------
-        // KEYWORDS
-        // --------------------------------
 
         if (
             Array.isArray(
@@ -1476,100 +1164,224 @@ function loadProgress() {
             )
         ) {
 
-            state.keywords = [
-
-                ...new Set(
-                    saved.keywords
-                )
-
-            ];
+            state.keywords =
+                [
+                    ...new Set(
+                        saved.keywords
+                    )
+                ];
 
         }
 
-
-        // --------------------------------
-        // FLAGS
-        // --------------------------------
 
         if (
             saved.flags
         ) {
 
-            state.flags.archiveUnlocked =
-                saved.flags.archiveUnlocked === true;
+            state.flags = {
 
+                ...state.flags,
 
-            state.flags.gameUnlocked =
-                saved.flags.gameUnlocked === true;
+                ...saved.flags
 
-
-            state.flags.truthUnlocked =
-                saved.flags.truthUnlocked === true;
+            };
 
         }
 
-
-        // --------------------------------
-        // REQUESTS
-        // --------------------------------
 
         if (
             saved.requests
         ) {
 
-            state.requests.archive =
-                saved.requests.archive === true;
+            state.requests = {
 
+                ...state.requests,
 
-            state.requests.game =
-                saved.requests.game === true;
+                ...saved.requests
 
-
-            state.requests.truth =
-                saved.requests.truth === true;
+            };
 
         }
 
 
-        // --------------------------------
-        // STORAGE SYNC
-        // --------------------------------
-        //
-        // Storage keys have priority for
-        // pending requests because they
-        // allow recovery after reload.
-// --------------------------------
+        for (
+            const type
+            of Object.keys(
+                PENDING_KEYS
+            )
+        ) {
 
-        state.requests.archive =
-            state.requests.archive
-            ||
-            getPendingStorage("archive");
+            if (
+                localStorage.getItem(
+                    PENDING_KEYS[type]
+                ) ===
+                "1"
+            ) {
 
+                state.requests[type] =
+                    true;
 
-        state.requests.game =
-            state.requests.game
-            ||
-            getPendingStorage("game");
+            }
 
+        }
 
-        state.requests.truth =
-            state.requests.truth
-            ||
-            getPendingStorage("truth");
+    } catch (error) {
 
-
-        console.log(
-            "[MR.SMILE PROGRESS] Progress loaded."
-        );
-
-    }
-    catch (error) {
-
-        console.error(
-            "[MR.SMILE PROGRESS] Failed to load progress.",
+        console.warn(
+            "[MR.SMILE PROGRESS] Load failed:",
             error
         );
 
     }
 
 }
+
+
+/* ==========================================================
+   STATUS
+========================================================== */
+
+export function getProgressStatus() {
+
+    return {
+
+        initialized:
+            state.initialized,
+
+        keywords:
+            [
+                ...state.keywords
+            ],
+
+        flags:
+            {
+                ...state.flags
+            },
+
+        requests:
+            {
+                ...state.requests
+            },
+
+        trust:
+            getTrust()
+
+    };
+
+}
+
+
+/* ==========================================================
+   RESET
+========================================================== */
+
+export function resetMrSmileProgress() {
+
+    state.keywords =
+        [];
+
+
+    state.flags = {
+
+        archiveUnlocked:
+            false,
+
+        gameUnlocked:
+            false,
+
+        truthUnlocked:
+            false
+
+    };
+
+
+    state.requests = {
+
+        archive:
+            false,
+
+        game:
+            false,
+
+        truth:
+            false
+
+    };
+
+
+    save();
+
+
+    Object.values(
+        PENDING_KEYS
+    ).forEach(
+        key =>
+            localStorage.removeItem(
+                key
+            )
+    );
+
+}
+
+
+/* ==========================================================
+   GLOBAL API
+========================================================== */
+
+if (
+    typeof window !==
+    "undefined"
+) {
+
+    window.MRSMILE_PROGRESS = {
+
+        init:
+            initMrSmileProgress,
+
+        input:
+            processMrSmileInput,
+
+        evaluate:
+            evaluateProgress,
+
+        status:
+            getProgressStatus,
+
+        grantArchive:
+            grantMirrorArchiveAccess,
+
+        grantGame:
+            grantGameAccess,
+
+        grantTruth:
+            grantTruthAccess,
+
+        deny:
+            denyAccess,
+
+        clear:
+            clearAccessRequest,
+
+        reset:
+            resetMrSmileProgress
+
+    };
+
+}
+
+
+/* ==========================================================
+   DEFAULT
+========================================================== */
+
+export default {
+
+    initMrSmileProgress,
+
+    processMrSmileInput,
+
+    evaluateProgress,
+
+    getProgressStatus
+
+};
