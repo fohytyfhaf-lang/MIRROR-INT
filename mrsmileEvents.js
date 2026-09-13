@@ -1782,11 +1782,54 @@ function handleSys00Accepted(
     data = {}
 ) {
 
+    const payload = {
+
+        ...(
+            data ||
+            {}
+        ),
+
+        timestamp:
+            Date.now(),
+
+        eventId:
+            STATE.currentEventId
+
+    };
+
+
+    /*
+       IMPORTANT:
+       Never trigger "mrsmile:sys00Accepted" here.
+
+       This function is already the listener
+       for that event.
+
+       Re-emitting the same event would create
+       infinite recursion.
+    */
+
+
     trigger(
-        "mrsmile:sys00Accepted",
+        "mrsmile:sys00AcceptedProcessed",
+        payload
+    );
+
+
+    /*
+       Notify systems that specifically need
+       the processed state.
+    */
+
+    trigger(
+        "mrsmile:systemStateChanged",
         {
 
-            ...data,
+            source:
+                "sys00",
+
+            state:
+                "accepted",
 
             timestamp:
                 Date.now(),
@@ -1797,8 +1840,12 @@ function handleSys00Accepted(
         }
     );
 
-}
 
+    console.log(
+        "[MR.SMILE EVENTS] SYS00 accepted."
+    );
+
+}
 
 /* ==========================================================
    TRUST CHANGE
