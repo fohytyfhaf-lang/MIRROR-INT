@@ -1719,6 +1719,121 @@ export function openChat(
 
 
 /* ==========================================================
+   REVEAL MR.SMILE CHAT
+========================================================== */
+export function revealMrSmileChat() {
+
+    const chat = chats.mrsmile;
+
+    if (!chat) {
+
+        console.warn(
+            "[OMEGA CHAT] MR.SMILE channel not found."
+        );
+
+        return false;
+
+    }
+
+
+    chat.hidden = false;
+
+
+    /*
+       Try to reveal the channel in the UI.
+       Different versions of the OMEGA interface may
+       use different selectors, so several paths are supported.
+    */
+
+    const selectors = [
+
+        '[data-chat="mrsmile"]',
+
+        '[data-channel="mrsmile"]',
+
+        '#chat-mrsmile',
+
+        '#mrsmileChatButton',
+
+        '.chat-mrsmile'
+
+    ];
+
+
+    let revealedElement =
+        null;
+
+
+    for (
+        const selector
+        of selectors
+    ) {
+
+        const element =
+            document.querySelector(
+                selector
+            );
+
+
+        if (
+            element
+        ) {
+
+            element.classList.remove(
+                "hidden"
+            );
+
+            element.style.display =
+                "";
+
+            element.removeAttribute(
+                "hidden"
+            );
+
+            revealedElement =
+                element;
+
+            break;
+
+        }
+
+    }
+
+
+    /*
+       Notify UI / other systems.
+    */
+
+    trigger(
+        "mrsmile:chatRevealed",
+        {
+
+            chatId:
+                "mrsmile",
+
+            timestamp:
+                Date.now(),
+
+            elementFound:
+                Boolean(
+                    revealedElement
+                )
+
+        }
+    );
+
+
+    console.log(
+        "[OMEGA CHAT] MR.SMILE channel revealed."
+    );
+
+
+    return true;
+
+}
+
+
+/* ==========================================================
    ADD CHAT MESSAGE
 ========================================================== */
 
