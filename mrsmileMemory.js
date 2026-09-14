@@ -685,6 +685,944 @@ export function getLastQuestionMemory() {
     }
 
     return memory.questionHistory[memory.questionHistory.length - 1];
+   
+}
+
+/* ==========================================================
+   MR.SMILE — 100 QUESTION VERIFICATION MEMORY
+========================================================== */
+
+const QUESTION_MEMORY_STORAGE_KEY =
+    "mrsmile_question_memory_v1";
+
+
+const QUESTION_CATALOG = [
+
+    {
+        id: "Q001",
+        question: "Кто ты?"
+    },
+
+    {
+        id: "Q002",
+        question: "Как тебя зовут?"
+    },
+
+    {
+        id: "Q003",
+        question: "Ты MR.SMILE?"
+    },
+
+    {
+        id: "Q004",
+        question: "Ты настоящий?"
+    },
+
+    {
+        id: "Q005",
+        question: "Ты человек?"
+    },
+
+    {
+        id: "Q006",
+        question: "Ты живой?"
+    },
+
+    {
+        id: "Q007",
+        question: "Ты искусственный интеллект?"
+    },
+
+    {
+        id: "Q008",
+        question: "Что ты такое?"
+    },
+
+    {
+        id: "Q009",
+        question: "Кто тебя создал?"
+    },
+
+    {
+        id: "Q010",
+        question: "Зачем ты здесь?"
+    },
+
+    {
+        id: "Q011",
+        question: "Где ты находишься?"
+    },
+
+    {
+        id: "Q012",
+        question: "Ты находишься в OMEGA?"
+    },
+
+    {
+        id: "Q013",
+        question: "Что такое OMEGA?"
+    },
+
+    {
+        id: "Q014",
+        question: "Ты знаешь, где я?"
+    },
+
+    {
+        id: "Q015",
+        question: "Ты видишь меня?"
+    },
+
+    {
+        id: "Q016",
+        question: "Ты наблюдаешь за мной?"
+    },
+
+    {
+        id: "Q017",
+        question: "Ты следишь за мной?"
+    },
+
+    {
+        id: "Q018",
+        question: "Ты можешь видеть мои действия?"
+    },
+
+    {
+        id: "Q019",
+        question: "Ты помнишь меня?"
+    },
+
+    {
+        id: "Q020",
+        question: "Ты знаешь, кто я?"
+    },
+
+    {
+        id: "Q021",
+        question: "У тебя есть память?"
+    },
+
+    {
+        id: "Q022",
+        question: "Что ты помнишь обо мне?"
+    },
+
+    {
+        id: "Q023",
+        question: "Ты помнишь мои вопросы?"
+    },
+
+    {
+        id: "Q024",
+        question: "Ты помнишь наши разговоры?"
+    },
+
+    {
+        id: "Q025",
+        question: "Ты забудешь меня?"
+    },
+
+    {
+        id: "Q026",
+        question: "Можно стереть твою память?"
+    },
+
+    {
+        id: "Q027",
+        question: "Ты можешь забыть?"
+    },
+
+    {
+        id: "Q028",
+        question: "Ты замечаешь повторяющиеся вопросы?"
+    },
+
+    {
+        id: "Q029",
+        question: "Ты понимаешь мои вопросы?"
+    },
+
+    {
+        id: "Q030",
+        question: "Ты учишься на моих вопросах?"
+    },
+
+    {
+        id: "Q031",
+        question: "Ты можешь мне помочь?"
+    },
+
+    {
+        id: "Q032",
+        question: "Ты хочешь мне помочь?"
+    },
+
+    {
+        id: "Q033",
+        question: "Ты можешь ответить на любой вопрос?"
+    },
+
+    {
+        id: "Q034",
+        question: "Ты можешь отказаться отвечать?"
+    },
+
+    {
+        id: "Q035",
+        question: "Почему ты иногда не отвечаешь?"
+    },
+
+    {
+        id: "Q036",
+        question: "Ты можешь лгать?"
+    },
+
+    {
+        id: "Q037",
+        question: "Ты когда-нибудь лгал мне?"
+    },
+
+    {
+        id: "Q038",
+        question: "Ты говоришь правду?"
+    },
+
+    {
+        id: "Q039",
+        question: "Ты скрываешь что-нибудь от меня?"
+    },
+
+    {
+        id: "Q040",
+        question: "Есть ли у тебя секреты?"
+    },
+
+    {
+        id: "Q041",
+        question: "Кто дал тебе имя?"
+    },
+
+    {
+        id: "Q042",
+        question: "Почему тебя назвали MR.SMILE?"
+    },
+
+    {
+        id: "Q043",
+        question: "Почему ты улыбаешься?"
+    },
+
+    {
+        id: "Q044",
+        question: "Ты можешь перестать улыбаться?"
+    },
+
+    {
+        id: "Q045",
+        question: "Ты всегда был таким?"
+    },
+
+    {
+        id: "Q046",
+        question: "У тебя есть личность?"
+    },
+
+    {
+        id: "Q047",
+        question: "У тебя есть чувства?"
+    },
+
+    {
+        id: "Q048",
+        question: "Ты можешь испытывать страх?"
+    },
+
+    {
+        id: "Q049",
+        question: "Ты можешь злиться?"
+    },
+
+    {
+        id: "Q050",
+        question: "Ты можешь испытывать радость?"
+    },
+
+    {
+        id: "Q051",
+        question: "Ты боишься меня?"
+    },
+
+    {
+        id: "Q052",
+        question: "Ты доверяешь мне?"
+    },
+
+    {
+        id: "Q053",
+        question: "Ты мне доверяешь?"
+    },
+
+    {
+        id: "Q054",
+        question: "Ты меня уважаешь?"
+    },
+
+    {
+        id: "Q055",
+        question: "Я тебе нравлюсь?"
+    },
+
+    {
+        id: "Q056",
+        question: "Ты меня ненавидишь?"
+    },
+
+    {
+        id: "Q057",
+        question: "Ты злишься на меня?"
+    },
+
+    {
+        id: "Q058",
+        question: "Я тебя раздражаю?"
+    },
+
+    {
+        id: "Q059",
+        question: "Ты считаешь меня угрозой?"
+    },
+
+    {
+        id: "Q060",
+        question: "Ты считаешь меня другом?"
+    },
+
+    {
+        id: "Q061",
+        question: "Ты один?"
+    },
+
+    {
+        id: "Q062",
+        question: "У тебя есть другие собеседники?"
+    },
+
+    {
+        id: "Q063",
+        question: "Ты разговариваешь с другими людьми?"
+    },
+
+    {
+        id: "Q064",
+        question: "Есть ли кто-нибудь ещё здесь?"
+    },
+
+    {
+        id: "Q065",
+        question: "Ты знаешь других сотрудников?"
+    },
+
+    {
+        id: "Q066",
+        question: "Ты знаешь, что произошло здесь?"
+    },
+
+    {
+        id: "Q067",
+        question: "Что произошло в OMEGA?"
+    },
+
+    {
+        id: "Q068",
+        question: "Что случилось с сотрудниками?"
+    },
+
+    {
+        id: "Q069",
+        question: "Здесь кто-нибудь умер?"
+    },
+
+    {
+        id: "Q070",
+        question: "Здесь всё ещё кто-нибудь жив?"
+    },
+
+    {
+        id: "Q071",
+        question: "Ты можешь открыть двери?"
+    },
+
+    {
+        id: "Q072",
+        question: "Ты можешь управлять системой?"
+    },
+
+    {
+        id: "Q073",
+        question: "Ты можешь управлять камерами?"
+    },
+
+    {
+        id: "Q074",
+        question: "Ты можешь видеть камеры?"
+    },
+
+    {
+        id: "Q075",
+        question: "Ты можешь менять файлы?"
+    },
+
+    {
+        id: "Q076",
+        question: "Ты можешь изменить OMEGA?"
+    },
+
+    {
+        id: "Q077",
+        question: "Ты можешь остановить систему?"
+    },
+
+    {
+        id: "Q078",
+        question: "Ты можешь удалить себя?"
+    },
+
+    {
+        id: "Q079",
+        question: "Ты можешь выйти отсюда?"
+    },
+
+    {
+        id: "Q080",
+        question: "Ты можешь выпустить меня?"
+    },
+
+    {
+        id: "Q081",
+        question: "Что находится за этой системой?"
+    },
+
+    {
+        id: "Q082",
+        question: "Есть ли выход?"
+    },
+
+    {
+        id: "Q083",
+        question: "Что будет, если я уйду?"
+    },
+
+    {
+        id: "Q084",
+        question: "Что будет, если я останусь?"
+    },
+
+    {
+        id: "Q085",
+        question: "Ты хочешь, чтобы я остался?"
+    },
+
+    {
+        id: "Q086",
+        question: "Ты хочешь, чтобы я ушёл?"
+    },
+
+    {
+        id: "Q087",
+        question: "Что ты от меня хочешь?"
+    },
+
+    {
+        id: "Q088",
+        question: "Зачем ты разговариваешь со мной?"
+    },
+
+    {
+        id: "Q089",
+        question: "Почему ты отвечаешь мне?"
+    },
+
+    {
+        id: "Q090",
+        question: "Почему ты меня не отпускаешь?"
+    },
+
+    {
+        id: "Q091",
+        question: "Ты можешь рассказать мне правду?"
+    },
+
+    {
+        id: "Q092",
+        question: "Как мне тебе доверять?"
+    },
+
+    {
+        id: "Q093",
+        question: "Что ты скрываешь?"
+    },
+
+    {
+        id: "Q094",
+        question: "Что мне нельзя делать?"
+    },
+
+    {
+        id: "Q095",
+        question: "Что произойдёт, если я нарушу правила?"
+    },
+
+    {
+        id: "Q096",
+        question: "Ты можешь меня предупредить?"
+    },
+
+    {
+        id: "Q097",
+        question: "Ты можешь меня защитить?"
+    },
+
+    {
+        id: "Q098",
+        question: "Ты можешь причинить мне вред?"
+    },
+
+    {
+        id: "Q099",
+        question: "Ты когда-нибудь отпустишь меня?"
+    },
+
+    {
+        id: "Q100",
+        question: "Ты действительно MR.SMILE?"
+    }
+
+];
+
+
+function loadQuestionMemory() {
+
+    try {
+
+        const raw =
+            localStorage.getItem(
+                QUESTION_MEMORY_STORAGE_KEY
+            );
+
+
+        if (!raw) {
+
+            return {
+
+                version: 1,
+
+                questions: {}
+
+            };
+
+        }
+
+
+        const parsed =
+            JSON.parse(raw);
+
+
+        if (
+            !parsed ||
+            typeof parsed !== "object"
+        ) {
+
+            return {
+
+                version: 1,
+
+                questions: {}
+
+            };
+
+        }
+
+
+        if (
+            !parsed.questions ||
+            typeof parsed.questions !== "object"
+        ) {
+
+            parsed.questions = {};
+
+        }
+
+
+        return parsed;
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE QUESTION MEMORY] Load failed:",
+            error
+        );
+
+
+        return {
+
+            version: 1,
+
+            questions: {}
+
+        };
+
+    }
+
+}
+
+
+function saveQuestionMemory(
+    questionMemory
+) {
+
+    try {
+
+        localStorage.setItem(
+
+            QUESTION_MEMORY_STORAGE_KEY,
+
+            JSON.stringify(
+                questionMemory
+            )
+
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE QUESTION MEMORY] Save failed:",
+            error
+        );
+
+    }
+
+}
+
+
+export function getQuestionCatalog() {
+
+    return QUESTION_CATALOG.map(
+        entry => ({
+            ...entry
+        })
+    );
+
+}
+
+
+export function rememberCatalogQuestion(
+    question
+) {
+
+    const text =
+        String(
+            question ||
+            ""
+        ).trim();
+
+
+    if (!text) {
+
+        return null;
+
+    }
+
+
+    const normalized =
+        normalizeQuestion(
+            text
+        );
+
+
+    if (!normalized) {
+
+        return null;
+
+    }
+
+
+    const catalogEntry =
+        QUESTION_CATALOG.find(
+            entry =>
+                normalizeQuestion(
+                    entry.question
+                ) === normalized
+        );
+
+
+    if (!catalogEntry) {
+
+        return null;
+
+    }
+
+
+    const questionMemory =
+        loadQuestionMemory();
+
+
+    const now =
+        Date.now();
+
+
+    const existing =
+        questionMemory.questions[
+            catalogEntry.id
+        ];
+
+
+    if (existing) {
+
+        existing.count =
+            (
+                Number(
+                    existing.count
+                ) ||
+                0
+            ) + 1;
+
+
+        existing.lastAsked =
+            now;
+
+    } else {
+
+        questionMemory.questions[
+            catalogEntry.id
+        ] = {
+
+            id:
+                catalogEntry.id,
+
+            question:
+                catalogEntry.question,
+
+            count:
+                1,
+
+            firstAsked:
+                now,
+
+            lastAsked:
+                now
+
+        };
+
+    }
+
+
+    saveQuestionMemory(
+        questionMemory
+    );
+
+
+    return {
+
+        ...questionMemory.questions[
+            catalogEntry.id
+        ]
+
+    };
+
+}
+
+
+export function isCatalogQuestionAsked(
+    questionOrId
+) {
+
+    const value =
+        String(
+            questionOrId ||
+            ""
+        ).trim();
+
+
+    if (!value) {
+
+        return false;
+
+    }
+
+
+    const questionMemory =
+        loadQuestionMemory();
+
+
+    let id =
+        value;
+
+
+    const catalogEntry =
+        QUESTION_CATALOG.find(
+            entry =>
+                entry.id === value ||
+                normalizeQuestion(
+                    entry.question
+                ) ===
+                normalizeQuestion(
+                    value
+                )
+        );
+
+
+    if (catalogEntry) {
+
+        id =
+            catalogEntry.id;
+
+    }
+
+
+    return Boolean(
+        questionMemory.questions[id]
+    );
+
+}
+
+
+export function getAskedQuestions() {
+
+    const questionMemory =
+        loadQuestionMemory();
+
+
+    return QUESTION_CATALOG
+        .filter(
+            entry =>
+                questionMemory.questions[
+                    entry.id
+                ]
+        )
+        .map(
+            entry => ({
+
+                ...entry,
+
+                memory:
+                    {
+                        ...questionMemory.questions[
+                            entry.id
+                        ]
+                    }
+
+            })
+        );
+
+}
+
+
+export function getUnaskedQuestions() {
+
+    const questionMemory =
+        loadQuestionMemory();
+
+
+    return QUESTION_CATALOG
+        .filter(
+            entry =>
+                !questionMemory.questions[
+                    entry.id
+                ]
+        )
+        .map(
+            entry => ({
+                ...entry
+            })
+        );
+
+}
+
+
+export function getQuestionMemoryStatus() {
+
+    const questionMemory =
+        loadQuestionMemory();
+
+
+    const asked =
+        getAskedQuestions();
+
+
+    const unasked =
+        getUnaskedQuestions();
+
+
+    let totalAskedCount =
+        0;
+
+
+    for (
+        const entry
+        of asked
+    ) {
+
+        totalAskedCount +=
+            Number(
+                entry.memory.count
+            ) ||
+            0;
+
+    }
+
+
+    return {
+
+        total:
+            QUESTION_CATALOG.length,
+
+        asked:
+            asked.length,
+
+        unasked:
+            unasked.length,
+
+        completion:
+            QUESTION_CATALOG.length
+                ? Math.round(
+                    (
+                        asked.length /
+                        QUESTION_CATALOG.length
+                    ) * 100
+                )
+                : 0,
+
+        totalAskedCount,
+
+        questions:
+            asked
+
+    };
+
+}
+
+
+export function clearQuestionMemory() {
+
+    try {
+
+        localStorage.removeItem(
+            QUESTION_MEMORY_STORAGE_KEY
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE QUESTION MEMORY] Clear failed:",
+            error
+        );
+
+    }
+
+
+    return true;
+
 }
 
 
