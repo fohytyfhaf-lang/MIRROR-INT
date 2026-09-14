@@ -1983,6 +1983,36 @@ function handleOperatorFileRead(
 function handleSys00Accepted(
     data = {}
 ) {
+       /*
+       SYS_00 officially starts
+       MR.SMILE observation.
+    */
+
+    STATE.discoveryArmed =
+        true;
+
+    STATE.discoveryActionCount =
+        0;
+
+    STATE.discoveryFileCount =
+        0;
+
+    STATE.discoveryConsoleCount =
+        0;
+
+    STATE.discoveryCameraCount =
+        0;
+
+    STATE.discoveryWindowCount =
+        0;
+
+    STATE.discoveryTriggered =
+        false;
+
+
+    console.log(
+        "[MR.SMILE EVENTS] Discovery mode ARMED."
+    );
 
     const payload = {
 
