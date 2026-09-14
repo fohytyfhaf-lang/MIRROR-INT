@@ -40,6 +40,8 @@ const DEFAULT_MEMORY = {
 
     conversations:
         [],
+   questionHistory: 
+        [],
 
     openedFiles:
         [],
@@ -264,6 +266,7 @@ function merge(
         of [
 
             "conversations",
+            "questionHistory",
             "openedFiles",
             "commands",
             "visitedPages",
@@ -561,6 +564,127 @@ export function rememberOperatorMessage(
 
     return true;
 
+}
+
+function normalizeQuestion(text) {
+    return String(text || "")
+        .normalize("NFKC")
+        .toLowerCase()
+        .replace(/[“”„«»]/g, "\"")
+        .replace(/[‘’]/g, "'")
+        .replace(/[!?.,;:]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+export function rememberQuestion(question, intent = null, response = null) {
+    initMemory();
+
+    const text = String(question || "").trim();
+    if (!text) return false;
+
+    const normalized = normalizeQuestion(text);
+
+    let existing = null;
+
+    for (let i = memory.questionHistory.length - 1; i >= 0; i--) {
+        if (memory.questionHistory[i].normalized === normalized) {
+            existing = memory.questionHistory[i];
+            break;
+        }
+    }
+
+    if (existing) {
+        existing.count = (Number(existing.count) || 0) + 1;
+        existing.lastAsked = Date.now();
+
+        if (intent) {
+            existing.intent = intent;
+        }
+
+        if (response) {
+            existing.lastResponse = response;
+
+            if (!Array.isArray(existing.responses)) {
+                existing.responses = [];
+            }
+
+            push(existing.responses, response);
+        }
+    } else {
+        push(memory.questionHistory, {
+            question: text,
+            normalized,
+            intent,
+            response,
+            lastResponse: response,
+            responses: response ? [response] : [],
+            count: 1,
+            firstAsked: Date.now(),
+            lastAsked: Date.now()
+        });
+    }
+
+    save();
+    return true;
+}
+
+export function findPreviousQuestion(question) {
+    initMemory();
+
+    const normalized = normalizeQuestion(question);
+
+    if (!normalized) {
+        return null;
+    }
+
+    for (let i = memory.questionHistory.length - 1; i >= 0; i--) {
+        const entry = memory.questionHistory[i];
+
+        if (entry && entry.normalized === normalized) {
+            return entry;
+        }
+    }
+
+    return null;
+}
+
+export function findPreviousIntent(intent) {
+    initMemory();
+
+    if (!intent) {
+        return null;
+    }
+
+    for (let i = memory.questionHistory.length - 1; i >= 0; i--) {
+        const entry = memory.questionHistory[i];
+
+        if (entry && entry.intent === intent) {
+            return entry;
+        }
+    }
+
+    return null;
+}
+
+export function getQuestionRepeatCount(question) {
+    const entry = findPreviousQuestion(question);
+
+    if (!entry) {
+        return 0;
+    }
+
+    return Number(entry.count) || 0;
+}
+
+export function getLastQuestionMemory() {
+    initMemory();
+
+    if (!memory.questionHistory.length) {
+        return null;
+    }
+
+    return memory.questionHistory[memory.questionHistory.length - 1];
 }
 
 
