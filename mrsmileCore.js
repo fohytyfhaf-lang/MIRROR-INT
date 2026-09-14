@@ -2050,7 +2050,6 @@ function getQuestionRepeatContext(text, intent) {
     };
 }
 
-
 /* ==========================================================
    REPEAT RESPONSE
 ========================================================== */
@@ -2059,86 +2058,27 @@ function getRepeatResponse(language, repeatCount) {
 
     const responses = {
 
-        ru: {
+        ru: [
+            "Я помню этот вопрос.",
+            "Вы проверяете мою память?",
+            "Вы хотите получить другой ответ?",
+            "Я начинаю подозревать, что вопрос не в моём имени."
+        ],
 
-            1: [
-                "Вы уже спрашивали об этом.",
-                "Я помню этот вопрос.",
-                "Мы уже говорили об этом."
-            ],
+        uk: [
+            "Я пам'ятаю це питання.",
+            "Ви перевіряєте мою пам'ять?",
+            "Ви хочете отримати іншу відповідь?",
+            "Я починаю підозрювати, що питання не в моєму імені."
+        ],
 
-            2: [
-                "Вы решили спросить ещё раз.",
-                "Вы проверяете мою память?",
-                "Мне кажется, этот вопрос уже звучал."
-            ],
+        en: [
+            "I remember this question.",
+            "Are you testing my memory?",
+            "Would you like a different answer?",
+            "I am beginning to suspect the question is not really about my name."
+        ]
 
-            3: [
-                "Вы хотите получить другой ответ?",
-                "Вы проверяете, изменится ли мой ответ?",
-                "Интересно. Вы продолжаете возвращаться к этому вопросу."
-            ],
-
-            4: [
-                "Я начинаю подозревать, что вопрос не в моём имени.",
-                "Вы действительно хотите услышать другой ответ?",
-                "Полагаю, вы уже знаете мой ответ."
-            ]
-        },
-
-        uk: {
-
-            1: [
-                "Ви вже це запитували.",
-                "Я пам'ятаю це питання.",
-                "Ми вже про це говорили."
-            ],
-
-            2: [
-                "Ви вирішили запитати ще раз.",
-                "Ви перевіряєте мою пам'ять?",
-                "Здається, це питання вже звучало."
-            ],
-
-            3: [
-                "Ви хочете отримати іншу відповідь?",
-                "Ви перевіряєте, чи зміниться моя відповідь?",
-                "Цікаво. Ви продовжуєте повертатися до цього питання."
-            ],
-
-            4: [
-                "Я починаю підозрювати, що питання не в моєму імені.",
-                "Ви справді хочете почути іншу відповідь?",
-                "Гадаю, ви вже знаєте мою відповідь."
-            ]
-        },
-
-        en: {
-
-            1: [
-                "You have already asked that.",
-                "I remember this question.",
-                "We have spoken about this already."
-            ],
-
-            2: [
-                "You decided to ask again.",
-                "Are you testing my memory?",
-                "I believe that question has already been asked."
-            ],
-
-            3: [
-                "Would you like a different answer?",
-                "Are you checking whether my answer will change?",
-                "Interesting. You keep returning to the same question."
-            ],
-
-            4: [
-                "I am beginning to suspect the question is not really about my name.",
-                "Do you genuinely want a different answer?",
-                "I believe you already know my answer."
-            ]
-        }
     };
 
     const bank =
@@ -2147,13 +2087,15 @@ function getRepeatResponse(language, repeatCount) {
 
     const stage =
         Math.min(
-            Math.max(Number(repeatCount) || 1, 1),
+            Math.max(
+                Number(repeatCount) || 1,
+                1
+            ),
             4
         );
 
-    return randomItem(bank[stage]);
+    return bank[stage - 1];
 }
-
 
 /* ==========================================================
    SPEECH TIMING
@@ -2329,7 +2271,7 @@ if (
     response =
         getRepeatResponse(
             language,
-            repeatContext.count + 1
+            repeatContext.count
         );
 
 } else {
