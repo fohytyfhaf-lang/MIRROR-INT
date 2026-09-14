@@ -2134,14 +2134,19 @@ function calculateDelay(intent, text) {
 /* ==========================================================
    MAIN SPEECH FUNCTION
 ========================================================== */
-
 export function mrSmileSay(text, options = {}) {
 
     const rawText = safeString(text).trim();
 
+    console.trace(
+        "[MR.SMILE] mrSmileSay() CALL:",
+        rawText
+    );
+
     if (!rawText) {
         return null;
     }
+
 
 
     const now = Date.now();
