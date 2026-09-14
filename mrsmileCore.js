@@ -2266,6 +2266,14 @@ try {
     // Optional question memory integration
 }
 
+try {
+    rememberCatalogQuestion(
+        rawText
+    );
+} catch {
+    // Optional 100-question verification memory
+}
+
 CORE_STATE.lastResponse =
     response;
 
