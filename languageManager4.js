@@ -207,20 +207,20 @@ export function t(
      * Если ключ вообще отсутствует,
      * возвращаем сам ключ.
      */
+if (
+    text === undefined
+) {
 
-    if (
-        text === undefined
-    ) {
-
+    if (LANGUAGE_DEBUG) {
         console.warn(
             "[LANGUAGE] Missing translation:",
             key
         );
-
-
-        return key;
-
     }
+
+    return key;
+}
+
 
 
     /*
