@@ -1588,7 +1588,6 @@ if (
 
 }
 
-
 /* ==========================================================
    DEFAULT
 ========================================================== */
@@ -1602,6 +1601,16 @@ export default {
     rememberOperatorMessage,
 
     rememberMrSmileMessage,
+
+    rememberQuestion,
+
+    findPreviousQuestion,
+
+    findPreviousIntent,
+
+    getQuestionRepeatCount,
+
+    getLastQuestionMemory,
 
     rememberFile,
 
