@@ -48,6 +48,13 @@ import {
 const STATE = {
 
     initialized: false,
+    chatBridgeReady: false,
+
+   channelInitializationPending: false,
+
+   channelInitialized: false,
+
+   chatBridgeTimer: null,
 
     channel: "mrsmile",
 
@@ -211,6 +218,50 @@ function chatAvailable() {
 
 }
 
+function waitForChatBridge(
+    callback,
+    attempts = 60
+) {
+
+    if (chatAvailable()) {
+
+        STATE.chatBridgeReady = true;
+
+        callback();
+
+        return true;
+    }
+
+
+    if (attempts <= 0) {
+
+        console.warn(
+            "[MR.SMILE CHAT] OMEGA chat bridge was not available."
+        );
+
+        return false;
+    }
+
+
+    STATE.channelInitializationPending = true;
+
+
+    STATE.chatBridgeTimer =
+        setTimeout(
+            () => {
+
+                waitForChatBridge(
+                    callback,
+                    attempts - 1
+                );
+
+            },
+            100
+        );
+
+
+    return false;
+}
 
 /* ==========================================================
    CHAT BRIDGE
@@ -1774,8 +1825,38 @@ export function revealMrSmileChat() {
 /* ==========================================================
    INITIAL MESSAGE
 ========================================================== */
-
 function initializeChannel() {
+
+    if (STATE.channelInitialized) {
+        return true;
+    }
+
+
+    if (!chatAvailable()) {
+
+        STATE.channelInitializationPending =
+            true;
+
+
+        waitForChatBridge(
+            () => {
+
+                initializeChannel();
+
+            }
+        );
+
+
+        return false;
+    }
+
+
+    STATE.chatBridgeReady =
+        true;
+
+    STATE.channelInitializationPending =
+        false;
+
 
     /*
        Do not duplicate the initialization
@@ -1794,12 +1875,17 @@ function initializeChannel() {
                     "mrsmile"
                 );
 
+
             if (
                 chat &&
                 Array.isArray(chat.messages) &&
                 chat.messages.length > 0
             ) {
-                return;
+
+                STATE.channelInitialized =
+                    true;
+
+                return true;
             }
 
         }
@@ -1809,30 +1895,75 @@ function initializeChannel() {
     }
 
 
-    addSystemChatMessage(
-        "PRIVATE COMMUNICATION CHANNEL INITIALIZED."
+    const systemOne =
+        addSystemChatMessage(
+            "PRIVATE COMMUNICATION CHANNEL INITIALIZED."
+        );
+
+
+    const systemTwo =
+        addSystemChatMessage(
+            "REMOTE PARTICIPANT PRESENT."
+        );
+
+
+    const smileOne =
+        addMrSmileChatMessage(
+            "Good evening."
+        );
+
+
+    const smileTwo =
+        addMrSmileChatMessage(
+            "Please, take your time."
+        );
+
+
+    const smileThree =
+        addMrSmileChatMessage(
+            "There is no particular hurry."
+        );
+
+
+    /*
+       Mark initialized only after the real
+       OMEGA chat bridge accepted the messages.
+    */
+
+    if (
+        systemOne ||
+        systemTwo ||
+        smileOne ||
+        smileTwo ||
+        smileThree
+    ) {
+
+        STATE.channelInitialized =
+            true;
+
+        return true;
+    }
+
+
+    /*
+       Bridge disappeared between the check
+       and the actual message insertion.
+    */
+
+    STATE.channelInitializationPending =
+        true;
+
+
+    waitForChatBridge(
+        () => {
+
+            initializeChannel();
+
+        }
     );
 
 
-    addSystemChatMessage(
-        "REMOTE PARTICIPANT PRESENT."
-    );
-
-
-    addMrSmileChatMessage(
-        "Good evening."
-    );
-
-
-    addMrSmileChatMessage(
-        "Please, take your time."
-    );
-
-
-    addMrSmileChatMessage(
-        "There is no particular hurry."
-    );
-
+    return false;
 }
 
 
