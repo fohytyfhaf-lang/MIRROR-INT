@@ -2,6 +2,7 @@
 let dictionary = {};
 let englishDictionary = {};
 let currentLanguage = "en";
+const LANGUAGE_DEBUG = false;
 
 
 /* =========================================================
