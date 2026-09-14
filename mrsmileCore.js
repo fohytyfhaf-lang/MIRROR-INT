@@ -17,7 +17,13 @@ import {
     initMemory,
     getMemory,
     rememberOperatorMessage,
-    rememberMrSmileMessage
+    rememberMrSmileMessage,
+
+    rememberQuestion,
+    findPreviousQuestion,
+    findPreviousIntent,
+    getQuestionRepeatCount,
+    getLastQuestionMemory
 } from "./mrsmileMemory.js";
 
 import {
