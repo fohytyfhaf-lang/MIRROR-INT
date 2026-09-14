@@ -189,7 +189,7 @@ const STATE = {
         null,
 
     lastSystemEvent:
-        null
+        null,
 
        /* ======================================================
        FIRST CONTACT DISCOVERY
