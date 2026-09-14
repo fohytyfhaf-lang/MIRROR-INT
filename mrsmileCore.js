@@ -20,6 +20,7 @@ import {
     rememberMrSmileMessage,
 
     rememberQuestion,
+    rememberCatalogQuestion,
     findPreviousQuestion,
     findPreviousIntent,
     getQuestionRepeatCount,
