@@ -1986,27 +1986,15 @@ function rememberOutput(text) {
 /* ==========================================================
    QUESTION MEMORY / REPEAT DETECTION
 ========================================================== */
-
 function getQuestionRepeatContext(text, intent) {
 
     let exact = null;
-    let semantic = null;
 
     try {
         exact = findPreviousQuestion(text);
     } catch {
         exact = null;
     }
-
-    try {
-        semantic = findPreviousIntent(intent);
-    } catch {
-        semantic = null;
-    }
-
-    /*
-       Exact question has priority.
-    */
 
     if (exact) {
         return {
@@ -2021,26 +2009,6 @@ function getQuestionRepeatContext(text, intent) {
         };
     }
 
-    /*
-       Same intent but different wording.
-       Example:
-       "Кто ты?"
-       "Напомни, кто ты такой?"
-    */
-
-    if (semantic) {
-        return {
-            repeated: true,
-            type: "semantic",
-            count: Number(semantic.count) || 0,
-            previousResponse:
-                semantic.lastResponse ||
-                semantic.response ||
-                "",
-            memory: semantic
-        };
-    }
-
     return {
         repeated: false,
         type: "none",
@@ -2049,6 +2017,7 @@ function getQuestionRepeatContext(text, intent) {
         memory: null
     };
 }
+
 
 /* ==========================================================
    REPEAT RESPONSE
