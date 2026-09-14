@@ -4,6 +4,59 @@ let englishDictionary = {};
 let currentLanguage = "en";
 const LANGUAGE_DEBUG = false;
 
+function parseLanguageData(data) {
+
+    /*
+     * Текущий формат:
+     *
+     * {
+     *     "content": "{ ... настоящий словарь ... }"
+     * }
+     */
+
+    if (
+        data &&
+        typeof data === "object" &&
+        typeof data.content === "string"
+    ) {
+
+        try {
+
+            return JSON.parse(
+                data.content
+            );
+
+        } catch (error) {
+
+            console.error(
+                "[LANGUAGE] Failed to parse embedded dictionary:",
+                error
+            );
+
+            return {};
+
+        }
+
+    }
+
+
+    /*
+     * Поддержка обычного JSON-словаря.
+     */
+
+    if (
+        data &&
+        typeof data === "object"
+    ) {
+
+        return data;
+
+    }
+
+
+    return {};
+
+}
 
 /* =========================================================
    LOAD LANGUAGE
@@ -29,10 +82,12 @@ export async function loadLanguage(lang) {
                     "languages/en.json"
                 );
 
-            englishDictionary =
-                await englishResponse.json();
+           englishDictionary =
+    parseLanguageData(
+        await englishResponse.json()
+    );
 
-        }
+      
 
 
         const response =
@@ -50,8 +105,10 @@ export async function loadLanguage(lang) {
         }
 
 
-        dictionary =
-            await response.json();
+      dictionary =
+    parseLanguageData(
+        await response.json()
+    );
 
 
         currentLanguage =
@@ -113,8 +170,10 @@ export async function loadLanguage(lang) {
                     );
 
 
-                englishDictionary =
-                    await response.json();
+               englishDictionary =
+                   parseLanguageData(
+                       await response.json()
+                   );
 
             } catch (fallbackError) {
 
