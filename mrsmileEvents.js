@@ -191,6 +191,31 @@ const STATE = {
     lastSystemEvent:
         null
 
+       /* ======================================================
+       FIRST CONTACT DISCOVERY
+    ====================================================== */
+
+    discoveryArmed:
+        false,
+
+    discoveryActionCount:
+        0,
+
+    discoveryFileCount:
+        0,
+
+    discoveryConsoleCount:
+        0,
+
+    discoveryCameraCount:
+        0,
+
+    discoveryWindowCount:
+        0,
+
+    discoveryTriggered:
+        false
+
 };
 
 
@@ -1664,6 +1689,121 @@ function normalizeOperatorAction(
 
 
 /* ==========================================================
+   FIRST CONTACT DISCOVERY
+========================================================== */
+
+function checkFirstContactDiscovery() {
+
+    if (
+        isFirstContactCompleted()
+    ) {
+
+        STATE.discoveryTriggered =
+            true;
+
+        return;
+
+    }
+
+
+    if (
+        !STATE.discoveryArmed
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        STATE.discoveryTriggered ||
+        STATE.firstContactRunning ||
+        STATE.firstContactQueued
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+       Минимум пять действий.
+    */
+
+    if (
+        STATE.discoveryActionCount <
+        5
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+       Нужна реальная работа
+       с системой.
+    */
+
+    const hasExploration =
+        (
+            STATE.discoveryFileCount >=
+            1
+        ) ||
+        (
+            STATE.discoveryWindowCount >=
+            2
+        );
+
+
+    const hasSystemContact =
+        (
+            STATE.discoveryConsoleCount >=
+            1
+        ) ||
+        (
+            STATE.discoveryCameraCount >=
+            1
+        );
+
+
+    if (
+        !hasExploration ||
+        !hasSystemContact
+    ) {
+
+        return;
+
+    }
+
+
+    STATE.discoveryTriggered =
+        true;
+
+
+    console.log(
+        "[MR.SMILE EVENTS] OPERATOR DISCOVERY COMPLETE."
+    );
+
+
+    console.log(
+        "[MR.SMILE EVENTS] FIRST CONTACT WILL BEGIN."
+    );
+
+
+    triggerMrSmileFirstContact({
+
+        source:
+            "operator_discovery",
+
+        type:
+            "first_contact_discovered"
+
+    });
+
+}
+
+/* ==========================================================
    OPERATOR ACTION EVENT
 ========================================================== */
 
@@ -1686,6 +1826,68 @@ function handleOperatorAction(
 
     STATE.lastOperatorAction =
         action;
+
+       /* ======================================================
+       FIRST CONTACT DISCOVERY
+    ====================================================== */
+
+    if (
+        STATE.discoveryArmed &&
+        !STATE.discoveryTriggered
+    ) {
+
+        STATE.discoveryActionCount +=
+            1;
+
+
+        switch (
+            action.action
+        ) {
+
+            case "file_open":
+            case "restricted_file":
+            case "file_read":
+
+                STATE.discoveryFileCount +=
+                    1;
+
+                break;
+
+
+            case "console_command":
+
+                STATE.discoveryConsoleCount +=
+                    1;
+
+                break;
+
+
+            case "camera_open":
+            case "camera_switch":
+            case "camera_close":
+
+                STATE.discoveryCameraCount +=
+                    1;
+
+                break;
+
+
+            case "window_open":
+            case "window_close":
+            case "window_focus":
+            case "window_move":
+
+                STATE.discoveryWindowCount +=
+                    1;
+
+                break;
+
+        }
+
+
+        checkFirstContactDiscovery();
+
+    }
 
 
     trigger(
