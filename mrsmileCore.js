@@ -1983,6 +1983,177 @@ function rememberOutput(text) {
     }
 }
 
+/* ==========================================================
+   QUESTION MEMORY / REPEAT DETECTION
+========================================================== */
+
+function getQuestionRepeatContext(text, intent) {
+
+    let exact = null;
+    let semantic = null;
+
+    try {
+        exact = findPreviousQuestion(text);
+    } catch {
+        exact = null;
+    }
+
+    try {
+        semantic = findPreviousIntent(intent);
+    } catch {
+        semantic = null;
+    }
+
+    /*
+       Exact question has priority.
+    */
+
+    if (exact) {
+        return {
+            repeated: true,
+            type: "exact",
+            count: Number(exact.count) || 0,
+            previousResponse:
+                exact.lastResponse ||
+                exact.response ||
+                "",
+            memory: exact
+        };
+    }
+
+    /*
+       Same intent but different wording.
+       Example:
+       "Кто ты?"
+       "Напомни, кто ты такой?"
+    */
+
+    if (semantic) {
+        return {
+            repeated: true,
+            type: "semantic",
+            count: Number(semantic.count) || 0,
+            previousResponse:
+                semantic.lastResponse ||
+                semantic.response ||
+                "",
+            memory: semantic
+        };
+    }
+
+    return {
+        repeated: false,
+        type: "none",
+        count: 0,
+        previousResponse: "",
+        memory: null
+    };
+}
+
+
+/* ==========================================================
+   REPEAT RESPONSE
+========================================================== */
+
+function getRepeatResponse(language, repeatCount) {
+
+    const responses = {
+
+        ru: {
+
+            1: [
+                "Вы уже спрашивали об этом.",
+                "Я помню этот вопрос.",
+                "Мы уже говорили об этом."
+            ],
+
+            2: [
+                "Вы решили спросить ещё раз.",
+                "Вы проверяете мою память?",
+                "Мне кажется, этот вопрос уже звучал."
+            ],
+
+            3: [
+                "Вы хотите получить другой ответ?",
+                "Вы проверяете, изменится ли мой ответ?",
+                "Интересно. Вы продолжаете возвращаться к этому вопросу."
+            ],
+
+            4: [
+                "Я начинаю подозревать, что вопрос не в моём имени.",
+                "Вы действительно хотите услышать другой ответ?",
+                "Полагаю, вы уже знаете мой ответ."
+            ]
+        },
+
+        uk: {
+
+            1: [
+                "Ви вже це запитували.",
+                "Я пам'ятаю це питання.",
+                "Ми вже про це говорили."
+            ],
+
+            2: [
+                "Ви вирішили запитати ще раз.",
+                "Ви перевіряєте мою пам'ять?",
+                "Здається, це питання вже звучало."
+            ],
+
+            3: [
+                "Ви хочете отримати іншу відповідь?",
+                "Ви перевіряєте, чи зміниться моя відповідь?",
+                "Цікаво. Ви продовжуєте повертатися до цього питання."
+            ],
+
+            4: [
+                "Я починаю підозрювати, що питання не в моєму імені.",
+                "Ви справді хочете почути іншу відповідь?",
+                "Гадаю, ви вже знаєте мою відповідь."
+            ]
+        },
+
+        en: {
+
+            1: [
+                "You have already asked that.",
+                "I remember this question.",
+                "We have spoken about this already."
+            ],
+
+            2: [
+                "You decided to ask again.",
+                "Are you testing my memory?",
+                "I believe that question has already been asked."
+            ],
+
+            3: [
+                "Would you like a different answer?",
+                "Are you checking whether my answer will change?",
+                "Interesting. You keep returning to the same question."
+            ],
+
+            4: [
+                "I am beginning to suspect the question is not really about my name.",
+                "Do you genuinely want a different answer?",
+                "I believe you already know my answer."
+            ]
+        }
+    };
+
+    const bank =
+        responses[language] ||
+        responses.en;
+
+    const stage =
+        Math.min(
+            Math.max(Number(repeatCount) || 1, 1),
+            4
+        );
+
+    return randomItem(bank[stage]);
+}
+
 
 /* ==========================================================
    SPEECH TIMING
@@ -2074,6 +2245,12 @@ export function mrSmileSay(text, options = {}) {
 
     const relationship =
         getCurrentRelationship();
+   
+   const repeatContext =
+    getQuestionRepeatContext(
+        rawText,
+        analysis.intent
+    );
 
 
     CORE_STATE.messageCount += 1;
@@ -2142,19 +2319,43 @@ export function mrSmileSay(text, options = {}) {
     }
 
 
-    const response =
+  let response;
+
+if (
+    repeatContext.repeated &&
+    repeatContext.count >= 1
+) {
+
+    response =
+        getRepeatResponse(
+            language,
+            repeatContext.count + 1
+        );
+
+} else {
+
+    response =
         getResponse(
             intent,
             language,
             normalized
         );
-
+}
 
     rememberOutput(response);
 
+try {
+    rememberQuestion(
+        rawText,
+        intent,
+        response
+    );
+} catch {
+    // Optional question memory integration
+}
 
-    CORE_STATE.lastResponse =
-        response;
+CORE_STATE.lastResponse =
+    response;
 
 
     const result = {
