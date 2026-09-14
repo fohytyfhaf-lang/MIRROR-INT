@@ -72,7 +72,7 @@ export async function loadLanguage(lang) {
          * не превратится просто в название ключа.
          */
 
-        if (
+               if (
             lang !== "en" &&
             Object.keys(englishDictionary).length === 0
         ) {
@@ -82,19 +82,18 @@ export async function loadLanguage(lang) {
                     "languages/en.json"
                 );
 
-           englishDictionary =
-    parseLanguageData(
-        await englishResponse.json()
-    );
+            englishDictionary =
+                parseLanguageData(
+                    await englishResponse.json()
+                );
 
-      
+        }
 
 
         const response =
             await fetch(
                 `languages/${lang}.json`
             );
-
 
         if (!response.ok) {
 
