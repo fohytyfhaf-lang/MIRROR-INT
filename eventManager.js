@@ -10,13 +10,51 @@ const events = new Map();
 
 export function on(eventName, callback) {
 
+    if (
+        typeof eventName !== "string" ||
+        !eventName.trim()
+    ) {
+        console.warn(
+            "[EVENT] Invalid event name:",
+            eventName
+        );
+
+        return () => {};
+    }
+
+    if (typeof callback !== "function") {
+
+        console.warn(
+            "[EVENT] Invalid callback for:",
+            eventName
+        );
+
+        return () => {};
+    }
+
     if (!events.has(eventName)) {
         events.set(eventName, []);
     }
 
-    events.get(eventName).push(callback);
+    const list = events.get(eventName);
+
+    /* Prevent duplicate registration */
+
+    if (!list.includes(callback)) {
+        list.push(callback);
+    }
+
+    /*
+        Return unsubscribe helper.
+        This does not replace off().
+    */
+
+    return () => {
+        off(eventName, callback);
+    };
 
 }
+
 
 /* ===================================
             REMOVE
@@ -24,7 +62,9 @@ export function on(eventName, callback) {
 
 export function off(eventName, callback) {
 
-    if (!events.has(eventName)) return;
+    if (!events.has(eventName)) {
+        return;
+    }
 
     const list = events.get(eventName);
 
@@ -34,7 +74,16 @@ export function off(eventName, callback) {
         list.splice(index, 1);
     }
 
+    /*
+        Remove empty event buckets.
+    */
+
+    if (list.length === 0) {
+        events.delete(eventName);
+    }
+
 }
+
 
 /* ===================================
             TRIGGER
@@ -42,11 +91,46 @@ export function off(eventName, callback) {
 
 export function trigger(eventName, data = null) {
 
-    console.log("[EVENT]", eventName, data);
+    console.log(
+        "[EVENT]",
+        eventName,
+        data
+    );
 
-    if (!events.has(eventName)) return;
+    if (!events.has(eventName)) {
+        return;
+    }
 
-    events.get(eventName).forEach(callback => {
+    /*
+        Use a snapshot.
+
+        This prevents problems when handlers
+        call on() / off() while the event is
+        currently being dispatched.
+    */
+
+    const listeners = [
+        ...events.get(eventName)
+    ];
+
+    listeners.forEach(callback => {
+
+        /*
+            The listener may have been removed
+            after the snapshot was created.
+
+            Do not execute it if it is no longer
+            registered.
+        */
+
+        const currentList = events.get(eventName);
+
+        if (
+            !currentList ||
+            !currentList.includes(callback)
+        ) {
+            return;
+        }
 
         try {
 
@@ -66,22 +150,66 @@ export function trigger(eventName, data = null) {
 
 }
 
+
 /* ===================================
             ONCE
 =================================== */
+
 export function once(eventName, callback) {
+
+    if (
+        typeof eventName !== "string" ||
+        !eventName.trim()
+    ) {
+        console.warn(
+            "[EVENT] Invalid event name:",
+            eventName
+        );
+
+        return () => {};
+    }
+
+    if (typeof callback !== "function") {
+
+        console.warn(
+            "[EVENT] Invalid callback for:",
+            eventName
+        );
+
+        return () => {};
+    }
 
     function wrapper(data) {
 
+        /*
+            Remove FIRST.
+
+            This is important if the callback
+            itself triggers the same event.
+        */
+
+        off(eventName, wrapper);
+
         try {
+
             callback(data);
-        } finally {
-            off(eventName, wrapper);
+
+        } catch (error) {
+
+            console.error(
+                "[EVENT ERROR]",
+                eventName,
+                error
+            );
+
         }
 
     }
 
-    on(eventName, wrapper);
+    return on(
+        eventName,
+        wrapper
+    );
 
 }
 
@@ -95,6 +223,7 @@ export function clear(eventName) {
     events.delete(eventName);
 
 }
+
 
 /* ===================================
             CLEAR ALL
