@@ -11,6 +11,7 @@
    - personnel responses
    - MR.SMILE channel
    - NULL channel
+   - NULL ACCOUNT
    - chat context
    - operator input routing
 
@@ -34,8 +35,32 @@
            ↓
        chats.js / addChatMessage()
 
-   This prevents multiple MR.SMILE brains
-   from answering simultaneously.
+   NULL PATH:
+
+       NULL ACCOUNT
+           ↓
+       nullEntity
+           ↓
+       FUTURE:
+       nullCore.js
+           ↓
+       nullMemory.js
+           ↓
+       nullEvents.js
+           ↓
+       NULL RESPONSE / EVENT
+
+   NULL IS CURRENTLY DORMANT.
+
+   It does NOT:
+   - generate AI responses
+   - use personnelAI
+   - use MR.SMILE
+   - generate automatic events
+   - generate lore
+   - modify itself automatically
+
+   This file only provides the account/channel foundation.
 ========================================================== */
 
 
@@ -608,6 +633,12 @@ const chats = {
 
     /* ======================================================
        NULL
+       ------------------------------------------------------
+       SECRET ENTITY ACCOUNT.
+
+       This is only the dormant chat endpoint.
+
+       NULL DOES NOT HAVE AI HERE.
     ====================================================== */
 
     nullEntity: {
@@ -655,6 +686,73 @@ const chats = {
             }
 
         ]
+
+    }
+
+};
+
+
+/* ==========================================================
+   CHAT ACCOUNTS
+   ----------------------------------------------------------
+   Account metadata is deliberately separate from the
+   chat database.
+
+   This allows the future NULL system to grow without
+   turning chats.js into NULL's personality engine.
+
+   FUTURE:
+
+       accounts.NULL
+           ↓
+       nullCore.js
+           ↓
+       nullMemory.js
+           ↓
+       nullEvents.js
+           ↓
+       null lore / behavior / dialogue
+========================================================== */
+
+const chatAccounts = {
+
+    NULL: {
+
+        id:
+            "NULL",
+
+        chatId:
+            "nullEntity",
+
+        name:
+            "NULL",
+
+        type:
+            "secret_entity",
+
+        clearance:
+            0,
+
+        secret:
+            true,
+
+        discovered:
+            false,
+
+        connected:
+            false,
+
+        aiEnabled:
+            false,
+
+        eventsEnabled:
+            false,
+
+        loreEnabled:
+            false,
+
+        memoryEnabled:
+            false
 
     }
 
@@ -727,6 +825,7 @@ const TIMING = {
 
     mrSmileDispatchPause:
         20
+
 };
 
 
@@ -1138,6 +1237,42 @@ function updateChatContext(
 
             context.entity =
                 "network";
+
+        }
+
+    }
+
+
+    /*
+       NULL
+
+       Only context is recorded.
+
+       No behavior is generated here.
+    */
+
+    if (
+        chatId ===
+        "nullEntity"
+    ) {
+
+        if (
+            contains(
+                message,
+                [
+                    "null",
+                    "unknown",
+                    "неизвест",
+                    "unknown user"
+                ]
+            )
+        ) {
+
+            context.topic =
+                "null_account";
+
+            context.entity =
+                "NULL";
 
         }
 
@@ -1713,6 +1848,49 @@ export function openChat(
     }
 
 
+    /*
+       NULL is intentionally separated
+       from MR.SMILE.
+
+       Opening the channel does NOT make
+       NULL answer or start any AI logic.
+
+       It only exposes a future event hook.
+    */
+
+    if (
+        chatId ===
+        "nullEntity"
+    ) {
+
+        const account =
+            chatAccounts.NULL;
+
+        if (account) {
+
+            account.connected =
+                true;
+
+        }
+
+
+        trigger(
+            "null:chatOpened",
+            {
+                chatId:
+                    "nullEntity",
+
+                accountId:
+                    "NULL",
+
+                timestamp:
+                    Date.now()
+            }
+        );
+
+    }
+
+
     return true;
 
 }
@@ -1721,6 +1899,7 @@ export function openChat(
 /* ==========================================================
    REVEAL MR.SMILE CHAT
 ========================================================== */
+
 export function revealMrSmileChat() {
 
     const chat = chats.mrsmile;
@@ -1829,6 +2008,172 @@ export function revealMrSmileChat() {
 
 
     return true;
+
+}
+
+
+/* ==========================================================
+   NULL ACCOUNT
+   ----------------------------------------------------------
+   FUTURE SECRET ENTITY FOUNDATION.
+
+   IMPORTANT:
+
+   This does NOT create NULL AI.
+
+   It only provides account identity/state.
+
+   Future modules may use this object but should own
+   their own behavior instead of putting NULL's personality
+   inside chats.js.
+========================================================== */
+
+
+/* ==========================================================
+   GET CHAT ACCOUNT
+========================================================== */
+
+export function getChatAccount(
+    accountId
+) {
+
+    const id =
+        safeString(
+            accountId
+        )
+            .trim()
+            .toUpperCase();
+
+
+    const account =
+        chatAccounts[id];
+
+
+    if (!account) {
+        return null;
+    }
+
+
+    /*
+       Return a copy.
+
+       External modules should not silently mutate
+       the internal account object.
+    */
+
+    return {
+        ...account
+    };
+
+}
+
+
+/* ==========================================================
+   GET NULL ACCOUNT
+========================================================== */
+
+export function getNullAccount() {
+
+    return getChatAccount(
+        "NULL"
+    );
+
+}
+
+
+/* ==========================================================
+   REVEAL NULL ACCOUNT
+   ----------------------------------------------------------
+   This is intentionally explicit.
+
+   Nothing automatically reveals NULL.
+
+   Future lore/events can call this when the operator
+   reaches the correct condition.
+========================================================== */
+
+export function revealNullAccount() {
+
+    const account =
+        chatAccounts.NULL;
+
+    const chat =
+        chats.nullEntity;
+
+
+    if (
+        !account ||
+        !chat
+    ) {
+
+        console.warn(
+            "[OMEGA NULL] NULL account/channel not found."
+        );
+
+        return false;
+
+    }
+
+
+    account.discovered =
+        true;
+
+
+    chat.hidden =
+        false;
+
+
+    renderChatList();
+
+
+    trigger(
+        "null:accountRevealed",
+        {
+
+            accountId:
+                "NULL",
+
+            chatId:
+                "nullEntity",
+
+            timestamp:
+                Date.now()
+
+        }
+    );
+
+
+    trigger(
+        "chat:revealed",
+        {
+
+            chatId:
+                "nullEntity"
+
+        }
+    );
+
+
+    console.log(
+        "[OMEGA NULL] NULL account revealed."
+    );
+
+
+    return true;
+
+}
+
+
+/* ==========================================================
+   NULL ACCOUNT DISCOVERY STATUS
+========================================================== */
+
+export function isNullAccountDiscovered() {
+
+    return Boolean(
+        chatAccounts.NULL &&
+        chatAccounts.NULL.discovered
+    );
 
 }
 
@@ -2001,6 +2346,43 @@ export function addChatMessage(
     );
 
 
+    /*
+       NULL-specific event hook.
+
+       This is ONLY an event notification.
+
+       It does not generate a response.
+
+       Future nullEvents.js can subscribe to this.
+    */
+
+    if (
+        chatId ===
+        "nullEntity"
+    ) {
+
+        trigger(
+            "null:messageAdded",
+            {
+
+                chatId:
+                    "nullEntity",
+
+                accountId:
+                    "NULL",
+
+                message:
+                    entry,
+
+                timestamp:
+                    Date.now()
+
+            }
+        );
+
+    }
+
+
     return true;
 
 }
@@ -2114,6 +2496,14 @@ export function appendChatMessage(
        trigger event
        ↓
        mrsmileChat.js
+
+   NULL:
+
+       add YOU
+       ↓
+       save context
+       ↓
+       NO AUTOMATIC RESPONSE
 */
 
 export function sendMessage() {
@@ -2274,6 +2664,57 @@ export function sendMessage() {
 
             },
             TIMING.mrSmileDispatchPause
+        );
+
+
+        return true;
+
+    }
+
+
+    /*
+       NULL ACCOUNT.
+
+       NULL currently has no response pipeline.
+
+       This is deliberately kept separate from
+       personnelAI and MR.SMILE.
+    */
+
+    if (
+        activeChat ===
+        "nullEntity"
+    ) {
+
+        /*
+           Future NULL processing will be attached here
+           through a dedicated event/module.
+
+           For now the operator message simply remains
+           inside the NULL chat history.
+        */
+
+        trigger(
+            "null:operatorMessage",
+            {
+
+                text,
+
+                chat:
+                    "nullEntity",
+
+                accountId:
+                    "NULL",
+
+                source:
+                    "operator",
+
+                sequence,
+
+                timestamp:
+                    Date.now()
+
+            }
         );
 
 
@@ -3176,6 +3617,42 @@ export function revealChat(
     );
 
 
+    /*
+       NULL has a dedicated account state.
+
+       Generic revealChat() still works, but the
+       dedicated revealNullAccount() function should
+       be preferred by future NULL systems.
+    */
+
+    if (
+        chatId ===
+        "nullEntity"
+    ) {
+
+        chatAccounts.NULL.discovered =
+            true;
+
+
+        trigger(
+            "null:accountRevealed",
+            {
+
+                accountId:
+                    "NULL",
+
+                chatId:
+                    "nullEntity",
+
+                timestamp:
+                    Date.now()
+
+            }
+        );
+
+    }
+
+
     return true;
 
 }
@@ -3205,6 +3682,14 @@ export function hideChat(
     renderChatList();
 
 
+    /*
+       If NULL is hidden again, do not erase
+       discovery history.
+
+       The account remains discovered in lore/state.
+    */
+
+
     return true;
 
 }
@@ -3223,6 +3708,7 @@ export function initChats(
     ) {
 
         return {
+
             ok:
                 true,
 
@@ -3230,6 +3716,7 @@ export function initChats(
                 true,
 
             activeChat
+
         };
 
     }
@@ -3272,6 +3759,21 @@ export function initChats(
         window.revealChat =
             revealChat;
 
+        window.revealMrSmileChat =
+            revealMrSmileChat;
+
+        window.revealNullAccount =
+            revealNullAccount;
+
+        window.getChatAccount =
+            getChatAccount;
+
+        window.getNullAccount =
+            getNullAccount;
+
+        window.isNullAccountDiscovered =
+            isNullAccountDiscovered;
+
         window.hasChatAccess =
             hasChatAccess;
 
@@ -3295,6 +3797,11 @@ export function initChats(
 
     console.log(
         "[OMEGA CHAT] Rebuilt chat system initialized."
+    );
+
+
+    console.log(
+        "[OMEGA CHAT] NULL account registered as dormant secret entity."
     );
 
 
@@ -3437,7 +3944,40 @@ export function getChatSystemStatus() {
         nullMessages:
             chats.nullEntity
                 ?.messages
-                ?.length || 0
+                ?.length || 0,
+
+        nullAccount:
+            {
+                discovered:
+                    Boolean(
+                        chatAccounts.NULL
+                            ?.discovered
+                    ),
+
+                connected:
+                    Boolean(
+                        chatAccounts.NULL
+                            ?.connected
+                    ),
+
+                aiEnabled:
+                    Boolean(
+                        chatAccounts.NULL
+                            ?.aiEnabled
+                    ),
+
+                eventsEnabled:
+                    Boolean(
+                        chatAccounts.NULL
+                            ?.eventsEnabled
+                    ),
+
+                loreEnabled:
+                    Boolean(
+                        chatAccounts.NULL
+                            ?.loreEnabled
+                    )
+            }
 
     };
 
@@ -3530,6 +4070,21 @@ const API = {
 
     reveal:
         revealChat,
+
+    revealMrSmile:
+        revealMrSmileChat,
+
+    revealNull:
+        revealNullAccount,
+
+    getAccount:
+        getChatAccount,
+
+    getNullAccount:
+        getNullAccount,
+
+    isNullDiscovered:
+        isNullAccountDiscovered,
 
     hide:
         hideChat,
