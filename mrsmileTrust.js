@@ -1,82 +1,375 @@
-// =======================================
-// MR.SMILE TRUST SYSTEM
-// OMEGA SYSTEM
-// =======================================
 
-import { trigger } from "./eventManager.js";
+/* ==========================================================
+   MR.SMILE TRUST SYSTEM — V4
+   OMEGA / MIRROR-INT
 
-const STORAGE_KEY = "mrsmileTrust";
+   RESPONSIBILITY
+   ----------------------------------------------------------
+   This module owns ONLY the Trust relationship value.
 
-const MIN_TRUST = -100;
-const MAX_TRUST = 100;
+   It DOES:
+   - load / save Trust
+   - add / remove / set Trust
+   - clamp Trust between -100 and 100
+   - calculate relationship level
+   - expose Trust conditions
+   - emit Trust change events
+   - emit Trust level change events
 
-// =======================================
-// INTERNAL STATE
-// =======================================
+   It DOES NOT:
+   - generate dialogue
+   - generate MR.SMILE responses
+   - process chat messages
+   - control progression
+   - unlock files directly
+   - render UI
 
-let trust = 0;
-let initialized = false;
+   ARCHITECTURE:
 
-// =======================================
-// TRUST LEVELS
-// =======================================
+       event / action
+            ↓
+       addTrust / removeTrust / setTrust
+            ↓
+       Trust state
+            ↓
+       mrsmile:trustChanged
+            ↓
+       mrsmileProgress.js
+
+   IMPORTANT:
+
+   A real Trust change creates ONE trustChanged event.
+
+   Setting the same value does NOT create a fake change event.
+
+========================================================== */
+
+
+/* ==========================================================
+   STORAGE
+========================================================== */
+
+const STORAGE_KEY =
+    "mrsmileTrust";
+
+
+const MIN_TRUST =
+    -100;
+
+
+const MAX_TRUST =
+    100;
+
+
+/* ==========================================================
+   STATE
+========================================================== */
+
+let trust =
+    0;
+
+let initialized =
+    false;
+
+
+/* ==========================================================
+   TRUST LEVELS
+========================================================== */
 
 const levels = [
 
     {
-        id: 0,
-        name: "UNKNOWN",
-        min: -999
+        id:
+            0,
+
+        name:
+            "UNKNOWN",
+
+        min:
+            -999
     },
 
     {
-        id: 1,
-        name: "OBSERVED",
-        min: 5
+        id:
+            1,
+
+        name:
+            "OBSERVED",
+
+        min:
+            5
     },
 
     {
-        id: 2,
-        name: "INTERESTING",
-        min: 15
+        id:
+            2,
+
+        name:
+            "INTERESTING",
+
+        min:
+            15
     },
 
     {
-        id: 3,
-        name: "TRUSTED",
-        min: 30
+        id:
+            3,
+
+        name:
+            "TRUSTED",
+
+        min:
+            30
     },
 
     {
-        id: 4,
-        name: "ALLY",
-        min: 50
+        id:
+            4,
+
+        name:
+            "ALLY",
+
+        min:
+            50
     },
 
     {
-        id: 5,
-        name: "FRIEND",
-        min: 80
+        id:
+            5,
+
+        name:
+            "FRIEND",
+
+        min:
+            80
     }
 
 ];
 
-// =======================================
-// INIT
-// =======================================
+
+/* ==========================================================
+   INTERNAL HELPERS
+========================================================== */
+
+function clampTrust(
+    value
+) {
+
+    return Math.max(
+        MIN_TRUST,
+        Math.min(
+            MAX_TRUST,
+            value
+        )
+    );
+
+}
+
+
+function safeNumber(
+    value,
+    fallback = 0
+) {
+
+    const number =
+        Number(
+            value
+        );
+
+
+    return Number.isFinite(
+        number
+    )
+        ? number
+        : fallback;
+
+}
+
+
+function storageAvailable() {
+
+    try {
+
+        return (
+            typeof localStorage !==
+            "undefined"
+        );
+
+    } catch {
+
+        return false;
+
+    }
+
+}
+
+
+/* ==========================================================
+   SAVE
+========================================================== */
+
+export function saveTrust() {
+
+    if (
+        !storageAvailable()
+    ) {
+
+        return false;
+
+    }
+
+
+    try {
+
+        localStorage.setItem(
+
+            STORAGE_KEY,
+
+            String(
+                clampTrust(
+                    trust
+                )
+            )
+
+        );
+
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "[MR.SMILE TRUST] Failed to save:",
+            error
+        );
+
+
+        return false;
+
+    }
+
+}
+
+
+/* ==========================================================
+   LOAD
+========================================================== */
+
+export function loadTrust() {
+
+    if (
+        !storageAvailable()
+    ) {
+
+        trust =
+            0;
+
+        return trust;
+
+    }
+
+
+    try {
+
+        const value =
+            localStorage.getItem(
+                STORAGE_KEY
+            );
+
+
+        if (
+            value === null
+        ) {
+
+            trust =
+                0;
+
+            return trust;
+
+        }
+
+
+        const parsed =
+            Number(
+                value
+            );
+
+
+        if (
+            !Number.isFinite(
+                parsed
+            )
+        ) {
+
+            console.warn(
+                "[MR.SMILE TRUST] Invalid stored value. Resetting."
+            );
+
+
+            trust =
+                0;
+
+
+            saveTrust();
+
+
+            return trust;
+
+        }
+
+
+        trust =
+            clampTrust(
+                parsed
+            );
+
+
+    } catch (error) {
+
+        console.error(
+            "[MR.SMILE TRUST] Failed to load:",
+            error
+        );
+
+
+        trust =
+            0;
+
+    }
+
+
+    return trust;
+
+}
+
+
+/* ==========================================================
+   INIT
+========================================================== */
 
 export function initTrust() {
 
-    if (initialized)
+    if (
+        initialized
+    ) {
+
         return trust;
 
-    initialized = true;
+    }
+
 
     loadTrust();
 
-    // Создаём запись в localStorage,
-    // даже если Trust сейчас равен 0
+
+    initialized =
+        true;
+
+
+    /*
+     * Ensure the current valid value exists in storage.
+     */
     saveTrust();
+
 
     console.log(
         "[MR.SMILE TRUST] Initialized:",
@@ -84,85 +377,15 @@ export function initTrust() {
         getTrustName()
     );
 
-    return trust;
-
-}
-
-// =======================================
-// ADD TRUST
-// =======================================
-
-export function addTrust(
-    amount,
-    reason = ""
-) {
-
-    initTrust();
-
-    amount = Number(amount);
-
-    if (!Number.isFinite(amount))
-        return trust;
-
-    const previousTrust = trust;
-
-    trust += amount;
-
-    trust = clampTrust(trust);
-
-    saveTrust();
-
-    console.log(
-        "[MR.SMILE] Trust:",
-        previousTrust,
-        "→",
-        trust,
-        reason
-    );
-
-    trigger(
-        "mrsmile:trustChanged",
-        {
-            previous: previousTrust,
-            current: trust,
-            difference: trust - previousTrust,
-            reason: reason
-        }
-    );
-
-    checkTrustLevelChange(
-        previousTrust,
-        trust
-    );
 
     return trust;
 
 }
 
-// =======================================
-// REMOVE TRUST
-// =======================================
 
-export function removeTrust(
-    amount,
-    reason = ""
-) {
-
-    amount = Number(amount);
-
-    if (!Number.isFinite(amount))
-        return getTrust();
-
-    return addTrust(
-        -Math.abs(amount),
-        reason
-    );
-
-}
-
-// =======================================
-// GET TRUST
-// =======================================
+/* ==========================================================
+   GET TRUST
+========================================================== */
 
 export function getTrust() {
 
@@ -172,24 +395,65 @@ export function getTrust() {
 
 }
 
-// =======================================
-// SET TRUST
-// =======================================
 
-export function setTrust(value) {
+/* ==========================================================
+   SET TRUST
+========================================================== */
+
+export function setTrust(
+    value
+) {
 
     initTrust();
 
-    value = Number(value);
 
-    if (!Number.isFinite(value))
+    const numericValue =
+        Number(
+            value
+        );
+
+
+    if (
+        !Number.isFinite(
+            numericValue
+        )
+    ) {
+
         return trust;
 
-    const previousTrust = trust;
+    }
 
-    trust = clampTrust(value);
+
+    const previousTrust =
+        trust;
+
+
+    const nextTrust =
+        clampTrust(
+            numericValue
+        );
+
+
+    /*
+     * No actual change:
+     * do not emit fake events.
+     */
+    if (
+        nextTrust ===
+        previousTrust
+    ) {
+
+        return trust;
+
+    }
+
+
+    trust =
+        nextTrust;
+
 
     saveTrust();
+
 
     console.log(
         "[MR.SMILE] Trust manually set:",
@@ -198,52 +462,288 @@ export function setTrust(value) {
         trust
     );
 
-    trigger(
-        "mrsmile:trustChanged",
-        {
-            previous: previousTrust,
-            current: trust,
-            difference: trust - previousTrust,
-            reason: "SET"
-        }
+
+    emitTrustChanged(
+        previousTrust,
+        trust,
+        "SET"
     );
 
-    checkTrustLevelChange(
-        previousTrust,
-        trust
-    );
 
     return trust;
 
 }
 
-// =======================================
-// TRUST LEVEL
-// =======================================
+
+/* ==========================================================
+   ADD TRUST
+========================================================== */
+
+export function addTrust(
+    amount,
+    reason = ""
+) {
+
+    initTrust();
+
+
+    const numericAmount =
+        Number(
+            amount
+        );
+
+
+    if (
+        !Number.isFinite(
+            numericAmount
+        )
+    ) {
+
+        return trust;
+
+    }
+
+
+    /*
+     * No-op change.
+     */
+    if (
+        numericAmount ===
+        0
+    ) {
+
+        return trust;
+
+    }
+
+
+    const previousTrust =
+        trust;
+
+
+    const nextTrust =
+        clampTrust(
+            trust +
+            numericAmount
+        );
+
+
+    /*
+     * The requested change can be non-zero
+     * but clamping may leave Trust unchanged.
+     *
+     * Example:
+     * trust = 100
+     * addTrust(5)
+     */
+    if (
+        nextTrust ===
+        previousTrust
+    ) {
+
+        return trust;
+
+    }
+
+
+    trust =
+        nextTrust;
+
+
+    saveTrust();
+
+
+    console.log(
+        "[MR.SMILE] Trust:",
+        previousTrust,
+        "→",
+        trust,
+        reason
+    );
+
+
+    emitTrustChanged(
+        previousTrust,
+        trust,
+        reason || "ADD"
+    );
+
+
+    return trust;
+
+}
+
+
+/* ==========================================================
+   REMOVE TRUST
+========================================================== */
+
+export function removeTrust(
+    amount,
+    reason = ""
+) {
+
+    const numericAmount =
+        Number(
+            amount
+        );
+
+
+    if (
+        !Number.isFinite(
+            numericAmount
+        )
+    ) {
+
+        return getTrust();
+
+    }
+
+
+    return addTrust(
+        -Math.abs(
+            numericAmount
+        ),
+        reason
+    );
+
+}
+
+
+/* ==========================================================
+   TRUST CHANGE EVENT
+========================================================== */
+
+function emitTrustChanged(
+    previousTrust,
+    currentTrust,
+    reason = ""
+) {
+
+    const difference =
+        currentTrust -
+        previousTrust;
+
+
+    /*
+     * Safety:
+     * there is no Trust event without a real change.
+     */
+    if (
+        difference ===
+        0
+    ) {
+
+        return false;
+
+    }
+
+
+    triggerTrustChanged(
+        {
+            previous:
+                previousTrust,
+
+            current:
+                currentTrust,
+
+            difference,
+
+            reason:
+                reason || ""
+
+        }
+    );
+
+
+    checkTrustLevelChange(
+        previousTrust,
+        currentTrust
+    );
+
+
+    return true;
+
+}
+
+
+/* ==========================================================
+   EVENT DISPATCH
+========================================================== */
+
+function triggerTrustChanged(
+    payload
+) {
+
+    try {
+
+        /*
+         * Import is static at module level.
+         */
+        trigger(
+            "mrsmile:trustChanged",
+            {
+                ...payload
+            }
+        );
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "[MR.SMILE TRUST] Trust event failed:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* ==========================================================
+   TRUST LEVEL
+========================================================== */
 
 export function getTrustLevel() {
 
     initTrust();
 
-    let current = levels[0];
 
-    for (const level of levels) {
+    let current =
+        levels[0];
 
-        if (trust >= level.min) {
 
-            current = level;
+    for (
+        const level
+        of levels
+    ) {
+
+        if (
+            trust >=
+            level.min
+        ) {
+
+            current =
+                level;
 
         }
 
     }
 
-    return current;
+
+    return {
+        ...current
+    };
 
 }
 
-// =======================================
-// TRUST LEVEL NAME
-// =======================================
+
+/* ==========================================================
+   TRUST LEVEL NAME
+========================================================== */
 
 export function getTrustName() {
 
@@ -251,9 +751,10 @@ export function getTrustName() {
 
 }
 
-// =======================================
-// TRUST LEVEL ID
-// =======================================
+
+/* ==========================================================
+   TRUST LEVEL ID
+========================================================== */
 
 export function getTrustLevelId() {
 
@@ -261,27 +762,158 @@ export function getTrustLevelId() {
 
 }
 
-// =======================================
-// CHECKS
-// =======================================
+
+/* ==========================================================
+   FIND LEVEL FOR VALUE
+========================================================== */
+
+function getLevelForValue(
+    value
+) {
+
+    const numericValue =
+        clampTrust(
+            safeNumber(
+                value,
+                0
+            )
+        );
+
+
+    let current =
+        levels[0];
+
+
+    for (
+        const level
+        of levels
+    ) {
+
+        if (
+            numericValue >=
+            level.min
+        ) {
+
+            current =
+                level;
+
+        }
+
+    }
+
+
+    return {
+        ...current
+    };
+
+}
+
+
+/* ==========================================================
+   LEVEL CHANGE
+========================================================== */
+
+function checkTrustLevelChange(
+    previous,
+    current
+) {
+
+    const previousLevel =
+        getLevelForValue(
+            previous
+        );
+
+
+    const currentLevel =
+        getLevelForValue(
+            current
+        );
+
+
+    if (
+        previousLevel.id ===
+        currentLevel.id
+    ) {
+
+        return false;
+
+    }
+
+
+    console.log(
+        "[MR.SMILE TRUST] Level changed:",
+        previousLevel.name,
+        "→",
+        currentLevel.name
+    );
+
+
+    try {
+
+        trigger(
+            "mrsmile:trustLevelChanged",
+            {
+
+                previous:
+                    previousLevel,
+
+                current:
+                    currentLevel,
+
+                previousTrust:
+                    previous,
+
+                trust:
+                    current
+
+            }
+        );
+
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "[MR.SMILE TRUST] Trust level event failed:",
+            error
+        );
+
+
+        return false;
+
+    }
+
+}
+
+
+/* ==========================================================
+   RELATIONSHIP CHECKS
+========================================================== */
 
 export function isTrusted() {
 
-    return getTrust() >= 30;
+    return getTrust() >=
+        30;
 
 }
+
 
 export function isAlly() {
 
-    return getTrust() >= 50;
+    return getTrust() >=
+        50;
 
 }
+
 
 export function isFriend() {
 
-    return getTrust() >= 80;
+    return getTrust() >=
+        80;
 
 }
+
 
 export function isHostile() {
 
@@ -289,47 +921,62 @@ export function isHostile() {
 
 }
 
-// =======================================
-// REVEAL CONDITIONS
-// =======================================
+
+/* ==========================================================
+   REVEAL CONDITIONS
+========================================================== */
 
 export function canRevealSecrets() {
 
-    return getTrust() >= 20;
+    return getTrust() >=
+        20;
 
 }
+
 
 export function canRevealLore() {
 
-    return getTrust() >= 10;
+    return getTrust() >=
+        10;
 
 }
+
 
 export function canUnlockFiles() {
 
-    return getTrust() >= 30;
+    return getTrust() >=
+        30;
 
 }
+
 
 export function canGiveGame() {
 
-    return getTrust() >= 40;
+    return getTrust() >=
+        40;
 
 }
+
 
 export function canTellTruth() {
 
-    return getTrust() >= 60;
+    return getTrust() >=
+        60;
 
 }
 
-// =======================================
-// REWARDS
-// =======================================
 
-export function reward(event) {
+/* ==========================================================
+   REWARDS
+========================================================== */
 
-    switch (event) {
+export function reward(
+    event
+) {
+
+    switch (
+        event
+    ) {
 
         case "READ_FILE":
 
@@ -340,6 +987,7 @@ export function reward(event) {
 
             break;
 
+
         case "READ_SECRET":
 
             addTrust(
@@ -348,6 +996,7 @@ export function reward(event) {
             );
 
             break;
+
 
         case "HELP_SYSTEM":
 
@@ -358,6 +1007,7 @@ export function reward(event) {
 
             break;
 
+
         case "OPEN_ARCHIVE":
 
             addTrust(
@@ -367,6 +1017,7 @@ export function reward(event) {
 
             break;
 
+
         case "RETURN_NIGHT":
 
             addTrust(
@@ -375,6 +1026,7 @@ export function reward(event) {
             );
 
             break;
+
 
         default:
 
@@ -389,13 +1041,18 @@ export function reward(event) {
 
 }
 
-// =======================================
-// PUNISHMENTS
-// =======================================
 
-export function punish(event) {
+/* ==========================================================
+   PUNISHMENTS
+========================================================== */
 
-    switch (event) {
+export function punish(
+    event
+) {
+
+    switch (
+        event
+    ) {
 
         case "SPAM":
 
@@ -406,6 +1063,7 @@ export function punish(event) {
 
             break;
 
+
         case "ATTACK_SYSTEM":
 
             removeTrust(
@@ -414,6 +1072,7 @@ export function punish(event) {
             );
 
             break;
+
 
         case "IGNORE_WARNING":
 
@@ -424,6 +1083,7 @@ export function punish(event) {
 
             break;
 
+
         case "DELETE_FILE":
 
             removeTrust(
@@ -432,6 +1092,7 @@ export function punish(event) {
             );
 
             break;
+
 
         default:
 
@@ -446,225 +1107,247 @@ export function punish(event) {
 
 }
 
-// =======================================
-// SAVE
-// =======================================
 
-export function saveTrust() {
+/* ==========================================================
+   RESET
+========================================================== */
 
-    try {
+export function resetTrust() {
 
-        localStorage.setItem(
-            STORAGE_KEY,
-            String(trust)
+    initTrust();
+
+
+    const previousTrust =
+        trust;
+
+
+    /*
+     * Reset internal value first.
+     */
+    trust =
+        0;
+
+
+    saveTrust();
+
+
+    console.log(
+        "[MR.SMILE TRUST] Reset:",
+        previousTrust,
+        "→",
+        0
+    );
+
+
+    /*
+     * Emit only when a real reset happened.
+     */
+    if (
+        previousTrust !==
+        0
+    ) {
+
+        emitTrustChanged(
+            previousTrust,
+            0,
+            "RESET"
         );
 
     }
-    catch (error) {
 
-        console.error(
-            "[MR.SMILE TRUST] Failed to save:",
-            error
-        );
-
-    }
-
-}
-
-// =======================================
-// LOAD
-// =======================================
-
-export function loadTrust() {
-
-    try {
-
-        const value =
-            localStorage.getItem(
-                STORAGE_KEY
-            );
-
-        if (value === null) {
-
-            trust = 0;
-
-            return trust;
-
-        }
-
-        const parsed =
-            Number(value);
-
-        if (!Number.isFinite(parsed)) {
-
-            console.warn(
-                "[MR.SMILE TRUST] Invalid stored value. Resetting."
-            );
-
-            trust = 0;
-
-            saveTrust();
-
-            return trust;
-
-        }
-
-        trust = clampTrust(parsed);
-
-    }
-    catch (error) {
-
-        console.error(
-            "[MR.SMILE TRUST] Failed to load:",
-            error
-        );
-
-        trust = 0;
-
-    }
 
     return trust;
 
 }
 
-// =======================================
-// RESET
-// =======================================
 
-export function resetTrust() {
-
-    trust = 0;
-
-    localStorage.removeItem(
-        STORAGE_KEY
-    );
-
-    console.log(
-        "[MR.SMILE TRUST] Reset."
-    );
-
-    trigger(
-        "mrsmile:trustChanged",
-        {
-            previous: 0,
-            current: 0,
-            difference: 0,
-            reason: "RESET"
-        }
-    );
-
-}
-
-// =======================================
-// DEBUG / STATUS
-// =======================================
+/* ==========================================================
+   STATUS
+========================================================== */
 
 export function getTrustStatus() {
 
     initTrust();
 
+
+    const level =
+        getTrustLevel();
+
+
     return {
 
-        value: trust,
+        value:
+            trust,
 
-        level: getTrustLevel(),
+        level,
 
-        name: getTrustName(),
+        name:
+            level.name,
 
-        trusted: isTrusted(),
+        levelId:
+            level.id,
 
-        ally: isAlly(),
+        trusted:
+            isTrusted(),
 
-        friend: isFriend(),
+        ally:
+            isAlly(),
 
-        hostile: isHostile()
+        friend:
+            isFriend(),
+
+        hostile:
+            isHostile(),
+
+        canRevealSecrets:
+            canRevealSecrets(),
+
+        canRevealLore:
+            canRevealLore(),
+
+        canUnlockFiles:
+            canUnlockFiles(),
+
+        canGiveGame:
+            canGiveGame(),
+
+        canTellTruth:
+            canTellTruth()
 
     };
 
 }
 
-// =======================================
-// INTERNAL HELPERS
-// =======================================
 
-function clampTrust(value) {
+/* ==========================================================
+   IMPORT
+   ----------------------------------------------------------
+   Kept at the bottom of the logical declaration section
+   for readability in this rebuilt file.
+========================================================== */
 
-    return Math.max(
-        MIN_TRUST,
-        Math.min(
-            MAX_TRUST,
-            value
-        )
-    );
+import {
+    trigger
+} from "./eventManager.js";
 
-}
 
-// =======================================
-// LEVEL CHANGE
-// =======================================
+/* ==========================================================
+   WINDOW DEBUG API
+========================================================== */
 
-function checkTrustLevelChange(
-    previous,
-    current
+if (
+    typeof window !==
+    "undefined"
 ) {
 
-    const previousLevel =
-        getLevelForValue(previous);
+    window.debugTrust = {
 
-    const currentLevel =
-        getLevelForValue(current);
+        get:
+            getTrust,
 
-    if (
-        previousLevel.id ===
-        currentLevel.id
-    ) {
-        return;
-    }
+        set:
+            setTrust,
 
-    console.log(
-        "[MR.SMILE TRUST] Level changed:",
-        previousLevel.name,
-        "→",
-        currentLevel.name
-    );
+        add:
+            addTrust,
 
-    trigger(
-        "mrsmile:trustLevelChanged",
-        {
-            previous: previousLevel,
-            current: currentLevel,
-            trust: current
-        }
+        remove:
+            removeTrust,
+
+        reward:
+            reward,
+
+        punish:
+            punish,
+
+        init:
+            initTrust,
+
+        status:
+            getTrustStatus,
+
+        level:
+            getTrustLevel,
+
+        levelId:
+            getTrustLevelId,
+
+        reset:
+            resetTrust
+
+    };
+
+}
+
+
+/* ==========================================================
+   AUTO INITIALIZATION
+========================================================== */
+
+try {
+
+    initTrust();
+
+} catch (error) {
+
+    console.error(
+        "[MR.SMILE TRUST] Initialization failed:",
+        error
     );
 
 }
 
-// =======================================
-// FIND LEVEL
-// =======================================
 
-function getLevelForValue(value) {
+/* ==========================================================
+   DEFAULT EXPORT
+========================================================== */
 
-    let current = levels[0];
+export default {
 
-    for (const level of levels) {
+    initTrust,
 
-        if (value >= level.min) {
+    loadTrust,
 
-            current = level;
+    saveTrust,
 
-        }
+    getTrust,
 
-    }
+    setTrust,
 
-    return current;
+    addTrust,
 
-}
+    removeTrust,
 
-window.debugTrust = {
-    get: getTrust,
-    set: setTrust,
-    add: addTrust,
-    init: initTrust,
-    status: getTrustStatus
+    getTrustLevel,
+
+    getTrustName,
+
+    getTrustLevelId,
+
+    isTrusted,
+
+    isAlly,
+
+    isFriend,
+
+    isHostile,
+
+    canRevealSecrets,
+
+    canRevealLore,
+
+    canUnlockFiles,
+
+    canGiveGame,
+
+    canTellTruth,
+
+    reward,
+
+    punish,
+
+    resetTrust,
+
+    getTrustStatus
+
 };
