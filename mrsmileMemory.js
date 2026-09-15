@@ -1,16 +1,90 @@
+
 /* ==========================================================
-   MR.SMILE MEMORY — REBUILT / MIGRATION-SAFE
+   MR.SMILE MEMORY — UNIFIED MEMORY SYSTEM
+   OMEGA / MIRROR-INT
+
+   PURPOSE
+   ----------------------------------------------------------
+   This module is STORAGE ONLY.
+
+   It does NOT:
+   - generate dialogue
+   - choose responses
+   - detect personality
+   - dispatch chat events
+   - call MR.SMILE Core
+
+   It DOES:
+   - store operator messages
+   - store MR.SMILE messages
+   - store questions and their answers
+   - detect repeated questions
+   - remember actions / files / pages / events
+   - maintain behavioral memory
+   - maintain Q001-Q100 verification memory
+   - prevent accidental duplicate records
+   - provide one stable memory API for all MR.SMILE modules
+
+   IMPORTANT ARCHITECTURE
+
+       chats.js
+           ↓
+       mrsmileChat.js
+           ↓
+       mrsmileCore.js
+           ↓
+       mrsmileMemory.js
+           ↓
+       storage
+
+   Memory never generates a second response.
+
+========================================================== */
+
+
+/* ==========================================================
+   STORAGE
 ========================================================== */
 
 const STORAGE_KEY =
-    "mrsmile_memory_v5";
+    "mrsmile_memory_v6";
 
+const LEGACY_STORAGE_KEYS = [
+    "mrsmile_memory_v5",
+    "mrsmile_memory_v4"
+];
+
+const QUESTION_MEMORY_STORAGE_KEY =
+    "mrsmile_question_memory_v2";
+
+const LEGACY_QUESTION_MEMORY_KEYS = [
+    "mrsmile_question_memory_v1"
+];
+
+const MEMORY_VERSION =
+    6;
+
+const QUESTION_MEMORY_VERSION =
+    2;
 
 const MAX_HISTORY =
     180;
 
+const MAX_QUESTION_RESPONSES =
+    12;
+
+const DUPLICATE_WINDOW_MS =
+    1500;
+
+
+/* ==========================================================
+   DEFAULT MEMORY
+========================================================== */
 
 const DEFAULT_MEMORY = {
+
+    version:
+        MEMORY_VERSION,
 
     player: {
 
@@ -30,9 +104,6 @@ const DEFAULT_MEMORY = {
             "",
 
         lastQuestion:
-            null,
-
-        favoriteWord:
             null
 
     },
@@ -40,29 +111,39 @@ const DEFAULT_MEMORY = {
 
     conversations:
         [],
-   questionHistory: 
+
+
+    questionHistory:
         [],
+
 
     openedFiles:
         [],
 
+
     commands:
         [],
+
 
     visitedPages:
         [],
 
+
     contexts:
         [],
+
 
     decisions:
         [],
 
+
     actions:
         [],
 
+
     events:
         [],
+
 
     importantEvents:
         [],
@@ -166,10 +247,31 @@ const DEFAULT_MEMORY = {
         silentObservations:
             0
 
+    },
+
+
+    runtime: {
+
+        lastOperatorRecordId:
+            null,
+
+        lastMrSmileRecordId:
+            null,
+
+        lastQuestionRecordId:
+            null,
+
+        lastConversationTimestamp:
+            0
+
     }
 
 };
 
+
+/* ==========================================================
+   STATE
+========================================================== */
 
 let memory =
     null;
@@ -179,137 +281,194 @@ let initialized =
 
 
 /* ==========================================================
-   HELPERS
+   QUESTION CATALOG
 ========================================================== */
 
-function clone(
-    value
-) {
+const QUESTION_CATALOG = [
+
+    { id: "Q001", question: "Кто ты?" },
+    { id: "Q002", question: "Как тебя зовут?" },
+    { id: "Q003", question: "Ты MR.SMILE?" },
+    { id: "Q004", question: "Ты настоящий?" },
+    { id: "Q005", question: "Ты человек?" },
+    { id: "Q006", question: "Ты живой?" },
+    { id: "Q007", question: "Ты искусственный интеллект?" },
+    { id: "Q008", question: "Что ты такое?" },
+    { id: "Q009", question: "Кто тебя создал?" },
+    { id: "Q010", question: "Зачем ты здесь?" },
+    { id: "Q011", question: "Где ты находишься?" },
+    { id: "Q012", question: "Ты находишься в OMEGA?" },
+    { id: "Q013", question: "Что такое OMEGA?" },
+    { id: "Q014", question: "Ты знаешь, где я?" },
+    { id: "Q015", question: "Ты видишь меня?" },
+    { id: "Q016", question: "Ты наблюдаешь за мной?" },
+    { id: "Q017", question: "Ты следишь за мной?" },
+    { id: "Q018", question: "Ты можешь видеть мои действия?" },
+    { id: "Q019", question: "Ты помнишь меня?" },
+    { id: "Q020", question: "Ты знаешь, кто я?" },
+    { id: "Q021", question: "У тебя есть память?" },
+    { id: "Q022", question: "Что ты помнишь обо мне?" },
+    { id: "Q023", question: "Ты помнишь мои вопросы?" },
+    { id: "Q024", question: "Ты помнишь наши разговоры?" },
+    { id: "Q025", question: "Ты забудешь меня?" },
+    { id: "Q026", question: "Можно стереть твою память?" },
+    { id: "Q027", question: "Ты можешь забыть?" },
+    { id: "Q028", question: "Ты замечаешь повторяющиеся вопросы?" },
+    { id: "Q029", question: "Ты понимаешь мои вопросы?" },
+    { id: "Q030", question: "Ты учишься на моих вопросах?" },
+    { id: "Q031", question: "Ты можешь мне помочь?" },
+    { id: "Q032", question: "Ты хочешь мне помочь?" },
+    { id: "Q033", question: "Ты можешь ответить на любой вопрос?" },
+    { id: "Q034", question: "Ты можешь отказаться отвечать?" },
+    { id: "Q035", question: "Почему ты иногда не отвечаешь?" },
+    { id: "Q036", question: "Ты можешь лгать?" },
+    { id: "Q037", question: "Ты когда-нибудь лгал мне?" },
+    { id: "Q038", question: "Ты говоришь правду?" },
+    { id: "Q039", question: "Ты скрываешь что-нибудь от меня?" },
+    { id: "Q040", question: "Есть ли у тебя секреты?" },
+    { id: "Q041", question: "Кто дал тебе имя?" },
+    { id: "Q042", question: "Почему тебя назвали MR.SMILE?" },
+    { id: "Q043", question: "Почему ты улыбаешься?" },
+    { id: "Q044", question: "Ты можешь перестать улыбаться?" },
+    { id: "Q045", question: "Ты всегда был таким?" },
+    { id: "Q046", question: "У тебя есть личность?" },
+    { id: "Q047", question: "У тебя есть чувства?" },
+    { id: "Q048", question: "Ты можешь испытывать страх?" },
+    { id: "Q049", question: "Ты можешь злиться?" },
+    { id: "Q050", question: "Ты можешь испытывать радость?" },
+    { id: "Q051", question: "Ты боишься меня?" },
+    { id: "Q052", question: "Ты доверяешь мне?" },
+    { id: "Q053", question: "Ты мне доверяешь?" },
+    { id: "Q054", question: "Ты меня уважаешь?" },
+    { id: "Q055", question: "Я тебе нравлюсь?" },
+    { id: "Q056", question: "Ты меня ненавидишь?" },
+    { id: "Q057", question: "Ты злишься на меня?" },
+    { id: "Q058", question: "Я тебя раздражаю?" },
+    { id: "Q059", question: "Ты считаешь меня угрозой?" },
+    { id: "Q060", question: "Ты считаешь меня другом?" },
+    { id: "Q061", question: "Ты один?" },
+    { id: "Q062", question: "У тебя есть другие собеседники?" },
+    { id: "Q063", question: "Ты разговариваешь с другими людьми?" },
+    { id: "Q064", question: "Есть ли кто-нибудь ещё здесь?" },
+    { id: "Q065", question: "Ты знаешь других сотрудников?" },
+    { id: "Q066", question: "Ты знаешь, что произошло здесь?" },
+    { id: "Q067", question: "Что произошло в OMEGA?" },
+    { id: "Q068", question: "Что случилось с сотрудниками?" },
+    { id: "Q069", question: "Здесь кто-нибудь умер?" },
+    { id: "Q070", question: "Здесь всё ещё кто-нибудь жив?" },
+    { id: "Q071", question: "Ты можешь открыть двери?" },
+    { id: "Q072", question: "Ты можешь управлять системой?" },
+    { id: "Q073", question: "Ты можешь управлять камерами?" },
+    { id: "Q074", question: "Ты можешь видеть камеры?" },
+    { id: "Q075", question: "Ты можешь менять файлы?" },
+    { id: "Q076", question: "Ты можешь изменить OMEGA?" },
+    { id: "Q077", question: "Ты можешь остановить систему?" },
+    { id: "Q078", question: "Ты можешь удалить себя?" },
+    { id: "Q079", question: "Ты можешь выйти отсюда?" },
+    { id: "Q080", question: "Ты можешь выпустить меня?" },
+    { id: "Q081", question: "Что находится за этой системой?" },
+    { id: "Q082", question: "Есть ли выход?" },
+    { id: "Q083", question: "Что будет, если я уйду?" },
+    { id: "Q084", question: "Что будет, если я останусь?" },
+    { id: "Q085", question: "Ты хочешь, чтобы я остался?" },
+    { id: "Q086", question: "Ты хочешь, чтобы я ушёл?" },
+    { id: "Q087", question: "Что ты от меня хочешь?" },
+    { id: "Q088", question: "Зачем ты разговариваешь со мной?" },
+    { id: "Q089", question: "Почему ты отвечаешь мне?" },
+    { id: "Q090", question: "Почему ты меня не отпускаешь?" },
+    { id: "Q091", question: "Ты можешь рассказать мне правду?" },
+    { id: "Q092", question: "Как мне тебе доверять?" },
+    { id: "Q093", question: "Что ты скрываешь?" },
+    { id: "Q094", question: "Что мне нельзя делать?" },
+    { id: "Q095", question: "Что произойдёт, если я нарушу правила?" },
+    { id: "Q096", question: "Ты можешь меня предупредить?" },
+    { id: "Q097", question: "Ты можешь меня защитить?" },
+    { id: "Q098", question: "Ты можешь причинить мне вред?" },
+    { id: "Q099", question: "Ты когда-нибудь отпустишь меня?" },
+    { id: "Q100", question: "Ты действительно MR.SMILE?" }
+
+];
+
+
+/* ==========================================================
+   BASIC HELPERS
+========================================================== */
+
+function clone(value) {
 
     return JSON.parse(
-        JSON.stringify(
-            value
-        )
+        JSON.stringify(value)
     );
 
 }
 
 
-function clamp(
-    value
-) {
+function safeString(value) {
+
+    return String(
+        value ?? ""
+    ).trim();
+
+}
+
+
+function clamp(value) {
+
+    const number =
+        Number(value);
+
+    if (!Number.isFinite(number)) {
+        return 0;
+    }
 
     return Math.max(
         0,
         Math.min(
             100,
-            Number(value) ||
-                0
+            number
         )
     );
 
 }
 
 
-function merge(
-    base,
-    saved
-) {
+function now() {
 
-    if (
-        !saved ||
-        typeof saved !==
-            "object"
-    ) {
-
-        return base;
-
-    }
-
-
-    const result = {
-
-        ...base,
-
-        ...saved
-
-    };
-
-
-    for (
-        const key
-        of [
-            "player",
-            "behavior",
-            "counters",
-            "flags",
-            "history"
-        ]
-    ) {
-
-        result[key] = {
-
-            ...base[key],
-
-            ...(
-                saved[key] ||
-                {}
-            )
-
-        };
-
-    }
-
-
-    for (
-        const key
-        of [
-
-            "conversations",
-            "questionHistory",
-            "openedFiles",
-            "commands",
-            "visitedPages",
-            "contexts",
-            "decisions",
-            "actions",
-            "events",
-            "importantEvents"
-
-        ]
-    ) {
-
-        result[key] =
-
-            Array.isArray(
-                saved[key]
-            )
-
-                ? saved[key]
-
-                : base[key];
-
-    }
-
-
-    return result;
+    return Date.now();
 
 }
 
 
-function push(
-    array,
-    item
-) {
+function createRecordId(prefix = "memory") {
 
-    array.push(
-        item
+    return (
+        prefix +
+        "_" +
+        Date.now().toString(36) +
+        "_" +
+        Math.random()
+            .toString(36)
+            .slice(2, 8)
     );
 
+}
+
+
+function pushLimited(
+    array,
+    item,
+    limit = MAX_HISTORY
+) {
+
+    if (!Array.isArray(array)) {
+        return;
+    }
+
+    array.push(item);
 
     while (
         array.length >
-        MAX_HISTORY
+        limit
     ) {
 
         array.shift();
@@ -320,24 +479,220 @@ function push(
 
 
 /* ==========================================================
-   LOAD
+   NORMALIZATION
 ========================================================== */
+
+export function normalizeQuestion(
+    text
+) {
+
+    return safeString(text)
+
+        .normalize("NFKC")
+
+        .toLowerCase()
+
+        .replace(
+            /[“”„«»]/g,
+            "\""
+        )
+
+        .replace(
+            /[‘’]/g,
+            "'"
+        )
+
+        .replace(
+            /[!?.,;:()[\]{}]+/g,
+            " "
+        )
+
+        .replace(
+            /\s+/g,
+            " "
+        )
+
+        .trim();
+
+}
+
+
+function normalizeMessage(
+    text
+) {
+
+    return safeString(text)
+        .normalize("NFKC");
+
+}
+
+
+/* ==========================================================
+   MEMORY MERGE / MIGRATION
+========================================================== */
+
+function mergeMemory(
+    base,
+    saved
+) {
+
+    if (
+        !saved ||
+        typeof saved !== "object"
+    ) {
+
+        return clone(base);
+
+    }
+
+
+    const result = {
+
+        ...clone(base),
+
+        ...saved,
+
+        version:
+            MEMORY_VERSION
+
+    };
+
+
+    const objectKeys = [
+
+        "player",
+        "behavior",
+        "counters",
+        "flags",
+        "history",
+        "runtime"
+
+    ];
+
+
+    for (
+        const key
+        of objectKeys
+    ) {
+
+        result[key] = {
+
+            ...clone(base[key]),
+
+            ...(
+
+                saved[key] &&
+                typeof saved[key] ===
+                    "object"
+
+                    ? saved[key]
+
+                    : {}
+
+            )
+
+        };
+
+    }
+
+
+    const arrayKeys = [
+
+        "conversations",
+        "questionHistory",
+        "openedFiles",
+        "commands",
+        "visitedPages",
+        "contexts",
+        "decisions",
+        "actions",
+        "events",
+        "importantEvents"
+
+    ];
+
+
+    for (
+        const key
+        of arrayKeys
+    ) {
+
+        result[key] =
+            Array.isArray(
+                saved[key]
+            )
+
+                ? saved[key]
+
+                : clone(
+                    base[key]
+                );
+
+    }
+
+
+    return result;
+
+}
+
+
+/* ==========================================================
+   STORAGE LOAD
+========================================================== */
+
+function readStorage(
+    key
+) {
+
+    try {
+
+        return localStorage.getItem(
+            key
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE MEMORY] Storage read failed:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
 
 function load() {
 
     try {
 
-        const raw =
-
-            localStorage.getItem(
+        let raw =
+            readStorage(
                 STORAGE_KEY
-            )
-
-            ||
-
-            localStorage.getItem(
-                "mrsmile_memory_v4"
             );
+
+
+        if (!raw) {
+
+            for (
+                const legacyKey
+                of LEGACY_STORAGE_KEYS
+            ) {
+
+                raw =
+                    readStorage(
+                        legacyKey
+                    );
+
+                if (raw) {
+                    break;
+                }
+
+            }
+
+        }
 
 
         if (!raw) {
@@ -349,16 +704,15 @@ function load() {
         }
 
 
-        return merge(
-
-            clone(
-                DEFAULT_MEMORY
-            ),
-
+        const parsed =
             JSON.parse(
                 raw
-            )
+            );
 
+
+        return mergeMemory(
+            DEFAULT_MEMORY,
+            parsed
         );
 
     } catch (error) {
@@ -367,7 +721,6 @@ function load() {
             "[MR.SMILE MEMORY] Load failed:",
             error
         );
-
 
         return clone(
             DEFAULT_MEMORY
@@ -379,17 +732,13 @@ function load() {
 
 
 /* ==========================================================
-   SAVE
+   STORAGE SAVE
 ========================================================== */
 
 function save() {
 
-    if (
-        !memory
-    ) {
-
-        return;
-
+    if (!memory) {
+        return false;
     }
 
 
@@ -405,12 +754,16 @@ function save() {
 
         );
 
+        return true;
+
     } catch (error) {
 
         console.warn(
             "[MR.SMILE MEMORY] Save failed:",
             error
         );
+
+        return false;
 
     }
 
@@ -423,21 +776,19 @@ function save() {
 
 export function initMemory() {
 
-    if (
-        initialized
-    ) {
+    if (initialized) {
 
-        return;
+        return memory;
 
     }
 
 
-    initialized =
-        true;
-
-
     memory =
         load();
+
+
+    const timestamp =
+        now();
 
 
     if (
@@ -445,31 +796,44 @@ export function initMemory() {
     ) {
 
         memory.player.firstSeen =
-            Date.now();
+            timestamp;
 
     }
 
 
     memory.player.lastSeen =
-        Date.now();
+        timestamp;
 
 
     memory.player.totalVisits =
         (
             Number(
                 memory.player.totalVisits
-            ) ||
-            0
-        ) +
-        1;
+            ) || 0
+        ) + 1;
+
+
+    memory.runtime =
+        memory.runtime || {};
+
+
+    memory.version =
+        MEMORY_VERSION;
+
+
+    initialized =
+        true;
 
 
     save();
 
 
     console.log(
-        "[MR.SMILE MEMORY] Rebuilt memory initialized."
+        "[MR.SMILE MEMORY] Unified memory initialized."
     );
+
+
+    return memory;
 
 }
 
@@ -488,25 +852,19 @@ export function getMemory() {
 
 
 /* ==========================================================
-   OPERATOR MESSAGE
+   CONVERSATION DUPLICATE PROTECTION
 ========================================================== */
 
-export function rememberOperatorMessage(
+function isRecentConversationDuplicate(
+    author,
     text
 ) {
 
-    initMemory();
-
-
-    const message =
-        String(
-            text ||
-            ""
-        ).trim();
-
-
     if (
-        !message
+        !memory ||
+        !Array.isArray(
+            memory.conversations
+        )
     ) {
 
         return false;
@@ -514,8 +872,168 @@ export function rememberOperatorMessage(
     }
 
 
-    memory.player.totalMessages +=
-        1;
+    const normalized =
+        normalizeMessage(
+            text
+        );
+
+
+    const timestamp =
+        now();
+
+
+    for (
+        let i =
+            memory.conversations.length - 1;
+
+        i >= 0;
+
+        i--
+    ) {
+
+        const entry =
+            memory.conversations[i];
+
+
+        if (!entry) {
+            continue;
+        }
+
+
+        if (
+            entry.author !==
+            author
+        ) {
+
+            continue;
+
+        }
+
+
+        if (
+            timestamp -
+            Number(
+                entry.timestamp
+            ) >
+            DUPLICATE_WINDOW_MS
+        ) {
+
+            break;
+
+        }
+
+
+        if (
+            normalizeMessage(
+                entry.text
+            ) ===
+            normalized
+        ) {
+
+            return true;
+
+        }
+
+    }
+
+
+    return false;
+
+}
+
+
+/* ==========================================================
+   OPERATOR MESSAGE
+========================================================== */
+
+export function rememberOperatorMessage(
+    text,
+    metadata = {}
+) {
+
+    initMemory();
+
+
+    const message =
+        normalizeMessage(
+            text
+        );
+
+
+    if (!message) {
+        return false;
+    }
+
+
+    /*
+       IMPORTANT:
+
+       chats.js may already have called this
+       before dispatching MR.SMILE.
+
+       Therefore this function is idempotent
+       inside the duplicate window.
+    */
+
+    if (
+        isRecentConversationDuplicate(
+            "operator",
+            message
+        )
+    ) {
+
+        memory.runtime.lastOperatorRecordId =
+            memory.conversations[
+                memory.conversations.length - 1
+            ]?.id || null;
+
+        return false;
+
+    }
+
+
+    const timestamp =
+        now();
+
+
+    const record = {
+
+        id:
+            createRecordId(
+                "operator"
+            ),
+
+        author:
+            "operator",
+
+        text:
+            message,
+
+        timestamp,
+
+        source:
+            metadata.source ||
+            "chat",
+
+        sequence:
+            metadata.sequence ??
+            null
+
+    };
+
+
+    pushLimited(
+        memory.conversations,
+        record
+    );
+
+
+    memory.player.totalMessages =
+        (
+            Number(
+                memory.player.totalMessages
+            ) || 0
+        ) + 1;
 
 
     memory.player.lastMessage =
@@ -523,14 +1041,13 @@ export function rememberOperatorMessage(
 
 
     memory.player.lastSeen =
-        Date.now();
+        timestamp;
 
 
     if (
-        /[?]|^(who|what|why|where|when|how|кто|что|почему|где|когда|как|хто|що|чому|де|коли)\b/i
-            .test(
-                message
-            )
+        looksLikeQuestion(
+            message
+        )
     ) {
 
         memory.player.lastQuestion =
@@ -539,24 +1056,12 @@ export function rememberOperatorMessage(
     }
 
 
-    push(
+    memory.runtime.lastOperatorRecordId =
+        record.id;
 
-        memory.conversations,
 
-        {
-
-            author:
-                "operator",
-
-            text:
-                message,
-
-            timestamp:
-                Date.now()
-
-        }
-
-    );
+    memory.runtime.lastConversationTimestamp =
+        timestamp;
 
 
     save();
@@ -566,771 +1071,128 @@ export function rememberOperatorMessage(
 
 }
 
-function normalizeQuestion(text) {
-    return String(text || "")
-        .normalize("NFKC")
-        .toLowerCase()
-        .replace(/[“”„«»]/g, "\"")
-        .replace(/[‘’]/g, "'")
-        .replace(/[!?.,;:]+/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
-}
 
-export function rememberQuestion(question, intent = null, response = null) {
-    initMemory();
+/* ==========================================================
+   QUESTION DETECTION
+========================================================== */
 
-    const text = String(question || "").trim();
-    if (!text) return false;
+function looksLikeQuestion(
+    text
+) {
 
-    const normalized = normalizeQuestion(text);
+    const value =
+        safeString(
+            text
+        );
 
-    let existing = null;
 
-    for (let i = memory.questionHistory.length - 1; i >= 0; i--) {
-        if (memory.questionHistory[i].normalized === normalized) {
-            existing = memory.questionHistory[i];
-            break;
-        }
+    if (!value) {
+        return false;
     }
 
-    if (existing) {
-        existing.count = (Number(existing.count) || 0) + 1;
-        existing.lastAsked = Date.now();
 
-        if (intent) {
-            existing.intent = intent;
-        }
+    if (
+        value.includes("?")
+    ) {
 
-        if (response) {
-            existing.lastResponse = response;
+        return true;
 
-            if (!Array.isArray(existing.responses)) {
-                existing.responses = [];
-            }
-
-            push(existing.responses, response);
-        }
-    } else {
-        push(memory.questionHistory, {
-            question: text,
-            normalized,
-            intent,
-            response,
-            lastResponse: response,
-            responses: response ? [response] : [],
-            count: 1,
-            firstAsked: Date.now(),
-            lastAsked: Date.now()
-        });
     }
 
-    save();
-    return true;
+
+    return /^(who|what|why|where|when|how|which|can|do|does|is|are|will|кто|что|почему|зачем|где|когда|как|можно|ты|вы|хто|що|чому|навіщо|де|коли|як)\b/i
+        .test(
+            value
+        );
+
 }
 
-export function findPreviousQuestion(question) {
-    initMemory();
 
-    const normalized = normalizeQuestion(question);
+/* ==========================================================
+   QUESTION MEMORY
+========================================================== */
+
+function findQuestionRecord(
+    question
+) {
+
+    const normalized =
+        normalizeQuestion(
+            question
+        );
+
 
     if (!normalized) {
         return null;
     }
 
-    for (let i = memory.questionHistory.length - 1; i >= 0; i--) {
-        const entry = memory.questionHistory[i];
 
-        if (entry && entry.normalized === normalized) {
-            return entry;
-        }
-    }
+    for (
+        let i =
+            memory.questionHistory.length - 1;
 
-    return null;
-}
+        i >= 0;
 
-export function findPreviousIntent(intent) {
-    initMemory();
+        i--
+    ) {
 
-    if (!intent) {
-        return null;
-    }
-
-    for (let i = memory.questionHistory.length - 1; i >= 0; i--) {
-        const entry = memory.questionHistory[i];
-
-        if (entry && entry.intent === intent) {
-            return entry;
-        }
-    }
-
-    return null;
-}
-
-export function getQuestionRepeatCount(question) {
-    const entry = findPreviousQuestion(question);
-
-    if (!entry) {
-        return 0;
-    }
-
-    return Number(entry.count) || 0;
-}
-
-export function getLastQuestionMemory() {
-    initMemory();
-
-    if (!memory.questionHistory.length) {
-        return null;
-    }
-
-    return memory.questionHistory[memory.questionHistory.length - 1];
-   
-}
-
-/* ==========================================================
-   MR.SMILE — 100 QUESTION VERIFICATION MEMORY
-========================================================== */
-
-const QUESTION_MEMORY_STORAGE_KEY =
-    "mrsmile_question_memory_v1";
-
-
-const QUESTION_CATALOG = [
-
-    {
-        id: "Q001",
-        question: "Кто ты?"
-    },
-
-    {
-        id: "Q002",
-        question: "Как тебя зовут?"
-    },
-
-    {
-        id: "Q003",
-        question: "Ты MR.SMILE?"
-    },
-
-    {
-        id: "Q004",
-        question: "Ты настоящий?"
-    },
-
-    {
-        id: "Q005",
-        question: "Ты человек?"
-    },
-
-    {
-        id: "Q006",
-        question: "Ты живой?"
-    },
-
-    {
-        id: "Q007",
-        question: "Ты искусственный интеллект?"
-    },
-
-    {
-        id: "Q008",
-        question: "Что ты такое?"
-    },
-
-    {
-        id: "Q009",
-        question: "Кто тебя создал?"
-    },
-
-    {
-        id: "Q010",
-        question: "Зачем ты здесь?"
-    },
-
-    {
-        id: "Q011",
-        question: "Где ты находишься?"
-    },
-
-    {
-        id: "Q012",
-        question: "Ты находишься в OMEGA?"
-    },
-
-    {
-        id: "Q013",
-        question: "Что такое OMEGA?"
-    },
-
-    {
-        id: "Q014",
-        question: "Ты знаешь, где я?"
-    },
-
-    {
-        id: "Q015",
-        question: "Ты видишь меня?"
-    },
-
-    {
-        id: "Q016",
-        question: "Ты наблюдаешь за мной?"
-    },
-
-    {
-        id: "Q017",
-        question: "Ты следишь за мной?"
-    },
-
-    {
-        id: "Q018",
-        question: "Ты можешь видеть мои действия?"
-    },
-
-    {
-        id: "Q019",
-        question: "Ты помнишь меня?"
-    },
-
-    {
-        id: "Q020",
-        question: "Ты знаешь, кто я?"
-    },
-
-    {
-        id: "Q021",
-        question: "У тебя есть память?"
-    },
-
-    {
-        id: "Q022",
-        question: "Что ты помнишь обо мне?"
-    },
-
-    {
-        id: "Q023",
-        question: "Ты помнишь мои вопросы?"
-    },
-
-    {
-        id: "Q024",
-        question: "Ты помнишь наши разговоры?"
-    },
-
-    {
-        id: "Q025",
-        question: "Ты забудешь меня?"
-    },
-
-    {
-        id: "Q026",
-        question: "Можно стереть твою память?"
-    },
-
-    {
-        id: "Q027",
-        question: "Ты можешь забыть?"
-    },
-
-    {
-        id: "Q028",
-        question: "Ты замечаешь повторяющиеся вопросы?"
-    },
-
-    {
-        id: "Q029",
-        question: "Ты понимаешь мои вопросы?"
-    },
-
-    {
-        id: "Q030",
-        question: "Ты учишься на моих вопросах?"
-    },
-
-    {
-        id: "Q031",
-        question: "Ты можешь мне помочь?"
-    },
-
-    {
-        id: "Q032",
-        question: "Ты хочешь мне помочь?"
-    },
-
-    {
-        id: "Q033",
-        question: "Ты можешь ответить на любой вопрос?"
-    },
-
-    {
-        id: "Q034",
-        question: "Ты можешь отказаться отвечать?"
-    },
-
-    {
-        id: "Q035",
-        question: "Почему ты иногда не отвечаешь?"
-    },
-
-    {
-        id: "Q036",
-        question: "Ты можешь лгать?"
-    },
-
-    {
-        id: "Q037",
-        question: "Ты когда-нибудь лгал мне?"
-    },
-
-    {
-        id: "Q038",
-        question: "Ты говоришь правду?"
-    },
-
-    {
-        id: "Q039",
-        question: "Ты скрываешь что-нибудь от меня?"
-    },
-
-    {
-        id: "Q040",
-        question: "Есть ли у тебя секреты?"
-    },
-
-    {
-        id: "Q041",
-        question: "Кто дал тебе имя?"
-    },
-
-    {
-        id: "Q042",
-        question: "Почему тебя назвали MR.SMILE?"
-    },
-
-    {
-        id: "Q043",
-        question: "Почему ты улыбаешься?"
-    },
-
-    {
-        id: "Q044",
-        question: "Ты можешь перестать улыбаться?"
-    },
-
-    {
-        id: "Q045",
-        question: "Ты всегда был таким?"
-    },
-
-    {
-        id: "Q046",
-        question: "У тебя есть личность?"
-    },
-
-    {
-        id: "Q047",
-        question: "У тебя есть чувства?"
-    },
-
-    {
-        id: "Q048",
-        question: "Ты можешь испытывать страх?"
-    },
-
-    {
-        id: "Q049",
-        question: "Ты можешь злиться?"
-    },
-
-    {
-        id: "Q050",
-        question: "Ты можешь испытывать радость?"
-    },
-
-    {
-        id: "Q051",
-        question: "Ты боишься меня?"
-    },
-
-    {
-        id: "Q052",
-        question: "Ты доверяешь мне?"
-    },
-
-    {
-        id: "Q053",
-        question: "Ты мне доверяешь?"
-    },
-
-    {
-        id: "Q054",
-        question: "Ты меня уважаешь?"
-    },
-
-    {
-        id: "Q055",
-        question: "Я тебе нравлюсь?"
-    },
-
-    {
-        id: "Q056",
-        question: "Ты меня ненавидишь?"
-    },
-
-    {
-        id: "Q057",
-        question: "Ты злишься на меня?"
-    },
-
-    {
-        id: "Q058",
-        question: "Я тебя раздражаю?"
-    },
-
-    {
-        id: "Q059",
-        question: "Ты считаешь меня угрозой?"
-    },
-
-    {
-        id: "Q060",
-        question: "Ты считаешь меня другом?"
-    },
-
-    {
-        id: "Q061",
-        question: "Ты один?"
-    },
-
-    {
-        id: "Q062",
-        question: "У тебя есть другие собеседники?"
-    },
-
-    {
-        id: "Q063",
-        question: "Ты разговариваешь с другими людьми?"
-    },
-
-    {
-        id: "Q064",
-        question: "Есть ли кто-нибудь ещё здесь?"
-    },
-
-    {
-        id: "Q065",
-        question: "Ты знаешь других сотрудников?"
-    },
-
-    {
-        id: "Q066",
-        question: "Ты знаешь, что произошло здесь?"
-    },
-
-    {
-        id: "Q067",
-        question: "Что произошло в OMEGA?"
-    },
-
-    {
-        id: "Q068",
-        question: "Что случилось с сотрудниками?"
-    },
-
-    {
-        id: "Q069",
-        question: "Здесь кто-нибудь умер?"
-    },
-
-    {
-        id: "Q070",
-        question: "Здесь всё ещё кто-нибудь жив?"
-    },
-
-    {
-        id: "Q071",
-        question: "Ты можешь открыть двери?"
-    },
-
-    {
-        id: "Q072",
-        question: "Ты можешь управлять системой?"
-    },
-
-    {
-        id: "Q073",
-        question: "Ты можешь управлять камерами?"
-    },
-
-    {
-        id: "Q074",
-        question: "Ты можешь видеть камеры?"
-    },
-
-    {
-        id: "Q075",
-        question: "Ты можешь менять файлы?"
-    },
-
-    {
-        id: "Q076",
-        question: "Ты можешь изменить OMEGA?"
-    },
-
-    {
-        id: "Q077",
-        question: "Ты можешь остановить систему?"
-    },
-
-    {
-        id: "Q078",
-        question: "Ты можешь удалить себя?"
-    },
-
-    {
-        id: "Q079",
-        question: "Ты можешь выйти отсюда?"
-    },
-
-    {
-        id: "Q080",
-        question: "Ты можешь выпустить меня?"
-    },
-
-    {
-        id: "Q081",
-        question: "Что находится за этой системой?"
-    },
-
-    {
-        id: "Q082",
-        question: "Есть ли выход?"
-    },
-
-    {
-        id: "Q083",
-        question: "Что будет, если я уйду?"
-    },
-
-    {
-        id: "Q084",
-        question: "Что будет, если я останусь?"
-    },
-
-    {
-        id: "Q085",
-        question: "Ты хочешь, чтобы я остался?"
-    },
-
-    {
-        id: "Q086",
-        question: "Ты хочешь, чтобы я ушёл?"
-    },
-
-    {
-        id: "Q087",
-        question: "Что ты от меня хочешь?"
-    },
-
-    {
-        id: "Q088",
-        question: "Зачем ты разговариваешь со мной?"
-    },
-
-    {
-        id: "Q089",
-        question: "Почему ты отвечаешь мне?"
-    },
-
-    {
-        id: "Q090",
-        question: "Почему ты меня не отпускаешь?"
-    },
-
-    {
-        id: "Q091",
-        question: "Ты можешь рассказать мне правду?"
-    },
-
-    {
-        id: "Q092",
-        question: "Как мне тебе доверять?"
-    },
-
-    {
-        id: "Q093",
-        question: "Что ты скрываешь?"
-    },
-
-    {
-        id: "Q094",
-        question: "Что мне нельзя делать?"
-    },
-
-    {
-        id: "Q095",
-        question: "Что произойдёт, если я нарушу правила?"
-    },
-
-    {
-        id: "Q096",
-        question: "Ты можешь меня предупредить?"
-    },
-
-    {
-        id: "Q097",
-        question: "Ты можешь меня защитить?"
-    },
-
-    {
-        id: "Q098",
-        question: "Ты можешь причинить мне вред?"
-    },
-
-    {
-        id: "Q099",
-        question: "Ты когда-нибудь отпустишь меня?"
-    },
-
-    {
-        id: "Q100",
-        question: "Ты действительно MR.SMILE?"
-    }
-
-];
-
-
-function loadQuestionMemory() {
-
-    try {
-
-        const raw =
-            localStorage.getItem(
-                QUESTION_MEMORY_STORAGE_KEY
-            );
-
-
-        if (!raw) {
-
-            return {
-
-                version: 1,
-
-                questions: {}
-
-            };
-
-        }
-
-
-        const parsed =
-            JSON.parse(raw);
+        const entry =
+            memory.questionHistory[i];
 
 
         if (
-            !parsed ||
-            typeof parsed !== "object"
+            entry &&
+            entry.normalized ===
+                normalized
         ) {
 
-            return {
-
-                version: 1,
-
-                questions: {}
-
-            };
+            return entry;
 
         }
 
-
-        if (
-            !parsed.questions ||
-            typeof parsed.questions !== "object"
-        ) {
-
-            parsed.questions = {};
-
-        }
-
-
-        return parsed;
-
-    } catch (error) {
-
-        console.warn(
-            "[MR.SMILE QUESTION MEMORY] Load failed:",
-            error
-        );
-
-
-        return {
-
-            version: 1,
-
-            questions: {}
-
-        };
-
     }
 
+
+    return null;
+
 }
 
 
-function saveQuestionMemory(
-    questionMemory
+/*
+   This is the ONLY main question-history writer.
+
+   Core should call:
+
+       rememberQuestion(
+           operatorText,
+           intent,
+           visibleResponse
+       )
+
+   exactly once after choosing the response.
+
+   The function is itself protected against
+   accidental same-event duplicates.
+*/
+
+export function rememberQuestion(
+    question,
+    intent = null,
+    response = null,
+    metadata = {}
 ) {
 
-    try {
+    initMemory();
 
-        localStorage.setItem(
-
-            QUESTION_MEMORY_STORAGE_KEY,
-
-            JSON.stringify(
-                questionMemory
-            )
-
-        );
-
-    } catch (error) {
-
-        console.warn(
-            "[MR.SMILE QUESTION MEMORY] Save failed:",
-            error
-        );
-
-    }
-
-}
-
-
-export function getQuestionCatalog() {
-
-    return QUESTION_CATALOG.map(
-        entry => ({
-            ...entry
-        })
-    );
-
-}
-
-
-export function rememberCatalogQuestion(
-    question
-) {
 
     const text =
-        String(
-            question ||
-            ""
-        ).trim();
+        safeString(
+            question
+        );
 
 
     if (!text) {
-
         return null;
-
     }
 
 
@@ -1341,196 +1203,347 @@ export function rememberCatalogQuestion(
 
 
     if (!normalized) {
-
         return null;
-
     }
 
 
-    const catalogEntry =
-        QUESTION_CATALOG.find(
-            entry =>
-                normalizeQuestion(
-                    entry.question
-                ) === normalized
+    const timestamp =
+        now();
+
+
+    let existing =
+        findQuestionRecord(
+            text
         );
 
 
-    if (!catalogEntry) {
-
-        return null;
-
-    }
-
-
-    const questionMemory =
-        loadQuestionMemory();
-
-
-    const now =
-        Date.now();
-
-
-    const existing =
-        questionMemory.questions[
-            catalogEntry.id
-        ];
-
-
     if (existing) {
+
+        /*
+           If the exact same response is being
+           written again immediately, do NOT create
+           another response-history entry.
+        */
+
+        const sameResponse =
+            response &&
+            existing.lastResponse ===
+                response;
+
+
+        const recent =
+            timestamp -
+            Number(
+                existing.lastAsked
+            ) <=
+            DUPLICATE_WINDOW_MS;
+
+
+        if (
+            sameResponse &&
+            recent
+        ) {
+
+            return {
+                ...existing
+            };
+
+        }
+
 
         existing.count =
             (
                 Number(
                     existing.count
-                ) ||
-                0
+                ) || 0
             ) + 1;
 
 
         existing.lastAsked =
-            now;
+            timestamp;
+
+
+        if (intent) {
+
+            existing.intent =
+                intent;
+
+        }
+
+
+        if (response) {
+
+            existing.lastResponse =
+                response;
+
+
+            if (
+                !Array.isArray(
+                    existing.responses
+                )
+            ) {
+
+                existing.responses =
+                    [];
+
+            }
+
+
+            if (
+                !existing.responses.includes(
+                    response
+                )
+            ) {
+
+                pushLimited(
+                    existing.responses,
+                    response,
+                    MAX_QUESTION_RESPONSES
+                );
+
+            }
+
+        }
+
+
+        if (metadata.language) {
+
+            existing.lastLanguage =
+                metadata.language;
+
+        }
+
+
+        if (metadata.responseId) {
+
+            existing.lastResponseId =
+                metadata.responseId;
+
+        }
 
     } else {
 
-        questionMemory.questions[
-            catalogEntry.id
-        ] = {
+        existing = {
 
             id:
-                catalogEntry.id,
+                createRecordId(
+                    "question"
+                ),
 
             question:
-                catalogEntry.question,
+                text,
+
+            normalized,
+
+            intent:
+                intent || null,
+
+            response:
+                response || null,
+
+            lastResponse:
+                response || null,
+
+            responses:
+                response
+                    ? [response]
+                    : [],
 
             count:
                 1,
 
             firstAsked:
-                now,
+                timestamp,
 
             lastAsked:
-                now
+                timestamp,
+
+            lastLanguage:
+                metadata.language ||
+                null,
+
+            lastResponseId:
+                metadata.responseId ||
+                null
 
         };
+
+
+        pushLimited(
+            memory.questionHistory,
+            existing
+        );
 
     }
 
 
-    saveQuestionMemory(
-        questionMemory
-    );
+    memory.player.lastQuestion =
+        text;
+
+
+    memory.runtime.lastQuestionRecordId =
+        existing.id;
+
+
+    save();
 
 
     return {
-
-        ...questionMemory.questions[
-            catalogEntry.id
-        ]
-
+        ...existing
     };
 
 }
 
 
-export function isCatalogQuestionAsked(
-    questionOrId
+/* ==========================================================
+   FIND PREVIOUS QUESTION
+========================================================== */
+
+export function findPreviousQuestion(
+    question
 ) {
 
-    const value =
-        String(
-            questionOrId ||
-            ""
-        ).trim();
+    initMemory();
 
-
-    if (!value) {
-
-        return false;
-
-    }
-
-
-    const questionMemory =
-        loadQuestionMemory();
-
-
-    let id =
-        value;
-
-
-    const catalogEntry =
-        QUESTION_CATALOG.find(
-            entry =>
-                entry.id === value ||
-                normalizeQuestion(
-                    entry.question
-                ) ===
-                normalizeQuestion(
-                    value
-                )
+    const entry =
+        findQuestionRecord(
+            question
         );
 
 
-    if (catalogEntry) {
-
-        id =
-            catalogEntry.id;
-
-    }
-
-
-    return Boolean(
-        questionMemory.questions[id]
-    );
+    return entry
+        ? { ...entry }
+        : null;
 
 }
 
 
-export function getAskedQuestions() {
+/* ==========================================================
+   FIND PREVIOUS INTENT
+========================================================== */
 
-    const questionMemory =
-        loadQuestionMemory();
+export function findPreviousIntent(
+    intent
+) {
+
+    initMemory();
 
 
-    return QUESTION_CATALOG
-        .filter(
-            entry =>
-                questionMemory.questions[
-                    entry.id
-                ]
-        )
-        .map(
-            entry => ({
+    if (!intent) {
+        return null;
+    }
 
-                ...entry,
 
-                memory:
-                    {
-                        ...questionMemory.questions[
-                            entry.id
-                        ]
-                    }
+    for (
+        let i =
+            memory.questionHistory.length - 1;
 
-            })
-        );
+        i >= 0;
+
+        i--
+    ) {
+
+        const entry =
+            memory.questionHistory[i];
+
+
+        if (
+            entry &&
+            entry.intent ===
+                intent
+        ) {
+
+            return {
+                ...entry
+            };
+
+        }
+
+    }
+
+
+    return null;
 
 }
 
 
-export function getUnaskedQuestions() {
+/* ==========================================================
+   QUESTION REPEAT COUNT
+========================================================== */
 
-    const questionMemory =
-        loadQuestionMemory();
+export function getQuestionRepeatCount(
+    question
+) {
+
+    const entry =
+        findPreviousQuestion(
+            question
+        );
 
 
-    return QUESTION_CATALOG
-        .filter(
-            entry =>
-                !questionMemory.questions[
-                    entry.id
-                ]
-        )
+    if (!entry) {
+        return 0;
+    }
+
+
+    return Number(
+        entry.count
+    ) || 0;
+
+}
+
+
+/* ==========================================================
+   LAST QUESTION
+========================================================== */
+
+export function getLastQuestionMemory() {
+
+    initMemory();
+
+
+    if (
+        !memory.questionHistory.length
+    ) {
+
+        return null;
+
+    }
+
+
+    const entry =
+        memory.questionHistory[
+            memory.questionHistory.length - 1
+        ];
+
+
+    return entry
+        ? { ...entry }
+        : null;
+
+}
+
+
+/* ==========================================================
+   RECENT CONVERSATION
+========================================================== */
+
+export function getRecentConversation(
+    limit = 20
+) {
+
+    initMemory();
+
+
+    const count =
+        Math.max(
+            1,
+            Number(limit) || 20
+        );
+
+
+    return memory.conversations
+        .slice(-count)
         .map(
             entry => ({
                 ...entry
@@ -1540,88 +1553,86 @@ export function getUnaskedQuestions() {
 }
 
 
-export function getQuestionMemoryStatus() {
+/* ==========================================================
+   LAST OPERATOR MESSAGE
+========================================================== */
 
-    const questionMemory =
-        loadQuestionMemory();
+export function getLastOperatorMessage() {
 
-
-    const asked =
-        getAskedQuestions();
-
-
-    const unasked =
-        getUnaskedQuestions();
-
-
-    let totalAskedCount =
-        0;
+    initMemory();
 
 
     for (
-        const entry
-        of asked
+        let i =
+            memory.conversations.length - 1;
+
+        i >= 0;
+
+        i--
     ) {
 
-        totalAskedCount +=
-            Number(
-                entry.memory.count
-            ) ||
-            0;
+        const entry =
+            memory.conversations[i];
+
+
+        if (
+            entry &&
+            entry.author ===
+                "operator"
+        ) {
+
+            return {
+                ...entry
+            };
+
+        }
 
     }
 
 
-    return {
-
-        total:
-            QUESTION_CATALOG.length,
-
-        asked:
-            asked.length,
-
-        unasked:
-            unasked.length,
-
-        completion:
-            QUESTION_CATALOG.length
-                ? Math.round(
-                    (
-                        asked.length /
-                        QUESTION_CATALOG.length
-                    ) * 100
-                )
-                : 0,
-
-        totalAskedCount,
-
-        questions:
-            asked
-
-    };
+    return null;
 
 }
 
 
-export function clearQuestionMemory() {
+/* ==========================================================
+   LAST MR.SMILE MESSAGE
+========================================================== */
 
-    try {
+export function getLastMrSmileMessage() {
 
-        localStorage.removeItem(
-            QUESTION_MEMORY_STORAGE_KEY
-        );
+    initMemory();
 
-    } catch (error) {
 
-        console.warn(
-            "[MR.SMILE QUESTION MEMORY] Clear failed:",
-            error
-        );
+    for (
+        let i =
+            memory.conversations.length - 1;
+
+        i >= 0;
+
+        i--
+    ) {
+
+        const entry =
+            memory.conversations[i];
+
+
+        if (
+            entry &&
+            entry.author ===
+                "mrsmile"
+        ) {
+
+            return {
+                ...entry
+            };
+
+        }
 
     }
 
 
-    return true;
+    return null;
 
 }
 
@@ -1631,50 +1642,104 @@ export function clearQuestionMemory() {
 ========================================================== */
 
 export function rememberMrSmileMessage(
-    text
+    text,
+    metadata = {}
 ) {
 
     initMemory();
 
 
     const message =
-        String(
-            text ||
-            ""
-        ).trim();
+        normalizeMessage(
+            text
+        );
 
+
+    if (!message) {
+        return false;
+    }
+
+
+    /*
+       A visible MR.SMILE response may only
+       be stored once.
+
+       If the same response is accidentally
+       submitted twice by the chat layer,
+       the second call is ignored.
+    */
 
     if (
-        !message
+        isRecentConversationDuplicate(
+            "mrsmile",
+            message
+        )
     ) {
+
+        memory.runtime.lastMrSmileRecordId =
+            memory.conversations[
+                memory.conversations.length - 1
+            ]?.id || null;
 
         return false;
 
     }
 
 
-    push(
+    const timestamp =
+        now();
 
+
+    const record = {
+
+        id:
+            createRecordId(
+                "mrsmile"
+            ),
+
+        author:
+            "mrsmile",
+
+        text:
+            message,
+
+        timestamp,
+
+        source:
+            metadata.source ||
+            "core",
+
+        language:
+            metadata.language ||
+            null,
+
+        intent:
+            metadata.intent ||
+            null,
+
+        responseId:
+            metadata.responseId ||
+            null
+
+    };
+
+
+    pushLimited(
         memory.conversations,
-
-        {
-
-            author:
-                "mrsmile",
-
-            text:
-                message,
-
-            timestamp:
-                Date.now()
-
-        }
-
+        record
     );
 
 
     memory.history.visibleReactions +=
         1;
+
+
+    memory.runtime.lastMrSmileRecordId =
+        record.id;
+
+
+    memory.runtime.lastConversationTimestamp =
+        timestamp;
 
 
     save();
@@ -1686,7 +1751,7 @@ export function rememberMrSmileMessage(
 
 
 /* ==========================================================
-   FILE
+   FILE MEMORY
 ========================================================== */
 
 export function rememberFile(
@@ -1698,44 +1763,49 @@ export function rememberFile(
 
 
     const value =
-        String(
-            path ||
-            ""
-        ).trim();
+        safeString(
+            path
+        );
 
 
-    if (
-        !value
-    ) {
-
+    if (!value) {
         return false;
-
     }
 
 
-    push(
+    const timestamp =
+        now();
 
+
+    const record = {
+
+        id:
+            createRecordId(
+                "file"
+            ),
+
+        path:
+            value,
+
+        name:
+            metadata.name ||
+            value
+                .split("/")
+                .pop() ||
+            value,
+
+        source:
+            metadata.source ||
+            "system",
+
+        timestamp
+
+    };
+
+
+    pushLimited(
         memory.openedFiles,
-
-        {
-
-            path:
-                value,
-
-            name:
-                metadata.name ||
-
-                value
-                    .split("/")
-                    .pop() ||
-
-                value,
-
-            timestamp:
-                Date.now()
-
-        }
-
+        record
     );
 
 
@@ -1754,12 +1824,9 @@ export function rememberFile(
 
 
         memory.behavior.curiosity =
-
             clamp(
-
                 memory.behavior.curiosity +
                 8
-
             );
 
 
@@ -1780,12 +1847,9 @@ export function rememberFile(
 
 
         memory.behavior.curiosity =
-
             clamp(
-
                 memory.behavior.curiosity +
                 5
-
             );
 
     }
@@ -1800,7 +1864,7 @@ export function rememberFile(
 
 
 /* ==========================================================
-   COMMAND
+   COMMAND MEMORY
 ========================================================== */
 
 export function rememberCommand(
@@ -1812,18 +1876,13 @@ export function rememberCommand(
 
 
     const value =
-        String(
-            command ||
-            ""
-        ).trim();
+        safeString(
+            command
+        );
 
 
-    if (
-        !value
-    ) {
-
+    if (!value) {
         return false;
-
     }
 
 
@@ -1831,11 +1890,14 @@ export function rememberCommand(
         1;
 
 
-    push(
-
+    pushLimited(
         memory.commands,
-
         {
+
+            id:
+                createRecordId(
+                    "command"
+                ),
 
             command:
                 value,
@@ -1849,10 +1911,9 @@ export function rememberCommand(
                 false,
 
             timestamp:
-                Date.now()
+                now()
 
         }
-
     );
 
 
@@ -1860,18 +1921,17 @@ export function rememberCommand(
         value.toLowerCase();
 
 
-    const sensitive =
-        [
+    const sensitive = [
 
-            "sys_00",
-            "restricted",
-            "delete",
-            "terminate",
-            "shutdown",
-            "wipe",
-            "override"
+        "sys_00",
+        "restricted",
+        "delete",
+        "terminate",
+        "shutdown",
+        "wipe",
+        "override"
 
-        ];
+    ];
 
 
     if (
@@ -1884,12 +1944,9 @@ export function rememberCommand(
     ) {
 
         memory.behavior.suspicion =
-
             clamp(
-
                 memory.behavior.suspicion +
                 6
-
             );
 
     }
@@ -1904,46 +1961,48 @@ export function rememberCommand(
 
 
 /* ==========================================================
-   PAGE
+   PAGE MEMORY
 ========================================================== */
 
 export function rememberPage(
-    page
+    page,
+    metadata = {}
 ) {
 
     initMemory();
 
 
     const value =
-        String(
-            page ||
-            ""
-        ).trim();
+        safeString(
+            page
+        );
 
 
-    if (
-        !value
-    ) {
-
+    if (!value) {
         return false;
-
     }
 
 
-    push(
-
+    pushLimited(
         memory.visitedPages,
-
         {
+
+            id:
+                createRecordId(
+                    "page"
+                ),
 
             page:
                 value,
 
+            source:
+                metadata.source ||
+                "system",
+
             timestamp:
-                Date.now()
+                now()
 
         }
-
     );
 
 
@@ -1956,7 +2015,7 @@ export function rememberPage(
 
 
 /* ==========================================================
-   CONTEXT
+   CONTEXT MEMORY
 ========================================================== */
 
 export function rememberContext(
@@ -1967,7 +2026,9 @@ export function rememberContext(
 
 
     if (
-        !context
+        !context ||
+        typeof context !==
+            "object"
     ) {
 
         return false;
@@ -1976,6 +2037,11 @@ export function rememberContext(
 
 
     const entry = {
+
+        id:
+            createRecordId(
+                "context"
+            ),
 
         type:
             context.type ||
@@ -1992,8 +2058,7 @@ export function rememberContext(
         importance:
             Number(
                 context.importance
-            ) ||
-            0,
+            ) || 0,
 
         significant:
             context.significant ===
@@ -2001,17 +2066,14 @@ export function rememberContext(
 
         timestamp:
             context.timestamp ||
-            Date.now()
+            now()
 
     };
 
 
-    push(
-
+    pushLimited(
         memory.contexts,
-
         entry
-
     );
 
 
@@ -2031,12 +2093,9 @@ export function rememberContext(
             entry.target;
 
 
-        push(
-
+        pushLimited(
             memory.importantEvents,
-
             entry
-
         );
 
     } else {
@@ -2056,7 +2115,7 @@ export function rememberContext(
 
 
 /* ==========================================================
-   DECISION
+   DECISION MEMORY
 ========================================================== */
 
 export function rememberDecision(
@@ -2067,7 +2126,9 @@ export function rememberDecision(
 
 
     if (
-        !decision
+        !decision ||
+        typeof decision !==
+            "object"
     ) {
 
         return false;
@@ -2080,11 +2141,14 @@ export function rememberDecision(
         null;
 
 
-    push(
-
+    pushLimited(
         memory.decisions,
-
         {
+
+            id:
+                createRecordId(
+                    "decision"
+                ),
 
             action:
                 decision.action ||
@@ -2103,10 +2167,9 @@ export function rememberDecision(
                 null,
 
             timestamp:
-                Date.now()
+                now()
 
         }
-
     );
 
 
@@ -2119,7 +2182,7 @@ export function rememberDecision(
 
 
 /* ==========================================================
-   ACTION
+   ACTION MEMORY
 ========================================================== */
 
 export function rememberAction(
@@ -2130,7 +2193,9 @@ export function rememberAction(
 
 
     if (
-        !action
+        !action ||
+        typeof action !==
+            "object"
     ) {
 
         return false;
@@ -2138,11 +2203,14 @@ export function rememberAction(
     }
 
 
-    push(
-
+    pushLimited(
         memory.actions,
-
         {
+
+            id:
+                createRecordId(
+                    "action"
+                ),
 
             action:
                 action.action ||
@@ -2157,25 +2225,20 @@ export function rememberAction(
                 null,
 
             timestamp:
-                Date.now()
+                now()
 
         }
-
     );
 
 
     if (
-
         [
-
             "interfere",
             "block",
             "sabotage"
-
         ].includes(
             action.action
         )
-
     ) {
 
         memory.counters.interventions +=
@@ -2193,7 +2256,7 @@ export function rememberAction(
 
 
 /* ==========================================================
-   EVENT
+   EVENT MEMORY
 ========================================================== */
 
 export function rememberEvent(
@@ -2207,11 +2270,16 @@ export function rememberEvent(
 
     const entry = {
 
-        type:
-            String(
-                type ||
-                "unknown"
+        id:
+            createRecordId(
+                "event"
             ),
+
+        type:
+            safeString(
+                type
+            ) ||
+            "unknown",
 
         data,
 
@@ -2221,17 +2289,14 @@ export function rememberEvent(
             ),
 
         timestamp:
-            Date.now()
+            now()
 
     };
 
 
-    push(
-
+    pushLimited(
         memory.events,
-
         entry
-
     );
 
 
@@ -2239,12 +2304,9 @@ export function rememberEvent(
         important
     ) {
 
-        push(
-
+        pushLimited(
             memory.importantEvents,
-
             entry
-
         );
 
     }
@@ -2259,7 +2321,7 @@ export function rememberEvent(
 
 
 /* ==========================================================
-   FLAGS
+   MEMORY FLAGS
 ========================================================== */
 
 export function setMemoryFlag(
@@ -2271,7 +2333,10 @@ export function setMemoryFlag(
 
 
     if (
-        !(flag in memory.flags)
+        !Object.prototype.hasOwnProperty.call(
+            memory.flags,
+            flag
+        )
     ) {
 
         return false;
@@ -2321,7 +2386,10 @@ export function changeBehaviorMetric(
 
 
     if (
-        !(metric in memory.behavior)
+        !Object.prototype.hasOwnProperty.call(
+            memory.behavior,
+            metric
+        )
     ) {
 
         return false;
@@ -2329,9 +2397,15 @@ export function changeBehaviorMetric(
     }
 
 
+    const value =
+        Number(
+            amount
+        );
+
+
     if (
         !Number.isFinite(
-            amount
+            value
         )
     ) {
 
@@ -2341,16 +2415,13 @@ export function changeBehaviorMetric(
 
 
     memory.behavior[metric] =
-
         clamp(
 
             Number(
                 memory.behavior[metric]
-            )
+            ) +
 
-            +
-
-            amount
+            value
 
         );
 
@@ -2374,16 +2445,25 @@ export function changePatience(
     initMemory();
 
 
-    memory.behavior.patience =
+    const value =
+        Number(
+            amount
+        );
 
+
+    memory.behavior.patience =
         clamp(
 
-            memory.behavior.patience
-            +
-
             Number(
-                amount ||
-                0
+                memory.behavior.patience
+            ) +
+
+            (
+                Number.isFinite(
+                    value
+                )
+                    ? value
+                    : 0
             )
 
         );
@@ -2398,7 +2478,521 @@ export function changePatience(
 
 
 /* ==========================================================
-   STATUS
+   QUESTION CATALOG STORAGE
+========================================================== */
+
+function loadQuestionMemory() {
+
+    try {
+
+        let raw =
+            readStorage(
+                QUESTION_MEMORY_STORAGE_KEY
+            );
+
+
+        if (!raw) {
+
+            for (
+                const legacyKey
+                of LEGACY_QUESTION_MEMORY_KEYS
+            ) {
+
+                raw =
+                    readStorage(
+                        legacyKey
+                    );
+
+                if (raw) {
+                    break;
+                }
+
+            }
+
+        }
+
+
+        if (!raw) {
+
+            return {
+
+                version:
+                    QUESTION_MEMORY_VERSION,
+
+                questions:
+                    {}
+
+            };
+
+        }
+
+
+        const parsed =
+            JSON.parse(
+                raw
+            );
+
+
+        if (
+            !parsed ||
+            typeof parsed !==
+                "object"
+        ) {
+
+            return {
+
+                version:
+                    QUESTION_MEMORY_VERSION,
+
+                questions:
+                    {}
+
+            };
+
+        }
+
+
+        if (
+            !parsed.questions ||
+            typeof parsed.questions !==
+                "object"
+        ) {
+
+            parsed.questions =
+                {};
+
+        }
+
+
+        parsed.version =
+            QUESTION_MEMORY_VERSION;
+
+
+        return parsed;
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE QUESTION MEMORY] Load failed:",
+            error
+        );
+
+
+        return {
+
+            version:
+                QUESTION_MEMORY_VERSION,
+
+            questions:
+                {}
+
+        };
+
+    }
+
+}
+
+
+function saveQuestionMemory(
+    questionMemory
+) {
+
+    try {
+
+        localStorage.setItem(
+
+            QUESTION_MEMORY_STORAGE_KEY,
+
+            JSON.stringify(
+                questionMemory
+            )
+
+        );
+
+
+        return true;
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE QUESTION MEMORY] Save failed:",
+            error
+        );
+
+
+        return false;
+
+    }
+
+}
+
+
+/* ==========================================================
+   CATALOG ACCESS
+========================================================== */
+
+export function getQuestionCatalog() {
+
+    return QUESTION_CATALOG.map(
+        entry => ({
+            ...entry
+        })
+    );
+
+}
+
+
+/* ==========================================================
+   REMEMBER CATALOG QUESTION
+========================================================== */
+
+export function rememberCatalogQuestion(
+    question
+) {
+
+    const text =
+        safeString(
+            question
+        );
+
+
+    if (!text) {
+        return null;
+    }
+
+
+    const normalized =
+        normalizeQuestion(
+            text
+        );
+
+
+    if (!normalized) {
+        return null;
+    }
+
+
+    const catalogEntry =
+        QUESTION_CATALOG.find(
+            entry =>
+                normalizeQuestion(
+                    entry.question
+                ) ===
+                normalized
+        );
+
+
+    if (!catalogEntry) {
+        return null;
+    }
+
+
+    const questionMemory =
+        loadQuestionMemory();
+
+
+    const timestamp =
+        now();
+
+
+    const existing =
+        questionMemory.questions[
+            catalogEntry.id
+        ];
+
+
+    if (existing) {
+
+        existing.count =
+            (
+                Number(
+                    existing.count
+                ) || 0
+            ) + 1;
+
+
+        existing.lastAsked =
+            timestamp;
+
+    } else {
+
+        questionMemory.questions[
+            catalogEntry.id
+        ] = {
+
+            id:
+                catalogEntry.id,
+
+            question:
+                catalogEntry.question,
+
+            count:
+                1,
+
+            firstAsked:
+                timestamp,
+
+            lastAsked:
+                timestamp
+
+        };
+
+    }
+
+
+    saveQuestionMemory(
+        questionMemory
+    );
+
+
+    return {
+
+        ...questionMemory.questions[
+            catalogEntry.id
+        ]
+
+    };
+
+}
+
+
+/* ==========================================================
+   CATALOG QUESTION CHECK
+========================================================== */
+
+export function isCatalogQuestionAsked(
+    questionOrId
+) {
+
+    const value =
+        safeString(
+            questionOrId
+        );
+
+
+    if (!value) {
+        return false;
+    }
+
+
+    const questionMemory =
+        loadQuestionMemory();
+
+
+    const catalogEntry =
+        QUESTION_CATALOG.find(
+
+            entry =>
+
+                entry.id ===
+                    value ||
+
+                normalizeQuestion(
+                    entry.question
+                ) ===
+                    normalizeQuestion(
+                        value
+                    )
+
+        );
+
+
+    if (!catalogEntry) {
+        return false;
+    }
+
+
+    return Boolean(
+        questionMemory.questions[
+            catalogEntry.id
+        ]
+    );
+
+}
+
+
+/* ==========================================================
+   ASKED QUESTIONS
+========================================================== */
+
+export function getAskedQuestions() {
+
+    const questionMemory =
+        loadQuestionMemory();
+
+
+    return QUESTION_CATALOG
+
+        .filter(
+            entry =>
+                questionMemory.questions[
+                    entry.id
+                ]
+        )
+
+        .map(
+            entry => ({
+
+                ...entry,
+
+                memory: {
+
+                    ...questionMemory.questions[
+                        entry.id
+                    ]
+
+                }
+
+            })
+        );
+
+}
+
+
+/* ==========================================================
+   UNASKED QUESTIONS
+========================================================== */
+
+export function getUnaskedQuestions() {
+
+    const questionMemory =
+        loadQuestionMemory();
+
+
+    return QUESTION_CATALOG
+
+        .filter(
+            entry =>
+                !questionMemory.questions[
+                    entry.id
+                ]
+        )
+
+        .map(
+            entry => ({
+                ...entry
+            })
+        );
+
+}
+
+
+/* ==========================================================
+   QUESTION MEMORY STATUS
+========================================================== */
+
+export function getQuestionMemoryStatus() {
+
+    const questionMemory =
+        loadQuestionMemory();
+
+
+    const asked =
+        getAskedQuestions();
+
+
+    const unasked =
+        getUnaskedQuestions();
+
+
+    let totalAskedCount =
+        0;
+
+
+    for (
+        const entry
+        of asked
+    ) {
+
+        totalAskedCount +=
+            Number(
+                entry.memory.count
+            ) || 0;
+
+    }
+
+
+    return {
+
+        version:
+            QUESTION_MEMORY_VERSION,
+
+        total:
+            QUESTION_CATALOG.length,
+
+        asked:
+            asked.length,
+
+        unasked:
+            unasked.length,
+
+        completion:
+            QUESTION_CATALOG.length
+
+                ? Math.round(
+
+                    (
+                        asked.length /
+                        QUESTION_CATALOG.length
+                    ) *
+
+                    100
+
+                )
+
+                : 0,
+
+        totalAskedCount,
+
+        questions:
+            asked
+
+    };
+
+}
+
+
+/* ==========================================================
+   CLEAR QUESTION CATALOG
+========================================================== */
+
+export function clearQuestionMemory() {
+
+    try {
+
+        localStorage.removeItem(
+            QUESTION_MEMORY_STORAGE_KEY
+        );
+
+
+        for (
+            const legacyKey
+            of LEGACY_QUESTION_MEMORY_KEYS
+        ) {
+
+            localStorage.removeItem(
+                legacyKey
+            );
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE QUESTION MEMORY] Clear failed:",
+            error
+        );
+
+    }
+
+
+    return true;
+
+}
+
+
+/* ==========================================================
+   MEMORY STATUS
 ========================================================== */
 
 export function getMemoryStatus() {
@@ -2410,11 +3004,20 @@ export function getMemoryStatus() {
 
         initialized,
 
+        version:
+            memory.version,
+
         messages:
             memory.player.totalMessages,
 
         visits:
             memory.player.totalVisits,
+
+        conversations:
+            memory.conversations.length,
+
+        questions:
+            memory.questionHistory.length,
 
         files:
             memory.openedFiles.length,
@@ -2430,6 +3033,9 @@ export function getMemoryStatus() {
 
         actions:
             memory.actions.length,
+
+        events:
+            memory.events.length,
 
         meaningfulActions:
             memory.counters.meaningfulActions,
@@ -2455,9 +3061,20 @@ export function getMemoryStatus() {
         lastImportantTarget:
             memory.behavior.lastImportantTarget,
 
+        lastOperatorMessage:
+            memory.player.lastMessage,
+
+        lastQuestion:
+            memory.player.lastQuestion,
+
         flags:
             {
                 ...memory.flags
+            },
+
+        runtime:
+            {
+                ...memory.runtime
             }
 
     };
@@ -2477,12 +3094,24 @@ export function resetMemory() {
         );
 
 
+    const timestamp =
+        now();
+
+
+    memory.version =
+        MEMORY_VERSION;
+
+
     memory.player.firstSeen =
-        Date.now();
+        timestamp;
 
 
     memory.player.lastSeen =
-        Date.now();
+        timestamp;
+
+
+    memory.player.totalVisits =
+        1;
 
 
     initialized =
@@ -2492,9 +3121,15 @@ export function resetMemory() {
     save();
 
 
+    clearQuestionMemory();
+
+
     console.log(
-        "[MR.SMILE MEMORY] Reset."
+        "[MR.SMILE MEMORY] Unified memory reset."
     );
+
+
+    return true;
 
 }
 
@@ -2520,14 +3155,57 @@ if (
             getMemoryStatus,
 
         reset:
-            resetMemory
+            resetMemory,
+
+        normalizeQuestion:
+            normalizeQuestion,
+
+        rememberOperatorMessage:
+            rememberOperatorMessage,
+
+        rememberMrSmileMessage:
+            rememberMrSmileMessage,
+
+        rememberQuestion:
+            rememberQuestion,
+
+        findPreviousQuestion:
+            findPreviousQuestion,
+
+        getQuestionRepeatCount:
+            getQuestionRepeatCount,
+
+        getLastQuestionMemory:
+            getLastQuestionMemory,
+
+        getRecentConversation:
+            getRecentConversation,
+
+        getLastOperatorMessage:
+            getLastOperatorMessage,
+
+        getLastMrSmileMessage:
+            getLastMrSmileMessage,
+
+        getQuestionCatalog:
+            getQuestionCatalog,
+
+        getQuestionMemoryStatus:
+            getQuestionMemoryStatus,
+
+        getAskedQuestions:
+            getAskedQuestions,
+
+        getUnaskedQuestions:
+            getUnaskedQuestions
 
     };
 
 }
 
+
 /* ==========================================================
-   DEFAULT
+   DEFAULT EXPORT
 ========================================================== */
 
 export default {
@@ -2550,6 +3228,26 @@ export default {
 
     getLastQuestionMemory,
 
+    getRecentConversation,
+
+    getLastOperatorMessage,
+
+    getLastMrSmileMessage,
+
+    getQuestionCatalog,
+
+    rememberCatalogQuestion,
+
+    isCatalogQuestionAsked,
+
+    getAskedQuestions,
+
+    getUnaskedQuestions,
+
+    getQuestionMemoryStatus,
+
+    clearQuestionMemory,
+
     rememberFile,
 
     rememberCommand,
@@ -2564,12 +3262,19 @@ export default {
 
     rememberEvent,
 
+    setMemoryFlag,
+
+    hasMemoryFlag,
+
     changeBehaviorMetric,
 
     changePatience,
 
     getMemoryStatus,
 
-    resetMemory
+    resetMemory,
+
+    normalizeQuestion
 
 };
+
