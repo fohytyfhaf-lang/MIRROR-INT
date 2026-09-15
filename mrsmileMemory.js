@@ -1,78 +1,123 @@
-
 /* ==========================================================
    MR.SMILE MEMORY — UNIFIED MEMORY SYSTEM
    OMEGA / MIRROR-INT
 
-   PURPOSE
+   RESPONSIBILITY
    ----------------------------------------------------------
-   This module is STORAGE ONLY.
+   THIS MODULE IS STORAGE ONLY.
 
    It does NOT:
    - generate dialogue
    - choose responses
-   - detect personality
+   - generate personality
    - dispatch chat events
    - call MR.SMILE Core
+   - create visible messages
 
    It DOES:
    - store operator messages
    - store MR.SMILE messages
-   - store questions and their answers
+   - store questions / responses
    - detect repeated questions
-   - remember actions / files / pages / events
+   - remember files / pages / commands
+   - remember actions / decisions / events
    - maintain behavioral memory
    - maintain Q001-Q100 verification memory
    - prevent accidental duplicate records
-   - provide one stable memory API for all MR.SMILE modules
+   - provide one stable memory API
 
-   IMPORTANT ARCHITECTURE
+   ARCHITECTURE
 
        chats.js
            ↓
        mrsmileChat.js
            ↓
+       mrsmileDialogue.js
+           ↓
        mrsmileCore.js
            ↓
        mrsmileMemory.js
            ↓
-       storage
+       localStorage
 
-   Memory never generates a second response.
+   IMPORTANT
+
+   Memory is passive.
+
+   It remembers what happened.
+   It never decides what MR.SMILE should say.
 
 ========================================================== */
 
 
 /* ==========================================================
-   STORAGE
+   STORAGE CONSTANTS
 ========================================================== */
 
 const STORAGE_KEY =
-    "mrsmile_memory_v6";
+    "mrsmile_memory_v7";
 
 const LEGACY_STORAGE_KEYS = [
+    "mrsmile_memory_v6",
     "mrsmile_memory_v5",
     "mrsmile_memory_v4"
 ];
 
 const QUESTION_MEMORY_STORAGE_KEY =
-    "mrsmile_question_memory_v2";
+    "mrsmile_question_memory_v3";
 
 const LEGACY_QUESTION_MEMORY_KEYS = [
+    "mrsmile_question_memory_v2",
     "mrsmile_question_memory_v1"
 ];
 
 const MEMORY_VERSION =
-    6;
+    7;
 
 const QUESTION_MEMORY_VERSION =
-    2;
+    3;
 
 const MAX_HISTORY =
+    180;
+
+const MAX_QUESTION_HISTORY =
     180;
 
 const MAX_QUESTION_RESPONSES =
     12;
 
+const MAX_FILES =
+    180;
+
+const MAX_COMMANDS =
+    180;
+
+const MAX_PAGES =
+    180;
+
+const MAX_CONTEXTS =
+    180;
+
+const MAX_DECISIONS =
+    180;
+
+const MAX_ACTIONS =
+    180;
+
+const MAX_EVENTS =
+    240;
+
+const MAX_IMPORTANT_EVENTS =
+    120;
+
+
+/*
+ * Used only to reject accidental duplicate delivery
+ * of the exact same event.
+ *
+ * This does NOT prevent a real repeated question
+ * after the window has passed.
+ */
 const DUPLICATE_WINDOW_MS =
     1500;
 
@@ -85,6 +130,7 @@ const DEFAULT_MEMORY = {
 
     version:
         MEMORY_VERSION,
+
 
     player: {
 
@@ -109,44 +155,34 @@ const DEFAULT_MEMORY = {
     },
 
 
-    conversations:
-        [],
+    conversations: [],
 
 
-    questionHistory:
-        [],
+    questionHistory: [],
 
 
-    openedFiles:
-        [],
+    openedFiles: [],
 
 
-    commands:
-        [],
+    commands: [],
 
 
-    visitedPages:
-        [],
+    visitedPages: [],
 
 
-    contexts:
-        [],
+    contexts: [],
 
 
-    decisions:
-        [],
+    decisions: [],
 
 
-    actions:
-        [],
+    actions: [],
 
 
-    events:
-        [],
+    events: [],
 
 
-    importantEvents:
-        [],
+    importantEvents: [],
 
 
     behavior: {
@@ -262,7 +298,22 @@ const DEFAULT_MEMORY = {
             null,
 
         lastConversationTimestamp:
-            0
+            0,
+
+        lastActionRecordId:
+            null,
+
+        lastEventRecordId:
+            null,
+
+        lastFileRecordId:
+            null,
+
+        lastPageRecordId:
+            null,
+
+        lastCommandRecordId:
+            null
 
     }
 
@@ -396,9 +447,13 @@ const QUESTION_CATALOG = [
 
 function clone(value) {
 
-    return JSON.parse(
-        JSON.stringify(value)
-    );
+    try {
+        return JSON.parse(
+            JSON.stringify(value)
+        );
+    } catch {
+        return null;
+    }
 
 }
 
@@ -412,13 +467,43 @@ function safeString(value) {
 }
 
 
+function now() {
+
+    return Date.now();
+
+}
+
+
+function createRecordId(
+    prefix = "memory"
+) {
+
+    return (
+        prefix +
+        "_" +
+        Date.now().toString(36) +
+        "_" +
+        Math.random()
+            .toString(36)
+            .slice(2, 9)
+    );
+
+}
+
+
 function clamp(value) {
 
     const number =
         Number(value);
 
-    if (!Number.isFinite(number)) {
+    if (
+        !Number.isFinite(
+            number
+        )
+    ) {
+
         return 0;
+
     }
 
     return Math.max(
@@ -432,39 +517,25 @@ function clamp(value) {
 }
 
 
-function now() {
-
-    return Date.now();
-
-}
-
-
-function createRecordId(prefix = "memory") {
-
-    return (
-        prefix +
-        "_" +
-        Date.now().toString(36) +
-        "_" +
-        Math.random()
-            .toString(36)
-            .slice(2, 8)
-    );
-
-}
-
-
 function pushLimited(
     array,
     item,
     limit = MAX_HISTORY
 ) {
 
-    if (!Array.isArray(array)) {
+    if (
+        !Array.isArray(
+            array
+        )
+    ) {
+
         return;
+
     }
 
-    array.push(item);
+    array.push(
+        item
+    );
 
     while (
         array.length >
@@ -478,6 +549,21 @@ function pushLimited(
 }
 
 
+function safeMetadata(
+    metadata
+) {
+
+    return (
+        metadata &&
+        typeof metadata ===
+            "object"
+            ? metadata
+            : {}
+    );
+
+}
+
+
 /* ==========================================================
    NORMALIZATION
 ========================================================== */
@@ -486,7 +572,9 @@ export function normalizeQuestion(
     text
 ) {
 
-    return safeString(text)
+    return safeString(
+        text
+    )
 
         .normalize("NFKC")
 
@@ -521,14 +609,124 @@ function normalizeMessage(
     text
 ) {
 
-    return safeString(text)
+    return safeString(
+        text
+    )
         .normalize("NFKC");
 
 }
 
 
+function normalizeIdentifier(
+    value
+) {
+
+    return safeString(
+        value
+    )
+        .normalize("NFKC")
+        .toLowerCase()
+        .replace(
+            /\s+/g,
+            " "
+        )
+        .trim();
+
+}
+
+
 /* ==========================================================
-   MEMORY MERGE / MIGRATION
+   STORAGE HELPERS
+========================================================== */
+
+function storageAvailable() {
+
+    try {
+
+        return (
+            typeof localStorage !==
+            "undefined"
+        );
+
+    } catch {
+
+        return false;
+
+    }
+
+}
+
+
+function readStorage(
+    key
+) {
+
+    if (
+        !storageAvailable()
+    ) {
+
+        return null;
+
+    }
+
+    try {
+
+        return localStorage.getItem(
+            key
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE MEMORY] Storage read failed:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+function writeStorage(
+    key,
+    value
+) {
+
+    if (
+        !storageAvailable()
+    ) {
+
+        return false;
+
+    }
+
+    try {
+
+        localStorage.setItem(
+            key,
+            value
+        );
+
+        return true;
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE MEMORY] Storage write failed:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* ==========================================================
+   MEMORY MERGE
 ========================================================== */
 
 function mergeMemory(
@@ -538,10 +736,13 @@ function mergeMemory(
 
     if (
         !saved ||
-        typeof saved !== "object"
+        typeof saved !==
+            "object"
     ) {
 
-        return clone(base);
+        return clone(
+            base
+        );
 
     }
 
@@ -575,20 +776,35 @@ function mergeMemory(
         of objectKeys
     ) {
 
+        const baseValue =
+            base[key];
+
+        const savedValue =
+            saved[key];
+
+
         result[key] = {
 
-            ...clone(base[key]),
-
             ...(
-
-                saved[key] &&
-                typeof saved[key] ===
+                baseValue &&
+                typeof baseValue ===
                     "object"
 
-                    ? saved[key]
+                    ? clone(
+                        baseValue
+                    )
 
                     : {}
+            ),
 
+            ...(
+                savedValue &&
+                typeof savedValue ===
+                    "object"
+
+                    ? savedValue
+
+                    : {}
             )
 
         };
@@ -631,78 +847,140 @@ function mergeMemory(
     }
 
 
+    /*
+     * Defensive repair.
+     * Old versions may contain malformed values.
+     */
+
+    if (
+        !Array.isArray(
+            result.conversations
+        )
+    ) {
+        result.conversations = [];
+    }
+
+    if (
+        !Array.isArray(
+            result.questionHistory
+        )
+    ) {
+        result.questionHistory = [];
+    }
+
+    if (
+        !Array.isArray(
+            result.openedFiles
+        )
+    ) {
+        result.openedFiles = [];
+    }
+
+    if (
+        !Array.isArray(
+            result.commands
+        )
+    ) {
+        result.commands = [];
+    }
+
+    if (
+        !Array.isArray(
+            result.visitedPages
+        )
+    ) {
+        result.visitedPages = [];
+    }
+
+    if (
+        !Array.isArray(
+            result.contexts
+        )
+    ) {
+        result.contexts = [];
+    }
+
+    if (
+        !Array.isArray(
+            result.decisions
+        )
+    ) {
+        result.decisions = [];
+    }
+
+    if (
+        !Array.isArray(
+            result.actions
+        )
+    ) {
+        result.actions = [];
+    }
+
+    if (
+        !Array.isArray(
+            result.events
+        )
+    ) {
+        result.events = [];
+    }
+
+    if (
+        !Array.isArray(
+            result.importantEvents
+        )
+    ) {
+        result.importantEvents = [];
+    }
+
+
     return result;
 
 }
 
 
 /* ==========================================================
-   STORAGE LOAD
+   LOAD MAIN MEMORY
 ========================================================== */
-
-function readStorage(
-    key
-) {
-
-    try {
-
-        return localStorage.getItem(
-            key
-        );
-
-    } catch (error) {
-
-        console.warn(
-            "[MR.SMILE MEMORY] Storage read failed:",
-            error
-        );
-
-        return null;
-
-    }
-
-}
-
 
 function load() {
 
-    try {
-
-        let raw =
-            readStorage(
-                STORAGE_KEY
-            );
+    let raw =
+        readStorage(
+            STORAGE_KEY
+        );
 
 
-        if (!raw) {
+    if (!raw) {
 
-            for (
-                const legacyKey
-                of LEGACY_STORAGE_KEYS
-            ) {
+        for (
+            const legacyKey
+            of LEGACY_STORAGE_KEYS
+        ) {
 
-                raw =
-                    readStorage(
-                        legacyKey
-                    );
+            raw =
+                readStorage(
+                    legacyKey
+                );
 
-                if (raw) {
-                    break;
-                }
-
+            if (raw) {
+                break;
             }
 
         }
 
+    }
 
-        if (!raw) {
 
-            return clone(
-                DEFAULT_MEMORY
-            );
+    if (!raw) {
 
-        }
+        return clone(
+            DEFAULT_MEMORY
+        );
 
+    }
+
+
+    try {
 
         const parsed =
             JSON.parse(
@@ -718,9 +996,10 @@ function load() {
     } catch (error) {
 
         console.warn(
-            "[MR.SMILE MEMORY] Load failed:",
+            "[MR.SMILE MEMORY] Main memory parse failed:",
             error
         );
+
 
         return clone(
             DEFAULT_MEMORY
@@ -732,7 +1011,7 @@ function load() {
 
 
 /* ==========================================================
-   STORAGE SAVE
+   SAVE MAIN MEMORY
 ========================================================== */
 
 function save() {
@@ -744,7 +1023,7 @@ function save() {
 
     try {
 
-        localStorage.setItem(
+        return writeStorage(
 
             STORAGE_KEY,
 
@@ -753,8 +1032,6 @@ function save() {
             )
 
         );
-
-        return true;
 
     } catch (error) {
 
@@ -776,7 +1053,10 @@ function save() {
 
 export function initMemory() {
 
-    if (initialized) {
+    if (
+        initialized &&
+        memory
+    ) {
 
         return memory;
 
@@ -806,19 +1086,27 @@ export function initMemory() {
 
 
     memory.player.totalVisits =
-        (
+        Math.max(
+            1,
             Number(
                 memory.player.totalVisits
             ) || 0
         ) + 1;
 
 
-    memory.runtime =
-        memory.runtime || {};
-
-
     memory.version =
         MEMORY_VERSION;
+
+
+    if (
+        !memory.runtime ||
+        typeof memory.runtime !==
+            "object"
+    ) {
+
+        memory.runtime = {};
+
+    }
 
 
     initialized =
@@ -829,7 +1117,8 @@ export function initMemory() {
 
 
     console.log(
-        "[MR.SMILE MEMORY] Unified memory initialized."
+        "[MR.SMILE MEMORY] Unified memory initialized. Version:",
+        MEMORY_VERSION
     );
 
 
@@ -852,12 +1141,64 @@ export function getMemory() {
 
 
 /* ==========================================================
-   CONVERSATION DUPLICATE PROTECTION
+   FIND LAST AUTHOR RECORD
+========================================================== */
+
+function findLastConversationByAuthor(
+    author
+) {
+
+    if (
+        !memory ||
+        !Array.isArray(
+            memory.conversations
+        )
+    ) {
+
+        return null;
+
+    }
+
+
+    for (
+        let i =
+            memory.conversations.length - 1;
+
+        i >= 0;
+
+        i--
+    ) {
+
+        const entry =
+            memory.conversations[i];
+
+
+        if (
+            entry &&
+            entry.author ===
+                author
+        ) {
+
+            return entry;
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+/* ==========================================================
+   CONVERSATION DUPLICATE CHECK
 ========================================================== */
 
 function isRecentConversationDuplicate(
     author,
-    text
+    text,
+    metadata = {}
 ) {
 
     if (
@@ -880,6 +1221,12 @@ function isRecentConversationDuplicate(
 
     const timestamp =
         now();
+
+
+    const eventId =
+        safeString(
+            metadata.eventId
+        );
 
 
     for (
@@ -910,11 +1257,15 @@ function isRecentConversationDuplicate(
         }
 
 
-        if (
+        const age =
             timestamp -
             Number(
                 entry.timestamp
-            ) >
+            );
+
+
+        if (
+            age >
             DUPLICATE_WINDOW_MS
         ) {
 
@@ -922,6 +1273,29 @@ function isRecentConversationDuplicate(
 
         }
 
+
+        /*
+         * Strongest duplicate key:
+         * exact event ID.
+         */
+
+        if (
+            eventId &&
+            entry.eventId &&
+            eventId ===
+                entry.eventId
+        ) {
+
+            return true;
+
+        }
+
+
+        /*
+         * Fallback:
+         * same author + same text
+         * in duplicate window.
+         */
 
         if (
             normalizeMessage(
@@ -965,27 +1339,31 @@ export function rememberOperatorMessage(
     }
 
 
-    /*
-       IMPORTANT:
+    const meta =
+        safeMetadata(
+            metadata
+        );
 
-       chats.js may already have called this
-       before dispatching MR.SMILE.
-
-       Therefore this function is idempotent
-       inside the duplicate window.
-    */
 
     if (
         isRecentConversationDuplicate(
             "operator",
-            message
+            message,
+            meta
         )
     ) {
 
+        const last =
+            findLastConversationByAuthor(
+                "operator"
+            );
+
+
         memory.runtime.lastOperatorRecordId =
-            memory.conversations[
-                memory.conversations.length - 1
-            ]?.id || null;
+            last?.id ||
+            memory.runtime.lastOperatorRecordId ||
+            null;
+
 
         return false;
 
@@ -1012,11 +1390,19 @@ export function rememberOperatorMessage(
         timestamp,
 
         source:
-            metadata.source ||
+            meta.source ||
             "chat",
 
         sequence:
-            metadata.sequence ??
+            meta.sequence ??
+            null,
+
+        eventId:
+            meta.eventId ||
+            null,
+
+        language:
+            meta.language ||
             null
 
     };
@@ -1024,12 +1410,14 @@ export function rememberOperatorMessage(
 
     pushLimited(
         memory.conversations,
-        record
+        record,
+        MAX_HISTORY
     );
 
 
     memory.player.totalMessages =
-        (
+        Math.max(
+            0,
             Number(
                 memory.player.totalMessages
             ) || 0
@@ -1109,12 +1497,24 @@ function looksLikeQuestion(
 
 
 /* ==========================================================
-   QUESTION MEMORY
+   FIND QUESTION RECORD INTERNAL
 ========================================================== */
 
 function findQuestionRecord(
     question
 ) {
+
+    if (
+        !memory ||
+        !Array.isArray(
+            memory.questionHistory
+        )
+    ) {
+
+        return null;
+
+    }
+
 
     const normalized =
         normalizeQuestion(
@@ -1158,22 +1558,9 @@ function findQuestionRecord(
 }
 
 
-/*
-   This is the ONLY main question-history writer.
-
-   Core should call:
-
-       rememberQuestion(
-           operatorText,
-           intent,
-           visibleResponse
-       )
-
-   exactly once after choosing the response.
-
-   The function is itself protected against
-   accidental same-event duplicates.
-*/
+/* ==========================================================
+   QUESTION MEMORY
+========================================================== */
 
 export function rememberQuestion(
     question,
@@ -1207,6 +1594,12 @@ export function rememberQuestion(
     }
 
 
+    const meta =
+        safeMetadata(
+            metadata
+        );
+
+
     const timestamp =
         now();
 
@@ -1219,40 +1612,73 @@ export function rememberQuestion(
 
     if (existing) {
 
-        /*
-           If the exact same response is being
-           written again immediately, do NOT create
-           another response-history entry.
-        */
-
-        const sameResponse =
-            response &&
-            existing.lastResponse ===
-                response;
-
-
-        const recent =
-            timestamp -
+        const previousTimestamp =
             Number(
                 existing.lastAsked
-            ) <=
+            ) || 0;
+
+
+        const isRecent =
+            timestamp -
+            previousTimestamp <=
             DUPLICATE_WINDOW_MS;
 
 
+        const sameResponse =
+            response !== null &&
+            response !== undefined &&
+            safeString(
+                response
+            ) ===
+            safeString(
+                existing.lastResponse
+            );
+
+
+        const sameResponseId =
+            meta.responseId &&
+            existing.lastResponseId &&
+            meta.responseId ===
+            existing.lastResponseId;
+
+
+        /*
+         * Exact duplicate of the same processing event.
+         */
         if (
-            sameResponse &&
-            recent
+            isRecent &&
+            (
+                sameResponse ||
+                sameResponseId
+            )
         ) {
 
+            memory.runtime.lastQuestionRecordId =
+                existing.id;
+
+
             return {
-                ...existing
+                ...existing,
+                responses:
+                    Array.isArray(
+                        existing.responses
+                    )
+                        ? [
+                            ...existing.responses
+                        ]
+                        : []
             };
 
         }
 
 
+        /*
+         * Genuine repeated question.
+         */
+
         existing.count =
-            (
+            Math.max(
+                0,
                 Number(
                     existing.count
                 ) || 0
@@ -1271,10 +1697,22 @@ export function rememberQuestion(
         }
 
 
-        if (response) {
+        if (
+            response !== null &&
+            response !== undefined &&
+            safeString(
+                response
+            )
+        ) {
+
+            const visibleResponse =
+                safeString(
+                    response
+                );
+
 
             existing.lastResponse =
-                response;
+                visibleResponse;
 
 
             if (
@@ -1289,15 +1727,21 @@ export function rememberQuestion(
             }
 
 
+            /*
+             * We keep a response history,
+             * but do not store the same response
+             * twice.
+             */
+
             if (
                 !existing.responses.includes(
-                    response
+                    visibleResponse
                 )
             ) {
 
                 pushLimited(
                     existing.responses,
-                    response,
+                    visibleResponse,
                     MAX_QUESTION_RESPONSES
                 );
 
@@ -1306,20 +1750,31 @@ export function rememberQuestion(
         }
 
 
-        if (metadata.language) {
+        if (
+            meta.language
+        ) {
 
             existing.lastLanguage =
-                metadata.language;
+                meta.language;
 
         }
 
 
-        if (metadata.responseId) {
+        if (
+            meta.responseId
+        ) {
 
             existing.lastResponseId =
-                metadata.responseId;
+                meta.responseId;
 
         }
+
+
+        existing.lastIntent =
+            intent ||
+            existing.intent ||
+            null;
+
 
     } else {
 
@@ -1336,17 +1791,38 @@ export function rememberQuestion(
             normalized,
 
             intent:
-                intent || null,
+                intent ||
+                null,
 
             response:
-                response || null,
+                response !== null &&
+                response !== undefined
+                    ? safeString(
+                        response
+                    )
+                    : null,
 
             lastResponse:
-                response || null,
+                response !== null &&
+                response !== undefined
+                    ? safeString(
+                        response
+                    )
+                    : null,
 
             responses:
-                response
-                    ? [response]
+                (
+                    response !== null &&
+                    response !== undefined &&
+                    safeString(
+                        response
+                    )
+                )
+                    ? [
+                        safeString(
+                            response
+                        )
+                    ]
                     : [],
 
             count:
@@ -1359,11 +1835,15 @@ export function rememberQuestion(
                 timestamp,
 
             lastLanguage:
-                metadata.language ||
+                meta.language ||
                 null,
 
             lastResponseId:
-                metadata.responseId ||
+                meta.responseId ||
+                null,
+
+            lastIntent:
+                intent ||
                 null
 
         };
@@ -1371,7 +1851,8 @@ export function rememberQuestion(
 
         pushLimited(
             memory.questionHistory,
-            existing
+            existing,
+            MAX_QUESTION_HISTORY
         );
 
     }
@@ -1389,7 +1870,16 @@ export function rememberQuestion(
 
 
     return {
-        ...existing
+        ...existing,
+
+        responses:
+            Array.isArray(
+                existing.responses
+            )
+                ? [
+                    ...existing.responses
+                ]
+                : []
     };
 
 }
@@ -1405,15 +1895,32 @@ export function findPreviousQuestion(
 
     initMemory();
 
+
     const entry =
         findQuestionRecord(
             question
         );
 
 
-    return entry
-        ? { ...entry }
-        : null;
+    if (!entry) {
+        return null;
+    }
+
+
+    return {
+
+        ...entry,
+
+        responses:
+            Array.isArray(
+                entry.responses
+            )
+                ? [
+                    ...entry.responses
+                ]
+                : []
+
+    };
 
 }
 
@@ -1429,7 +1936,13 @@ export function findPreviousIntent(
     initMemory();
 
 
-    if (!intent) {
+    const value =
+        safeString(
+            intent
+        );
+
+
+    if (!value) {
         return null;
     }
 
@@ -1449,12 +1962,26 @@ export function findPreviousIntent(
 
         if (
             entry &&
-            entry.intent ===
-                intent
+            (
+                entry.intent ===
+                    value ||
+
+                entry.lastIntent ===
+                    value
+            )
         ) {
 
             return {
-                ...entry
+                ...entry,
+
+                responses:
+                    Array.isArray(
+                        entry.responses
+                    )
+                        ? [
+                            ...entry.responses
+                        ]
+                        : []
             };
 
         }
@@ -1486,9 +2013,12 @@ export function getQuestionRepeatCount(
     }
 
 
-    return Number(
-        entry.count
-    ) || 0;
+    return Math.max(
+        0,
+        Number(
+            entry.count
+        ) || 0
+    );
 
 }
 
@@ -1517,9 +2047,25 @@ export function getLastQuestionMemory() {
         ];
 
 
-    return entry
-        ? { ...entry }
-        : null;
+    if (!entry) {
+        return null;
+    }
+
+
+    return {
+
+        ...entry,
+
+        responses:
+            Array.isArray(
+                entry.responses
+            )
+                ? [
+                    ...entry.responses
+                ]
+                : []
+
+    };
 
 }
 
@@ -1562,35 +2108,15 @@ export function getLastOperatorMessage() {
     initMemory();
 
 
-    for (
-        let i =
-            memory.conversations.length - 1;
-
-        i >= 0;
-
-        i--
-    ) {
-
-        const entry =
-            memory.conversations[i];
+    const entry =
+        findLastConversationByAuthor(
+            "operator"
+        );
 
 
-        if (
-            entry &&
-            entry.author ===
-                "operator"
-        ) {
-
-            return {
-                ...entry
-            };
-
-        }
-
-    }
-
-
-    return null;
+    return entry
+        ? { ...entry }
+        : null;
 
 }
 
@@ -1604,35 +2130,15 @@ export function getLastMrSmileMessage() {
     initMemory();
 
 
-    for (
-        let i =
-            memory.conversations.length - 1;
-
-        i >= 0;
-
-        i--
-    ) {
-
-        const entry =
-            memory.conversations[i];
+    const entry =
+        findLastConversationByAuthor(
+            "mrsmile"
+        );
 
 
-        if (
-            entry &&
-            entry.author ===
-                "mrsmile"
-        ) {
-
-            return {
-                ...entry
-            };
-
-        }
-
-    }
-
-
-    return null;
+    return entry
+        ? { ...entry }
+        : null;
 
 }
 
@@ -1660,26 +2166,35 @@ export function rememberMrSmileMessage(
     }
 
 
-    /*
-       A visible MR.SMILE response may only
-       be stored once.
+    const meta =
+        safeMetadata(
+            metadata
+        );
 
-       If the same response is accidentally
-       submitted twice by the chat layer,
-       the second call is ignored.
-    */
+
+    /*
+     * One visible response must become one memory record.
+     */
 
     if (
         isRecentConversationDuplicate(
             "mrsmile",
-            message
+            message,
+            meta
         )
     ) {
 
+        const last =
+            findLastConversationByAuthor(
+                "mrsmile"
+            );
+
+
         memory.runtime.lastMrSmileRecordId =
-            memory.conversations[
-                memory.conversations.length - 1
-            ]?.id || null;
+            last?.id ||
+            memory.runtime.lastMrSmileRecordId ||
+            null;
+
 
         return false;
 
@@ -1706,19 +2221,23 @@ export function rememberMrSmileMessage(
         timestamp,
 
         source:
-            metadata.source ||
+            meta.source ||
             "core",
 
         language:
-            metadata.language ||
+            meta.language ||
             null,
 
         intent:
-            metadata.intent ||
+            meta.intent ||
             null,
 
         responseId:
-            metadata.responseId ||
+            meta.responseId ||
+            null,
+
+        sequence:
+            meta.sequence ??
             null
 
     };
@@ -1726,12 +2245,18 @@ export function rememberMrSmileMessage(
 
     pushLimited(
         memory.conversations,
-        record
+        record,
+        MAX_HISTORY
     );
 
 
-    memory.history.visibleReactions +=
-        1;
+    memory.history.visibleReactions =
+        Math.max(
+            0,
+            Number(
+                memory.history.visibleReactions
+            ) || 0
+        ) + 1;
 
 
     memory.runtime.lastMrSmileRecordId =
@@ -1746,6 +2271,83 @@ export function rememberMrSmileMessage(
 
 
     return true;
+
+}
+
+
+/* ==========================================================
+   GENERIC RECENT RECORD DUPLICATE CHECK
+========================================================== */
+
+function isRecentRecordDuplicate(
+    array,
+    predicate
+) {
+
+    if (
+        !Array.isArray(
+            array
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    const timestamp =
+        now();
+
+
+    for (
+        let i =
+            array.length - 1;
+
+        i >= 0;
+
+        i--
+    ) {
+
+        const entry =
+            array[i];
+
+
+        if (!entry) {
+            continue;
+        }
+
+
+        const age =
+            timestamp -
+            Number(
+                entry.timestamp
+            );
+
+
+        if (
+            age >
+            DUPLICATE_WINDOW_MS
+        ) {
+
+            break;
+
+        }
+
+
+        if (
+            predicate(
+                entry
+            )
+        ) {
+
+            return true;
+
+        }
+
+    }
+
+
+    return false;
 
 }
 
@@ -1773,6 +2375,41 @@ export function rememberFile(
     }
 
 
+    const meta =
+        safeMetadata(
+            metadata
+        );
+
+
+    const normalized =
+        normalizeIdentifier(
+            value
+        );
+
+
+    if (
+        isRecentRecordDuplicate(
+            memory.openedFiles,
+            entry =>
+                normalizeIdentifier(
+                    entry.path
+                ) === normalized &&
+
+                (
+                    meta.eventId &&
+                    entry.eventId
+                        ? meta.eventId ===
+                            entry.eventId
+                        : true
+                )
+        )
+    ) {
+
+        return false;
+
+    }
+
+
     const timestamp =
         now();
 
@@ -1788,15 +2425,21 @@ export function rememberFile(
             value,
 
         name:
-            metadata.name ||
+            safeString(
+                meta.name
+            ) ||
             value
                 .split("/")
                 .pop() ||
             value,
 
         source:
-            metadata.source ||
+            meta.source ||
             "system",
+
+        eventId:
+            meta.eventId ||
+            null,
 
         timestamp
 
@@ -1805,8 +2448,13 @@ export function rememberFile(
 
     pushLimited(
         memory.openedFiles,
-        record
+        record,
+        MAX_FILES
     );
+
+
+    memory.runtime.lastFileRecordId =
+        record.id;
 
 
     const lower =
@@ -1830,8 +2478,13 @@ export function rememberFile(
             );
 
 
-        memory.counters.secretReads +=
-            1;
+        memory.counters.secretReads =
+            Math.max(
+                0,
+                Number(
+                    memory.counters.secretReads
+                ) || 0
+            ) + 1;
 
     }
 
@@ -1886,35 +2539,89 @@ export function rememberCommand(
     }
 
 
-    memory.counters.consoleCommands +=
-        1;
+    const meta =
+        safeMetadata(
+            metadata
+        );
+
+
+    if (
+        isRecentRecordDuplicate(
+            memory.commands,
+            entry =>
+                normalizeIdentifier(
+                    entry.command
+                ) ===
+                normalizeIdentifier(
+                    value
+                ) &&
+                (
+                    meta.eventId &&
+                    entry.eventId
+                        ? meta.eventId ===
+                            entry.eventId
+                        : true
+                )
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    const timestamp =
+        now();
+
+
+    const allowed =
+        meta.allowed !==
+        false;
+
+
+    const record = {
+
+        id:
+            createRecordId(
+                "command"
+            ),
+
+        command:
+            value,
+
+        source:
+            meta.source ||
+            "console",
+
+        allowed,
+
+        eventId:
+            meta.eventId ||
+            null,
+
+        timestamp
+
+    };
 
 
     pushLimited(
         memory.commands,
-        {
-
-            id:
-                createRecordId(
-                    "command"
-                ),
-
-            command:
-                value,
-
-            source:
-                metadata.source ||
-                "console",
-
-            allowed:
-                metadata.allowed !==
-                false,
-
-            timestamp:
-                now()
-
-        }
+        record,
+        MAX_COMMANDS
     );
+
+
+    memory.runtime.lastCommandRecordId =
+        record.id;
+
+
+    memory.counters.consoleCommands =
+        Math.max(
+            0,
+            Number(
+                memory.counters.consoleCommands
+            ) || 0
+        ) + 1;
 
 
     const lower =
@@ -1983,27 +2690,70 @@ export function rememberPage(
     }
 
 
+    const meta =
+        safeMetadata(
+            metadata
+        );
+
+
+    if (
+        isRecentRecordDuplicate(
+            memory.visitedPages,
+            entry =>
+                normalizeIdentifier(
+                    entry.page
+                ) ===
+                normalizeIdentifier(
+                    value
+                ) &&
+                (
+                    meta.eventId &&
+                    entry.eventId
+                        ? meta.eventId ===
+                            entry.eventId
+                        : true
+                )
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    const record = {
+
+        id:
+            createRecordId(
+                "page"
+            ),
+
+        page:
+            value,
+
+        source:
+            meta.source ||
+            "system",
+
+        eventId:
+            meta.eventId ||
+            null,
+
+        timestamp:
+            now()
+
+    };
+
+
     pushLimited(
         memory.visitedPages,
-        {
-
-            id:
-                createRecordId(
-                    "page"
-                ),
-
-            page:
-                value,
-
-            source:
-                metadata.source ||
-                "system",
-
-            timestamp:
-                now()
-
-        }
+        record,
+        MAX_PAGES
     );
+
+
+    memory.runtime.lastPageRecordId =
+        record.id;
 
 
     save();
@@ -2036,6 +2786,79 @@ export function rememberContext(
     }
 
 
+    const timestamp =
+        Number(
+            context.timestamp
+        ) ||
+        now();
+
+
+    const type =
+        safeString(
+            context.type
+        ) ||
+        "unknown";
+
+
+    const target =
+        context.target ??
+        null;
+
+
+    const source =
+        safeString(
+            context.source
+        ) ||
+        "unknown";
+
+
+    const importance =
+        Number(
+            context.importance
+        ) || 0;
+
+
+    const significant =
+        context.significant ===
+        true;
+
+
+    const eventId =
+        safeString(
+            context.eventId
+        ) ||
+        null;
+
+
+    if (
+        isRecentRecordDuplicate(
+            memory.contexts,
+            entry =>
+                (
+                    eventId &&
+                    entry.eventId
+                        ? eventId ===
+                            entry.eventId
+                        : (
+                            entry.type ===
+                                type &&
+
+                            String(
+                                entry.target ?? ""
+                            ) ===
+                            String(
+                                target ?? ""
+                            )
+                        )
+                )
+        )
+    ) {
+
+        return false;
+
+    }
+
+
     const entry = {
 
         id:
@@ -2043,65 +2866,66 @@ export function rememberContext(
                 "context"
             ),
 
-        type:
-            context.type ||
-            "unknown",
+        type,
 
-        target:
-            context.target ??
-            null,
+        target,
 
-        source:
-            context.source ||
-            "unknown",
+        source,
 
-        importance:
-            Number(
-                context.importance
-            ) || 0,
+        importance,
 
-        significant:
-            context.significant ===
-            true,
+        significant,
 
-        timestamp:
-            context.timestamp ||
-            now()
+        eventId,
+
+        timestamp
 
     };
 
 
     pushLimited(
         memory.contexts,
-        entry
+        entry,
+        MAX_CONTEXTS
     );
 
 
     if (
-        entry.significant
+        significant
     ) {
 
-        memory.counters.meaningfulActions +=
-            1;
+        memory.counters.meaningfulActions =
+            Math.max(
+                0,
+                Number(
+                    memory.counters.meaningfulActions
+                ) || 0
+            ) + 1;
 
 
         memory.behavior.lastImportantAction =
-            entry.type;
+            type;
 
 
         memory.behavior.lastImportantTarget =
-            entry.target;
+            target;
 
 
         pushLimited(
             memory.importantEvents,
-            entry
+            entry,
+            MAX_IMPORTANT_EVENTS
         );
 
     } else {
 
-        memory.history.silentObservations +=
-            1;
+        memory.history.silentObservations =
+            Math.max(
+                0,
+                Number(
+                    memory.history.silentObservations
+                ) || 0
+            ) + 1;
 
     }
 
@@ -2136,41 +2960,68 @@ export function rememberDecision(
     }
 
 
-    memory.behavior.lastIntent =
-        decision.intent ||
-        null;
+    const record = {
+
+        id:
+            createRecordId(
+                "decision"
+            ),
+
+        action:
+            decision.action ||
+            null,
+
+        intent:
+            decision.intent ||
+            null,
+
+        target:
+            decision.target ??
+            null,
+
+        reason:
+            decision.reason ||
+            null,
+
+        eventId:
+            decision.eventId ||
+            null,
+
+        timestamp:
+            now()
+
+    };
+
+
+    /*
+     * Avoid accidental duplicate decision events.
+     */
+
+    if (
+        isRecentRecordDuplicate(
+            memory.decisions,
+            entry =>
+                decision.eventId &&
+                entry.eventId &&
+                decision.eventId ===
+                entry.eventId
+        )
+    ) {
+
+        return false;
+
+    }
 
 
     pushLimited(
         memory.decisions,
-        {
-
-            id:
-                createRecordId(
-                    "decision"
-                ),
-
-            action:
-                decision.action ||
-                null,
-
-            intent:
-                decision.intent ||
-                null,
-
-            target:
-                decision.target ??
-                null,
-
-            reason:
-                decision.reason ||
-                null,
-
-            timestamp:
-                now()
-
-        }
+        record,
+        MAX_DECISIONS
     );
+
+
+    memory.behavior.lastIntent =
+        record.intent;
 
 
     save();
@@ -2203,32 +3054,95 @@ export function rememberAction(
     }
 
 
+    const actionName =
+        safeString(
+            action.action
+        ) ||
+        null;
+
+
+    const intent =
+        safeString(
+            action.intent
+        ) ||
+        null;
+
+
+    const target =
+        action.target ??
+        null;
+
+
+    const eventId =
+        safeString(
+            action.eventId
+        ) ||
+        null;
+
+
+    if (
+        isRecentRecordDuplicate(
+            memory.actions,
+            entry =>
+                (
+                    eventId &&
+                    entry.eventId
+                        ? eventId ===
+                            entry.eventId
+                        : (
+                            entry.action ===
+                                actionName &&
+
+                            entry.intent ===
+                                intent &&
+
+                            String(
+                                entry.target ?? ""
+                            ) ===
+                            String(
+                                target ?? ""
+                            )
+                        )
+                )
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    const record = {
+
+        id:
+            createRecordId(
+                "action"
+            ),
+
+        action:
+            actionName,
+
+        intent,
+
+        target,
+
+        eventId,
+
+        timestamp:
+            now()
+
+    };
+
+
     pushLimited(
         memory.actions,
-        {
-
-            id:
-                createRecordId(
-                    "action"
-                ),
-
-            action:
-                action.action ||
-                null,
-
-            intent:
-                action.intent ||
-                null,
-
-            target:
-                action.target ??
-                null,
-
-            timestamp:
-                now()
-
-        }
+        record,
+        MAX_ACTIONS
     );
+
+
+    memory.runtime.lastActionRecordId =
+        record.id;
 
 
     if (
@@ -2237,12 +3151,17 @@ export function rememberAction(
             "block",
             "sabotage"
         ].includes(
-            action.action
+            actionName
         )
     ) {
 
-        memory.counters.interventions +=
-            1;
+        memory.counters.interventions =
+            Math.max(
+                0,
+                Number(
+                    memory.counters.interventions
+                ) || 0
+            ) + 1;
 
     }
 
@@ -2268,6 +3187,55 @@ export function rememberEvent(
     initMemory();
 
 
+    const eventType =
+        safeString(
+            type
+        ) ||
+        "unknown";
+
+
+    const eventId =
+        (
+            data &&
+            typeof data ===
+                "object"
+                ? safeString(
+                    data.eventId
+                )
+                : ""
+        ) ||
+        null;
+
+
+    if (
+        isRecentRecordDuplicate(
+            memory.events,
+            entry =>
+                (
+                    eventId &&
+                    entry.eventId
+                        ? eventId ===
+                            entry.eventId
+                        : (
+                            entry.type ===
+                                eventType &&
+
+                            JSON.stringify(
+                                entry.data
+                            ) ===
+                            JSON.stringify(
+                                data
+                            )
+                        )
+                )
+        )
+    ) {
+
+        return false;
+
+    }
+
+
     const entry = {
 
         id:
@@ -2276,12 +3244,11 @@ export function rememberEvent(
             ),
 
         type:
-            safeString(
-                type
-            ) ||
-            "unknown",
+            eventType,
 
         data,
+
+        eventId,
 
         important:
             Boolean(
@@ -2296,8 +3263,13 @@ export function rememberEvent(
 
     pushLimited(
         memory.events,
-        entry
+        entry,
+        MAX_EVENTS
     );
+
+
+    memory.runtime.lastEventRecordId =
+        entry.id;
 
 
     if (
@@ -2306,7 +3278,8 @@ export function rememberEvent(
 
         pushLimited(
             memory.importantEvents,
-            entry
+            entry,
+            MAX_IMPORTANT_EVENTS
         );
 
     }
@@ -2420,7 +3393,6 @@ export function changeBehaviorMetric(
             Number(
                 memory.behavior[metric]
             ) +
-
             value
 
         );
@@ -2451,20 +3423,21 @@ export function changePatience(
         );
 
 
+    const delta =
+        Number.isFinite(
+            value
+        )
+            ? value
+            : 0;
+
+
     memory.behavior.patience =
         clamp(
 
             Number(
                 memory.behavior.patience
             ) +
-
-            (
-                Number.isFinite(
-                    value
-                )
-                    ? value
-                    : 0
-            )
+            delta
 
         );
 
@@ -2478,54 +3451,54 @@ export function changePatience(
 
 
 /* ==========================================================
-   QUESTION CATALOG STORAGE
+   QUESTION MEMORY LOAD
 ========================================================== */
 
 function loadQuestionMemory() {
 
-    try {
-
-        let raw =
-            readStorage(
-                QUESTION_MEMORY_STORAGE_KEY
-            );
+    let raw =
+        readStorage(
+            QUESTION_MEMORY_STORAGE_KEY
+        );
 
 
-        if (!raw) {
+    if (!raw) {
 
-            for (
-                const legacyKey
-                of LEGACY_QUESTION_MEMORY_KEYS
-            ) {
+        for (
+            const legacyKey
+            of LEGACY_QUESTION_MEMORY_KEYS
+        ) {
 
-                raw =
-                    readStorage(
-                        legacyKey
-                    );
+            raw =
+                readStorage(
+                    legacyKey
+                );
 
-                if (raw) {
-                    break;
-                }
-
+            if (raw) {
+                break;
             }
 
         }
 
+    }
 
-        if (!raw) {
 
-            return {
+    if (!raw) {
 
-                version:
-                    QUESTION_MEMORY_VERSION,
+        return {
 
-                questions:
-                    {}
+            version:
+                QUESTION_MEMORY_VERSION,
 
-            };
+            questions:
+                {}
 
-        }
+        };
 
+    }
+
+
+    try {
 
         const parsed =
             JSON.parse(
@@ -2573,7 +3546,7 @@ function loadQuestionMemory() {
     } catch (error) {
 
         console.warn(
-            "[MR.SMILE QUESTION MEMORY] Load failed:",
+            "[MR.SMILE QUESTION MEMORY] Parse failed:",
             error
         );
 
@@ -2593,13 +3566,26 @@ function loadQuestionMemory() {
 }
 
 
+/* ==========================================================
+   QUESTION MEMORY SAVE
+========================================================== */
+
 function saveQuestionMemory(
     questionMemory
 ) {
 
+    if (
+        !questionMemory
+    ) {
+
+        return false;
+
+    }
+
+
     try {
 
-        localStorage.setItem(
+        return writeStorage(
 
             QUESTION_MEMORY_STORAGE_KEY,
 
@@ -2609,16 +3595,12 @@ function saveQuestionMemory(
 
         );
 
-
-        return true;
-
     } catch (error) {
 
         console.warn(
             "[MR.SMILE QUESTION MEMORY] Save failed:",
             error
         );
-
 
         return false;
 
@@ -2628,7 +3610,7 @@ function saveQuestionMemory(
 
 
 /* ==========================================================
-   CATALOG ACCESS
+   QUESTION CATALOG API
 ========================================================== */
 
 export function getQuestionCatalog() {
@@ -2643,6 +3625,65 @@ export function getQuestionCatalog() {
 
 
 /* ==========================================================
+   CATALOG QUESTION SEARCH
+========================================================== */
+
+function findCatalogQuestion(
+    questionOrId
+) {
+
+    const value =
+        safeString(
+            questionOrId
+        );
+
+
+    if (!value) {
+        return null;
+    }
+
+
+    const normalized =
+        normalizeQuestion(
+            value
+        );
+
+
+    for (
+        const entry
+        of QUESTION_CATALOG
+    ) {
+
+        if (
+            entry.id ===
+                value
+        ) {
+
+            return entry;
+
+        }
+
+
+        if (
+            normalizeQuestion(
+                entry.question
+            ) ===
+            normalized
+        ) {
+
+            return entry;
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+/* ==========================================================
    REMEMBER CATALOG QUESTION
 ========================================================== */
 
@@ -2650,35 +3691,9 @@ export function rememberCatalogQuestion(
     question
 ) {
 
-    const text =
-        safeString(
-            question
-        );
-
-
-    if (!text) {
-        return null;
-    }
-
-
-    const normalized =
-        normalizeQuestion(
-            text
-        );
-
-
-    if (!normalized) {
-        return null;
-    }
-
-
     const catalogEntry =
-        QUESTION_CATALOG.find(
-            entry =>
-                normalizeQuestion(
-                    entry.question
-                ) ===
-                normalized
+        findCatalogQuestion(
+            question
         );
 
 
@@ -2703,8 +3718,33 @@ export function rememberCatalogQuestion(
 
     if (existing) {
 
+        const previousTimestamp =
+            Number(
+                existing.lastAsked
+            ) || 0;
+
+
+        /*
+         * Prevent the same catalog event from
+         * being counted twice.
+         */
+
+        if (
+            timestamp -
+            previousTimestamp <=
+            DUPLICATE_WINDOW_MS
+        ) {
+
+            return {
+                ...existing
+            };
+
+        }
+
+
         existing.count =
-            (
+            Math.max(
+                0,
                 Number(
                     existing.count
                 ) || 0
@@ -2740,6 +3780,10 @@ export function rememberCatalogQuestion(
     }
 
 
+    questionMemory.version =
+        QUESTION_MEMORY_VERSION;
+
+
     saveQuestionMemory(
         questionMemory
     );
@@ -2764,42 +3808,19 @@ export function isCatalogQuestionAsked(
     questionOrId
 ) {
 
-    const value =
-        safeString(
-            questionOrId
-        );
-
-
-    if (!value) {
-        return false;
-    }
-
-
-    const questionMemory =
-        loadQuestionMemory();
-
-
     const catalogEntry =
-        QUESTION_CATALOG.find(
-
-            entry =>
-
-                entry.id ===
-                    value ||
-
-                normalizeQuestion(
-                    entry.question
-                ) ===
-                    normalizeQuestion(
-                        value
-                    )
-
+        findCatalogQuestion(
+            questionOrId
         );
 
 
     if (!catalogEntry) {
         return false;
     }
+
+
+    const questionMemory =
+        loadQuestionMemory();
 
 
     return Boolean(
@@ -2887,29 +3908,58 @@ export function getQuestionMemoryStatus() {
         loadQuestionMemory();
 
 
-    const asked =
-        getAskedQuestions();
-
-
-    const unasked =
-        getUnaskedQuestions();
-
+    let askedCount =
+        0;
 
     let totalAskedCount =
         0;
 
 
+    const questions =
+        [];
+
+
     for (
         const entry
-        of asked
+        of QUESTION_CATALOG
     ) {
+
+        const saved =
+            questionMemory.questions[
+                entry.id
+            ];
+
+
+        if (!saved) {
+            continue;
+        }
+
+
+        askedCount +=
+            1;
+
 
         totalAskedCount +=
             Number(
-                entry.memory.count
+                saved.count
             ) || 0;
 
+
+        questions.push({
+
+            ...entry,
+
+            memory: {
+                ...saved
+            }
+
+        });
+
     }
+
+
+    const total =
+        QUESTION_CATALOG.length;
 
 
     return {
@@ -2917,35 +3967,32 @@ export function getQuestionMemoryStatus() {
         version:
             QUESTION_MEMORY_VERSION,
 
-        total:
-            QUESTION_CATALOG.length,
+        total,
 
         asked:
-            asked.length,
+            askedCount,
 
         unasked:
-            unasked.length,
+            Math.max(
+                0,
+                total -
+                askedCount
+            ),
 
         completion:
-            QUESTION_CATALOG.length
-
+            total
                 ? Math.round(
-
                     (
-                        asked.length /
-                        QUESTION_CATALOG.length
+                        askedCount /
+                        total
                     ) *
-
                     100
-
                 )
-
                 : 0,
 
         totalAskedCount,
 
-        questions:
-            asked
+        questions
 
     };
 
@@ -2953,35 +4000,41 @@ export function getQuestionMemoryStatus() {
 
 
 /* ==========================================================
-   CLEAR QUESTION CATALOG
+   CLEAR QUESTION MEMORY
 ========================================================== */
 
 export function clearQuestionMemory() {
 
-    try {
+    if (
+        storageAvailable()
+    ) {
 
-        localStorage.removeItem(
-            QUESTION_MEMORY_STORAGE_KEY
-        );
-
-
-        for (
-            const legacyKey
-            of LEGACY_QUESTION_MEMORY_KEYS
-        ) {
+        try {
 
             localStorage.removeItem(
-                legacyKey
+                QUESTION_MEMORY_STORAGE_KEY
+            );
+
+
+            for (
+                const legacyKey
+                of LEGACY_QUESTION_MEMORY_KEYS
+            ) {
+
+                localStorage.removeItem(
+                    legacyKey
+                );
+
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "[MR.SMILE QUESTION MEMORY] Clear failed:",
+                error
             );
 
         }
-
-    } catch (error) {
-
-        console.warn(
-            "[MR.SMILE QUESTION MEMORY] Clear failed:",
-            error
-        );
 
     }
 
@@ -3008,10 +4061,14 @@ export function getMemoryStatus() {
             memory.version,
 
         messages:
-            memory.player.totalMessages,
+            Number(
+                memory.player.totalMessages
+            ) || 0,
 
         visits:
-            memory.player.totalVisits,
+            Number(
+                memory.player.totalVisits
+            ) || 0,
 
         conversations:
             memory.conversations.length,
@@ -3037,20 +4094,33 @@ export function getMemoryStatus() {
         events:
             memory.events.length,
 
+        importantEvents:
+            memory.importantEvents.length,
+
         meaningfulActions:
-            memory.counters.meaningfulActions,
+            Number(
+                memory.counters.meaningfulActions
+            ) || 0,
 
         curiosity:
-            memory.behavior.curiosity,
+            Number(
+                memory.behavior.curiosity
+            ) || 0,
 
         attention:
-            memory.behavior.attention,
+            Number(
+                memory.behavior.attention
+            ) || 0,
 
         suspicion:
-            memory.behavior.suspicion,
+            Number(
+                memory.behavior.suspicion
+            ) || 0,
 
         patience:
-            memory.behavior.patience,
+            Number(
+                memory.behavior.patience
+            ) || 0,
 
         lastIntent:
             memory.behavior.lastIntent,
@@ -3067,15 +4137,13 @@ export function getMemoryStatus() {
         lastQuestion:
             memory.player.lastQuestion,
 
-        flags:
-            {
-                ...memory.flags
-            },
+        flags: {
+            ...memory.flags
+        },
 
-        runtime:
-            {
-                ...memory.runtime
-            }
+        runtime: {
+            ...memory.runtime
+        }
 
     };
 
@@ -3083,7 +4151,23 @@ export function getMemoryStatus() {
 
 
 /* ==========================================================
-   RESET
+   FULL MEMORY SNAPSHOT
+========================================================== */
+
+export function exportMemorySnapshot() {
+
+    initMemory();
+
+
+    return clone(
+        memory
+    );
+
+}
+
+
+/* ==========================================================
+   RESET MEMORY
 ========================================================== */
 
 export function resetMemory() {
@@ -3112,6 +4196,10 @@ export function resetMemory() {
 
     memory.player.totalVisits =
         1;
+
+
+    memory.player.totalMessages =
+        0;
 
 
     initialized =
@@ -3154,6 +4242,9 @@ if (
         status:
             getMemoryStatus,
 
+        snapshot:
+            exportMemorySnapshot,
+
         reset:
             resetMemory,
 
@@ -3171,6 +4262,9 @@ if (
 
         findPreviousQuestion:
             findPreviousQuestion,
+
+        findPreviousIntent:
+            findPreviousIntent,
 
         getQuestionRepeatCount:
             getQuestionRepeatCount,
@@ -3190,6 +4284,12 @@ if (
         getQuestionCatalog:
             getQuestionCatalog,
 
+        rememberCatalogQuestion:
+            rememberCatalogQuestion,
+
+        isCatalogQuestionAsked:
+            isCatalogQuestionAsked,
+
         getQuestionMemoryStatus:
             getQuestionMemoryStatus,
 
@@ -3197,7 +4297,43 @@ if (
             getAskedQuestions,
 
         getUnaskedQuestions:
-            getUnaskedQuestions
+            getUnaskedQuestions,
+
+        clearQuestionMemory:
+            clearQuestionMemory,
+
+        rememberFile:
+            rememberFile,
+
+        rememberCommand:
+            rememberCommand,
+
+        rememberPage:
+            rememberPage,
+
+        rememberContext:
+            rememberContext,
+
+        rememberDecision:
+            rememberDecision,
+
+        rememberAction:
+            rememberAction,
+
+        rememberEvent:
+            rememberEvent,
+
+        setMemoryFlag:
+            setMemoryFlag,
+
+        hasMemoryFlag:
+            hasMemoryFlag,
+
+        changeBehaviorMetric:
+            changeBehaviorMetric,
+
+        changePatience:
+            changePatience
 
     };
 
@@ -3213,6 +4349,14 @@ export default {
     initMemory,
 
     getMemory,
+
+    getMemoryStatus,
+
+    exportMemorySnapshot,
+
+    resetMemory,
+
+    normalizeQuestion,
 
     rememberOperatorMessage,
 
@@ -3268,13 +4412,24 @@ export default {
 
     changeBehaviorMetric,
 
-    changePatience,
-
-    getMemoryStatus,
-
-    resetMemory,
-
-    normalizeQuestion
+    changePatience
 
 };
 
+
+/* ==========================================================
+   AUTO INITIALIZATION
+========================================================== */
+
+try {
+
+    initMemory();
+
+} catch (error) {
+
+    console.error(
+        "[MR.SMILE MEMORY] Initialization failed:",
+        error
+    );
+
+}
