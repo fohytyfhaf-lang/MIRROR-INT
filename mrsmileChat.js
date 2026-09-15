@@ -1,19 +1,59 @@
+
 /* ==========================================================
-   MR.SMILE CHAT — COMPLETE REBUILD
+   MR.SMILE CHAT — STABLE CHAT BRIDGE
    OMEGA / MIRROR-INT
 
-   Responsibility:
+   RESPONSIBILITY:
+
    - bridge the real OMEGA chat UI
    - receive operator messages
-   - pass them through the living dialogue layer
+   - pass them through ONE dialogue/core pipeline
    - preserve First Contact
    - preserve idle behaviour
    - preserve operator actions
    - preserve MIRROR-00 access
-   - prevent duplicate Core calls
+   - serialize incoming operator messages
+   - prevent duplicate events
+   - keep channel initialization singular
 
-   MR.SMILE is an inhabitant of reflections, not an ordinary AI.
-   The chat layer must never invent his personality.
+   ARCHITECTURE:
+
+       OPERATOR
+          ↓
+       chats.js
+          ↓
+       mrsmile:operatorMessage
+          ↓
+       mrsmileChat.js
+          ↓
+       processMrSmileDialogue()
+          ↓
+       mrSmileSay()
+          ↓
+       ONE RESULT
+          ↓
+       ONE visible MR.SMILE message
+
+   IMPORTANT:
+
+   This file does NOT:
+   - generate MR.SMILE personality
+   - replace Core responses
+   - rewrite memory
+   - call Core twice
+   - create fake operator messages
+   - use idle prompts as operator input
+
+   MR.SMILE personality remains inside:
+       mrsmileCore.js
+
+   Dialogue/context analysis remains inside:
+       mrsmileDialogue.js
+========================================================== */
+
+
+/* ==========================================================
+   IMPORTS
 ========================================================== */
 
 import {
@@ -34,62 +74,170 @@ import {
 } from "./mrsmileProgress.js";
 
 
+/* ==========================================================
+   STATE
+========================================================== */
+
 const STATE = {
+
     initialized: false,
+
     chatBridgeReady: false,
+
     channelInitializationPending: false,
+
     channelInitialized: false,
 
     channel: "mrsmile",
 
+    /* ------------------------------------------------------
+       FIRST CONTACT
+    ------------------------------------------------------ */
+
     firstContactPlayed: false,
 
+    firstContactRunning: false,
+
+    firstContactPromise: null,
+
+    /* ------------------------------------------------------
+       OPERATOR PIPELINE
+    ------------------------------------------------------ */
+
     operatorProcessing: false,
+
+    operatorQueue: Promise.resolve(),
+
     responseSequence: 0,
 
+    /* ------------------------------------------------------
+       IDLE
+    ------------------------------------------------------ */
+
     idleTimer: null,
+
     idleEnabled: true,
+
     idleRunning: false,
 
+    lastIdleTime: 0,
+
+    /* ------------------------------------------------------
+       LAST MESSAGE STATE
+    ------------------------------------------------------ */
+
     lastOperatorMessage: "",
+
     lastMrSmileMessage: "",
 
     lastOperatorTime: 0,
+
     lastMrSmileTime: 0,
 
+    lastOperatorLanguage: "ru",
+
+    /* ------------------------------------------------------
+       RESPONSE CONTROL
+    ------------------------------------------------------ */
+
     responseCooldownUntil: 0,
-    lastIdleTime: 0,
+
+    /* ------------------------------------------------------
+       EVENT REGISTRATION
+    ------------------------------------------------------ */
 
     eventHandlersRegistered: false,
+
     archiveHandlerRegistered: false,
+
     operatorHandlerRegistered: false,
-    actionHandlerRegistered: false
+
+    actionHandlerRegistered: false,
+
+    /* ------------------------------------------------------
+       DUPLICATE EVENT PROTECTION
+    ------------------------------------------------------ */
+
+    lastIncomingEventText: "",
+
+    lastIncomingEventTime: 0
 };
 
+
+/* ==========================================================
+   CONFIG
+========================================================== */
 
 const CONFIG = {
+
     channel: "mrsmile",
 
+    /*
+     * Small delay between visible MR.SMILE responses.
+     * This is NOT used for duplicate question detection.
+     */
     responseCooldown: 900,
 
+    /*
+     * Core response delay bounds.
+     */
     minResponseDelay: 500,
+
     maxResponseDelay: 4500,
 
+    /*
+     * Idle timing.
+     */
     idleMinDelay: 60000,
+
     idleMaxDelay: 150000,
 
+    /*
+     * First Contact.
+     */
     firstContactEnabled: true,
+
+    /*
+     * Idle globally enabled.
+     */
     idleEnabled: true,
 
-    preventDuplicateMessageMs: 1200
+    /*
+     * Duplicate EVENT protection only.
+     *
+     * This prevents:
+     *
+     * sendMessage()
+     * +
+     * eventManager event
+     *
+     * from processing the same event twice.
+     *
+     * It does NOT suppress a real repeated question
+     * after the operator intentionally asks it again.
+     */
+    preventDuplicateEventMs: 1200,
+
+    /*
+     * If several operator events arrive almost together,
+     * they are serialized through the queue.
+     */
+    operatorQueueDelay: 50
 };
 
+
+/* ==========================================================
+   BASIC UTILITIES
+========================================================== */
 
 function sleep(ms) {
     return new Promise(resolve =>
         setTimeout(
             resolve,
-            Math.max(0, Number(ms) || 0)
+            Math.max(
+                0,
+                Number(ms) || 0
+            )
         )
     );
 }
@@ -101,15 +249,25 @@ function now() {
 
 
 function cleanText(value) {
-    return String(value ?? "").trim();
+    return String(
+        value ?? ""
+    ).trim();
 }
 
 
 function random(min, max) {
+    const low =
+        Number(min) || 0;
+
+    const high =
+        Number(max) || low;
+
     return (
         Math.floor(
-            Math.random() * (max - min + 1)
-        ) + min
+            Math.random() *
+            (high - low + 1)
+        ) +
+        low
     );
 }
 
@@ -117,10 +275,60 @@ function random(min, max) {
 function clamp(value, min, max) {
     return Math.max(
         min,
-        Math.min(max, value)
+        Math.min(
+            max,
+            value
+        )
     );
 }
 
+
+/* ==========================================================
+   SAFE LOCAL STORAGE
+========================================================== */
+
+function storageGet(key) {
+    try {
+        if (
+            typeof localStorage ===
+            "undefined"
+        ) {
+            return null;
+        }
+
+        return localStorage.getItem(key);
+
+    } catch {
+        return null;
+    }
+}
+
+
+function storageSet(key, value) {
+    try {
+        if (
+            typeof localStorage ===
+            "undefined"
+        ) {
+            return false;
+        }
+
+        localStorage.setItem(
+            key,
+            String(value)
+        );
+
+        return true;
+
+    } catch {
+        return false;
+    }
+}
+
+
+/* ==========================================================
+   CHAT AVAILABILITY
+========================================================== */
 
 function chatAvailable() {
     return (
@@ -130,17 +338,25 @@ function chatAvailable() {
 }
 
 
+/* ==========================================================
+   WAIT FOR CHAT BRIDGE
+========================================================== */
+
 function waitForChatBridge(
     callback,
     attempts = 60
 ) {
     if (chatAvailable()) {
+
         STATE.chatBridgeReady = true;
+
         callback();
+
         return true;
     }
 
     if (attempts <= 0) {
+
         console.warn(
             "[MR.SMILE CHAT] OMEGA chat bridge unavailable."
         );
@@ -148,7 +364,8 @@ function waitForChatBridge(
         return false;
     }
 
-    STATE.channelInitializationPending = true;
+    STATE.channelInitializationPending =
+        true;
 
     setTimeout(
         () =>
@@ -163,6 +380,10 @@ function waitForChatBridge(
 }
 
 
+/* ==========================================================
+   RAW CHAT OUTPUT
+========================================================== */
+
 function pushChatMessage(
     user,
     text
@@ -170,23 +391,30 @@ function pushChatMessage(
     const message =
         cleanText(text);
 
-    if (!message || !chatAvailable()) {
+    if (
+        !message ||
+        !chatAvailable()
+    ) {
         return false;
     }
 
     try {
+
         window.addChatMessage(
             CONFIG.channel,
             {
                 user,
+
                 time:
-                    new Date().toLocaleTimeString(
-                        [],
-                        {
-                            hour: "2-digit",
-                            minute: "2-digit"
-                        }
-                    ),
+                    new Date()
+                        .toLocaleTimeString(
+                            [],
+                            {
+                                hour: "2-digit",
+                                minute: "2-digit"
+                            }
+                        ),
+
                 text: message
             }
         );
@@ -194,6 +422,7 @@ function pushChatMessage(
         return true;
 
     } catch (error) {
+
         console.error(
             "[MR.SMILE CHAT] addChatMessage failed:",
             error
@@ -204,7 +433,13 @@ function pushChatMessage(
 }
 
 
-function addMrSmileChatMessage(text) {
+/* ==========================================================
+   MR.SMILE OUTPUT
+========================================================== */
+
+function addMrSmileChatMessage(
+    text
+) {
     const message =
         cleanText(text);
 
@@ -218,6 +453,8 @@ function addMrSmileChatMessage(text) {
     STATE.lastMrSmileTime =
         now();
 
+    STATE.responseSequence += 1;
+
     return pushChatMessage(
         "MR.SMILE",
         message
@@ -225,7 +462,13 @@ function addMrSmileChatMessage(text) {
 }
 
 
-function addSystemChatMessage(text) {
+/* ==========================================================
+   SYSTEM OUTPUT
+========================================================== */
+
+function addSystemChatMessage(
+    text
+) {
     return pushChatMessage(
         "SYSTEM",
         text
@@ -233,7 +476,12 @@ function addSystemChatMessage(text) {
 }
 
 
+/* ==========================================================
+   RESULT EXTRACTION
+========================================================== */
+
 function extractResponseText(result) {
+
     if (
         result === null ||
         result === undefined
@@ -241,37 +489,78 @@ function extractResponseText(result) {
         return "";
     }
 
-    if (typeof result === "string") {
-        return cleanText(result);
+    if (
+        typeof result ===
+        "string"
+    ) {
+        return cleanText(
+            result
+        );
     }
 
-    if (typeof result === "object") {
-        if (typeof result.text === "string") {
-            return cleanText(result.text);
-        }
+    if (
+        typeof result !==
+        "object"
+    ) {
+        return "";
+    }
 
-        if (typeof result.message === "string") {
-            return cleanText(result.message);
-        }
+    if (
+        typeof result.text ===
+        "string"
+    ) {
+        return cleanText(
+            result.text
+        );
+    }
 
-        if (typeof result.response === "string") {
-            return cleanText(result.response);
-        }
+    /*
+     * Compatibility fallback.
+     * Core normally uses result.text.
+     */
+    if (
+        typeof result.message ===
+        "string"
+    ) {
+        return cleanText(
+            result.message
+        );
+    }
+
+    if (
+        typeof result.response ===
+        "string"
+    ) {
+        return cleanText(
+            result.response
+        );
     }
 
     return "";
 }
 
 
-function extractResponseDelay(result) {
-    if (!result || typeof result !== "object") {
+/* ==========================================================
+   RESPONSE DELAY
+========================================================== */
+
+function extractResponseDelay(
+    result
+) {
+    if (
+        !result ||
+        typeof result !==
+        "object"
+    ) {
         return CONFIG.minResponseDelay;
     }
 
     const delay =
         Number(result.delay);
 
-    if (!Number.isFinite(delay)) {
+    if (
+        !Number.isFinite(delay)
+    ) {
         return CONFIG.minResponseDelay;
     }
 
@@ -283,7 +572,13 @@ function extractResponseDelay(result) {
 }
 
 
-function isDuplicateIncoming(text) {
+/* ==========================================================
+   DUPLICATE RESPONSE PROTECTION
+========================================================== */
+
+function isDuplicateVisibleResponse(
+    text
+) {
     const message =
         cleanText(text);
 
@@ -295,39 +590,61 @@ function isDuplicateIncoming(text) {
         now();
 
     return (
-        message === STATE.lastMrSmileMessage &&
-        current - STATE.lastMrSmileTime <
-            CONFIG.preventDuplicateMessageMs
+        message ===
+            STATE.lastMrSmileMessage &&
+
+        current -
+            STATE.lastMrSmileTime <
+            CONFIG.preventDuplicateEventMs
     );
 }
 
+
+/* ==========================================================
+   OUTPUT ONE RESPONSE
+========================================================== */
 
 async function outputMrSmile(
     result,
     options = {}
 ) {
     const text =
-        extractResponseText(result);
+        extractResponseText(
+            result
+        );
 
     if (!text) {
         return false;
     }
 
-    if (isDuplicateIncoming(text)) {
+    /*
+     * The same visible message cannot be emitted twice
+     * inside the duplicate-event protection window.
+     */
+    if (
+        isDuplicateVisibleResponse(
+            text
+        )
+    ) {
         return false;
     }
 
     const requestedDelay =
-        options.instant
+        options.instant === true
             ? 0
-            : extractResponseDelay(result);
+            : extractResponseDelay(
+                result
+            );
 
     const extraDelay =
-        Number(options.extraDelay) || 0;
+        Number(
+            options.extraDelay
+        ) || 0;
 
     const delay =
         clamp(
-            requestedDelay + extraDelay,
+            requestedDelay +
+                extraDelay,
             0,
             CONFIG.maxResponseDelay
         );
@@ -336,6 +653,9 @@ async function outputMrSmile(
         await sleep(delay);
     }
 
+    /*
+     * Respect the visible response cooldown.
+     */
     const current =
         now();
 
@@ -350,9 +670,12 @@ async function outputMrSmile(
     }
 
     const sent =
-        addMrSmileChatMessage(text);
+        addMrSmileChatMessage(
+            text
+        );
 
     if (sent) {
+
         STATE.responseCooldownUntil =
             now() +
             CONFIG.responseCooldown;
@@ -363,7 +686,50 @@ async function outputMrSmile(
 
 
 /* ==========================================================
-   OPERATOR PROCESSING
+   DUPLICATE OPERATOR EVENT DETECTION
+========================================================== */
+
+function isDuplicateOperatorEvent(
+    text
+) {
+    const input =
+        cleanText(text);
+
+    if (!input) {
+        return true;
+    }
+
+    const current =
+        now();
+
+    return (
+        input ===
+            STATE.lastIncomingEventText &&
+
+        current -
+            STATE.lastIncomingEventTime <
+            CONFIG.preventDuplicateEventMs
+    );
+}
+
+
+/* ==========================================================
+   REMEMBER LAST OPERATOR EVENT
+========================================================== */
+
+function markIncomingOperatorEvent(
+    text
+) {
+    STATE.lastIncomingEventText =
+        cleanText(text);
+
+    STATE.lastIncomingEventTime =
+        now();
+}
+
+
+/* ==========================================================
+   OPERATOR MESSAGE PIPELINE
 ========================================================== */
 
 async function processOperatorMessage(
@@ -377,13 +743,14 @@ async function processOperatorMessage(
         return null;
     }
 
-    const current =
-        now();
-
+    /*
+     * Ignore only duplicate EVENT delivery.
+     *
+     * An intentionally repeated question later is NOT blocked.
+     */
     if (
-        input === STATE.lastOperatorMessage &&
-        current - STATE.lastOperatorTime <
-            CONFIG.responseCooldown
+        options.skipDuplicateCheck !== true &&
+        isDuplicateOperatorEvent(input)
     ) {
         console.warn(
             "[MR.SMILE CHAT] Duplicate operator event ignored."
@@ -392,29 +759,42 @@ async function processOperatorMessage(
         return null;
     }
 
-    STATE.lastOperatorMessage =
-        input;
-
-    STATE.lastOperatorTime =
-        current;
-
-    if (STATE.operatorProcessing) {
-        await sleep(150);
+    if (
+        options.skipDuplicateCheck !== true
+    ) {
+        markIncomingOperatorEvent(
+            input
+        );
     }
+
+    /*
+     * Pause idle while the operator is actively speaking.
+     */
+    pauseIdleMessages();
 
     STATE.operatorProcessing =
         true;
 
     try {
+
+        await sleep(
+            CONFIG.operatorQueueDelay
+        );
+
         /*
-           ONE and only ONE call into the dialogue/Core pipeline.
-        */
+         * ====================================================
+         * ONE AND ONLY ONE DIALOGUE CALL
+         * ====================================================
+         */
         const result =
             processMrSmileDialogue(
                 input,
                 {
                     instant:
-                        options.instant === true
+                        options.instant === true,
+
+                    language:
+                        options.language
                 }
             );
 
@@ -422,6 +802,26 @@ async function processOperatorMessage(
             return null;
         }
 
+        /*
+         * Preserve language information from the dialogue layer.
+         */
+        const detectedLanguage =
+            result?.dialogueContext?.language;
+
+        if (
+            typeof detectedLanguage ===
+            "string" &&
+            detectedLanguage
+        ) {
+            STATE.lastOperatorLanguage =
+                detectedLanguage;
+        }
+
+        /*
+         * ====================================================
+         * ONE AND ONLY ONE VISIBLE RESPONSE
+         * ====================================================
+         */
         const response =
             await outputMrSmile(
                 result,
@@ -430,62 +830,166 @@ async function processOperatorMessage(
 
         return {
             input,
+
             result,
-            response
+
+            response,
+
+            sequence:
+                STATE.responseSequence
         };
 
     } catch (error) {
+
         console.error(
             "[MR.SMILE CHAT] Dialogue processing error:",
             error
         );
 
+        /*
+         * Emergency fallback is used only if Core actually
+         * throws. It is never generated alongside a valid result.
+         */
         const fallback = {
             ok: true,
-            text: "I see.",
-            delay: 900,
-            intent: "unknown_statement",
-            emergency: true
+
+            text:
+                "I see.",
+
+            delay:
+                900,
+
+            intent:
+                "unknown_statement",
+
+            emergency:
+                true
         };
 
-        await outputMrSmile(
-            fallback,
-            {
-                extraDelay: 200
-            }
-        );
+        const fallbackSent =
+            await outputMrSmile(
+                fallback,
+                {
+                    extraDelay:
+                        200,
+
+                    skipDuplicateCheck:
+                        true
+                }
+            );
 
         return {
             input,
-            result: fallback,
-            response: true,
+
+            result:
+                fallback,
+
+            response:
+                fallbackSent,
+
             error
         };
 
     } finally {
+
         STATE.operatorProcessing =
             false;
+
+        /*
+         * Idle is resumed only after the operator response
+         * has completely finished.
+         */
+        if (
+            STATE.idleEnabled
+        ) {
+            scheduleIdleMessages();
+        }
     }
 }
 
 
-export async function sendOperatorMessage(
+/* ==========================================================
+   SERIALIZED OPERATOR QUEUE
+========================================================== */
+
+function enqueueOperatorMessage(
     text,
     options = {}
 ) {
-    return processOperatorMessage(
+    const input =
+        cleanText(text);
+
+    if (!input) {
+        return Promise.resolve(null);
+    }
+
+    /*
+     * Every operator event enters the same queue.
+     *
+     * This prevents two event handlers from calling
+     * the Core simultaneously.
+     */
+    const task =
+        STATE.operatorQueue.then(
+            () =>
+                processOperatorMessage(
+                    input,
+                    options
+                )
+        );
+
+    /*
+     * Keep the queue alive even if one task throws.
+     */
+    STATE.operatorQueue =
+        task.catch(
+            error => {
+                console.error(
+                    "[MR.SMILE CHAT] Operator queue error:",
+                    error
+                );
+
+                return null;
+            }
+        );
+
+    return task;
+}
+
+
+/* ==========================================================
+   PUBLIC OPERATOR API
+========================================================== */
+
+export function sendOperatorMessage(
+    text,
+    options = {}
+) {
+    return enqueueOperatorMessage(
         text,
         options
     );
 }
 
 
-export async function sendMessage(text) {
-    return processOperatorMessage(text);
+export function sendMessage(
+    text
+) {
+    return enqueueOperatorMessage(
+        text,
+        {}
+    );
 }
 
 
-export async function typeMessage(text) {
+/* ==========================================================
+   MANUAL MESSAGE OUTPUT
+   These functions intentionally DO NOT call Core.
+========================================================== */
+
+export async function typeMessage(
+    text
+) {
     const message =
         cleanText(text);
 
@@ -501,7 +1005,9 @@ export async function typeMessage(text) {
 }
 
 
-export async function typeSystemMessage(text) {
+export async function typeSystemMessage(
+    text
+) {
     const message =
         cleanText(text);
 
@@ -521,111 +1027,258 @@ export async function typeSystemMessage(text) {
    FIRST CONTACT
 ========================================================== */
 
+async function playFirstContactSequence() {
+
+    /*
+     * One Promise controls the entire sequence.
+     *
+     * If an event and auto-init happen simultaneously,
+     * they share the same running sequence.
+     */
+    if (
+        STATE.firstContactPromise
+    ) {
+        return STATE.firstContactPromise;
+    }
+
+    STATE.firstContactRunning =
+        true;
+
+    STATE.firstContactPromise =
+        (async () => {
+
+            try {
+
+                if (
+                    STATE.firstContactPlayed
+                ) {
+                    return false;
+                }
+
+                STATE.firstContactPlayed =
+                    true;
+
+                storageSet(
+                    "mrsmile_first_contact",
+                    "1"
+                );
+
+                pauseIdleMessages();
+
+                /*
+                 * SYSTEM CHANNEL INITIALIZATION
+                 */
+
+                await sleep(500);
+
+                addSystemChatMessage(
+                    "PRIVATE COMMUNICATION CHANNEL INITIALIZED."
+                );
+
+                await sleep(700);
+
+                addSystemChatMessage(
+                    "REMOTE PARTICIPANT PRESENT."
+                );
+
+                /*
+                 * MR.SMILE FIRST CONTACT
+                 */
+
+                await sleep(900);
+
+                addMrSmileChatMessage(
+                    "Good evening."
+                );
+
+                await sleep(1600);
+
+                addMrSmileChatMessage(
+                    "I believe we have interrupted one another."
+                );
+
+                await sleep(1800);
+
+                addMrSmileChatMessage(
+                    "Please, take your time."
+                );
+
+                /*
+                 * After First Contact the normal idle scheduler
+                 * takes over.
+                 */
+                startIdleMessages();
+
+                return true;
+
+            } catch (error) {
+
+                console.error(
+                    "[MR.SMILE CHAT] First Contact failed:",
+                    error
+                );
+
+                return false;
+
+            } finally {
+
+                STATE.firstContactRunning =
+                    false;
+
+                STATE.firstContactPromise =
+                    null;
+            }
+        })();
+
+    return STATE.firstContactPromise;
+}
+
+
 export async function playFirstContactMessage(
     options = {}
 ) {
     if (
-        STATE.firstContactPlayed &&
-        options.force !== true
+        options.force !== true &&
+        STATE.firstContactPlayed
     ) {
         return false;
     }
 
-    STATE.firstContactPlayed =
-        true;
-
-    try {
-        localStorage.setItem(
-            "mrsmile_first_contact",
-            "1"
-        );
-    } catch {
-        // Optional persistence only.
-    }
-
     if (
-        options.systemMessages !== false
+        options.force === true
     ) {
-        await sleep(500);
-
-        addSystemChatMessage(
-            "PRIVATE COMMUNICATION CHANNEL INITIALIZED."
-        );
-
-        await sleep(700);
-
-        addSystemChatMessage(
-            "REMOTE PARTICIPANT PRESENT."
-        );
+        /*
+         * Force is intentionally explicit.
+         * It clears only this runtime guard.
+         */
+        STATE.firstContactPlayed =
+            false;
     }
 
-    await sleep(900);
-
-    addMrSmileChatMessage(
-        "Good evening."
-    );
-
-    await sleep(1600);
-
-    addMrSmileChatMessage(
-        "I believe we have interrupted one another."
-    );
-
-    await sleep(1800);
-
-    addMrSmileChatMessage(
-        "Please, take your time."
-    );
-
-    if (
-        options.startIdle !== false
-    ) {
-        startIdleMessages();
-    }
-
-    return true;
+    return playFirstContactSequence();
 }
 
 
-async function handleFirstContact(data = {}) {
-    await playFirstContactMessage(data);
+async function handleFirstContact(
+    data = {}
+) {
+    await playFirstContactMessage(
+        data || {}
+    );
 }
 
 
 /* ==========================================================
-   IDLE
+   IDLE LANGUAGE
 ========================================================== */
 
-function getIdlePrompt() {
-    const prompts = [
-        "You have been quiet.",
-        "Take your time.",
-        "I am still here.",
-        "Is there something you were considering?",
-        "Perhaps you had another question.",
-        "You seem to be thinking.",
-        "There is no particular hurry.",
-        "You may continue when you are ready."
-    ];
+function getIdleLanguage() {
 
-    return prompts[
+    const language =
+        STATE.lastOperatorLanguage;
+
+    if (
+        language === "en" ||
+        language === "uk" ||
+        language === "ru"
+    ) {
+        return language;
+    }
+
+    return "ru";
+}
+
+
+/* ==========================================================
+   IDLE MESSAGE BANK
+   IMPORTANT:
+   These are DIRECT MR.SMILE idle lines.
+
+   They are NOT sent through:
+       processMrSmileDialogue()
+       mrSmileSay()
+
+   Therefore idle cannot:
+   - create fake operator memory
+   - create fake questions
+   - trigger repeat detection
+   - trigger relationship changes
+   - create a second Core response
+========================================================== */
+
+function getIdleMessage() {
+
+    const language =
+        getIdleLanguage();
+
+    const banks = {
+
+        ru: [
+            "Вы всё ещё здесь.",
+            "Не спешите.",
+            "Я всё ещё здесь.",
+            "Можете продолжить, когда будете готовы.",
+            "Похоже, вы о чём-то задумались.",
+            "Полагаю, у вас есть ещё вопрос.",
+            "Тишина тоже может быть частью разговора.",
+            "Я подожду."
+        ],
+
+        uk: [
+            "Ви все ще тут.",
+            "Не поспішайте.",
+            "Я все ще тут.",
+            "Можете продовжити, коли будете готові.",
+            "Схоже, ви про щось замислилися.",
+            "Гадаю, у вас є ще одне питання.",
+            "Тиша теж може бути частиною розмови.",
+            "Я зачекаю."
+        ],
+
+        en: [
+            "You are still here.",
+            "Take your time.",
+            "I am still here.",
+            "You may continue when you are ready.",
+            "You seem to be thinking.",
+            "Perhaps you have another question.",
+            "Silence can be part of a conversation as well.",
+            "I can wait."
+        ]
+    };
+
+    const bank =
+        banks[language] ||
+        banks.ru;
+
+    return bank[
         random(
             0,
-            prompts.length - 1
+            bank.length - 1
         )
     ];
 }
 
 
+/* ==========================================================
+   IDLE SCHEDULING
+========================================================== */
+
 function scheduleIdleMessages() {
+
     clearTimeout(
         STATE.idleTimer
     );
 
+    STATE.idleTimer =
+        null;
+
     if (
         !CONFIG.idleEnabled ||
         !STATE.idleEnabled ||
-        !STATE.firstContactPlayed
+        !STATE.firstContactPlayed ||
+        STATE.operatorProcessing ||
+        STATE.firstContactRunning
     ) {
         return;
     }
@@ -639,24 +1292,43 @@ function scheduleIdleMessages() {
     STATE.idleTimer =
         setTimeout(
             async () => {
+
                 STATE.idleTimer =
                     null;
 
                 await performIdleMessage();
 
-                scheduleIdleMessages();
+                /*
+                 * Continue scheduling only if idle is still enabled.
+                 */
+                if (
+                    STATE.idleEnabled
+                ) {
+                    scheduleIdleMessages();
+                }
             },
             delay
         );
 }
 
 
+/* ==========================================================
+   PERFORM ONE IDLE MESSAGE
+========================================================== */
+
 async function performIdleMessage() {
-    if (STATE.idleRunning) {
+
+    if (
+        STATE.idleRunning ||
+        STATE.operatorProcessing ||
+        STATE.firstContactRunning
+    ) {
         return false;
     }
 
-    if (!STATE.firstContactPlayed) {
+    if (
+        !STATE.firstContactPlayed
+    ) {
         return false;
     }
 
@@ -664,41 +1336,42 @@ async function performIdleMessage() {
         true;
 
     try {
-        const prompt =
-            getIdlePrompt();
-
-        const result =
-            processMrSmileDialogue(
-                prompt,
-                {
-                    instant: false
-                }
-            );
-
-        if (!result) {
-            return false;
-        }
 
         const text =
-            extractResponseText(result);
+            getIdleMessage();
 
         if (!text) {
             return false;
         }
 
-        await outputMrSmile(
-            result,
-            {
-                extraDelay: 2200
-            }
+        /*
+         * No Core.
+         * No Dialogue.
+         * No fake operator message.
+         *
+         * This is a true autonomous MR.SMILE line.
+         */
+        await sleep(
+            random(
+                900,
+                2200
+            )
         );
 
-        STATE.lastIdleTime =
-            now();
+        const sent =
+            addMrSmileChatMessage(
+                text
+            );
 
-        return true;
+        if (sent) {
+            STATE.lastIdleTime =
+                now();
+        }
+
+        return sent;
 
     } catch (error) {
+
         console.error(
             "[MR.SMILE CHAT] Idle error:",
             error
@@ -707,21 +1380,30 @@ async function performIdleMessage() {
         return false;
 
     } finally {
+
         STATE.idleRunning =
             false;
     }
 }
 
 
+/* ==========================================================
+   IDLE CONTROL
+========================================================== */
+
 export function startIdleMessages() {
+
     STATE.idleEnabled =
         true;
 
     scheduleIdleMessages();
+
+    return true;
 }
 
 
 export function stopIdleMessages() {
+
     STATE.idleEnabled =
         false;
 
@@ -731,10 +1413,13 @@ export function stopIdleMessages() {
 
     STATE.idleTimer =
         null;
+
+    return true;
 }
 
 
 export function pauseIdleMessages() {
+
     clearTimeout(
         STATE.idleTimer
     );
@@ -745,18 +1430,23 @@ export function pauseIdleMessages() {
 
 
 export function resumeIdleMessages() {
+
     STATE.idleEnabled =
         true;
 
     scheduleIdleMessages();
+
+    return true;
 }
 
 
 /* ==========================================================
-   EVENTS
+   CHAT MESSAGE EVENTS
 ========================================================== */
 
-async function handleChatMessage(data) {
+async function handleChatMessage(
+    data
+) {
     if (!data) {
         return;
     }
@@ -771,7 +1461,9 @@ async function handleChatMessage(data) {
         return;
     }
 
-    if (data.stopIdle === true) {
+    if (
+        data.stopIdle === true
+    ) {
         pauseIdleMessages();
     }
 
@@ -782,51 +1474,84 @@ async function handleChatMessage(data) {
             ? Number(data.delay)
             : 0;
 
-    await sleep(
-        Math.max(0, delay)
-    );
-
-    if (data.type === "system") {
-        addSystemChatMessage(text);
-    } else {
-        addMrSmileChatMessage(text);
+    if (delay > 0) {
+        await sleep(
+            delay
+        );
     }
 
-    if (data.resumeIdle === true) {
+    if (
+        data.type === "system"
+    ) {
+        addSystemChatMessage(
+            text
+        );
+    } else {
+        addMrSmileChatMessage(
+            text
+        );
+    }
+
+    if (
+        data.resumeIdle === true
+    ) {
         resumeIdleMessages();
     }
 }
 
 
-async function handleChatSequence(data) {
+/* ==========================================================
+   CHAT SEQUENCE
+========================================================== */
+
+async function handleChatSequence(
+    data
+) {
     if (
         !data ||
-        !Array.isArray(data.messages)
+        !Array.isArray(
+            data.messages
+        )
     ) {
         return;
     }
 
     pauseIdleMessages();
 
-    for (const item of data.messages) {
+    for (
+        const item of data.messages
+    ) {
+
         if (!item) {
             continue;
         }
 
-        await handleChatMessage({
-            ...item,
-            stopIdle: false,
-            resumeIdle: false
-        });
+        await handleChatMessage(
+            {
+                ...item,
+
+                stopIdle: false,
+
+                resumeIdle: false
+            }
+        );
     }
 
-    if (data.resumeIdle !== false) {
+    if (
+        data.resumeIdle !== false
+    ) {
         resumeIdleMessages();
     }
 }
 
 
-async function handleOperatorEvent(data) {
+/* ==========================================================
+   OPERATOR EVENT
+========================================================== */
+
+async function handleOperatorEvent(
+    data
+) {
     if (!data) {
         return;
     }
@@ -841,46 +1566,77 @@ async function handleOperatorEvent(data) {
         return;
     }
 
+    /*
+     * Prevent MR.SMILE-generated events from
+     * accidentally entering the operator pipeline.
+     */
     if (
         data.source === "mrsmile" ||
-        data.user === "MR.SMILE"
+        data.user === "MR.SMILE" ||
+        data.author === "mrsmile"
     ) {
         return;
     }
 
-    await processOperatorMessage(
+    return enqueueOperatorMessage(
         text,
         {
             instant:
-                data.instant === true
+                data.instant === true,
+
+            /*
+             * Event handler owns duplicate detection.
+             */
+            skipDuplicateCheck:
+                false
         }
     );
 }
 
 
-async function handleOperatorAction(data) {
+/* ==========================================================
+   OPERATOR ACTION
+========================================================== */
+
+async function handleOperatorAction(
+    data
+) {
     if (!data) {
         return;
     }
 
     try {
-        const result =
-            reactToAction(data);
 
-        if (!result || result.speak !== true) {
+        /*
+         * One action → one reactToAction() call.
+         */
+        const result =
+            reactToAction(
+                data
+            );
+
+        if (
+            !result ||
+            result.speak !== true
+        ) {
             return;
         }
 
         const text =
-            extractResponseText(result);
+            extractResponseText(
+                result
+            );
 
         if (!text) {
             return;
         }
 
-        await outputMrSmile(result);
+        await outputMrSmile(
+            result
+        );
 
     } catch (error) {
+
         console.error(
             "[MR.SMILE CHAT] Action reaction error:",
             error
@@ -889,9 +1645,17 @@ async function handleOperatorAction(data) {
 }
 
 
+/* ==========================================================
+   MIRROR-00 ACCESS
+========================================================== */
+
 async function handleMirrorArchiveAccess() {
+
     try {
-        if (!hasPendingMirrorArchiveAccess()) {
+
+        if (
+            !hasPendingMirrorArchiveAccess()
+        ) {
             return;
         }
 
@@ -916,6 +1680,7 @@ async function handleMirrorArchiveAccess() {
         resumeIdleMessages();
 
     } catch (error) {
+
         console.error(
             "[MR.SMILE CHAT] MIRROR-00 error:",
             error
@@ -931,50 +1696,88 @@ async function handleMirrorArchiveAccess() {
 ========================================================== */
 
 function registerEvents() {
-    if (STATE.eventHandlersRegistered) {
+
+    if (
+        STATE.eventHandlersRegistered
+    ) {
         return;
     }
 
+    /*
+     * Set guard BEFORE registration.
+     * This prevents duplicate registration if another
+     * initialization path runs during startup.
+     */
     STATE.eventHandlersRegistered =
         true;
 
+
+    /* ------------------------------------------------------
+       FIRST CONTACT
+    ------------------------------------------------------ */
+
     try {
+
         on(
             "mrsmile:firstContact",
             handleFirstContact
         );
+
     } catch (error) {
+
         console.warn(
             "[MR.SMILE CHAT] First Contact listener failed:",
             error
         );
     }
 
+
+    /* ------------------------------------------------------
+       DIRECT CHAT MESSAGE
+    ------------------------------------------------------ */
+
     try {
+
         on(
             "mrsmile:chatMessage",
             handleChatMessage
         );
+
     } catch (error) {
+
         console.warn(
             "[MR.SMILE CHAT] chatMessage listener failed:",
             error
         );
     }
 
+
+    /* ------------------------------------------------------
+       CHAT SEQUENCE
+    ------------------------------------------------------ */
+
     try {
+
         on(
             "mrsmile:chatSequence",
             handleChatSequence
         );
+
     } catch (error) {
+
         console.warn(
             "[MR.SMILE CHAT] chatSequence listener failed:",
             error
         );
     }
 
+
+    /* ------------------------------------------------------
+       OPERATOR MESSAGE
+    ------------------------------------------------------ */
+
     try {
+
         on(
             "mrsmile:operatorMessage",
             handleOperatorEvent
@@ -984,13 +1787,20 @@ function registerEvents() {
             true;
 
     } catch (error) {
+
         console.warn(
             "[MR.SMILE CHAT] operatorMessage listener failed:",
             error
         );
     }
 
+
+    /* ------------------------------------------------------
+       OPERATOR ACTION
+    ------------------------------------------------------ */
+
     try {
+
         on(
             "mrsmile:operatorAction",
             handleOperatorAction
@@ -1000,13 +1810,20 @@ function registerEvents() {
             true;
 
     } catch (error) {
+
         console.warn(
             "[MR.SMILE CHAT] operatorAction listener failed:",
             error
         );
     }
 
+
+    /* ------------------------------------------------------
+       MIRROR ARCHIVE
+    ------------------------------------------------------ */
+
     try {
+
         on(
             "mrsmile:mirrorArchiveAccess",
             handleMirrorArchiveAccess
@@ -1016,6 +1833,7 @@ function registerEvents() {
             true;
 
     } catch (error) {
+
         console.warn(
             "[MR.SMILE CHAT] Mirror Archive listener failed:",
             error
@@ -1025,30 +1843,45 @@ function registerEvents() {
 
 
 /* ==========================================================
-   REVEAL
+   REVEAL MR.SMILE CHAT
 ========================================================== */
 
 export function revealMrSmileChat() {
+
     try {
+
         if (
-            typeof window !== "undefined" &&
-            typeof window.openChat === "function"
+            typeof window !==
+                "undefined" &&
+            typeof window.openChat ===
+                "function"
         ) {
-            window.openChat("mrsmile");
+
+            window.openChat(
+                "mrsmile"
+            );
+
             return true;
         }
 
-        const channel =
-            document.querySelector(
-                '[data-chat="mrsmile"]'
-            );
+        if (
+            typeof document !==
+                "undefined"
+        ) {
 
-        if (channel) {
-            channel.click();
-            return true;
+            const channel =
+                document.querySelector(
+                    '[data-chat="mrsmile"]'
+                );
+
+            if (channel) {
+                channel.click();
+                return true;
+            }
         }
 
     } catch (error) {
+
         console.warn(
             "[MR.SMILE CHAT] reveal failed:",
             error
@@ -1063,12 +1896,38 @@ export function revealMrSmileChat() {
    CHANNEL INITIALIZATION
 ========================================================== */
 
+/*
+ * IMPORTANT:
+ *
+ * Channel initialization does NOT print messages.
+ *
+ * First Contact is responsible for the visible introduction.
+ *
+ * This prevents:
+ *
+ * initializeChannel()
+ *   ↓
+ * SYSTEM init
+ *
+ * + firstContact
+ *   ↓
+ * SYSTEM init AGAIN
+ *
+ * from happening.
+ */
+
 function initializeChannel() {
-    if (STATE.channelInitialized) {
+
+    if (
+        STATE.channelInitialized
+    ) {
         return true;
     }
 
-    if (!chatAvailable()) {
+    if (
+        !chatAvailable()
+    ) {
+
         STATE.channelInitializationPending =
             true;
 
@@ -1086,98 +1945,117 @@ function initializeChannel() {
     STATE.channelInitializationPending =
         false;
 
-    try {
-        if (
-            typeof window !== "undefined" &&
-            typeof window.getChat === "function"
-        ) {
-            const chat =
-                window.getChat("mrsmile");
 
-            if (
-                chat &&
-                Array.isArray(chat.messages) &&
-                chat.messages.length > 0
-            ) {
+    /*
+     * Compatibility check:
+     * see whether chats.js already has the channel.
+     */
+    try {
+
+        if (
+            typeof window !==
+                "undefined" &&
+            typeof window.getChat ===
+                "function"
+        ) {
+
+            const chat =
+                window.getChat(
+                    "mrsmile"
+                );
+
+            if (chat) {
+
                 STATE.channelInitialized =
                     true;
 
                 return true;
             }
         }
+
     } catch {
-        // Compatibility lookup is optional.
+        /*
+         * Optional compatibility lookup.
+         */
     }
 
-    const systemOne =
-        addSystemChatMessage(
-            "PRIVATE COMMUNICATION CHANNEL INITIALIZED."
-        );
 
-    const systemTwo =
-        addSystemChatMessage(
-            "REMOTE PARTICIPANT PRESENT."
-        );
-
-    const smileOne =
-        addMrSmileChatMessage(
-            "Good evening."
-        );
-
-    const smileTwo =
-        addMrSmileChatMessage(
-            "Please, take your time."
-        );
-
-    const smileThree =
-        addMrSmileChatMessage(
-            "There is no particular hurry."
-        );
-
-    if (
-        systemOne ||
-        systemTwo ||
-        smileOne ||
-        smileTwo ||
-        smileThree
-    ) {
-        STATE.channelInitialized =
-            true;
-
-        return true;
-    }
-
-    STATE.channelInitializationPending =
+    /*
+     * The bridge itself is sufficient.
+     *
+     * chats.js remains the owner of chat data.
+     */
+    STATE.channelInitialized =
         true;
 
-    waitForChatBridge(
-        () =>
-            initializeChannel()
-    );
-
-    return false;
+    return true;
 }
 
 
 /* ==========================================================
-   INIT / STATUS / RESET
+   FIRST CONTACT AUTO-START
+========================================================== */
+
+function shouldStartFirstContact() {
+
+    if (
+        !CONFIG.firstContactEnabled
+    ) {
+        return false;
+    }
+
+    if (
+        STATE.firstContactPlayed
+    ) {
+        return false;
+    }
+
+    const persisted =
+        storageGet(
+            "mrsmile_first_contact"
+        );
+
+    return persisted !== "1";
+}
+
+
+/* ==========================================================
+   INIT
 ========================================================== */
 
 export function initMrSmileChat(
     options = {}
 ) {
-    if (STATE.initialized) {
+
+    if (
+        STATE.initialized
+    ) {
+
         return {
             ok: true,
-            alreadyInitialized: true,
-            state: getMrSmileChatStatus()
+
+            alreadyInitialized:
+                true,
+
+            state:
+                getMrSmileChatStatus()
         };
     }
 
     STATE.initialized =
         true;
 
+
+    /* ------------------------------------------------------
+       EVENTS
+    ------------------------------------------------------ */
+
     registerEvents();
+
+
+    /* ------------------------------------------------------
+       CHANNEL
+    ------------------------------------------------------ */
 
     if (
         options.initializeChannel !== false
@@ -1185,55 +2063,107 @@ export function initMrSmileChat(
         initializeChannel();
     }
 
-    if (
-        options.startIdle !== false &&
-        CONFIG.idleEnabled
-    ) {
-        try {
-            if (
-                localStorage.getItem(
-                    "mrsmile_first_contact"
-                ) === "1"
-            ) {
-                STATE.firstContactPlayed =
-                    true;
 
-                startIdleMessages();
-            }
-        } catch {
-            // Optional persistence only.
+    /* ------------------------------------------------------
+       PERSISTED FIRST CONTACT
+    ------------------------------------------------------ */
+
+    const firstContactWasPlayed =
+        storageGet(
+            "mrsmile_first_contact"
+        ) === "1";
+
+    if (
+        firstContactWasPlayed
+    ) {
+
+        STATE.firstContactPlayed =
+            true;
+
+        if (
+            options.startIdle !== false &&
+            CONFIG.idleEnabled
+        ) {
+
+            startIdleMessages();
+        }
+
+    } else if (
+        options.autoFirstContact !== false &&
+        CONFIG.firstContactEnabled
+    ) {
+
+        /*
+         * Exactly one startup path can start First Contact.
+         * Event listener is still safe because the sequence
+         * is controlled by firstContactPromise.
+         */
+
+        if (
+            shouldStartFirstContact()
+        ) {
+            playFirstContactMessage();
         }
     }
 
+
     console.log(
-        "[MR.SMILE CHAT] Living dialogue bridge initialized."
+        "[MR.SMILE CHAT] Stable dialogue bridge initialized."
     );
+
 
     return {
         ok: true,
-        initialized: true,
+
+        initialized:
+            true,
+
         state:
             getMrSmileChatStatus()
     };
 }
 
 
+/* ==========================================================
+   STATUS
+========================================================== */
+
 export function getMrSmileChatStatus() {
+
     return {
+
         initialized:
             STATE.initialized,
+
+        chatBridgeReady:
+            STATE.chatBridgeReady,
+
+        channelInitialized:
+            STATE.channelInitialized,
+
+        channelInitializationPending:
+            STATE.channelInitializationPending,
 
         firstContactPlayed:
             STATE.firstContactPlayed,
 
+        firstContactRunning:
+            STATE.firstContactRunning,
+
         operatorProcessing:
             STATE.operatorProcessing,
+
+        responseSequence:
+            STATE.responseSequence,
 
         idleEnabled:
             STATE.idleEnabled,
 
         idleRunning:
             STATE.idleRunning,
+
+        lastIdleTime:
+            STATE.lastIdleTime,
 
         lastOperatorMessage:
             STATE.lastOperatorMessage,
@@ -1247,11 +2177,23 @@ export function getMrSmileChatStatus() {
         lastMrSmileTime:
             STATE.lastMrSmileTime,
 
+        lastOperatorLanguage:
+            STATE.lastOperatorLanguage,
+
         responseCooldownUntil:
             STATE.responseCooldownUntil,
 
         eventHandlersRegistered:
             STATE.eventHandlersRegistered,
+
+        operatorHandlerRegistered:
+            STATE.operatorHandlerRegistered,
+
+        actionHandlerRegistered:
+            STATE.actionHandlerRegistered,
+
+        archiveHandlerRegistered:
+            STATE.archiveHandlerRegistered,
 
         channel:
             STATE.channel
@@ -1259,16 +2201,33 @@ export function getMrSmileChatStatus() {
 }
 
 
+/* ==========================================================
+   RESET
+========================================================== */
+
 export function resetMrSmileChat(
     options = {}
 ) {
+
     stopIdleMessages();
 
     STATE.firstContactPlayed =
         false;
 
+    STATE.firstContactRunning =
+        false;
+
+    STATE.firstContactPromise =
+        null;
+
     STATE.operatorProcessing =
         false;
+
+    STATE.operatorQueue =
+        Promise.resolve();
+
+    STATE.responseSequence =
+        0;
 
     STATE.lastOperatorMessage =
         "";
@@ -1282,14 +2241,48 @@ export function resetMrSmileChat(
     STATE.lastMrSmileTime =
         0;
 
+    STATE.lastOperatorLanguage =
+        "ru";
+
+    STATE.lastIncomingEventText =
+        "";
+
+    STATE.lastIncomingEventTime =
+        0;
+
     STATE.responseCooldownUntil =
         0;
 
+
     if (
-        options.restartIdle === true
+        options.clearFirstContactPersistence === true
+    ) {
+
+        try {
+
+            if (
+                typeof localStorage !==
+                    "undefined"
+            ) {
+
+                localStorage.removeItem(
+                    "mrsmile_first_contact"
+                );
+            }
+
+        } catch {
+            /* Optional persistence only. */
+        }
+    }
+
+
+    if (
+        options.restartIdle === true &&
+        STATE.firstContactPlayed
     ) {
         startIdleMessages();
     }
+
 
     return getMrSmileChatStatus();
 }
@@ -1300,6 +2293,7 @@ export function resetMrSmileChat(
 ========================================================== */
 
 const API = {
+
     init:
         initMrSmileChat,
 
@@ -1338,14 +2332,23 @@ const API = {
 };
 
 
+/* ==========================================================
+   GLOBAL WINDOW EXPORTS
+========================================================== */
+
 if (
-    typeof window !== "undefined"
+    typeof window !==
+    "undefined"
 ) {
+
     window.MRSMILE_CHAT =
         API;
 
     window.mrSmileChatSend =
         sendMessage;
+
+    window.mrSmileChatSendOperator =
+        sendOperatorMessage;
 
     window.revealMrSmileChat =
         revealMrSmileChat;
@@ -1362,9 +2365,16 @@ if (
 }
 
 
+/* ==========================================================
+   AUTOMATIC INITIALIZATION
+========================================================== */
+
 try {
+
     initMrSmileChat();
+
 } catch (error) {
+
     console.error(
         "[MR.SMILE CHAT] Initialization failed:",
         error
@@ -1372,4 +2382,9 @@ try {
 }
 
 
+/* ==========================================================
+   DEFAULT EXPORT
+========================================================== */
+
 export default API;
+
