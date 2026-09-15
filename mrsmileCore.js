@@ -191,8 +191,14 @@ function resolveLanguage(text) {
         // Ignore
     }
 
-    return CORE_STATE.lastLanguage || "en";
-}
+    return (
+    CORE_STATE.lastLanguage &&
+    isSupportedLanguage?.(CORE_STATE.lastLanguage)
+)
+    ? CORE_STATE.lastLanguage
+    : "en";
+   
+   }
 
 
 /* ==========================================================
@@ -1954,7 +1960,7 @@ function getResponse(intent, language, normalizedText) {
 function rememberInput(text, intent) {
 
     try {
-        rememberOperatorMessage(text);
+       
     } catch {
         // Optional memory integration
     }
@@ -1997,56 +2003,74 @@ function getQuestionRepeatContext(text, intent) {
         exact = null;
     }
 
-    if (exact) {
+    if (!exact) {
         return {
-            repeated: true,
-            type: "exact",
-            count: Number(exact.count) || 0,
-            previousResponse:
-                exact.lastResponse ||
-                exact.response ||
-                "",
-            memory: exact
+            repeated: false,
+            type: "none",
+            count: 0,
+            previousResponse: "",
+            previousIntent: null,
+            memory: null
         };
     }
 
+    const previousIntent =
+        exact.intent || null;
+
+    const previousResponse =
+        exact.lastResponse ||
+        exact.response ||
+        "";
+
+    const count =
+        Number(exact.count) || 0;
+
     return {
-        repeated: false,
-        type: "none",
-        count: 0,
-        previousResponse: "",
-        memory: null
+        repeated: true,
+
+        type:
+            previousIntent &&
+            intent &&
+            previousIntent !== intent
+                ? "same_question_new_intent"
+                : "exact",
+
+        count,
+
+        previousResponse,
+
+        previousIntent,
+
+        memory: exact
     };
 }
-
 
 /* ==========================================================
    REPEAT RESPONSE
 ========================================================== */
-
-function getRepeatResponse(language, repeatCount) {
+function getRepeatResponse(language, repeatCount, previousResponse = "") {
 
     const responses = {
 
         ru: [
             "Я помню этот вопрос.",
             "Вы проверяете мою память?",
-            "Вы хотите получить другой ответ?",
-            "Я начинаю подозревать, что вопрос не в моём имени."
+            "Любопытно. Вы всё ещё возвращаетесь к этому вопросу.",
+            "Пожалуй, теперь мне действительно интересно, зачем вы продолжаете его задавать."
         ],
 
         uk: [
             "Я пам'ятаю це питання.",
             "Ви перевіряєте мою пам'ять?",
-            "Ви хочете отримати іншу відповідь?",
-            "Я починаю підозрювати, що питання не в моєму імені."
+            "Цікаво. Ви все ще повертаєтеся до цього питання.",
+            "Певно, тепер мені справді цікаво, навіщо ви продовжуєте його ставити."
         ],
 
         en: [
             "I remember this question.",
             "Are you testing my memory?",
-            "Would you like a different answer?",
-            "I am beginning to suspect the question is not really about my name."
+            "Curious. You keep returning to this question.",
+            "I must admit, I am beginning to wonder why you continue asking it."
         ]
 
     };
@@ -2055,16 +2079,47 @@ function getRepeatResponse(language, repeatCount) {
         responses[language] ||
         responses.en;
 
-    const stage =
-        Math.min(
-            Math.max(
-                Number(repeatCount) || 1,
-                1
-            ),
-            4
+    const count =
+        Math.max(
+            Number(repeatCount) || 1,
+            1
         );
 
-    return bank[stage - 1];
+    const stage =
+        Math.min(
+            count,
+            bank.length
+        );
+
+    let response =
+        bank[stage - 1];
+
+    /*
+       Do not repeat the exact same response
+       that MR.SMILE gave previously.
+    */
+
+    if (
+        previousResponse &&
+        response === previousResponse
+    ) {
+        const alternatives =
+            bank.filter(
+                item => item !== previousResponse
+            );
+
+        if (alternatives.length > 0) {
+            response =
+                alternatives[
+                    Math.floor(
+                        Math.random() *
+                        alternatives.length
+                    )
+                ];
+        }
+    }
+
+    return response;
 }
 
 /* ==========================================================
@@ -2244,10 +2299,11 @@ if (
 ) {
 
     response =
-        getRepeatResponse(
-            language,
-            repeatContext.count
-        );
+    getRepeatResponse(
+        language,
+        repeatContext.count,
+        repeatContext.previousResponse
+    );
 
 } else {
 
