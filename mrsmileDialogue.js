@@ -1,19 +1,51 @@
+
 /* ==========================================================
-   MR.SMILE DIALOGUE — LIVING CONVERSATION LAYER
+   MR.SMILE DIALOGUE — CONTEXT / COMPATIBILITY LAYER
    OMEGA / MIRROR-INT
 
-   MR.SMILE is not a normal assistant.
-   He is an inhabitant of reflections who has entered OMEGA.
+   IMPORTANT ARCHITECTURE RULE:
 
-   This layer gives the existing Core conversational continuity:
-   - remembers repeated questions
-   - notices deliberate tests
-   - notices memory checks
-   - keeps conversation continuity
-   - preserves the calm gentleman personality
-   - prefers hints to direct explanations
+   This module is NOT a second response generator.
 
-   The Core remains responsible for the main personality/intent system.
+   MR.SMILE response generation belongs to:
+       mrsmileCore.js
+
+   Memory writing belongs to:
+       mrsmileMemory.js
+
+   Progress / relationship belongs to:
+       mrsmileProgress.js
+       mrsmileRelationship.js
+
+   This file ONLY:
+   - analyzes conversational context
+   - detects repeated questions
+   - detects deliberate testing
+   - detects memory checks
+   - detects conversational continuation
+   - collects recent dialogue context
+   - calls the Core exactly once
+   - enriches the Core result with metadata
+   - preserves compatibility for older callers
+
+   It MUST NOT:
+   - generate a second visible response
+   - replace Core response text
+   - write responses directly into localStorage
+   - manually write operator messages
+   - manually write MR.SMILE messages
+   - call Core more than once per processMrSmileDialogue()
+   - act as an independent personality engine
+
+   Target invariant:
+
+       one operator message
+              ↓
+       one processMrSmileDialogue()
+              ↓
+       one mrSmileSay()
+              ↓
+       one returned response
 ========================================================== */
 
 import {
@@ -26,8 +58,9 @@ import {
 } from "./mrsmileMemory.js";
 
 
-const STORAGE_KEY = "mrsmile_memory_v5";
-
+/* ==========================================================
+   BASIC UTILITIES
+========================================================== */
 
 function clean(value) {
     return String(value ?? "").trim();
@@ -40,31 +73,51 @@ function normalize(text) {
         .toLowerCase()
         .replace(/[“”„«»]/g, '"')
         .replace(/[‘’]/g, "'")
-        .replace(/[!?.,;:]+/g, " ")
+        .replace(/[!?.,;:()[\]{}]+/g, " ")
         .replace(/\s+/g, " ")
         .trim();
 }
 
 
-function randomItem(list) {
-    if (!Array.isArray(list) || !list.length) {
-        return "";
-    }
-
-    return list[
-        Math.floor(Math.random() * list.length)
-    ];
-}
-
+/* ==========================================================
+   LANGUAGE DETECTION
+   This layer only describes the message.
+   Actual response language remains a Core responsibility.
+========================================================== */
 
 function detectLanguage(text, fallback = "ru") {
-    const value = normalize(text);
+    const value = clean(text);
 
-    if (/[а-яёіїєґ]/i.test(value)) {
+    if (!value) {
+        return fallback;
+    }
+
+    const normalized = value.toLowerCase();
+
+    const ukrainianMarkers =
+        /[іїєґ]/i.test(normalized) ||
+        /\b(привіт|дякую|будь ласка|чому|якщо|тому|памятаєш|пам'ятаєш|можеш|розкажи|хто ти|що ти)\b/i.test(
+            normalized
+        );
+
+    const russianMarkers =
+        /[ыэъё]/i.test(normalized) ||
+        /\b(привет|спасибо|пожалуйста|почему|если|помнишь|можешь|расскажи|кто ты|что ты|зачем)\b/i.test(
+            normalized
+        );
+
+    const latin =
+        /[a-z]/i.test(normalized);
+
+    if (ukrainianMarkers) {
+        return "uk";
+    }
+
+    if (russianMarkers) {
         return "ru";
     }
 
-    if (/[a-z]/i.test(value)) {
+    if (latin && !/[а-яёіїєґ]/i.test(normalized)) {
         return "en";
     }
 
@@ -72,35 +125,213 @@ function detectLanguage(text, fallback = "ru") {
 }
 
 
+/* ==========================================================
+   TEST / CHECKING DETECTION
+
+   Used only as metadata.
+   Core still decides the actual response.
+========================================================== */
+
 function detectTest(text) {
     const value = normalize(text);
 
+    if (!value) {
+        return false;
+    }
+
+    const russian =
+        /\b(проверяю|проверить|проверка|проверить тебя|проверяю тебя|тестирую|тест|проверка памяти|проверяю память|перепроверить|проверим)\b/i;
+
+    const ukrainian =
+        /\b(перевіряю|перевірити|перевірка|перевірити тебе|тестую|тест|перевірка пам'яті|перевірю)\b/i;
+
+    const english =
+        /\b(test|testing|check|checking|memory test|i am testing you|i'm testing you|let me test you|are you testing)\b/i;
+
     return (
-        /\b(проверяю|проверить|проверка|тестирую|тест|проверяю тебя|проверяю память|проверка памяти|перепроверить)\b/i.test(value) ||
-        /\b(test|testing|check|checking|memory test|i am testing you|i'm testing you)\b/i.test(value)
+        russian.test(value) ||
+        ukrainian.test(value) ||
+        english.test(value)
     );
 }
 
+
+/* ==========================================================
+   MEMORY QUESTION DETECTION
+========================================================== */
 
 function detectMemoryQuestion(text) {
     const value = normalize(text);
 
+    if (!value) {
+        return false;
+    }
+
+    const russian =
+        /\b(помнишь|ты помнишь|запомнил|запомнила|помнишь мой|помнишь что|помнишь меня|ты это помнишь)\b/i;
+
+    const ukrainian =
+        /\b(пам'ятаєш|памятаєш|ти пам'ятаєш|ти памятаєш|запам'ятав|запамятував|пам'ятаєш мене|памятаєш мене)\b/i;
+
+    const english =
+        /\b(do you remember|remember this|did you remember|you remember|remember me|do you still remember)\b/i;
+
     return (
-        /\b(помнишь|ты помнишь|запомнил|запомнила|помнишь мой|помнишь что)\b/i.test(value) ||
-        /\b(do you remember|remember this|did you remember|you remember)\b/i.test(value)
+        russian.test(value) ||
+        ukrainian.test(value) ||
+        english.test(value)
     );
 }
 
+
+/* ==========================================================
+   CONTINUATION DETECTION
+
+   Examples:
+       "а если..."
+       "тогда..."
+       "и что..."
+       "what about..."
+========================================================== */
 
 function detectContinuation(text) {
     const value = normalize(text);
 
+    if (!value) {
+        return false;
+    }
+
     return (
-        /^(и\s+|а\s+|тогда\s+|но\s+|значит\s+|то есть\s+|а если\s+|тогда что|что насчёт|что насчет)/i.test(value) ||
-        /^(and\s+|then\s+|but\s+|so\s+|what about|what if|then what)/i.test(value)
+        /^(и\s+|а\s+|тогда\s+|но\s+|значит\s+|то есть\s+|а если\s+|тогда что|что насчёт|что насчет|и что|а что)/i.test(value) ||
+        /^(і\s+|а\s+|тоді\s+|але\s+|отже\s+|тобто\s+|а якщо\s+|що щодо|і що)/i.test(value) ||
+        /^(and\s+|then\s+|but\s+|so\s+|what about|what if|then what|and what)/i.test(value)
     );
 }
 
+
+/* ==========================================================
+   TOPIC DETECTION
+
+   This is descriptive metadata only.
+   It does NOT replace Core intent detection.
+========================================================== */
+
+function getConversationTopic(text) {
+    const value = normalize(text);
+
+    if (!value) {
+        return "general";
+    }
+
+    if (
+        /mirror|reflection|отражен|зеркал|изнанк|зеркальн|відображен|дзеркал|дзеркальн/i.test(value)
+    ) {
+        return "mirror";
+    }
+
+    if (
+        /omega|омега|омеґа/i.test(value)
+    ) {
+        return "omega";
+    }
+
+    if (
+        /памят|пам'ят|memory|запомн|памятаєш|пам'ятаєш|память/i.test(value)
+    ) {
+        return "memory";
+    }
+
+    if (
+        /кто ты|что ты|кто такой|who are you|what are you|хто ти|що ти|хто ти є/i.test(value)
+    ) {
+        return "identity";
+    }
+
+    if (
+        /человек|human|живой|alive|людина|живий/i.test(value)
+    ) {
+        return "identity";
+    }
+
+    if (
+        /видишь|видишь меня|наблюда|следишь|watch|watching|see me|seeing me|бачиш|спостеріга|стежиш/i.test(value)
+    ) {
+        return "observation";
+    }
+
+    if (
+        /выйти|уйти|покинуть|leave|escape|exit|вийти|піти|покинути/i.test(value)
+    ) {
+        return "exit";
+    }
+
+    if (
+        /помочь|помощ|help|допомог|допомога/i.test(value)
+    ) {
+        return "help";
+    }
+
+    if (
+        /музык|music|книг|book|классик|classic|музик|книж|класик/i.test(value)
+    ) {
+        return "classics";
+    }
+
+    if (
+        /ten\b|тэн\b|тен\b|experiment|эксперимент|експеримент/i.test(value)
+    ) {
+        return "ten";
+    }
+
+    if (
+        /black blood|чёрн|черн.*кров|blackblood|чорн.*кров|чорна кров/i.test(value)
+    ) {
+        return "black_blood";
+    }
+
+    if (
+        /living corpse|living corpses|живой труп|живые трупы|живой мертвец|живі тіла|живий труп/i.test(value)
+    ) {
+        return "living_corpses";
+    }
+
+    if (
+        /source entity|source|источник|источн|джерело/i.test(value)
+    ) {
+        return "source";
+    }
+
+    if (
+        /vessel|сосуд|носитель|судин|носій/i.test(value)
+    ) {
+        return "vessel";
+    }
+
+    if (
+        /soul|душ|душа|душу|душі/i.test(value)
+    ) {
+        return "soul";
+    }
+
+    if (
+        /улыб|smile|mr smile|mr\. smile|mrsmile|містер смайл/i.test(value)
+    ) {
+        return "mrsmile";
+    }
+
+    if (
+        /archive|архив|архів|file|файл|досье|досьє/i.test(value)
+    ) {
+        return "archive";
+    }
+
+    return "general";
+}
+
+
+/* ==========================================================
+   RECENT CONVERSATION ACCESS
+========================================================== */
 
 function getRecentConversation(limit = 12) {
     try {
@@ -110,32 +341,29 @@ function getRecentConversation(limit = 12) {
             ? memory.conversations
             : [];
 
-        return list.slice(-limit);
+        return list.slice(-Math.max(1, Number(limit) || 12));
+
     } catch {
         return [];
     }
 }
 
 
-function getLastMrSmileMessage() {
-    const list = getRecentConversation();
-
-    for (let i = list.length - 1; i >= 0; i--) {
-        if (list[i]?.author === "mrsmile") {
-            return clean(list[i].text);
-        }
-    }
-
-    return "";
-}
-
+/* ==========================================================
+   LAST OPERATOR MESSAGE
+========================================================== */
 
 function getLastOperatorMessage() {
-    const list = getRecentConversation();
+    const list = getRecentConversation(24);
 
     for (let i = list.length - 1; i >= 0; i--) {
-        if (list[i]?.author === "operator") {
-            return clean(list[i].text);
+        const entry = list[i];
+
+        if (
+            entry?.author === "operator" &&
+            clean(entry.text)
+        ) {
+            return clean(entry.text);
         }
     }
 
@@ -143,240 +371,148 @@ function getLastOperatorMessage() {
 }
 
 
-function getConversationTopic(text) {
-    const value = normalize(text);
+/* ==========================================================
+   LAST MR.SMILE MESSAGE
+========================================================== */
 
-    if (/mirror|reflection|отражен|зеркал|изнанк|зеркальн/i.test(value)) {
-        return "mirror";
+function getLastMrSmileMessage() {
+    const list = getRecentConversation(24);
+
+    for (let i = list.length - 1; i >= 0; i--) {
+        const entry = list[i];
+
+        if (
+            entry?.author === "mrsmile" &&
+            clean(entry.text)
+        ) {
+            return clean(entry.text);
+        }
     }
 
-    if (/omega|омега/i.test(value)) {
-        return "omega";
-    }
-
-    if (/памят|memory|запомн/i.test(value)) {
-        return "memory";
-    }
-
-    if (/кто ты|что ты|кто такой|who are you|what are you/i.test(value)) {
-        return "identity";
-    }
-
-    if (/человек|human|живой|alive/i.test(value)) {
-        return "identity";
-    }
-
-    if (/видишь|наблюда|следишь|watch|see me|seeing me/i.test(value)) {
-        return "observation";
-    }
-
-    if (/выйти|уйти|покинуть|leave|escape|exit/i.test(value)) {
-        return "exit";
-    }
-
-    if (/помочь|помощ|help/i.test(value)) {
-        return "help";
-    }
-
-    if (/музык|music|книг|book|классик|classic/i.test(value)) {
-        return "classics";
-    }
-
-    return "general";
+    return "";
 }
 
 
-function getBank(language) {
-    const ru = language !== "en";
+/* ==========================================================
+   CONVERSATION SUMMARY
+========================================================== */
+
+function buildConversationContext(input, previous) {
+    const recent = getRecentConversation(12);
 
     return {
-        repeatFirst: ru
-            ? [
-                "Вы уже задавали этот вопрос.",
-                "Мы уже касались этого.",
-                "Этот вопрос мне уже знаком.",
-                "Любопытно. Вы решили вернуться к тому же вопросу.",
-                "Полагаю, вы проверяете, помню ли я предыдущий разговор."
-            ]
-            : [
-                "You have asked me that before.",
-                "We have touched on this already.",
-                "That question is familiar to me.",
-                "Curious. You have returned to the same question.",
-                "I suspect you are checking whether I remember the previous conversation."
-            ],
+        topic: getConversationTopic(input),
 
-        repeatLater: ru
-            ? [
-                "Мы снова пришли сюда.",
-                "Вы действительно настойчивы.",
-                "Вы уже знаете, что я отвечал.",
-                "Вопрос тот же. Причина, полагаю, уже другая.",
-                "Я помню, что отвечал вам прежде."
-            ]
-            : [
-                "We have arrived here again.",
-                "You are remarkably persistent.",
-                "You already know what I told you.",
-                "The question is the same. The reason, I suspect, is not.",
-                "I remember what I told you before."
-            ],
+        previousQuestionCount:
+            Number(previous?.count) || 0,
 
-        test: ru
-            ? [
-                "Да. Я заметил.",
-                "Разумеется. Вы проверяете меня.",
-                "Вы можете продолжать. Я не возражаю против проверки.",
-                "Я понял, что именно вы проверяете.",
-                "Память — довольно странная вещь для проверки."
-            ]
-            : [
-                "Yes. I noticed.",
-                "Of course. You are testing me.",
-                "You may continue. I do not object to the test.",
-                "I understand what you are testing.",
-                "Memory is a rather interesting thing to test."
-            ],
+        repeated:
+            Boolean(previous),
 
-        memory: ru
-            ? [
-                "Я помню достаточно, чтобы заметить повторение.",
-                "Некоторые вещи остаются дольше других.",
-                "Я помню разговор лучше, чем вам, возможно, хотелось бы.",
-                "Да. Я помню.",
-                "Не всё одинаково важно. Но ваш вопрос я помню."
-            ]
-            : [
-                "I remember enough to notice repetition.",
-                "Some things remain longer than others.",
-                "I remember the conversation rather better than you may have expected.",
-                "Yes. I remember.",
-                "Not everything is equally important. But I remember your question."
-            ],
+        lastOperatorMessage:
+            getLastOperatorMessage(),
 
-        continuation: ru
-            ? [
-                "Продолжайте.",
-                "Теперь вопрос становится интереснее.",
-                "Вот это уже ближе к сути.",
-                "Я полагаю, вы ведёте разговор именно туда.",
-                "Не спешите. Мы ещё не закончили предыдущую мысль."
-            ]
-            : [
-                "Go on.",
-                "Now the question becomes more interesting.",
-                "That is rather closer to the point.",
-                "I suspect you are leading the conversation there deliberately.",
-                "Do not hurry. We have not quite finished the previous thought."
-            ]
+        lastMrSmileMessage:
+            getLastMrSmileMessage(),
+
+        recentCount:
+            recent.length
     };
 }
 
 
-function patchStoredVisibleResponse(question, response) {
+/* ==========================================================
+   MEMORY CHECK
+========================================================== */
+
+function inspectMemoryContext(input) {
+    let previous = null;
+
     try {
-        if (
-            typeof localStorage === "undefined"
-        ) {
-            return;
-        }
-
-        const raw = localStorage.getItem(STORAGE_KEY);
-
-        if (!raw) {
-            return;
-        }
-
-        const data = JSON.parse(raw);
-        const normalized = normalize(question);
-
-        if (Array.isArray(data.questionHistory)) {
-            const entry = data.questionHistory.find(item =>
-                item &&
-                item.normalized === normalized
-            );
-
-            if (entry) {
-                entry.lastResponse = response;
-
-                if (!Array.isArray(entry.responses)) {
-                    entry.responses = [];
-                }
-
-                if (entry.responses.length) {
-                    entry.responses[
-                        entry.responses.length - 1
-                    ] = response;
-                } else {
-                    entry.responses.push(response);
-                }
-            }
-        }
-
-        if (Array.isArray(data.conversations)) {
-            for (
-                let i = data.conversations.length - 1;
-                i >= 0;
-                i--
-            ) {
-                if (
-                    data.conversations[i]?.author === "mrsmile"
-                ) {
-                    data.conversations[i].text = response;
-                    break;
-                }
-            }
-        }
-
-        localStorage.setItem(
-            STORAGE_KEY,
-            JSON.stringify(data)
-        );
-
+        previous = findPreviousQuestion(input);
     } catch (error) {
         console.warn(
-            "[MR.SMILE DIALOGUE] Memory response sync failed:",
+            "[MR.SMILE DIALOGUE] Question lookup failed:",
             error
         );
     }
+
+    return {
+        repeated:
+            Boolean(previous),
+
+        repeatCount:
+            Number(previous?.count) || 0,
+
+        previous
+    };
 }
 
 
-function chooseContextualResponse(
-    input,
-    language,
-    previous,
-    testDetected,
-    memoryQuestion
-) {
-    const bank = getBank(language);
+/* ==========================================================
+   SAFE CORE CALL
+   Exactly ONE Core call.
+========================================================== */
 
-    if (testDetected) {
-        return randomItem(bank.test);
-    }
+function callCoreOnce(input, options = {}) {
+    try {
+        return mrSmileSay(
+            input,
+            {
+                ...options,
 
-    if (memoryQuestion) {
-        return randomItem(bank.memory);
-    }
-
-    if (previous) {
-        const count =
-            Number(previous.count) || 0;
-
-        return randomItem(
-            count >= 2
-                ? bank.repeatLater
-                : bank.repeatFirst
+                /*
+                 * Preserve explicit caller preference.
+                 * Dialogue layer never invents a second response.
+                 */
+                instant:
+                    options.instant === true
+            }
         );
-    }
 
-    if (detectContinuation(input)) {
-        return randomItem(bank.continuation);
-    }
+    } catch (error) {
+        console.error(
+            "[MR.SMILE DIALOGUE] Core failed:",
+            error
+        );
 
-    return null;
+        throw error;
+    }
 }
 
+
+/* ==========================================================
+   RESULT ENRICHMENT
+
+   We add metadata but NEVER replace:
+       result.text
+
+   This is the most important architectural change.
+========================================================== */
+
+function enrichCoreResult(
+    coreResult,
+    context
+) {
+    if (!coreResult || typeof coreResult !== "object") {
+        return coreResult;
+    }
+
+    return {
+        ...coreResult,
+
+        dialogueLayer: true,
+
+        dialogueContext: {
+            ...context
+        }
+    };
+}
+
+
+/* ==========================================================
+   MAIN ENTRY
+========================================================== */
 
 export function processMrSmileDialogue(
     text,
@@ -388,14 +524,18 @@ export function processMrSmileDialogue(
         return null;
     }
 
+    /*
+     * --------------------------------------------------------
+     * STEP 1 — ANALYZE ONLY
+     * No response generation here.
+     * --------------------------------------------------------
+     */
+
     const language =
         detectLanguage(
             input,
             options.language || "ru"
         );
-
-    const previous =
-        findPreviousQuestion(input);
 
     const testDetected =
         detectTest(input);
@@ -403,112 +543,124 @@ export function processMrSmileDialogue(
     const memoryQuestion =
         detectMemoryQuestion(input);
 
-    const lastOperator =
-        getLastOperatorMessage();
+    const continuation =
+        detectContinuation(input);
 
-    const lastMrSmile =
-        getLastMrSmileMessage();
+    const memoryContext =
+        inspectMemoryContext(input);
 
-    let coreResult;
-
-    try {
-        coreResult =
-            mrSmileSay(
-                input,
-                {
-                    ...options,
-                    instant:
-                        options.instant === true
-                }
-            );
-
-    } catch (error) {
-        console.error(
-            "[MR.SMILE DIALOGUE] Core failed:",
-            error
+    const conversationContext =
+        buildConversationContext(
+            input,
+            memoryContext.previous
         );
 
-        throw error;
-    }
+    /*
+     * --------------------------------------------------------
+     * STEP 2 — ONE AND ONLY ONE CORE CALL
+     * --------------------------------------------------------
+     */
+
+    const coreResult =
+        callCoreOnce(
+            input,
+            {
+                ...options,
+
+                /*
+                 * Preserve the explicitly detected language
+                 * as context, but do not force response text.
+                 */
+                language:
+                    options.language || language
+            }
+        );
 
     if (!coreResult) {
         return null;
     }
 
-    const contextual =
-        chooseContextualResponse(
-            input,
+    /*
+     * --------------------------------------------------------
+     * STEP 3 — ADD METADATA ONLY
+     *
+     * NEVER:
+     *   coreResult.text = another response
+     *   localStorage patch
+     *   second memory write
+     * --------------------------------------------------------
+     */
+
+    return enrichCoreResult(
+        coreResult,
+        {
+            ...conversationContext,
+
             language,
-            previous,
+
             testDetected,
-            memoryQuestion
-        );
 
-    if (!contextual) {
-        return coreResult;
-    }
+            memoryQuestion,
 
-    const result = {
-        ...coreResult,
+            continuation,
 
-        text:
-            contextual,
+            repeated:
+                memoryContext.repeated,
 
-        dialogueLayer:
-            true,
-
-        dialogueReason:
-            testDetected
-                ? "operator_test"
-                : memoryQuestion
-                    ? "memory_reference"
-                    : previous
-                        ? "repeated_question"
-                        : "conversation_continuation",
-
-        conversationContext: {
-            topic:
-                getConversationTopic(input),
-
-            previousQuestionCount:
-                Number(previous?.count) || 0,
-
-            lastOperatorMessage:
-                lastOperator,
-
-            lastMrSmileMessage:
-                lastMrSmile
+            repeatCount:
+                memoryContext.repeatCount
         }
-    };
-
-    patchStoredVisibleResponse(
-        input,
-        contextual
     );
-
-    return result;
 }
 
+
+/* ==========================================================
+   CONTEXT API
+========================================================== */
 
 export function getDialogueContext() {
     const recent =
-        getRecentConversation();
+        getRecentConversation(12);
 
     return {
         recent,
+
         lastOperator:
             getLastOperatorMessage(),
+
         lastMrSmile:
-            getLastMrSmileMessage()
+            getLastMrSmileMessage(),
+
+        recentCount:
+            recent.length
     };
 }
 
+
+/* ==========================================================
+   INPUT ANALYSIS API
+========================================================== */
 
 export function analyzeDialogueInput(text) {
     const input = clean(text);
 
-    const previous =
-        findPreviousQuestion(input);
+    if (!input) {
+        return {
+            text: "",
+            language: "ru",
+            test: false,
+            memoryQuestion: false,
+            continuation: false,
+            topic: "general",
+            repeated: false,
+            repeatCount: 0,
+            lastMrSmileMessage:
+                getLastMrSmileMessage()
+        };
+    }
+
+    const memoryContext =
+        inspectMemoryContext(input);
 
     return {
         text: input,
@@ -529,19 +681,165 @@ export function analyzeDialogueInput(text) {
             getConversationTopic(input),
 
         repeated:
-            Boolean(previous),
+            memoryContext.repeated,
 
         repeatCount:
-            Number(previous?.count) || 0,
+            memoryContext.repeatCount,
+
+        lastOperatorMessage:
+            getLastOperatorMessage(),
 
         lastMrSmileMessage:
-            getLastMrSmileMessage()
+            getLastMrSmileMessage(),
+
+        recentConversation:
+            getRecentConversation(12)
     };
 }
 
 
+/* ==========================================================
+   CONVENIENCE HELPERS
+========================================================== */
+
+export function isRepeatedQuestion(text) {
+    const input = clean(text);
+
+    if (!input) {
+        return false;
+    }
+
+    try {
+        return Boolean(findPreviousQuestion(input));
+    } catch {
+        return false;
+    }
+}
+
+
+export function getRepeatCount(text) {
+    const input = clean(text);
+
+    if (!input) {
+        return 0;
+    }
+
+    try {
+        return Number(
+            findPreviousQuestion(input)?.count
+        ) || 0;
+    } catch {
+        return 0;
+    }
+}
+
+
+export function isTestingMrSmile(text) {
+    return detectTest(text);
+}
+
+
+export function isMemoryQuestion(text) {
+    return detectMemoryQuestion(text);
+}
+
+
+export function isConversationContinuation(text) {
+    return detectContinuation(text);
+}
+
+
+export function getDialogueTopic(text) {
+    return getConversationTopic(text);
+}
+
+
+/* ==========================================================
+   DEBUG / DIAGNOSTIC STATE
+========================================================== */
+
+export function getDialogueDiagnostics(text = "") {
+    const input = clean(text);
+
+    const memoryContext =
+        input
+            ? inspectMemoryContext(input)
+            : {
+                repeated: false,
+                repeatCount: 0,
+                previous: null
+            };
+
+    return {
+        input,
+
+        language:
+            detectLanguage(
+                input,
+                "ru"
+            ),
+
+        testDetected:
+            input
+                ? detectTest(input)
+                : false,
+
+        memoryQuestion:
+            input
+                ? detectMemoryQuestion(input)
+                : false,
+
+        continuation:
+            input
+                ? detectContinuation(input)
+                : false,
+
+        topic:
+            input
+                ? getConversationTopic(input)
+                : "general",
+
+        repeated:
+            memoryContext.repeated,
+
+        repeatCount:
+            memoryContext.repeatCount,
+
+        lastOperatorMessage:
+            getLastOperatorMessage(),
+
+        lastMrSmileMessage:
+            getLastMrSmileMessage(),
+
+        recentConversation:
+            getRecentConversation(12)
+    };
+}
+
+
+/* ==========================================================
+   DEFAULT EXPORT
+========================================================== */
+
 export default {
     processMrSmileDialogue,
+
     getDialogueContext,
-    analyzeDialogueInput
+
+    analyzeDialogueInput,
+
+    isRepeatedQuestion,
+
+    getRepeatCount,
+
+    isTestingMrSmile,
+
+    isMemoryQuestion,
+
+    isConversationContinuation,
+
+    getDialogueTopic,
+
+    getDialogueDiagnostics
 };
+
