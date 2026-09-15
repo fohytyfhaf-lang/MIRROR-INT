@@ -1,7 +1,8 @@
+
 /* ==========================================================
    OMEGA INTERNAL CHATS
    ----------------------------------------------------------
-   REAL OMEGA CHAT SYSTEM — REBUILT
+   REAL OMEGA CHAT SYSTEM — STABLE REBUILD
 
    RESPONSIBILITIES:
    - channels
@@ -28,6 +29,8 @@
        mrsmile:operatorMessage
            ↓
        mrsmileChat.js
+           ↓
+       mrsmileDialogue.js
            ↓
        mrsmileCore.js
            ↓
@@ -60,7 +63,18 @@
    - generate lore
    - modify itself automatically
 
-   This file only provides the account/channel foundation.
+   IMPORTANT CHANGE:
+
+   MR.SMILE channel does NOT contain static First Contact
+   messages anymore.
+
+   First Contact belongs exclusively to:
+       mrsmileChat.js
+
+   This prevents duplicate:
+       SYSTEM / MR.SMILE / SYSTEM / MR.SMILE
+   initialization on startup.
+
 ========================================================== */
 
 
@@ -112,18 +126,6 @@ function cleanText(value) {
     return safeString(value)
         .replace(/\r\n/g, "\n")
         .trim();
-
-}
-
-
-function escapeHTML(value) {
-
-    return safeString(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
 
 }
 
@@ -181,13 +183,14 @@ function getCurrentTime() {
 
     try {
 
-        return new Date().toLocaleTimeString(
-            [],
-            {
-                hour: "2-digit",
-                minute: "2-digit"
-            }
-        );
+        return new Date()
+            .toLocaleTimeString(
+                [],
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            );
 
     } catch {
 
@@ -544,9 +547,15 @@ const chats = {
     /* ======================================================
        MR.SMILE
        ------------------------------------------------------
-       INITIAL CHANNEL CONTENT ONLY.
+       IMPORTANT:
 
-       This is NOT his AI.
+       NO STATIC FIRST CONTACT.
+
+       First Contact is owned by:
+           mrsmileChat.js
+
+       Keeping initial messages here would create duplicates
+       because mrsmileChat.js also plays the sequence.
     ====================================================== */
 
     mrsmile: {
@@ -569,64 +578,7 @@ const chats = {
         hidden:
             true,
 
-        messages: [
-
-            {
-                user:
-                    "SYSTEM",
-
-                time:
-                    "--:--",
-
-                text:
-                    "PRIVATE COMMUNICATION CHANNEL INITIALIZED."
-            },
-
-            {
-                user:
-                    "SYSTEM",
-
-                time:
-                    "--:--",
-
-                text:
-                    "REMOTE PARTICIPANT PRESENT."
-            },
-
-            {
-                user:
-                    "MR.SMILE",
-
-                time:
-                    "--:--",
-
-                text:
-                    "Good evening."
-            },
-
-            {
-                user:
-                    "MR.SMILE",
-
-                time:
-                    "--:--",
-
-                text:
-                    "Please, take your time."
-            },
-
-            {
-                user:
-                    "MR.SMILE",
-
-                time:
-                    "--:--",
-
-                text:
-                    "There is no particular hurry."
-            }
-
-        ]
+        messages: []
 
     },
 
@@ -636,9 +588,7 @@ const chats = {
        ------------------------------------------------------
        SECRET ENTITY ACCOUNT.
 
-       This is only the dormant chat endpoint.
-
-       NULL DOES NOT HAVE AI HERE.
+       Dormant foundation only.
     ====================================================== */
 
     nullEntity: {
@@ -694,24 +644,6 @@ const chats = {
 
 /* ==========================================================
    CHAT ACCOUNTS
-   ----------------------------------------------------------
-   Account metadata is deliberately separate from the
-   chat database.
-
-   This allows the future NULL system to grow without
-   turning chats.js into NULL's personality engine.
-
-   FUTURE:
-
-       accounts.NULL
-           ↓
-       nullCore.js
-           ↓
-       nullMemory.js
-           ↓
-       nullEvents.js
-           ↓
-       null lore / behavior / dialogue
 ========================================================== */
 
 const chatAccounts = {
@@ -760,7 +692,7 @@ const chatAccounts = {
 
 
 /* ==========================================================
-   CONTEXT
+   CONTEXT INITIALIZATION
 ========================================================== */
 
 for (
@@ -789,6 +721,7 @@ for (
 
         messageCount:
             0
+
     };
 
 }
@@ -811,6 +744,17 @@ let operatorMessageSequence =
     0;
 
 
+/*
+ * Prevents the exact same UI event from being
+ * submitted twice in a very short period.
+ */
+let lastSentText =
+    "";
+
+let lastSentTime =
+    0;
+
+
 /* ==========================================================
    TIMING
 ========================================================== */
@@ -824,7 +768,10 @@ const TIMING = {
         1800,
 
     mrSmileDispatchPause:
-        20
+        20,
+
+    duplicateOperatorWindow:
+        1200
 
 };
 
@@ -861,15 +808,18 @@ function updateChatContext(
     context.lastMessage =
         message;
 
+
     context.lastMessageTime =
         Date.now();
 
-    context.messageCount += 1;
+
+    context.messageCount +=
+        1;
 
 
-    /*
+    /* ------------------------------------------------------
        Question memory
-    */
+    ------------------------------------------------------ */
 
     if (
         message.endsWith("?")
@@ -932,9 +882,9 @@ function updateChatContext(
     }
 
 
-    /*
+    /* ------------------------------------------------------
        SECURITY
-    */
+    ------------------------------------------------------ */
 
     if (
         chatId ===
@@ -962,10 +912,7 @@ function updateChatContext(
             context.state =
                 "camera_04_discussion";
 
-        }
-
-
-        else if (
+        } else if (
             contains(
                 message,
                 [
@@ -1028,9 +975,9 @@ function updateChatContext(
     }
 
 
-    /*
+    /* ------------------------------------------------------
        RESEARCH
-    */
+    ------------------------------------------------------ */
 
     if (
         chatId ===
@@ -1085,9 +1032,9 @@ function updateChatContext(
     }
 
 
-    /*
+    /* ------------------------------------------------------
        MEDICAL
-    */
+    ------------------------------------------------------ */
 
     if (
         chatId ===
@@ -1140,9 +1087,9 @@ function updateChatContext(
     }
 
 
-    /*
+    /* ------------------------------------------------------
        INCIDENTS
-    */
+    ------------------------------------------------------ */
 
     if (
         chatId ===
@@ -1192,9 +1139,9 @@ function updateChatContext(
     }
 
 
-    /*
+    /* ------------------------------------------------------
        GENERAL
-    */
+    ------------------------------------------------------ */
 
     if (
         chatId ===
@@ -1243,13 +1190,12 @@ function updateChatContext(
     }
 
 
-    /*
+    /* ------------------------------------------------------
        NULL
-
-       Only context is recorded.
-
-       No behavior is generated here.
-    */
+       ------------------------------------------------------
+       ONLY CONTEXT.
+       NO AI.
+    ------------------------------------------------------ */
 
     if (
         chatId ===
@@ -1307,21 +1253,12 @@ function renderChatList() {
         of Object.entries(chats)
     ) {
 
-        /*
-           Hidden channels are not shown
-           in normal chat list.
-        */
-
         if (
             chat.hidden
         ) {
             continue;
         }
 
-
-        /*
-           Clearance
-        */
 
         const accessible =
             canAccess(
@@ -1816,6 +1753,7 @@ export function openChat(
     trigger(
         "chat:opened",
         {
+
             chatId,
 
             name:
@@ -1823,14 +1761,14 @@ export function openChat(
 
             status:
                 chat.status
+
         }
     );
 
 
-    /*
-       When MR.SMILE channel opens,
-       notify the rest of the system.
-    */
+    /* ------------------------------------------------------
+       MR.SMILE
+    ------------------------------------------------------ */
 
     if (
         chatId ===
@@ -1848,15 +1786,9 @@ export function openChat(
     }
 
 
-    /*
-       NULL is intentionally separated
-       from MR.SMILE.
-
-       Opening the channel does NOT make
-       NULL answer or start any AI logic.
-
-       It only exposes a future event hook.
-    */
+    /* ------------------------------------------------------
+       NULL
+    ------------------------------------------------------ */
 
     if (
         chatId ===
@@ -1865,6 +1797,7 @@ export function openChat(
 
         const account =
             chatAccounts.NULL;
+
 
         if (account) {
 
@@ -1877,6 +1810,7 @@ export function openChat(
         trigger(
             "null:chatOpened",
             {
+
                 chatId:
                     "nullEntity",
 
@@ -1885,6 +1819,7 @@ export function openChat(
 
                 timestamp:
                     Date.now()
+
             }
         );
 
@@ -1902,7 +1837,9 @@ export function openChat(
 
 export function revealMrSmileChat() {
 
-    const chat = chats.mrsmile;
+    const chat =
+        chats.mrsmile;
+
 
     if (!chat) {
 
@@ -1915,14 +1852,9 @@ export function revealMrSmileChat() {
     }
 
 
-    chat.hidden = false;
+    chat.hidden =
+        false;
 
-
-    /*
-       Try to reveal the channel in the UI.
-       Different versions of the OMEGA interface may
-       use different selectors, so several paths are supported.
-    */
 
     const selectors = [
 
@@ -1954,9 +1886,7 @@ export function revealMrSmileChat() {
             );
 
 
-        if (
-            element
-        ) {
+        if (element) {
 
             element.classList.remove(
                 "hidden"
@@ -1979,9 +1909,8 @@ export function revealMrSmileChat() {
     }
 
 
-    /*
-       Notify UI / other systems.
-    */
+    renderChatList();
+
 
     trigger(
         "mrsmile:chatRevealed",
@@ -2013,23 +1942,6 @@ export function revealMrSmileChat() {
 
 
 /* ==========================================================
-   NULL ACCOUNT
-   ----------------------------------------------------------
-   FUTURE SECRET ENTITY FOUNDATION.
-
-   IMPORTANT:
-
-   This does NOT create NULL AI.
-
-   It only provides account identity/state.
-
-   Future modules may use this object but should own
-   their own behavior instead of putting NULL's personality
-   inside chats.js.
-========================================================== */
-
-
-/* ==========================================================
    GET CHAT ACCOUNT
 ========================================================== */
 
@@ -2054,13 +1966,6 @@ export function getChatAccount(
     }
 
 
-    /*
-       Return a copy.
-
-       External modules should not silently mutate
-       the internal account object.
-    */
-
     return {
         ...account
     };
@@ -2083,19 +1988,13 @@ export function getNullAccount() {
 
 /* ==========================================================
    REVEAL NULL ACCOUNT
-   ----------------------------------------------------------
-   This is intentionally explicit.
-
-   Nothing automatically reveals NULL.
-
-   Future lore/events can call this when the operator
-   reaches the correct condition.
 ========================================================== */
 
 export function revealNullAccount() {
 
     const account =
         chatAccounts.NULL;
+
 
     const chat =
         chats.nullEntity;
@@ -2111,6 +2010,15 @@ export function revealNullAccount() {
         );
 
         return false;
+
+    }
+
+
+    if (
+        account.discovered
+    ) {
+
+        return true;
 
     }
 
@@ -2165,7 +2073,7 @@ export function revealNullAccount() {
 
 
 /* ==========================================================
-   NULL ACCOUNT DISCOVERY STATUS
+   NULL DISCOVERY STATUS
 ========================================================== */
 
 export function isNullAccountDiscovered() {
@@ -2181,22 +2089,6 @@ export function isNullAccountDiscovered() {
 /* ==========================================================
    ADD CHAT MESSAGE
 ========================================================== */
-
-/*
-   THIS IS THE MAIN CHAT BRIDGE.
-
-   Other modules should use:
-
-       window.addChatMessage(
-           "mrsmile",
-           {
-               user: "MR.SMILE",
-               text: "..."
-           }
-       );
-
-   No second chat database is created.
-*/
 
 export function addChatMessage(
     chatId,
@@ -2221,7 +2113,8 @@ export function addChatMessage(
 
     if (
         !message ||
-        typeof message !== "object"
+        typeof message !==
+            "object"
     ) {
 
         return false;
@@ -2236,9 +2129,7 @@ export function addChatMessage(
 
 
     if (!text) {
-
         return false;
-
     }
 
 
@@ -2267,6 +2158,17 @@ export function addChatMessage(
     };
 
 
+    /*
+     * IMPORTANT:
+
+     * addChatMessage() only updates the chat UI/history.
+     *
+     * It does NOT:
+     * - call MR.SMILE Core
+     * - call MR.SMILE memory
+     * - create another response
+     */
+
     chat.messages.push(
         entry
     );
@@ -2277,11 +2179,6 @@ export function addChatMessage(
         text
     );
 
-
-    /*
-       If another channel is currently active,
-       increase unread counter.
-    */
 
     if (
         chatId !==
@@ -2297,12 +2194,6 @@ export function addChatMessage(
 
     }
 
-
-    /*
-       Keep chat history sane.
-       This prevents an accidental infinite
-       message loop from destroying memory.
-    */
 
     const MAX_MESSAGES =
         500;
@@ -2338,23 +2229,21 @@ export function addChatMessage(
     trigger(
         "chat:messageAdded",
         {
+
             chatId,
 
             message:
                 entry
+
         }
     );
 
 
-    /*
-       NULL-specific event hook.
-
-       This is ONLY an event notification.
-
-       It does not generate a response.
-
-       Future nullEvents.js can subscribe to this.
-    */
+    /* ------------------------------------------------------
+       NULL-specific event hook
+       ------------------------------------------------------
+       Still only an event.
+    ------------------------------------------------------ */
 
     if (
         chatId ===
@@ -2463,12 +2352,51 @@ export function appendChatMessage(
     return addChatMessage(
         chatId,
         {
+
             user,
+
             text,
+
             time:
                 time ||
                 getCurrentTime()
+
         }
+    );
+
+}
+
+
+/* ==========================================================
+   OPERATOR EVENT DUPLICATE GUARD
+========================================================== */
+
+function isDuplicateOperatorSend(
+    text
+) {
+
+    const value =
+        cleanText(text);
+
+
+    if (!value) {
+        return true;
+    }
+
+
+    const current =
+        Date.now();
+
+
+    return (
+
+        value ===
+            lastSentText &&
+
+        current -
+            lastSentTime <
+            TIMING.duplicateOperatorWindow
+
     );
 
 }
@@ -2477,34 +2405,6 @@ export function appendChatMessage(
 /* ==========================================================
    OPERATOR MESSAGE
 ========================================================== */
-
-/*
-   IMPORTANT:
-
-   This function is used only by the MAIN CHAT UI.
-
-   MR.SMILE itself does NOT answer here.
-
-   For MR.SMILE:
-
-       add YOU
-       ↓
-       save context
-       ↓
-       progress
-       ↓
-       trigger event
-       ↓
-       mrsmileChat.js
-
-   NULL:
-
-       add YOU
-       ↓
-       save context
-       ↓
-       NO AUTOMATIC RESPONSE
-*/
 
 export function sendMessage() {
 
@@ -2551,25 +2451,55 @@ export function sendMessage() {
     }
 
 
+    /*
+     * Prevent double delivery from two UI handlers.
+     *
+     * Real repeated questions after this short window
+     * remain valid and are NOT blocked.
+     */
+
+    if (
+        isDuplicateOperatorSend(
+            text
+        )
+    ) {
+
+        console.warn(
+            "[CHAT] Duplicate operator send ignored."
+        );
+
+        input.value =
+            "";
+
+        return false;
+
+    }
+
+
     const sequence =
         ++operatorMessageSequence;
 
 
-    /*
-       Clear input immediately.
-    */
+    lastSentText =
+        text;
+
+
+    lastSentTime =
+        Date.now();
+
 
     input.value =
         "";
 
 
-    /*
-       Add YOU message.
-    */
+    /* ------------------------------------------------------
+       Add operator message to visible chat.
+    ------------------------------------------------------ */
 
     addChatMessage(
         activeChat,
         {
+
             user:
                 "YOU",
 
@@ -2577,21 +2507,30 @@ export function sendMessage() {
                 getCurrentTime(),
 
             text
+
         }
     );
 
 
-    /*
-       Global memory.
-       We do it ONCE here.
-       mrsmileChat.js does not add
-       another YOU-memory entry.
-    */
+    /* ------------------------------------------------------
+       Global MR.SMILE memory.
+       EXACTLY ONCE here.
+
+       mrsmileChat.js does not remember YOU again.
+    ------------------------------------------------------ */
 
     try {
 
         rememberOperatorMessage(
-            text
+            text,
+            {
+
+                source:
+                    "chat",
+
+                sequence
+
+            }
         );
 
     } catch (error) {
@@ -2604,9 +2543,9 @@ export function sendMessage() {
     }
 
 
-    /*
-       MR.SMILE progression.
-    */
+    /* ======================================================
+       MR.SMILE
+    ====================================================== */
 
     if (
         activeChat ===
@@ -2630,16 +2569,17 @@ export function sendMessage() {
 
 
         /*
-           VERY IMPORTANT:
+         * IMPORTANT:
 
-           Do NOT call the Core directly.
-
-           Do NOT generate a local response.
-
-           Do NOT call mrsmileSay() here.
-
-           One event -> one response pipeline.
-        */
+         * chats.js does NOT call:
+         *
+         *   mrSmileSay()
+         *   processMrSmileDialogue()
+         *
+         * directly.
+         *
+         * There is exactly one event route.
+         */
 
         setTimeout(
             () => {
@@ -2647,6 +2587,7 @@ export function sendMessage() {
                 trigger(
                     "mrsmile:operatorMessage",
                     {
+
                         text,
 
                         chat:
@@ -2659,6 +2600,7 @@ export function sendMessage() {
 
                         timestamp:
                             Date.now()
+
                     }
                 );
 
@@ -2672,14 +2614,9 @@ export function sendMessage() {
     }
 
 
-    /*
-       NULL ACCOUNT.
-
-       NULL currently has no response pipeline.
-
-       This is deliberately kept separate from
-       personnelAI and MR.SMILE.
-    */
+    /* ======================================================
+       NULL
+    ====================================================== */
 
     if (
         activeChat ===
@@ -2687,12 +2624,12 @@ export function sendMessage() {
     ) {
 
         /*
-           Future NULL processing will be attached here
-           through a dedicated event/module.
+         * NULL remains completely dormant.
 
-           For now the operator message simply remains
-           inside the NULL chat history.
-        */
+         * No AI.
+         * No Core.
+         * No personnelAI.
+         */
 
         trigger(
             "null:operatorMessage",
@@ -2723,9 +2660,9 @@ export function sendMessage() {
     }
 
 
-    /*
-       Normal personnel channels.
-    */
+    /* ======================================================
+       NORMAL PERSONNEL
+    ====================================================== */
 
     handlePersonnelMessage(
         activeChat,
@@ -2759,10 +2696,8 @@ function handlePersonnelMessage(
 
 
     /*
-       Cancel previous pending personnel response.
-       This avoids multiple delayed personnel replies
-       after rapid Enter presses.
-    */
+     * Cancel previous pending personnel response.
+     */
 
     if (
         personnelResponseTimer
@@ -2784,11 +2719,9 @@ function handlePersonnelMessage(
             .find(
                 message =>
                     message.user !==
-                        "YOU"
-                    &&
+                        "YOU" &&
                     message.user !==
-                        "SYSTEM"
-                    &&
+                        "SYSTEM" &&
                     message.user !==
                         "NULL"
             );
@@ -2813,6 +2746,14 @@ function handlePersonnelMessage(
                 personnelResponseTimer =
                     null;
 
+
+                /*
+                 * The channel might have changed while
+                 * this response was waiting.
+
+                 * Keep the response associated with the
+                 * channel where the operator typed.
+                 */
 
                 try {
 
@@ -2843,14 +2784,10 @@ function handlePersonnelMessage(
                     }
 
 
-                    /*
-                       Ignore stale callback if
-                       the active context changed completely.
-                    */
-
                     addChatMessage(
                         chatId,
                         {
+
                             user:
                                 personnel.user,
 
@@ -2859,6 +2796,7 @@ function handlePersonnelMessage(
 
                             text:
                                 response
+
                         }
                     );
 
@@ -2895,9 +2833,9 @@ function getContextualResponse(
             .toLowerCase();
 
 
-    /*
+    /* ======================================================
        GENERAL
-    */
+    ====================================================== */
 
     if (
         chatId ===
@@ -2998,9 +2936,9 @@ function getContextualResponse(
     }
 
 
-    /*
+    /* ======================================================
        SECURITY
-    */
+    ====================================================== */
 
     if (
         chatId ===
@@ -3125,9 +3063,9 @@ function getContextualResponse(
     }
 
 
-    /*
+    /* ======================================================
        RESEARCH
-    */
+    ====================================================== */
 
     if (
         chatId ===
@@ -3230,9 +3168,9 @@ function getContextualResponse(
     }
 
 
-    /*
+    /* ======================================================
        MEDICAL
-    */
+    ====================================================== */
 
     if (
         chatId ===
@@ -3389,9 +3327,9 @@ function getContextualResponse(
     }
 
 
-    /*
+    /* ======================================================
        INCIDENTS
-    */
+    ====================================================== */
 
     if (
         chatId ===
@@ -3471,9 +3409,9 @@ function getContextualResponse(
     }
 
 
-    /*
+    /* ======================================================
        ADMIN
-    */
+    ====================================================== */
 
     if (
         chatId ===
@@ -3617,14 +3555,6 @@ export function revealChat(
     );
 
 
-    /*
-       NULL has a dedicated account state.
-
-       Generic revealChat() still works, but the
-       dedicated revealNullAccount() function should
-       be preferred by future NULL systems.
-    */
-
     if (
         chatId ===
         "nullEntity"
@@ -3683,11 +3613,147 @@ export function hideChat(
 
 
     /*
-       If NULL is hidden again, do not erase
-       discovery history.
+     * Discovery is not erased.
+     */
 
-       The account remains discovered in lore/state.
-    */
+    return true;
+
+}
+
+
+/* ==========================================================
+   RESTORE PERSISTED MR.SMILE FIRST CONTACT
+   ----------------------------------------------------------
+   When the page reloads after First Contact, the runtime
+   chat database starts empty.
+
+   We restore ONLY the canonical First Contact history.
+
+   This does NOT run Core.
+   This does NOT generate dialogue.
+========================================================== */
+
+function restorePersistedMrSmileHistory() {
+
+    const chat =
+        chats.mrsmile;
+
+
+    if (
+        !chat ||
+        chat.messages.length > 0
+    ) {
+        return false;
+    }
+
+
+    try {
+
+        if (
+            typeof localStorage ===
+            "undefined"
+        ) {
+
+            return false;
+
+        }
+
+
+        if (
+            localStorage.getItem(
+                "mrsmile_first_contact"
+            ) !== "1"
+        ) {
+
+            return false;
+
+        }
+
+    } catch {
+
+        return false;
+
+    }
+
+
+    const messages = [
+
+        {
+            user:
+                "SYSTEM",
+
+            time:
+                "--:--",
+
+            text:
+                "PRIVATE COMMUNICATION CHANNEL INITIALIZED."
+        },
+
+        {
+            user:
+                "SYSTEM",
+
+            time:
+                "--:--",
+
+            text:
+                "REMOTE PARTICIPANT PRESENT."
+        },
+
+        {
+            user:
+                "MR.SMILE",
+
+            time:
+                "--:--",
+
+            text:
+                "Good evening."
+        },
+
+        {
+            user:
+                "MR.SMILE",
+
+            time:
+                "--:--",
+
+            text:
+                "I believe we have interrupted one another."
+        },
+
+        {
+            user:
+                "MR.SMILE",
+
+            time:
+                "--:--",
+
+            text:
+                "Please, take your time."
+        }
+
+    ];
+
+
+    for (
+        const message
+        of messages
+    ) {
+
+        chat.messages.push(
+            {
+                ...message
+            }
+        );
+
+    }
+
+
+    updateChatContext(
+        "mrsmile",
+        "MR.SMILE First Contact restored."
+    );
 
 
     return true;
@@ -3726,9 +3792,16 @@ export function initChats(
         true;
 
 
-    /*
+    /* ------------------------------------------------------
+       Restore persisted First Contact if necessary.
+    ------------------------------------------------------ */
+
+    restorePersistedMrSmileHistory();
+
+
+    /* ------------------------------------------------------
        Window bridge
-    */
+    ------------------------------------------------------ */
 
     if (
         typeof window !==
@@ -3788,15 +3861,11 @@ export function initChats(
     renderActiveChat();
 
 
-    /*
-       Enter handling
-    */
-
     bindInputEvents();
 
 
     console.log(
-        "[OMEGA CHAT] Rebuilt chat system initialized."
+        "[OMEGA CHAT] Stable chat system initialized."
     );
 
 
@@ -3855,8 +3924,8 @@ function bindInputEvents() {
 
 
     /*
-       Prevent duplicate listeners.
-    */
+     * Prevent duplicate listeners.
+     */
 
     if (
         input.dataset.omegaChatBound ===
@@ -3875,14 +3944,6 @@ function bindInputEvents() {
     input.addEventListener(
         "keydown",
         event => {
-
-            /*
-               Shift+Enter:
-               new line.
-
-               Enter:
-               send.
-            */
 
             if (
                 event.key !==
@@ -3946,38 +4007,39 @@ export function getChatSystemStatus() {
                 ?.messages
                 ?.length || 0,
 
-        nullAccount:
-            {
-                discovered:
-                    Boolean(
-                        chatAccounts.NULL
-                            ?.discovered
-                    ),
+        nullAccount: {
 
-                connected:
-                    Boolean(
-                        chatAccounts.NULL
-                            ?.connected
-                    ),
+            discovered:
+                Boolean(
+                    chatAccounts.NULL
+                        ?.discovered
+                ),
 
-                aiEnabled:
-                    Boolean(
-                        chatAccounts.NULL
-                            ?.aiEnabled
-                    ),
+            connected:
+                Boolean(
+                    chatAccounts.NULL
+                        ?.connected
+                ),
 
-                eventsEnabled:
-                    Boolean(
-                        chatAccounts.NULL
-                            ?.eventsEnabled
-                    ),
+            aiEnabled:
+                Boolean(
+                    chatAccounts.NULL
+                        ?.aiEnabled
+                ),
 
-                loreEnabled:
-                    Boolean(
-                        chatAccounts.NULL
-                            ?.loreEnabled
-                    )
-            }
+            eventsEnabled:
+                Boolean(
+                    chatAccounts.NULL
+                        ?.eventsEnabled
+                ),
+
+            loreEnabled:
+                Boolean(
+                    chatAccounts.NULL
+                        ?.loreEnabled
+                )
+
+        }
 
     };
 
@@ -4104,6 +4166,10 @@ const API = {
 };
 
 
+/* ==========================================================
+   GLOBAL API
+========================================================== */
+
 if (
     typeof window !==
     "undefined"
@@ -4141,3 +4207,4 @@ try {
 ========================================================== */
 
 export default API;
+
