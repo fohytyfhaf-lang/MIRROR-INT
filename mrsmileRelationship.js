@@ -1,27 +1,44 @@
+
 // =======================================
-// MR.SMILE RELATIONSHIP SYSTEM
+// MR.SMILE RELATIONSHIP SYSTEM — V4
 // OMEGA SYSTEM
 // =======================================
 //
-// MR.SMILE does not simply like/dislike
-// the operator.
-//
-// His attitude is based on several values:
+// MR.SMILE's attitude toward the operator
+// is described by:
 //
 // TRUST
 // RESPECT
 // IRRITATION
 //
-// The final relationship state is calculated
-// from these values.
+// TRUST is owned by:
+//      mrsmileTrust.js
 //
-// This module does NOT control visual
-// manifestations or sabotage.
+// RESPECT / IRRITATION are owned here.
 //
-// It only describes:
+// This module does NOT:
+// - generate dialogue
+// - generate personality
+// - control visual manifestations
+// - control sabotage
+// - generate chat messages
 //
-// "How does MR.SMILE currently regard
-// the operator?"
+// It ONLY describes the current relationship
+// state and exposes behavior/access helpers.
+//
+// IMPORTANT EVENT RULE:
+//
+// ONE REAL RELATIONSHIP STATE CHANGE
+//      ↓
+// ONE mrsmile:relationshipChanged
+//
+// Combined changes:
+//      changeRelationship()
+//          ↓
+//      ONE relationshipChanged
+//      ONE relationshipAction
+//
+// No-op changes produce no change event.
 // =======================================
 
 
@@ -36,103 +53,377 @@ import {
 } from "./mrsmileTrust.js";
 
 
-// =======================================
-// STORAGE
-// =======================================
+/* =======================================
+   STORAGE
+======================================= */
 
 const STORAGE_KEY =
     "mrsmile_relationship";
 
-
-// =======================================
-// LIMITS
-// =======================================
-
-const MIN_VALUE = 0;
-const MAX_VALUE = 100;
+const LEGACY_STORAGE_KEY =
+    "mrsmile_relationship_v3";
 
 
-// =======================================
-// STATE
-// =======================================
+/* =======================================
+   LIMITS
+======================================= */
+
+const MIN_VALUE =
+    0;
+
+const MAX_VALUE =
+    100;
+
+
+/* =======================================
+   STATE
+======================================= */
 
 const state = {
 
-    trust: 0,
+    trust:
+        0,
 
-    respect: 50,
+    respect:
+        50,
 
-    irritation: 0,
+    irritation:
+        0,
 
-    initialized: false
+    initialized:
+        false
 
 };
 
 
-// =======================================
-// INTERNAL
-// =======================================
+/* =======================================
+   INTERNAL STATE
+======================================= */
 
-let initialized = false;
-let trustListenerRegistered = false;
+let initialized =
+    false;
+
+let trustListenerRegistered =
+    false;
 
 
-// =======================================
-// INITIALIZATION
-// =======================================
+/* =======================================
+   UTILITY
+======================================= */
 
-export function initMrSmileRelationship() {
+function safeNumber(
+    value,
+    fallback = 0
+) {
 
-    if (initialized) {
+    const number =
+        Number(value);
 
-        syncTrust();
+    return Number.isFinite(
+        number
+    )
+        ? number
+        : fallback;
 
-        return;
+}
+
+
+function clamp(
+    value
+) {
+
+    return Math.max(
+        MIN_VALUE,
+        Math.min(
+            MAX_VALUE,
+            safeNumber(
+                value,
+                0
+            )
+        )
+    );
+
+}
+
+
+function storageAvailable() {
+
+    try {
+
+        return (
+            typeof localStorage !==
+            "undefined"
+        );
+
+    } catch {
+
+        return false;
+
+    }
+
+}
+
+
+function readStorage(
+    key
+) {
+
+    if (
+        !storageAvailable()
+    ) {
+
+        return null;
+
+    }
+
+    try {
+
+        return localStorage.getItem(
+            key
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE RELATIONSHIP] Storage read failed:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+function writeStorage(
+    key,
+    value
+) {
+
+    if (
+        !storageAvailable()
+    ) {
+
+        return false;
+
+    }
+
+    try {
+
+        localStorage.setItem(
+            key,
+            value
+        );
+
+        return true;
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE RELATIONSHIP] Storage write failed:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+function removeStorage(
+    key
+) {
+
+    if (
+        !storageAvailable()
+    ) {
+
+        return false;
+
+    }
+
+    try {
+
+        localStorage.removeItem(
+            key
+        );
+
+        return true;
+
+    } catch {
+
+        return false;
+
+    }
+
+}
+
+
+/* =======================================
+   RELATIONSHIP SNAPSHOT
+======================================= */
+
+function getRawStateSnapshot() {
+
+    return {
+
+        trust:
+            clamp(
+                state.trust
+            ),
+
+        respect:
+            clamp(
+                state.respect
+            ),
+
+        irritation:
+            clamp(
+                state.irritation
+            )
+
+    };
+
+}
+
+
+function statesEqual(
+    a,
+    b
+) {
+
+    if (
+        !a ||
+        !b
+    ) {
+
+        return false;
+
+    }
+
+    return (
+        a.trust === b.trust &&
+        a.respect === b.respect &&
+        a.irritation === b.irritation
+    );
+
+}
+
+
+/* =======================================
+   EMIT RELATIONSHIP CHANGE
+======================================= */
+
+function emitRelationshipChanged(
+    previous,
+    reason = ""
+) {
+
+    const current =
+        getRawStateSnapshot();
+
+
+    if (
+        statesEqual(
+            previous,
+            current
+        )
+    ) {
+
+        return false;
 
     }
 
 
-    initialized = true;
+    trigger(
+        "mrsmile:relationshipChanged",
+        {
+
+            previous: {
+                ...previous
+            },
+
+            current: {
+                ...current
+            },
+
+            reason:
+                reason || ""
+
+        }
+    );
 
 
-    // -----------------------------------
-    // TRUST SYSTEM
-    // -----------------------------------
+    return true;
 
-    initTrust();
+}
 
 
-    // -----------------------------------
-    // LOAD
-    // -----------------------------------
+/* =======================================
+   INITIALIZATION
+======================================= */
 
+export function initMrSmileRelationship() {
+
+    if (
+        initialized
+    ) {
+
+        syncTrust();
+
+        return getRelationshipStatus();
+
+    }
+
+
+    initialized =
+        true;
+
+
+    /*
+     * Trust is owned by mrsmileTrust.js.
+     */
+    try {
+
+        initTrust();
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE RELATIONSHIP] Trust initialization failed:",
+            error
+        );
+
+    }
+
+
+    /*
+     * Load only local relationship values:
+     * respect / irritation.
+     */
     loadRelationship();
 
 
-    // -----------------------------------
-    // SYNC TRUST
-    // -----------------------------------
-
+    /*
+     * Mirror current Trust.
+     */
     syncTrust();
 
 
-    // -----------------------------------
-    // LISTEN FOR TRUST CHANGES
-    // -----------------------------------
-
+    /*
+     * Listen for actual Trust changes.
+     */
     registerTrustListener();
 
-
-    // -----------------------------------
-    // INITIAL STATE
-    // -----------------------------------
 
     state.initialized =
         true;
 
 
     console.log(
-        "[MR.SMILE RELATIONSHIP] Initialized."
+        "[MR.SMILE RELATIONSHIP] V4 initialized."
     );
 
 
@@ -141,66 +432,64 @@ export function initMrSmileRelationship() {
         getRelationshipStatus()
     );
 
+
+    return getRelationshipStatus();
+
 }
 
 
-// =======================================
-// TRUST LISTENER
-// =======================================
+/* =======================================
+   TRUST LISTENER
+======================================= */
 
 function registerTrustListener() {
 
-    if (trustListenerRegistered)
+    if (
+        trustListenerRegistered
+    ) {
+
         return;
+
+    }
 
 
     trustListenerRegistered =
         true;
 
 
-    on(
-        "mrsmile:trustChanged",
-
-        () => {
-
-            syncTrust();
-
-
-            trigger(
-                "mrsmile:relationshipChanged",
-                getRelationshipStatus()
-            );
-
-        }
-
-    );
-
-}
-
-
-// =======================================
-// SYNC TRUST
-// =======================================
-//
-// Trust remains owned by mrsmileTrust.js.
-//
-// Relationship only mirrors it.
-// =======================================
-
-function syncTrust() {
-
     try {
 
-        state.trust =
-            clamp(
-                getTrust()
-            );
+        on(
+            "mrsmile:trustChanged",
+            data => {
 
-    }
-    catch (error) {
+                const previous =
+                    getRawStateSnapshot();
+
+
+                syncTrust();
+
+
+                /*
+                 * Trust is mirrored into the
+                 * relationship state.
+                 *
+                 * Emit only when the effective
+                 * relationship state actually changed.
+                 */
+                emitRelationshipChanged(
+                    previous,
+                    data?.reason ||
+                    "TRUST_CHANGED"
+                );
+
+            }
+        );
+
+    } catch (error) {
 
         console.warn(
-            "[MR.SMILE RELATIONSHIP] Failed to sync trust.",
+            "[MR.SMILE RELATIONSHIP] Trust listener failed:",
             error
         );
 
@@ -209,9 +498,43 @@ function syncTrust() {
 }
 
 
-// =======================================
-// CHANGE RESPECT
-// =======================================
+/* =======================================
+   SYNC TRUST
+======================================= */
+
+function syncTrust() {
+
+    try {
+
+        const nextTrust =
+            clamp(
+                getTrust()
+            );
+
+
+        state.trust =
+            nextTrust;
+
+
+        return state.trust;
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE RELATIONSHIP] Failed to sync trust:",
+            error
+        );
+
+        return state.trust;
+
+    }
+
+}
+
+
+/* =======================================
+   CHANGE RESPECT
+======================================= */
 
 export function changeRespect(
     amount,
@@ -221,18 +544,43 @@ export function changeRespect(
     initMrSmileRelationship();
 
 
-    const oldValue =
-        state.respect;
+    const value =
+        Number(amount);
 
 
-    state.respect =
+    if (
+        !Number.isFinite(
+            value
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    if (
+        value === 0
+    ) {
+
+        return false;
+
+    }
+
+
+    const previous =
+        getRawStateSnapshot();
+
+
+    const next =
         clamp(
-            state.respect + amount
+            state.respect +
+            value
         );
 
 
     if (
-        oldValue ===
+        next ===
         state.respect
     ) {
 
@@ -241,15 +589,25 @@ export function changeRespect(
     }
 
 
+    state.respect =
+        next;
+
+
     saveRelationship();
 
 
     console.log(
         "[MR.SMILE RELATIONSHIP] Respect:",
-        oldValue,
+        previous.respect,
         "→",
         state.respect,
         reason
+    );
+
+
+    emitRelationshipChanged(
+        previous,
+        reason || "RESPECT_CHANGED"
     );
 
 
@@ -257,22 +615,23 @@ export function changeRespect(
         "mrsmile:respectChanged",
         {
 
-            oldValue,
+            oldValue:
+                previous.respect,
 
             newValue:
                 state.respect,
 
-            amount,
+            amount:
+                state.respect -
+                previous.respect,
 
-            reason
+            requestedAmount:
+                value,
+
+            reason:
+                reason || ""
 
         }
-    );
-
-
-    trigger(
-        "mrsmile:relationshipChanged",
-        getRelationshipStatus()
     );
 
 
@@ -281,9 +640,9 @@ export function changeRespect(
 }
 
 
-// =======================================
-// CHANGE IRRITATION
-// =======================================
+/* =======================================
+   CHANGE IRRITATION
+======================================= */
 
 export function changeIrritation(
     amount,
@@ -293,18 +652,43 @@ export function changeIrritation(
     initMrSmileRelationship();
 
 
-    const oldValue =
-        state.irritation;
+    const value =
+        Number(amount);
 
 
-    state.irritation =
+    if (
+        !Number.isFinite(
+            value
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    if (
+        value === 0
+    ) {
+
+        return false;
+
+    }
+
+
+    const previous =
+        getRawStateSnapshot();
+
+
+    const next =
         clamp(
-            state.irritation + amount
+            state.irritation +
+            value
         );
 
 
     if (
-        oldValue ===
+        next ===
         state.irritation
     ) {
 
@@ -313,15 +697,25 @@ export function changeIrritation(
     }
 
 
+    state.irritation =
+        next;
+
+
     saveRelationship();
 
 
     console.log(
         "[MR.SMILE RELATIONSHIP] Irritation:",
-        oldValue,
+        previous.irritation,
         "→",
         state.irritation,
         reason
+    );
+
+
+    emitRelationshipChanged(
+        previous,
+        reason || "IRRITATION_CHANGED"
     );
 
 
@@ -329,22 +723,23 @@ export function changeIrritation(
         "mrsmile:irritationChanged",
         {
 
-            oldValue,
+            oldValue:
+                previous.irritation,
 
             newValue:
                 state.irritation,
 
-            amount,
+            amount:
+                state.irritation -
+                previous.irritation,
 
-            reason
+            requestedAmount:
+                value,
+
+            reason:
+                reason || ""
 
         }
-    );
-
-
-    trigger(
-        "mrsmile:relationshipChanged",
-        getRelationshipStatus()
     );
 
 
@@ -353,19 +748,9 @@ export function changeIrritation(
 }
 
 
-// =======================================
-// COMBINED RELATIONSHIP CHANGE
-// =======================================
-//
-// Useful for meaningful player actions.
-//
-// Example:
-//
-// improveRelationship({
-//     respect: +5,
-//     irritation: -3
-// });
-// =======================================
+/* =======================================
+   COMBINED RELATIONSHIP CHANGE
+======================================= */
 
 export function changeRelationship(
     changes = {},
@@ -375,63 +760,161 @@ export function changeRelationship(
     initMrSmileRelationship();
 
 
-    let changed =
-        false;
-
-
     if (
-        Number.isFinite(
+        !changes ||
+        typeof changes !==
+            "object"
+    ) {
+
+        return false;
+
+    }
+
+
+    const respectAmount =
+        Number(
             changes.respect
+        );
+
+
+    const irritationAmount =
+        Number(
+            changes.irritation
+        );
+
+
+    const validRespect =
+        Number.isFinite(
+            respectAmount
         )
-    ) {
-
-        const result =
-            changeRespect(
-                changes.respect,
-                reason
-            );
+            ? respectAmount
+            : 0;
 
 
-        if (result)
-            changed = true;
-
-    }
+    const validIrritation =
+        Number.isFinite(
+            irritationAmount
+        )
+            ? irritationAmount
+            : 0;
 
 
     if (
-        Number.isFinite(
-            changes.irritation
-        )
+        validRespect === 0 &&
+        validIrritation === 0
     ) {
 
-        const result =
-            changeIrritation(
-                changes.irritation,
-                reason
-            );
-
-
-        if (result)
-            changed = true;
+        return false;
 
     }
 
 
-    if (changed) {
+    const previous =
+        getRawStateSnapshot();
 
-        saveRelationship();
 
+    const nextRespect =
+        clamp(
+            state.respect +
+            validRespect
+        );
+
+
+    const nextIrritation =
+        clamp(
+            state.irritation +
+            validIrritation
+        );
+
+
+    const respectChanged =
+        nextRespect !==
+        state.respect;
+
+
+    const irritationChanged =
+        nextIrritation !==
+        state.irritation;
+
+
+    if (
+        !respectChanged &&
+        !irritationChanged
+    ) {
+
+        return false;
+
+    }
+
+
+    state.respect =
+        nextRespect;
+
+
+    state.irritation =
+        nextIrritation;
+
+
+    saveRelationship();
+
+
+    const actualChanges = {
+
+        respect:
+            state.respect -
+            previous.respect,
+
+        irritation:
+            state.irritation -
+            previous.irritation
+
+    };
+
+
+    console.log(
+        "[MR.SMILE RELATIONSHIP] Combined change:",
+        actualChanges,
+        reason
+    );
+
+
+    /*
+     * ONE relationshipChanged
+     */
+    emitRelationshipChanged(
+        previous,
+        reason || "RELATIONSHIP_CHANGED"
+    );
+
+
+    /*
+     * Individual component events remain available,
+     * but are emitted exactly once each and only when
+     * that component actually changed.
+     */
+
+    if (
+        respectChanged
+    ) {
 
         trigger(
-            "mrsmile:relationshipAction",
+            "mrsmile:respectChanged",
             {
 
-                changes,
+                oldValue:
+                    previous.respect,
 
-                reason,
+                newValue:
+                    state.respect,
 
-                status:
-                    getRelationshipStatus()
+                amount:
+                    actualChanges.respect,
+
+                requestedAmount:
+                    validRespect,
+
+                reason:
+                    reason || ""
 
             }
         );
@@ -439,97 +922,217 @@ export function changeRelationship(
     }
 
 
-    return changed;
+    if (
+        irritationChanged
+    ) {
+
+        trigger(
+            "mrsmile:irritationChanged",
+            {
+
+                oldValue:
+                    previous.irritation,
+
+                newValue:
+                    state.irritation,
+
+                amount:
+                    actualChanges.irritation,
+
+                requestedAmount:
+                    validIrritation,
+
+                reason:
+                    reason || ""
+
+            }
+        );
+
+    }
+
+
+    /*
+     * One high-level combined action event.
+     */
+    trigger(
+        "mrsmile:relationshipAction",
+        {
+
+            changes: {
+                ...actualChanges
+            },
+
+            requestedChanges: {
+
+                respect:
+                    validRespect,
+
+                irritation:
+                    validIrritation
+
+            },
+
+            reason:
+                reason || "",
+
+            status:
+                getRelationshipStatus()
+
+        }
+    );
+
+
+    return true;
 
 }
 
 
-// =======================================
-// POSITIVE ACTION
-// =======================================
-//
-// Convenience helper.
-//
-// Example:
-// MR.SMILE helps operator.
-// Operator responds correctly.
-// Respect increases.
-// Irritation decreases.
-// =======================================
+/* =======================================
+   POSITIVE ACTION
+======================================= */
 
 export function rewardOperator(
     amount = 5,
     reason = ""
 ) {
 
+    const value =
+        Math.abs(
+            Number(amount)
+        );
+
+
+    if (
+        !Number.isFinite(
+            value
+        ) ||
+        value === 0
+    ) {
+
+        return false;
+
+    }
+
+
     return changeRelationship(
 
         {
 
             respect:
-                Math.abs(amount),
+                value,
 
             irritation:
-                -Math.abs(
-                    Math.floor(
-                        amount / 2
-                    )
+                -Math.floor(
+                    value / 2
                 )
 
         },
 
-        reason
+        reason || "REWARD_OPERATOR"
 
     );
 
 }
 
 
-// =======================================
-// NEGATIVE ACTION
-// =======================================
-//
-// Operator ignores warning,
-// repeatedly asks forbidden questions,
-// attempts to force access, etc.
-// =======================================
+/* =======================================
+   NEGATIVE ACTION
+======================================= */
 
 export function punishOperator(
     amount = 5,
     reason = ""
 ) {
 
+    const value =
+        Math.abs(
+            Number(amount)
+        );
+
+
+    if (
+        !Number.isFinite(
+            value
+        ) ||
+        value === 0
+    ) {
+
+        return false;
+
+    }
+
+
     return changeRelationship(
 
         {
 
             respect:
-                -Math.abs(
-                    Math.floor(
-                        amount / 2
-                    )
+                -Math.floor(
+                    value / 2
                 ),
 
             irritation:
-                Math.abs(amount)
+                value
 
         },
 
-        reason
+        reason || "PUNISH_OPERATOR"
 
     );
 
 }
 
 
-// =======================================
-// CALCULATE RELATIONSHIP
-// =======================================
-//
-// This is NOT simply trust.
-//
-// Trust, respect and irritation all matter.
-// =======================================
+/* =======================================
+   RELATIONSHIP SCORE
+======================================= */
+
+function calculateRelationshipScore() {
+
+    const trust =
+        clamp(
+            state.trust
+        );
+
+
+    const respect =
+        clamp(
+            state.respect
+        );
+
+
+    const irritation =
+        clamp(
+            state.irritation
+        );
+
+
+    /*
+     * Trust = 50%
+     * Respect = 35%
+     * Irritation = -15%
+     */
+
+    const score =
+
+        trust * 0.50 +
+
+        respect * 0.35 +
+
+        (100 - irritation) *
+        0.15;
+
+
+    return clamp(
+        score
+    );
+
+}
+
+
+/* =======================================
+   RELATIONSHIP LEVEL
+======================================= */
 
 export function getRelationshipLevel() {
 
@@ -590,62 +1193,9 @@ export function getRelationshipLevel() {
 }
 
 
-// =======================================
-// RELATIONSHIP SCORE
-// =======================================
-
-function calculateRelationshipScore() {
-
-    const trust =
-        clamp(
-            state.trust
-        );
-
-
-    const respect =
-        clamp(
-            state.respect
-        );
-
-
-    const irritation =
-        clamp(
-            state.irritation
-        );
-
-
-    // -----------------------------------
-    // Formula
-    // -----------------------------------
-    //
-    // Trust = 50%
-    // Respect = 35%
-    // Irritation = -15%
-    //
-    // Irritation cannot completely erase
-    // genuine trust, but it can push the
-    // relationship downward.
-    // -----------------------------------
-
-    const score =
-
-        trust * 0.50 +
-
-        respect * 0.35 +
-
-        (100 - irritation) * 0.15;
-
-
-    return clamp(
-        score
-    );
-
-}
-
-
-// =======================================
-// RELATIONSHIP SCORE
-// =======================================
+/* =======================================
+   RELATIONSHIP SCORE
+======================================= */
 
 export function getRelationshipScore() {
 
@@ -659,13 +1209,25 @@ export function getRelationshipScore() {
 }
 
 
-// =======================================
-// GET STATUS
-// =======================================
+/* =======================================
+   STATUS
+======================================= */
 
 export function getRelationshipStatus() {
 
     initMrSmileRelationship();
+
+
+    const score =
+        Math.round(
+            calculateRelationshipScore()
+        );
+
+
+    const level =
+        getRelationshipLevelRaw(
+            score
+        );
 
 
     return {
@@ -685,20 +1247,76 @@ export function getRelationshipStatus() {
                 state.irritation
             ),
 
-        score:
-            getRelationshipScore(),
+        score,
 
-        level:
-            getRelationshipLevel()
+        level
 
     };
 
 }
 
 
-// =======================================
-// RELATIONSHIP CHECK
-// =======================================
+/*
+ * Internal level calculation that does not
+ * call initialization again.
+ */
+function getRelationshipLevelRaw(
+    score
+) {
+
+    if (
+        score < 20
+    ) {
+
+        return "hostile";
+
+    }
+
+
+    if (
+        score < 40
+    ) {
+
+        return "cold";
+
+    }
+
+
+    if (
+        score < 60
+    ) {
+
+        return "neutral";
+
+    }
+
+
+    if (
+        score < 75
+    ) {
+
+        return "friendly";
+
+    }
+
+
+    if (
+        score < 90
+    ) {
+
+        return "trusted";
+
+    }
+
+
+    return "close";
+
+}
+
+
+/* =======================================
+   RELATIONSHIP CHECK
+======================================= */
 
 export function isRelationshipAtLeast(
     level
@@ -720,7 +1338,11 @@ export function isRelationshipAtLeast(
 
 
     const current =
-        getRelationshipLevel();
+        getRelationshipLevelRaw(
+            Math.round(
+                calculateRelationshipScore()
+            )
+        );
 
 
     const currentIndex =
@@ -753,27 +1375,14 @@ export function isRelationshipAtLeast(
 }
 
 
-// =======================================
-// BEHAVIOR HELPERS
-// =======================================
-//
-// These functions will later be used by
-// mrsmileBehavior.js.
-//
-// They do NOT perform the behavior.
-// They only answer:
-//
-// "Would MR.SMILE probably do this?"
-// =======================================
+/* =======================================
+   BEHAVIOR HELPERS
+======================================= */
 
 export function isHelpful() {
 
-    return (
-
-        isRelationshipAtLeast(
-            "friendly"
-        )
-
+    return isRelationshipAtLeast(
+        "friendly"
     );
 
 }
@@ -782,33 +1391,25 @@ export function isHelpful() {
 export function isHostile() {
 
     return (
-        getRelationshipLevel() === "hostile"
+        getRelationshipLevel() ===
+        "hostile"
     );
 
 }
+
 
 export function isTrusted() {
 
-    return (
-
-        isRelationshipAtLeast(
-            "trusted"
-        )
-
+    return isRelationshipAtLeast(
+        "trusted"
     );
 
 }
 
 
-// =======================================
-// ACCESS DECISION HELPERS
-// =======================================
-//
-// These are intentionally simple for now.
-//
-// Later mrsmileBehavior.js will combine
-// these with personality, memory and context.
-// =======================================
+/* =======================================
+   ACCESS DECISION HELPERS
+======================================= */
 
 export function shouldHelpOperator() {
 
@@ -816,16 +1417,23 @@ export function shouldHelpOperator() {
 
 
     const level =
-        getRelationshipLevel();
+        getRelationshipLevelRaw(
+            Math.round(
+                calculateRelationshipScore()
+            )
+        );
 
 
     return (
 
-        level === "friendly" ||
+        level ===
+            "friendly" ||
 
-        level === "trusted" ||
+        level ===
+            "trusted" ||
 
-        level === "close"
+        level ===
+            "close"
 
     );
 
@@ -838,14 +1446,20 @@ export function shouldRefuseOperator() {
 
 
     const level =
-        getRelationshipLevel();
+        getRelationshipLevelRaw(
+            Math.round(
+                calculateRelationshipScore()
+            )
+        );
 
 
     return (
 
-        level === "hostile" ||
+        level ===
+            "hostile" ||
 
-        level === "cold"
+        level ===
+            "cold"
 
     );
 
@@ -858,28 +1472,41 @@ export function shouldRemainNeutral() {
 
 
     return (
-
-        getRelationshipLevel()
-        === "neutral"
-
+        getRelationshipLevelRaw(
+            Math.round(
+                calculateRelationshipScore()
+            )
+        ) ===
+        "neutral"
     );
 
 }
 
 
-// =======================================
-// RESET
-// =======================================
+/* =======================================
+   RESET
+======================================= */
 
 export function resetMrSmileRelationship() {
+
+    initMrSmileRelationship();
+
+
+    const previous =
+        getRawStateSnapshot();
+
+
+    const hadChanges =
+        previous.trust !== 0 ||
+        previous.respect !== 50 ||
+        previous.irritation !== 0;
+
 
     state.trust =
         0;
 
-
     state.respect =
         50;
-
 
     state.irritation =
         0;
@@ -893,98 +1520,115 @@ export function resetMrSmileRelationship() {
     );
 
 
-    trigger(
-        "mrsmile:relationshipReset"
-    );
+    if (
+        hadChanges
+    ) {
+
+        trigger(
+            "mrsmile:relationshipReset",
+            {
+
+                previous: {
+                    ...previous
+                },
+
+                current:
+                    getRawStateSnapshot()
+
+            }
+        );
 
 
-    trigger(
-        "mrsmile:relationshipChanged",
-        getRelationshipStatus()
-    );
+        emitRelationshipChanged(
+            previous,
+            "RESET"
+        );
+
+    }
+
+
+    return getRelationshipStatus();
 
 }
 
 
-// =======================================
-// CLAMP
-// =======================================
+/* =======================================
+   SAVE
+======================================= */
 
-function clamp(value) {
+function saveRelationship() {
 
-    return Math.max(
-        MIN_VALUE,
-        Math.min(
-            MAX_VALUE,
-            Number(value) || 0
+    const data = {
+
+        version:
+            4,
+
+        respect:
+            clamp(
+                state.respect
+            ),
+
+        irritation:
+            clamp(
+                state.irritation
+            )
+
+    };
+
+
+    return writeStorage(
+        STORAGE_KEY,
+        JSON.stringify(
+            data
         )
     );
 
 }
 
 
-// =======================================
-// SAVE
-// =======================================
-
-function saveRelationship() {
-
-    try {
-
-        localStorage.setItem(
-
-            STORAGE_KEY,
-
-            JSON.stringify({
-
-                respect:
-                    state.respect,
-
-                irritation:
-                    state.irritation
-
-            })
-
-        );
-
-    }
-    catch (error) {
-
-        console.error(
-            "[MR.SMILE RELATIONSHIP] Failed to save.",
-            error
-        );
-
-    }
-
-}
-
-
-// =======================================
-// LOAD
-// =======================================
+/* =======================================
+   LOAD
+======================================= */
 
 function loadRelationship() {
 
-    const raw =
-        localStorage.getItem(
+    let raw =
+        readStorage(
             STORAGE_KEY
         );
 
 
-    if (!raw)
+    /*
+     * Legacy fallback.
+     */
+    if (!raw) {
+
+        raw =
+            readStorage(
+                LEGACY_STORAGE_KEY
+            );
+
+    }
+
+
+    if (!raw) {
         return;
+    }
 
 
     try {
 
         const saved =
-            JSON.parse(raw);
+            JSON.parse(
+                raw
+            );
 
 
         if (
             Number.isFinite(
-                saved.respect
+                Number(
+                    saved.respect
+                )
             )
         ) {
 
@@ -998,7 +1642,9 @@ function loadRelationship() {
 
         if (
             Number.isFinite(
-                saved.irritation
+                Number(
+                    saved.irritation
+                )
             )
         ) {
 
@@ -1014,11 +1660,10 @@ function loadRelationship() {
             "[MR.SMILE RELATIONSHIP] Loaded."
         );
 
-    }
-    catch (error) {
+    } catch (error) {
 
         console.error(
-            "[MR.SMILE RELATIONSHIP] Failed to load.",
+            "[MR.SMILE RELATIONSHIP] Failed to load:",
             error
         );
 
@@ -1026,115 +1671,379 @@ function loadRelationship() {
 
 }
 
-// =======================================
-// DEBUG RELATIONSHIP CONTROLS
-// =======================================
 
-window.debugRelationship = {
+/* =======================================
+   DEBUG CONTROLS
+======================================= */
 
-    status() {
+function setDebugRespect(
+    value
+) {
+
+    initMrSmileRelationship();
+
+
+    const numericValue =
+        Number(value);
+
+
+    if (
+        !Number.isFinite(
+            numericValue
+        )
+    ) {
+
+        console.warn(
+            "[MR.SMILE RELATIONSHIP] Invalid respect:",
+            value
+        );
 
         return getRelationshipStatus();
-
-    },
-
-
-    setRespect(value) {
-
-        value = Number(value);
-
-        if (!Number.isFinite(value)) {
-
-            console.warn(
-                "[MR.SMILE RELATIONSHIP] Invalid respect:",
-                value
-            );
-
-            return getRelationshipStatus();
-
-        }
-
-
-        const previous =
-            state.respect;
-
-
-        state.respect =
-            clamp(value);
-
-
-        saveRelationship();
-
-
-        console.log(
-            "[MR.SMILE RELATIONSHIP] Respect:",
-            previous,
-            "→",
-            state.respect
-        );
-
-
-        trigger(
-            "mrsmile:relationshipChanged",
-            getRelationshipStatus()
-        );
-
-
-        return getRelationshipStatus();
-
-    },
-
-
-    setIrritation(value) {
-
-        value = Number(value);
-
-        if (!Number.isFinite(value)) {
-
-            console.warn(
-                "[MR.SMILE RELATIONSHIP] Invalid irritation:",
-                value
-            );
-
-            return getRelationshipStatus();
-
-        }
-
-
-        const previous =
-            state.irritation;
-
-
-        state.irritation =
-            clamp(value);
-
-
-        saveRelationship();
-
-
-        console.log(
-            "[MR.SMILE RELATIONSHIP] Irritation:",
-            previous,
-            "→",
-            state.irritation
-        );
-
-
-        trigger(
-            "mrsmile:relationshipChanged",
-            getRelationshipStatus()
-        );
-
-
-        return getRelationshipStatus();
-
-    },
-
-
-    reset() {
-
-        return resetMrSmileRelationship();
 
     }
+
+
+    const previous =
+        getRawStateSnapshot();
+
+
+    const next =
+        clamp(
+            numericValue
+        );
+
+
+    if (
+        next ===
+        state.respect
+    ) {
+
+        return getRelationshipStatus();
+
+    }
+
+
+    state.respect =
+        next;
+
+
+    saveRelationship();
+
+
+    console.log(
+        "[MR.SMILE RELATIONSHIP] Respect:",
+        previous.respect,
+        "→",
+        state.respect
+    );
+
+
+    emitRelationshipChanged(
+        previous,
+        "DEBUG_SET_RESPECT"
+    );
+
+
+    trigger(
+        "mrsmile:respectChanged",
+        {
+
+            oldValue:
+                previous.respect,
+
+            newValue:
+                state.respect,
+
+            amount:
+                state.respect -
+                previous.respect,
+
+            requestedAmount:
+                next -
+                previous.respect,
+
+            reason:
+                "DEBUG_SET"
+
+        }
+    );
+
+
+    return getRelationshipStatus();
+
+}
+
+
+function setDebugIrritation(
+    value
+) {
+
+    initMrSmileRelationship();
+
+
+    const numericValue =
+        Number(value);
+
+
+    if (
+        !Number.isFinite(
+            numericValue
+        )
+    ) {
+
+        console.warn(
+            "[MR.SMILE RELATIONSHIP] Invalid irritation:",
+            value
+        );
+
+        return getRelationshipStatus();
+
+    }
+
+
+    const previous =
+        getRawStateSnapshot();
+
+
+    const next =
+        clamp(
+            numericValue
+        );
+
+
+    if (
+        next ===
+        state.irritation
+    ) {
+
+        return getRelationshipStatus();
+
+    }
+
+
+    state.irritation =
+        next;
+
+
+    saveRelationship();
+
+
+    console.log(
+        "[MR.SMILE RELATIONSHIP] Irritation:",
+        previous.irritation,
+        "→",
+        state.irritation
+    );
+
+
+    emitRelationshipChanged(
+        previous,
+        "DEBUG_SET_IRRITATION"
+    );
+
+
+    trigger(
+        "mrsmile:irritationChanged",
+        {
+
+            oldValue:
+                previous.irritation,
+
+            newValue:
+                state.irritation,
+
+            amount:
+                state.irritation -
+                previous.irritation,
+
+            requestedAmount:
+                next -
+                previous.irritation,
+
+            reason:
+                "DEBUG_SET"
+
+        }
+    );
+
+
+    return getRelationshipStatus();
+
+}
+
+
+/* =======================================
+   GLOBAL DEBUG API
+======================================= */
+
+if (
+    typeof window !==
+    "undefined"
+) {
+
+    window.debugRelationship = {
+
+        status() {
+
+            return getRelationshipStatus();
+
+        },
+
+
+        setRespect(
+            value
+        ) {
+
+            return setDebugRespect(
+                value
+            );
+
+        },
+
+
+        setIrritation(
+            value
+        ) {
+
+            return setDebugIrritation(
+                value
+            );
+
+        },
+
+
+        changeRespect(
+            amount,
+            reason = "DEBUG_CHANGE"
+        ) {
+
+            return changeRespect(
+                amount,
+                reason
+            );
+
+        },
+
+
+        changeIrritation(
+            amount,
+            reason = "DEBUG_CHANGE"
+        ) {
+
+            return changeIrritation(
+                amount,
+                reason
+            );
+
+        },
+
+
+        change(
+            changes,
+            reason = "DEBUG_CHANGE"
+        ) {
+
+            return changeRelationship(
+                changes,
+                reason
+            );
+
+        },
+
+
+        reward(
+            amount = 5,
+            reason = "DEBUG_REWARD"
+        ) {
+
+            return rewardOperator(
+                amount,
+                reason
+            );
+
+        },
+
+
+        punish(
+            amount = 5,
+            reason = "DEBUG_PUNISH"
+        ) {
+
+            return punishOperator(
+                amount,
+                reason
+            );
+
+        },
+
+
+        reset() {
+
+            return resetMrSmileRelationship();
+
+        }
+
+    };
+
+}
+
+
+/* =======================================
+   AUTO INITIALIZATION
+======================================= */
+
+try {
+
+    initMrSmileRelationship();
+
+} catch (error) {
+
+    console.error(
+        "[MR.SMILE RELATIONSHIP] Initialization failed:",
+        error
+    );
+
+}
+
+
+/* =======================================
+   DEFAULT EXPORT
+======================================= */
+
+export default {
+
+    initMrSmileRelationship,
+
+    changeRespect,
+
+    changeIrritation,
+
+    changeRelationship,
+
+    rewardOperator,
+
+    punishOperator,
+
+    getRelationshipLevel,
+
+    getRelationshipScore,
+
+    getRelationshipStatus,
+
+    isRelationshipAtLeast,
+
+    isHelpful,
+
+    isHostile,
+
+    isTrusted,
+
+    shouldHelpOperator,
+
+    shouldRefuseOperator,
+
+    shouldRemainNeutral,
+
+    resetMrSmileRelationship
 
 };
