@@ -1,6 +1,6 @@
 
 // =======================================
-// MR.SMILE RELATIONSHIP SYSTEM — V4
+// MR.SMILE RELATIONSHIP SYSTEM — V5
 // OMEGA SYSTEM
 // =======================================
 //
@@ -24,7 +24,7 @@
 // - generate chat messages
 //
 // It ONLY describes the current relationship
-// state and exposes behavior/access helpers.
+// state and exposes relationship/access helpers.
 //
 // IMPORTANT EVENT RULE:
 //
@@ -32,13 +32,21 @@
 //      ↓
 // ONE mrsmile:relationshipChanged
 //
-// Combined changes:
-//      changeRelationship()
-//          ↓
-//      ONE relationshipChanged
-//      ONE relationshipAction
+// COMBINED CHANGES:
 //
-// No-op changes produce no change event.
+// changeRelationship()
+//      ↓
+// ONE relationshipChanged
+// ONE relationshipAction
+//
+// IMPORTANT INITIALIZATION RULE:
+//
+// Public status functions MUST NOT recursively
+// initialize this module.
+//
+// Therefore internal status builders NEVER call:
+//      initMrSmileRelationship()
+//
 // =======================================
 
 
@@ -108,7 +116,7 @@ let trustListenerRegistered =
 
 
 /* =======================================
-   UTILITY
+   BASIC HELPERS
 ======================================= */
 
 function safeNumber(
@@ -117,7 +125,9 @@ function safeNumber(
 ) {
 
     const number =
-        Number(value);
+        Number(
+            value
+        );
 
     return Number.isFinite(
         number
@@ -262,7 +272,7 @@ function removeStorage(
 
 
 /* =======================================
-   RELATIONSHIP SNAPSHOT
+   RAW STATE SNAPSHOT
 ======================================= */
 
 function getRawStateSnapshot() {
@@ -304,10 +314,167 @@ function statesEqual(
     }
 
     return (
-        a.trust === b.trust &&
-        a.respect === b.respect &&
-        a.irritation === b.irritation
+
+        a.trust ===
+            b.trust &&
+
+        a.respect ===
+            b.respect &&
+
+        a.irritation ===
+            b.irritation
+
     );
+
+}
+
+
+/* =======================================
+   INTERNAL RELATIONSHIP SCORE
+======================================= */
+
+function calculateRelationshipScore() {
+
+    const trust =
+        clamp(
+            state.trust
+        );
+
+    const respect =
+        clamp(
+            state.respect
+        );
+
+    const irritation =
+        clamp(
+            state.irritation
+        );
+
+
+    const score =
+
+        trust * 0.50 +
+
+        respect * 0.35 +
+
+        (100 - irritation) *
+        0.15;
+
+
+    return clamp(
+        score
+    );
+
+}
+
+
+/* =======================================
+   INTERNAL LEVEL RESOLUTION
+======================================= */
+
+function getRelationshipLevelRaw(
+    score
+) {
+
+    const value =
+        safeNumber(
+            score,
+            0
+        );
+
+
+    if (
+        value < 20
+    ) {
+
+        return "hostile";
+
+    }
+
+
+    if (
+        value < 40
+    ) {
+
+        return "cold";
+
+    }
+
+
+    if (
+        value < 60
+    ) {
+
+        return "neutral";
+
+    }
+
+
+    if (
+        value < 75
+    ) {
+
+        return "friendly";
+
+    }
+
+
+    if (
+        value < 90
+    ) {
+
+        return "trusted";
+
+    }
+
+
+    return "close";
+
+}
+
+
+/* =======================================
+   INTERNAL STATUS BUILDER
+   ------------------------------------------------
+   IMPORTANT:
+
+   This function NEVER calls initialization.
+   It is safe to use from init().
+======================================= */
+
+function buildRelationshipStatus() {
+
+    const score =
+        Math.round(
+            calculateRelationshipScore()
+        );
+
+
+    return {
+
+        trust:
+            Math.round(
+                state.trust
+            ),
+
+        respect:
+            Math.round(
+                state.respect
+            ),
+
+        irritation:
+            Math.round(
+                state.irritation
+            ),
+
+        score,
+
+        level:
+            getRelationshipLevelRaw(
+                score
+            )
+
+    };
 
 }
 
@@ -373,7 +540,7 @@ export function initMrSmileRelationship() {
 
         syncTrust();
 
-        return getRelationshipStatus();
+        return buildRelationshipStatus();
 
     }
 
@@ -382,9 +549,6 @@ export function initMrSmileRelationship() {
         true;
 
 
-    /*
-     * Trust is owned by mrsmileTrust.js.
-     */
     try {
 
         initTrust();
@@ -399,22 +563,12 @@ export function initMrSmileRelationship() {
     }
 
 
-    /*
-     * Load only local relationship values:
-     * respect / irritation.
-     */
     loadRelationship();
 
 
-    /*
-     * Mirror current Trust.
-     */
     syncTrust();
 
 
-    /*
-     * Listen for actual Trust changes.
-     */
     registerTrustListener();
 
 
@@ -423,17 +577,32 @@ export function initMrSmileRelationship() {
 
 
     console.log(
-        "[MR.SMILE RELATIONSHIP] V4 initialized."
+        "[MR.SMILE RELATIONSHIP] V5 initialized."
     );
 
+
+    /*
+     * IMPORTANT:
+     *
+     * Do NOT call:
+     *
+     * getRelationshipStatus()
+     *
+     * here.
+     *
+     * It calls initialization by design.
+     *
+     * buildRelationshipStatus() is the safe
+     * non-recursive internal status builder.
+     */
 
     trigger(
         "mrsmile:relationshipInitialized",
-        getRelationshipStatus()
+        buildRelationshipStatus()
     );
 
 
-    return getRelationshipStatus();
+    return buildRelationshipStatus();
 
 }
 
@@ -470,13 +639,6 @@ function registerTrustListener() {
                 syncTrust();
 
 
-                /*
-                 * Trust is mirrored into the
-                 * relationship state.
-                 *
-                 * Emit only when the effective
-                 * relationship state actually changed.
-                 */
                 emitRelationshipChanged(
                     previous,
                     data?.reason ||
@@ -506,14 +668,10 @@ function syncTrust() {
 
     try {
 
-        const nextTrust =
+        state.trust =
             clamp(
                 getTrust()
             );
-
-
-        state.trust =
-            nextTrust;
 
 
         return state.trust;
@@ -545,7 +703,9 @@ export function changeRespect(
 
 
     const value =
-        Number(amount);
+        Number(
+            amount
+        );
 
 
     if (
@@ -607,7 +767,8 @@ export function changeRespect(
 
     emitRelationshipChanged(
         previous,
-        reason || "RESPECT_CHANGED"
+        reason ||
+        "RESPECT_CHANGED"
     );
 
 
@@ -653,7 +814,9 @@ export function changeIrritation(
 
 
     const value =
-        Number(amount);
+        Number(
+            amount
+        );
 
 
     if (
@@ -715,7 +878,8 @@ export function changeIrritation(
 
     emitRelationshipChanged(
         previous,
-        reason || "IRRITATION_CHANGED"
+        reason ||
+        "IRRITATION_CHANGED"
     );
 
 
@@ -771,37 +935,37 @@ export function changeRelationship(
     }
 
 
-    const respectAmount =
+    const requestedRespect =
         Number(
             changes.respect
         );
 
 
-    const irritationAmount =
+    const requestedIrritation =
         Number(
             changes.irritation
         );
 
 
-    const validRespect =
+    const respectAmount =
         Number.isFinite(
-            respectAmount
+            requestedRespect
         )
-            ? respectAmount
+            ? requestedRespect
             : 0;
 
 
-    const validIrritation =
+    const irritationAmount =
         Number.isFinite(
-            irritationAmount
+            requestedIrritation
         )
-            ? irritationAmount
+            ? requestedIrritation
             : 0;
 
 
     if (
-        validRespect === 0 &&
-        validIrritation === 0
+        respectAmount === 0 &&
+        irritationAmount === 0
     ) {
 
         return false;
@@ -816,14 +980,14 @@ export function changeRelationship(
     const nextRespect =
         clamp(
             state.respect +
-            validRespect
+            respectAmount
         );
 
 
     const nextIrritation =
         clamp(
             state.irritation +
-            validIrritation
+            irritationAmount
         );
 
 
@@ -879,18 +1043,17 @@ export function changeRelationship(
 
 
     /*
-     * ONE relationshipChanged
+     * ONE high-level relationship change.
      */
     emitRelationshipChanged(
         previous,
-        reason || "RELATIONSHIP_CHANGED"
+        reason ||
+        "RELATIONSHIP_CHANGED"
     );
 
 
     /*
-     * Individual component events remain available,
-     * but are emitted exactly once each and only when
-     * that component actually changed.
+     * Individual component events.
      */
 
     if (
@@ -911,7 +1074,7 @@ export function changeRelationship(
                     actualChanges.respect,
 
                 requestedAmount:
-                    validRespect,
+                    respectAmount,
 
                 reason:
                     reason || ""
@@ -940,7 +1103,7 @@ export function changeRelationship(
                     actualChanges.irritation,
 
                 requestedAmount:
-                    validIrritation,
+                    irritationAmount,
 
                 reason:
                     reason || ""
@@ -952,8 +1115,9 @@ export function changeRelationship(
 
 
     /*
-     * One high-level combined action event.
+     * ONE combined action event.
      */
+
     trigger(
         "mrsmile:relationshipAction",
         {
@@ -965,10 +1129,10 @@ export function changeRelationship(
             requestedChanges: {
 
                 respect:
-                    validRespect,
+                    respectAmount,
 
                 irritation:
-                    validIrritation
+                    irritationAmount
 
             },
 
@@ -976,7 +1140,7 @@ export function changeRelationship(
                 reason || "",
 
             status:
-                getRelationshipStatus()
+                buildRelationshipStatus()
 
         }
     );
@@ -998,7 +1162,9 @@ export function rewardOperator(
 
     const value =
         Math.abs(
-            Number(amount)
+            Number(
+                amount
+            )
         );
 
 
@@ -1028,7 +1194,8 @@ export function rewardOperator(
 
         },
 
-        reason || "REWARD_OPERATOR"
+        reason ||
+        "REWARD_OPERATOR"
 
     );
 
@@ -1046,7 +1213,9 @@ export function punishOperator(
 
     const value =
         Math.abs(
-            Number(amount)
+            Number(
+                amount
+            )
         );
 
 
@@ -1076,55 +1245,9 @@ export function punishOperator(
 
         },
 
-        reason || "PUNISH_OPERATOR"
+        reason ||
+        "PUNISH_OPERATOR"
 
-    );
-
-}
-
-
-/* =======================================
-   RELATIONSHIP SCORE
-======================================= */
-
-function calculateRelationshipScore() {
-
-    const trust =
-        clamp(
-            state.trust
-        );
-
-
-    const respect =
-        clamp(
-            state.respect
-        );
-
-
-    const irritation =
-        clamp(
-            state.irritation
-        );
-
-
-    /*
-     * Trust = 50%
-     * Respect = 35%
-     * Irritation = -15%
-     */
-
-    const score =
-
-        trust * 0.50 +
-
-        respect * 0.35 +
-
-        (100 - irritation) *
-        0.15;
-
-
-    return clamp(
-        score
     );
 
 }
@@ -1139,56 +1262,9 @@ export function getRelationshipLevel() {
     initMrSmileRelationship();
 
 
-    const score =
-        calculateRelationshipScore();
-
-
-    if (
-        score < 20
-    ) {
-
-        return "hostile";
-
-    }
-
-
-    if (
-        score < 40
-    ) {
-
-        return "cold";
-
-    }
-
-
-    if (
-        score < 60
-    ) {
-
-        return "neutral";
-
-    }
-
-
-    if (
-        score < 75
-    ) {
-
-        return "friendly";
-
-    }
-
-
-    if (
-        score < 90
-    ) {
-
-        return "trusted";
-
-    }
-
-
-    return "close";
+    return getRelationshipLevelRaw(
+        calculateRelationshipScore()
+    );
 
 }
 
@@ -1210,7 +1286,12 @@ export function getRelationshipScore() {
 
 
 /* =======================================
-   STATUS
+   PUBLIC STATUS
+   ------------------------------------------------
+   THIS is where the recursion was removed.
+
+   It initializes once, then builds status
+   directly without calling itself through init().
 ======================================= */
 
 export function getRelationshipStatus() {
@@ -1218,98 +1299,7 @@ export function getRelationshipStatus() {
     initMrSmileRelationship();
 
 
-    const score =
-        Math.round(
-            calculateRelationshipScore()
-        );
-
-
-    const level =
-        getRelationshipLevelRaw(
-            score
-        );
-
-
-    return {
-
-        trust:
-            Math.round(
-                state.trust
-            ),
-
-        respect:
-            Math.round(
-                state.respect
-            ),
-
-        irritation:
-            Math.round(
-                state.irritation
-            ),
-
-        score,
-
-        level
-
-    };
-
-}
-
-
-/*
- * Internal level calculation that does not
- * call initialization again.
- */
-function getRelationshipLevelRaw(
-    score
-) {
-
-    if (
-        score < 20
-    ) {
-
-        return "hostile";
-
-    }
-
-
-    if (
-        score < 40
-    ) {
-
-        return "cold";
-
-    }
-
-
-    if (
-        score < 60
-    ) {
-
-        return "neutral";
-
-    }
-
-
-    if (
-        score < 75
-    ) {
-
-        return "friendly";
-
-    }
-
-
-    if (
-        score < 90
-    ) {
-
-        return "trusted";
-
-    }
-
-
-    return "close";
+    return buildRelationshipStatus();
 
 }
 
@@ -1339,9 +1329,7 @@ export function isRelationshipAtLeast(
 
     const current =
         getRelationshipLevelRaw(
-            Math.round(
-                calculateRelationshipScore()
-            )
+            calculateRelationshipScore()
         );
 
 
@@ -1418,9 +1406,7 @@ export function shouldHelpOperator() {
 
     const level =
         getRelationshipLevelRaw(
-            Math.round(
-                calculateRelationshipScore()
-            )
+            calculateRelationshipScore()
         );
 
 
@@ -1447,9 +1433,7 @@ export function shouldRefuseOperator() {
 
     const level =
         getRelationshipLevelRaw(
-            Math.round(
-                calculateRelationshipScore()
-            )
+            calculateRelationshipScore()
         );
 
 
@@ -1473,9 +1457,7 @@ export function shouldRemainNeutral() {
 
     return (
         getRelationshipLevelRaw(
-            Math.round(
-                calculateRelationshipScore()
-            )
+            calculateRelationshipScore()
         ) ===
         "neutral"
     );
@@ -1497,8 +1479,11 @@ export function resetMrSmileRelationship() {
 
 
     const hadChanges =
+
         previous.trust !== 0 ||
+
         previous.respect !== 50 ||
+
         previous.irritation !== 0;
 
 
@@ -1547,7 +1532,7 @@ export function resetMrSmileRelationship() {
     }
 
 
-    return getRelationshipStatus();
+    return buildRelationshipStatus();
 
 }
 
@@ -1561,7 +1546,7 @@ function saveRelationship() {
     const data = {
 
         version:
-            4,
+            5,
 
         respect:
             clamp(
@@ -1577,10 +1562,13 @@ function saveRelationship() {
 
 
     return writeStorage(
+
         STORAGE_KEY,
+
         JSON.stringify(
             data
         )
+
     );
 
 }
@@ -1598,9 +1586,6 @@ function loadRelationship() {
         );
 
 
-    /*
-     * Legacy fallback.
-     */
     if (!raw) {
 
         raw =
@@ -1612,7 +1597,9 @@ function loadRelationship() {
 
 
     if (!raw) {
+
         return;
+
     }
 
 
@@ -1684,7 +1671,9 @@ function setDebugRespect(
 
 
     const numericValue =
-        Number(value);
+        Number(
+            value
+        );
 
 
     if (
@@ -1698,7 +1687,7 @@ function setDebugRespect(
             value
         );
 
-        return getRelationshipStatus();
+        return buildRelationshipStatus();
 
     }
 
@@ -1718,7 +1707,7 @@ function setDebugRespect(
         state.respect
     ) {
 
-        return getRelationshipStatus();
+        return buildRelationshipStatus();
 
     }
 
@@ -1769,7 +1758,7 @@ function setDebugRespect(
     );
 
 
-    return getRelationshipStatus();
+    return buildRelationshipStatus();
 
 }
 
@@ -1782,7 +1771,9 @@ function setDebugIrritation(
 
 
     const numericValue =
-        Number(value);
+        Number(
+            value
+        );
 
 
     if (
@@ -1796,7 +1787,7 @@ function setDebugIrritation(
             value
         );
 
-        return getRelationshipStatus();
+        return buildRelationshipStatus();
 
     }
 
@@ -1816,7 +1807,7 @@ function setDebugIrritation(
         state.irritation
     ) {
 
-        return getRelationshipStatus();
+        return buildRelationshipStatus();
 
     }
 
@@ -1867,7 +1858,7 @@ function setDebugIrritation(
     );
 
 
-    return getRelationshipStatus();
+    return buildRelationshipStatus();
 
 }
 
@@ -1914,7 +1905,8 @@ if (
 
         changeRespect(
             amount,
-            reason = "DEBUG_CHANGE"
+            reason =
+                "DEBUG_CHANGE"
         ) {
 
             return changeRespect(
@@ -1927,7 +1919,8 @@ if (
 
         changeIrritation(
             amount,
-            reason = "DEBUG_CHANGE"
+            reason =
+                "DEBUG_CHANGE"
         ) {
 
             return changeIrritation(
@@ -1940,7 +1933,8 @@ if (
 
         change(
             changes,
-            reason = "DEBUG_CHANGE"
+            reason =
+                "DEBUG_CHANGE"
         ) {
 
             return changeRelationship(
@@ -1953,7 +1947,8 @@ if (
 
         reward(
             amount = 5,
-            reason = "DEBUG_REWARD"
+            reason =
+                "DEBUG_REWARD"
         ) {
 
             return rewardOperator(
@@ -1966,7 +1961,8 @@ if (
 
         punish(
             amount = 5,
-            reason = "DEBUG_PUNISH"
+            reason =
+                "DEBUG_PUNISH"
         ) {
 
             return punishOperator(
@@ -2047,3 +2043,4 @@ export default {
     resetMrSmileRelationship
 
 };
+
