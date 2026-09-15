@@ -911,7 +911,6 @@ async function processOperatorMessage(
 /* ==========================================================
    SERIALIZED OPERATOR QUEUE
 ========================================================== */
-
 function enqueueOperatorMessage(
     text,
     options = {}
@@ -924,26 +923,65 @@ function enqueueOperatorMessage(
     }
 
     /*
+     * Duplicate EVENT protection happens
+     * BEFORE entering the queue.
+     *
+     * This is important because the first task
+     * may take several seconds.
+     */
+
+    if (
+        options.skipDuplicateCheck !== true &&
+        isDuplicateOperatorEvent(input)
+    ) {
+        console.warn(
+            "[MR.SMILE CHAT] Duplicate operator event ignored before queue."
+        );
+
+        return Promise.resolve(null);
+    }
+
+    if (
+        options.skipDuplicateCheck !== true
+    ) {
+        markIncomingOperatorEvent(
+            input
+        );
+    }
+
+    /*
      * Every operator event enters the same queue.
      *
-     * This prevents two event handlers from calling
-     * the Core simultaneously.
+     * This prevents two legitimate messages
+     * from reaching the Core simultaneously.
      */
+
     const task =
         STATE.operatorQueue.then(
             () =>
                 processOperatorMessage(
                     input,
-                    options
+                    {
+                        ...options,
+
+                        /*
+                         * Duplicate check has already
+                         * happened at queue entry.
+                         */
+                        skipDuplicateCheck:
+                            true
+                    }
                 )
         );
 
     /*
      * Keep the queue alive even if one task throws.
      */
+
     STATE.operatorQueue =
         task.catch(
             error => {
+
                 console.error(
                     "[MR.SMILE CHAT] Operator queue error:",
                     error
@@ -955,7 +993,6 @@ function enqueueOperatorMessage(
 
     return task;
 }
-
 
 /* ==========================================================
    PUBLIC OPERATOR API
