@@ -1860,11 +1860,10 @@ function registerEvents() {
     ------------------------------------------------------ */
 
     try {
-
         on(
-            "mrsmile:mirrorArchiveAccess",
-            handleMirrorArchiveAccess
-        );
+            "mrsmile:archiveAccessRequested",
+           handleMirrorArchiveAccess
+         );
 
         STATE.archiveHandlerRegistered =
             true;
