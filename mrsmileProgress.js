@@ -1,4 +1,3 @@
-
 /* ==========================================================
    MR.SMILE PROGRESS — V4
    OMEGA / MIRROR-INT
@@ -22,34 +21,8 @@
    - manage chat rendering
    - own MR.SMILE personality
 
-   ARCHITECTURE:
-
-       operator input
-            ↓
-       chats.js
-            ↓
-       processMrSmileInput()
-            ↓
-       progression state
-            ↓
-       progress events
-            ↓
-       appropriate consumer
-
-   MR.SMILE dialogue remains separate:
-
-       operator input
-            ↓
-       mrsmileChat.js
-            ↓
-       mrsmileDialogue.js
-            ↓
-       mrsmileCore.js
-
    IMPORTANT:
-
    Progression is EVENT + STATE only.
-
 ========================================================== */
 
 
@@ -82,7 +55,6 @@ const LEGACY_STORAGE_KEYS = [
 
 const FIRST_CONTACT_KEY =
     "mrsmile_first_contact";
-
 
 const PENDING_KEYS = {
 
@@ -262,7 +234,6 @@ const keywordRules = [
             "игр",
             "игра",
             "игру",
-            "игрой",
             "игрой",
 
             "грай",
@@ -497,7 +468,6 @@ function eventRecentlySent(
             runtime[bucket]?.[type]
         ) || 0;
 
-
     return (
         now() -
         timestamp <
@@ -521,9 +491,66 @@ function markEventSent(
 
     }
 
-
     runtime[bucket][type] =
         now();
+
+}
+
+
+/* ==========================================================
+   INTERNAL STATE BUILDER
+   IMPORTANT:
+   NEVER CALL initMrSmileProgress() HERE.
+========================================================== */
+
+function buildProgressState() {
+
+    return {
+
+        initialized:
+            state.initialized,
+
+        firstContact:
+            hasFirstContact(),
+
+        trust:
+            Number(
+                getTrust()
+            ) || 0,
+
+        keywords:
+            [
+                ...state.keywords
+            ],
+
+        flags: {
+
+            ...state.flags
+
+        },
+
+        requests: {
+
+            ...state.requests
+
+        },
+
+        archive:
+            getProgressStatus(
+                "archive"
+            ),
+
+        game:
+            getProgressStatus(
+                "game"
+            ),
+
+        truth:
+            getProgressStatus(
+                "truth"
+            )
+
+    };
 
 }
 
@@ -534,13 +561,20 @@ function markEventSent(
 
 export function initMrSmileProgress() {
 
+    /*
+     * IMPORTANT:
+     *
+     * Do NOT call getMrSmileProgressState()
+     * here because that function calls initMrSmileProgress().
+     */
+
     if (
         state.initialized
     ) {
 
         syncPendingState();
 
-        return getMrSmileProgressState();
+        return buildProgressState();
 
     }
 
@@ -563,13 +597,29 @@ export function initMrSmileProgress() {
     }
 
 
-    load();
+    try {
 
-    register();
+        load();
 
-    syncPendingState();
+        register();
 
-    evaluateProgress();
+        syncPendingState();
+
+        evaluateProgress();
+
+    } catch (error) {
+
+        /*
+         * Do not allow one Progress error
+         * to permanently break the entire system.
+         */
+
+        console.error(
+            "[MR.SMILE PROGRESS] Initialization step failed:",
+            error
+        );
+
+    }
 
 
     console.log(
@@ -577,7 +627,7 @@ export function initMrSmileProgress() {
     );
 
 
-    return getMrSmileProgressState();
+    return buildProgressState();
 
 }
 
@@ -793,7 +843,6 @@ function emitKeywordRecognized(
 export function evaluateProgress() {
 
     initTrustSafe();
-
 
     syncPendingState();
 
@@ -1273,10 +1322,6 @@ function grantAccess(
         now();
 
 
-    /*
-     * One unlock event.
-     */
-
     if (
         !eventRecentlySent(
             "lastUnlockEvent",
@@ -1380,11 +1425,6 @@ export function denyAccess(
     const timestamp =
         now();
 
-
-    /*
-     * Only announce a denial when something
-     * was actually pending.
-     */
 
     if (
         wasPending &&
@@ -1715,7 +1755,10 @@ export function getProgressStatus(
                 false,
 
             firstContact:
-                hasFirstContact()
+                hasFirstContact(),
+
+            ready:
+                false
 
         };
 
@@ -1813,57 +1856,20 @@ export function getProgressRequirement(
    GET ALL PROGRESS
 ========================================================== */
 
+/*
+ * IMPORTANT:
+ *
+ * This function initializes once and then only
+ * builds a state snapshot.
+ *
+ * It NEVER calls itself indirectly.
+ */
+
 export function getMrSmileProgressState() {
 
     initMrSmileProgress();
 
-
-    return {
-
-        initialized:
-            state.initialized,
-
-        firstContact:
-            hasFirstContact(),
-
-        trust:
-            Number(
-                getTrust()
-            ) || 0,
-
-        keywords:
-            [
-                ...state.keywords
-            ],
-
-        flags: {
-
-            ...state.flags
-
-        },
-
-        requests: {
-
-            ...state.requests
-
-        },
-
-        archive:
-            getProgressStatus(
-                "archive"
-            ),
-
-        game:
-            getProgressStatus(
-                "game"
-            ),
-
-        truth:
-            getProgressStatus(
-                "truth"
-            )
-
-    };
+    return buildProgressState();
 
 }
 
@@ -2458,7 +2464,15 @@ export function resetMrSmileProgress(
     );
 
 
-    return getMrSmileProgressState();
+    /*
+     * Do not call initMrSmileProgress()
+     * recursively through the getter.
+     *
+     * Initialization already exists, so the
+     * internal state builder is sufficient.
+     */
+
+    return buildProgressState();
 
 }
 
@@ -2610,4 +2624,3 @@ export default {
     resetMrSmileProgress
 
 };
-
