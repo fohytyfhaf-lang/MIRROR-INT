@@ -15,6 +15,10 @@ import {
     initOperatorActivityBridge
 } from "./operatorActivityBridge.js";
 
+import {
+    initOmegaCodex
+} from "./omegaCodeX.js";
+
 
 let activityInitialized = false;
 
@@ -375,6 +379,7 @@ function initActivity() {
         true;
 
        initOperatorActivityBridge();
+       initOmegaCodex();
 
 
     on(
