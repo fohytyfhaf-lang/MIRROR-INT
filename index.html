@@ -267,12 +267,188 @@
             
 </button>
 
+        <button onclick="openApp('operatorProfile')">
+            ◉ <span>Operator Profile</span>
+        </button>
+
     </aside>
 
     <!-- Workspace -->
 
     <section id="workspace">
-     
+
+        
+     <!-- ==================================
+     OPERATOR PROFILE
+=================================== -->
+
+<div id="operatorProfileWindow" class="window hidden">
+
+    <div class="windowHeader">
+
+        <div class="windowTitle">
+            <span class="windowIcon">◉</span>
+            <span>OPERATOR PROFILE</span>
+        </div>
+
+        <div class="windowControls">
+            <button onclick="minimizeWindow('operatorProfile')" title="Minimize">─</button>
+            <button onclick="maximizeWindow('operatorProfile')" title="Maximize">□</button>
+            <button onclick="closeApp('operatorProfile')" title="Close">✕</button>
+        </div>
+
+    </div>
+
+    <div class="windowContent">
+
+        <div id="operatorProfile">
+
+            <section class="operatorSection">
+
+                <div class="operatorSectionTitle">
+                    OPERATOR IDENTIFICATION
+                </div>
+
+                <div class="operatorGrid">
+
+                    <div class="operatorField">
+                        <span>OPERATOR ID</span>
+                        <strong id="operatorId">—</strong>
+                    </div>
+
+                    <div class="operatorField">
+                        <span>STATUS</span>
+                        <strong id="operatorStatus">—</strong>
+                    </div>
+
+                    <div class="operatorField">
+                        <span>DESIGNATION</span>
+                        <strong id="operatorRole">—</strong>
+                    </div>
+
+                    <div class="operatorField">
+                        <span>CLEARANCE</span>
+                        <strong id="operatorClearance">—</strong>
+                    </div>
+
+                    <div class="operatorField operatorWide">
+                        <span>DEPARTMENT</span>
+                        <strong id="operatorDepartment">—</strong>
+                    </div>
+
+                    <div class="operatorField operatorWide">
+                        <span>ACCOUNT TYPE</span>
+                        <strong id="operatorAccountType">—</strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <section class="operatorSection">
+
+                <div class="operatorSectionTitle">
+                    ACCOUNT HISTORY
+                </div>
+
+                <div class="operatorGrid">
+
+                    <div class="operatorField">
+                        <span>REGISTERED</span>
+                        <strong id="operatorRegistered">—</strong>
+                    </div>
+
+                    <div class="operatorField">
+                        <span>LAST LOGIN</span>
+                        <strong id="operatorLastLogin">—</strong>
+                    </div>
+
+                    <div class="operatorField">
+                        <span>SESSIONS</span>
+                        <strong id="operatorSessions">0</strong>
+                    </div>
+
+                    <div class="operatorField">
+                        <span>TOTAL ACTIONS</span>
+                        <strong id="operatorActions">0</strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <section class="operatorSection">
+
+                <div class="operatorSectionTitle">
+                    ACTIVITY STATISTICS
+                </div>
+
+                <div class="operatorStats">
+
+                    <div>
+                        <span>FILES OPENED</span>
+                        <strong id="statFiles">0</strong>
+                    </div>
+
+                    <div>
+                        <span>RESTRICTED FILES</span>
+                        <strong id="statRestricted">0</strong>
+                    </div>
+
+                    <div>
+                        <span>WINDOWS OPENED</span>
+                        <strong id="statWindows">0</strong>
+                    </div>
+
+                    <div>
+                        <span>CONSOLE COMMANDS</span>
+                        <strong id="statConsole">0</strong>
+                    </div>
+
+                    <div>
+                        <span>CAMERA VISITS</span>
+                        <strong id="statCamera">0</strong>
+                    </div>
+
+                    <div>
+                        <span>CHAT MESSAGES</span>
+                        <strong id="statChat">0</strong>
+                    </div>
+
+                    <div>
+                        <span>MR.SMILE INTERACTIONS</span>
+                        <strong id="statSmile">0</strong>
+                    </div>
+
+                    <div>
+                        <span>DENIED ACTIONS</span>
+                        <strong id="statDenied">0</strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </div>
+
+    <div class="windowStatus">
+
+        <span>
+            OPERATOR STATUS:
+            <strong id="operatorFooterStatus">—</strong>
+        </span>
+
+        <span>
+            <strong id="operatorFooterId">—</strong>
+        </span>
+
+    </div>
+
+</div>
 
         <!-- ==================================
         SETTINGS WINDOW
