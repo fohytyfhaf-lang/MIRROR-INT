@@ -6,6 +6,10 @@ import {
     getCurrentOperator
 } from "./login.js";
 
+import {
+    on
+} from "./eventManager.js";
+
 
 /* ==========================================================
    FORMATTERS
@@ -31,7 +35,8 @@ function formatDate(value) {
 
 function setText(id, value) {
 
-    const element = document.getElementById(id);
+    const element =
+        document.getElementById(id);
 
     if (!element) return;
 
@@ -45,12 +50,68 @@ function setText(id, value) {
 
 
 /* ==========================================================
+   UPDATE TOPBAR OPERATOR
+========================================================== */
+
+function updateOperatorIdentity() {
+
+    const nameElement =
+        document.getElementById(
+            "topbarOperatorName"
+        );
+
+    const idElement =
+        document.getElementById(
+            "topbarOperatorId"
+        );
+
+    if (
+        !nameElement ||
+        !idElement
+    ) {
+        return;
+    }
+
+
+    const operator =
+        getCurrentOperator();
+
+
+    if (!operator) {
+
+        nameElement.textContent =
+            "—";
+
+        idElement.textContent =
+            "NO ACTIVE OPERATOR";
+
+        return;
+
+    }
+
+
+    nameElement.textContent =
+        operator.displayName ||
+        operator.username ||
+        "UNKNOWN";
+
+
+    idElement.textContent =
+        operator.operatorId ||
+        `SYSTEM ACCOUNT / ${operator.role || "UNKNOWN"}`;
+
+}
+
+
+/* ==========================================================
    LOAD PROFILE
 ========================================================== */
 
 export function loadOperatorProfile() {
 
-    const operator = getCurrentOperator();
+    const operator =
+        getCurrentOperator();
+
 
     if (!operator) {
 
@@ -61,12 +122,27 @@ export function loadOperatorProfile() {
         return;
     }
 
-    setText("operatorId", operator.operatorId);
-    setText("operatorStatus", operator.status);
-    setText("operatorRole", operator.role);
-    setText("operatorClearance",
+
+    setText(
+        "operatorId",
+        operator.operatorId
+    );
+
+    setText(
+        "operatorStatus",
+        operator.status
+    );
+
+    setText(
+        "operatorRole",
+        operator.role
+    );
+
+    setText(
+        "operatorClearance",
         `LEVEL ${operator.clearance}`
     );
+
 
     setText(
         "operatorDepartment",
@@ -78,15 +154,21 @@ export function loadOperatorProfile() {
         operator.accountType
     );
 
+
     setText(
         "operatorRegistered",
-        formatDate(operator.registeredAt)
+        formatDate(
+            operator.registeredAt
+        )
     );
 
     setText(
         "operatorLastLogin",
-        formatDate(operator.lastLogin)
+        formatDate(
+            operator.lastLogin
+        )
     );
+
 
     setText(
         "operatorSessions",
@@ -99,7 +181,9 @@ export function loadOperatorProfile() {
     );
 
 
-    const stats = operator.statistics || {};
+    const stats =
+        operator.statistics || {};
+
 
     setText(
         "statFiles",
@@ -151,6 +235,11 @@ export function loadOperatorProfile() {
         "operatorFooterId",
         operator.operatorId
     );
+
+
+    /* Update topbar too */
+    updateOperatorIdentity();
+
 }
 
 
@@ -160,3 +249,31 @@ export function loadOperatorProfile() {
 
 window.loadOperatorProfile =
     loadOperatorProfile;
+
+
+/* ==========================================================
+   LOGIN EVENT
+========================================================== */
+
+on(
+    "user.login",
+    () => {
+
+        updateOperatorIdentity();
+
+    }
+);
+
+
+/* ==========================================================
+   INITIAL LOAD
+========================================================== */
+
+window.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        updateOperatorIdentity();
+
+    }
+);
