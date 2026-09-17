@@ -84,7 +84,7 @@ const CONFIG = {
      * 90 seconds.
      */
     minimumSessionTime:
-        90000,
+         5000,
 
 
     /*
