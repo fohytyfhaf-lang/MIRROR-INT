@@ -331,10 +331,41 @@ function storageSet(key, value) {
 ========================================================== */
 
 function chatAvailable() {
-    return (
-        typeof window !== "undefined" &&
-        typeof window.addChatMessage === "function"
-    );
+
+    if (
+        typeof window === "undefined"
+    ) {
+        return false;
+    }
+
+    if (
+        typeof window.addChatMessage !==
+        "function"
+    ) {
+        return false;
+    }
+
+    if (
+        typeof window.getChat !==
+        "function"
+    ) {
+        return false;
+    }
+
+    try {
+
+        const chat =
+            window.getChat(
+                "mrsmile"
+            );
+
+        return Boolean(chat);
+
+    } catch {
+
+        return false;
+
+    }
 }
 
 
@@ -1092,13 +1123,7 @@ async function playFirstContactSequence() {
                     return false;
                 }
 
-                STATE.firstContactPlayed =
-                    true;
-
-                storageSet(
-                    "mrsmile_first_contact",
-                    "1"
-                );
+                
 
                 pauseIdleMessages();
 
@@ -1139,6 +1164,14 @@ async function playFirstContactSequence() {
                 addMrSmileChatMessage(
                     "Please, take your time."
                 );
+
+               STATE.firstContactPlayed =
+                   true;
+
+               storageSet(
+                  "mrsmile_first_contact",
+                  "1"
+               );
 
                 /*
                  * After First Contact the normal idle scheduler
@@ -2027,6 +2060,40 @@ function initializeChannel() {
     return true;
 }
 
+async function waitForChannelReady() {
+
+    for (
+        let attempt = 0;
+        attempt < 60;
+        attempt++
+    ) {
+
+        if (
+            chatAvailable()
+        ) {
+
+            STATE.chatBridgeReady =
+                true;
+
+            STATE.channelInitializationPending =
+                false;
+
+            STATE.channelInitialized =
+                true;
+
+            return true;
+        }
+
+        await sleep(100);
+    }
+
+    console.warn(
+        "[MR.SMILE CHAT] Channel was not ready for First Contact."
+    );
+
+    return false;
+}
+
 
 /* ==========================================================
    FIRST CONTACT AUTO-START
@@ -2124,23 +2191,65 @@ export function initMrSmileChat(
             startIdleMessages();
         }
 
-    } else if (
-        options.autoFirstContact !== false &&
-        CONFIG.firstContactEnabled
-    ) {
+   } else if (
+    options.autoFirstContact !== false &&
+    CONFIG.firstContactEnabled
+) {
 
-        /*
-         * Exactly one startup path can start First Contact.
-         * Event listener is still safe because the sequence
-         * is controlled by firstContactPromise.
-         */
+    /*
+     * Wait until chats.js has created the real
+     * MR.SMILE chat before deciding whether
+     * First Contact should start.
+     *
+     * This prevents:
+     *
+     * mrsmileChat
+     *     ↓
+     * First Contact
+     *
+     * happening before:
+     *
+     * chats.js
+     *     ↓
+     * chat restoration
+     */
 
-        if (
-            shouldStartFirstContact()
-        ) {
+    waitForChannelReady().then(
+        ready => {
+
+            if (!ready) {
+                return;
+            }
+
+            /*
+             * Re-check persistence AFTER the chat
+             * system is actually ready.
+             */
+
+            if (
+                !shouldStartFirstContact()
+            ) {
+
+                STATE.firstContactPlayed =
+                    true;
+
+                if (
+                    options.startIdle !== false &&
+                    CONFIG.idleEnabled
+                ) {
+
+                    startIdleMessages();
+                }
+
+                return;
+            }
+
             playFirstContactMessage();
+
         }
-    }
+    );
+
+}
 
 
     console.log(
