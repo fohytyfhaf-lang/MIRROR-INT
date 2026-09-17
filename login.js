@@ -2898,16 +2898,7 @@ function registerActivityListeners() {
        MR.SMILE interaction
     */
 
-    registerActivityEvent(
-        "mrsmile:decisionMade",
-        "mrsmile.interaction"
-    );
-
-
-    registerActivityEvent(
-        "mrsmile:actionRequested",
-        "mrsmile.interaction"
-    );
+   
 
 
     registerActivityEvent(
