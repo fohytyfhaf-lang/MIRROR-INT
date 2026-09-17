@@ -16,60 +16,18 @@
    - action execution
    - chat rendering
    - visual generation
+   - discovery conditions
+   - discovery traces
 
-   RESPONSIBILITY MAP
-   ----------------------------------------------------------
-
-   mrsmileCore.js
-       → understanding / personality / responses
-
-   mrsmileChat.js
-       → chat bridge / output / First Contact chat / idle
-
-   mrsmileMemory.js
-       → persistent memory
-
-   mrsmileRelationship.js
-       → trust / respect / irritation / relationship
-
-   mrsmileProgress.js
-       → unlock requirements / access requests
-
-   mrsmileContext.js
-       → OMEGA context collection
-
-   mrsmileBehavior.js
-       → behavioral decisions
-
-   mrsmileActions.js
-       → executable actions
-
-   mrsmileAppearance.js
-       → visual manifestation
-
-   mrsmileIntrusionUI.js
-       → UI intrusion layer
-
+   DISCOVERY IS HANDLED BY:
+   mrsmileConditions.js
+       ↓
+   mrsmileDiscovery.js
+       ↓
+   triggerMrSmileFirstContact()
+       ↓
    mrsmileEvents.js
-       → EVENT ORCHESTRATION ONLY
 
-
-   MAIN PIPELINE
-   ----------------------------------------------------------
-
-   OMEGA EVENT
-        ↓
-   mrsmileEvents.js
-        ↓
-   state synchronization
-        ↓
-   dependent systems
-        ↓
-   chat / progress / context / behavior / actions
-
-
-   IMPORTANT
-   ----------------------------------------------------------
    There must be only ONE official First Contact path.
 ========================================================== */
 
@@ -84,50 +42,41 @@ import {
     resumeIdleMessages
 } from "./mrsmileChat.js";
 
-
 import {
     getTrust,
     loadTrust,
     addTrust
 } from "./mrsmileTrust.js";
 
-
 import {
     revealMrSmileChat
 } from "./chats.js";
-
 
 import {
     initMrSmileProgress,
     evaluateProgress
 } from "./mrsmileProgress.js";
 
-
 import {
     showMrSmileFirstContactFace
 } from "./mrsmileAppearance.js";
-
 
 import {
     on,
     trigger
 } from "./eventManager.js";
 
-
 import {
     initMrSmileIntrusionUI
 } from "./mrsmileIntrusionUI.js";
-
 
 import {
     initMrSmileBehavior
 } from "./mrsmileBehavior.js";
 
-
 import {
     initMrSmileActions
 } from "./mrsmileActions.js";
-
 
 import {
     initMrSmileContext
@@ -189,32 +138,7 @@ const STATE = {
         null,
 
     lastSystemEvent:
-        null,
-
-       /* ======================================================
-       FIRST CONTACT DISCOVERY
-    ====================================================== */
-
-    discoveryArmed:
-        false,
-
-    discoveryActionCount:
-        0,
-
-    discoveryFileCount:
-        0,
-
-    discoveryConsoleCount:
-        0,
-
-    discoveryCameraCount:
-        0,
-
-    discoveryWindowCount:
-        0,
-
-    discoveryTriggered:
-        false
+        null
 
 };
 
@@ -462,7 +386,8 @@ async function safeAsyncCall(
 
 function nextEventId() {
 
-    STATE.currentEventId += 1;
+    STATE.currentEventId +=
+        1;
 
     STATE.lastEventTime =
         Date.now();
@@ -484,7 +409,8 @@ function isDuplicateEvent(
         Date.now();
 
     const previous =
-        STATE[`_event_${key}`] || 0;
+        STATE[`_event_${key}`] ||
+        0;
 
     if (
         now - previous <
@@ -529,7 +455,8 @@ function synchronizeMasterState(
             return;
         }
 
-        let current = null;
+        let current =
+            null;
 
         if (
             typeof api.get ===
@@ -598,7 +525,8 @@ function synchronizePresence(
             return;
         }
 
-        let current = null;
+        let current =
+            null;
 
         if (
             api.status &&
@@ -826,6 +754,12 @@ export function resetMrSmileFirstContact() {
     STATE.currentEventId =
         0;
 
+    STATE.firstContactStartTime =
+        0;
+
+    STATE.lastEventTime =
+        0;
+
     STATE.lastOperatorAction =
         null;
 
@@ -868,6 +802,8 @@ export function resetMrSmileFirstContact() {
 
 /* ==========================================================
    OFFICIAL FIRST CONTACT TRIGGER
+   ----------------------------------------------------------
+   THIS IS THE ONLY OFFICIAL ENTRY POINT.
 ========================================================== */
 
 export function triggerMrSmileFirstContact(
@@ -1230,6 +1166,7 @@ async function runFirstContact(
             error
         );
 
+
         trigger(
             "mrsmile:firstContactFailed",
             {
@@ -1244,6 +1181,7 @@ async function runFirstContact(
 
             }
         );
+
 
         return false;
 
@@ -1349,6 +1287,7 @@ async function runHandshake(
             error
         );
 
+
         trigger(
             "mrsmile:handshakeFailed",
             {
@@ -1362,6 +1301,7 @@ async function runHandshake(
 
             }
         );
+
 
         return false;
 
@@ -1495,6 +1435,7 @@ async function runIntegritySequence(
             error
         );
 
+
         trigger(
             "mrsmile:integrityFailed",
             {
@@ -1508,6 +1449,7 @@ async function runIntegritySequence(
 
             }
         );
+
 
         return false;
 
@@ -1609,6 +1551,7 @@ async function runRecovery(
             error
         );
 
+
         trigger(
             "mrsmile:recoveryFailed",
             {
@@ -1622,6 +1565,7 @@ async function runRecovery(
 
             }
         );
+
 
         return false;
 
@@ -1689,122 +1633,14 @@ function normalizeOperatorAction(
 
 
 /* ==========================================================
-   FIRST CONTACT DISCOVERY
-========================================================== */
-
-function checkFirstContactDiscovery() {
-
-    if (
-        isFirstContactCompleted()
-    ) {
-
-        STATE.discoveryTriggered =
-            true;
-
-        return;
-
-    }
-
-
-    if (
-        !STATE.discoveryArmed
-    ) {
-
-        return;
-
-    }
-
-
-    if (
-        STATE.discoveryTriggered ||
-        STATE.firstContactRunning ||
-        STATE.firstContactQueued
-    ) {
-
-        return;
-
-    }
-
-
-    /*
-       Минимум пять действий.
-    */
-
-    if (
-        STATE.discoveryActionCount <
-        5
-    ) {
-
-        return;
-
-    }
-
-
-    /*
-       Нужна реальная работа
-       с системой.
-    */
-
-    const hasExploration =
-        (
-            STATE.discoveryFileCount >=
-            1
-        ) ||
-        (
-            STATE.discoveryWindowCount >=
-            2
-        );
-
-
-    const hasSystemContact =
-        (
-            STATE.discoveryConsoleCount >=
-            1
-        ) ||
-        (
-            STATE.discoveryCameraCount >=
-            1
-        );
-
-
-    if (
-        !hasExploration ||
-        !hasSystemContact
-    ) {
-
-        return;
-
-    }
-
-
-    STATE.discoveryTriggered =
-        true;
-
-
-    console.log(
-        "[MR.SMILE EVENTS] OPERATOR DISCOVERY COMPLETE."
-    );
-
-
-    console.log(
-        "[MR.SMILE EVENTS] FIRST CONTACT WILL BEGIN."
-    );
-
-
-    triggerMrSmileFirstContact({
-
-        source:
-            "operator_discovery",
-
-        type:
-            "first_contact_discovered"
-
-    });
-
-}
-
-/* ==========================================================
    OPERATOR ACTION EVENT
+   ----------------------------------------------------------
+   IMPORTANT:
+   Discovery counters were intentionally removed.
+
+   mrsmileConditions.js is now responsible for
+   determining whether the operator has reached
+   the discovery conditions.
 ========================================================== */
 
 function handleOperatorAction(
@@ -1826,68 +1662,6 @@ function handleOperatorAction(
 
     STATE.lastOperatorAction =
         action;
-
-       /* ======================================================
-       FIRST CONTACT DISCOVERY
-    ====================================================== */
-
-    if (
-        STATE.discoveryArmed &&
-        !STATE.discoveryTriggered
-    ) {
-
-        STATE.discoveryActionCount +=
-            1;
-
-
-        switch (
-            action.action
-        ) {
-
-            case "file_open":
-            case "restricted_file":
-            case "file_read":
-
-                STATE.discoveryFileCount +=
-                    1;
-
-                break;
-
-
-            case "console_command":
-
-                STATE.discoveryConsoleCount +=
-                    1;
-
-                break;
-
-
-            case "camera_open":
-            case "camera_switch":
-            case "camera_close":
-
-                STATE.discoveryCameraCount +=
-                    1;
-
-                break;
-
-
-            case "window_open":
-            case "window_close":
-            case "window_focus":
-            case "window_move":
-
-                STATE.discoveryWindowCount +=
-                    1;
-
-                break;
-
-        }
-
-
-        checkFirstContactDiscovery();
-
-    }
 
 
     trigger(
@@ -1978,41 +1752,19 @@ function handleOperatorFileRead(
 
 /* ==========================================================
    SYS00 ACCEPTED
+   ----------------------------------------------------------
+   SYS_00 no longer arms a discovery counter system.
+
+   It only reports that SYS_00 was accepted.
+
+   Discovery is handled independently by:
+       mrsmileConditions.js
+       mrsmileDiscovery.js
 ========================================================== */
 
 function handleSys00Accepted(
     data = {}
 ) {
-       /*
-       SYS_00 officially starts
-       MR.SMILE observation.
-    */
-
-    STATE.discoveryArmed =
-        true;
-
-    STATE.discoveryActionCount =
-        0;
-
-    STATE.discoveryFileCount =
-        0;
-
-    STATE.discoveryConsoleCount =
-        0;
-
-    STATE.discoveryCameraCount =
-        0;
-
-    STATE.discoveryWindowCount =
-        0;
-
-    STATE.discoveryTriggered =
-        false;
-
-
-    console.log(
-        "[MR.SMILE EVENTS] Discovery mode ARMED."
-    );
 
     const payload = {
 
@@ -2030,28 +1782,11 @@ function handleSys00Accepted(
     };
 
 
-    /*
-       IMPORTANT:
-       Never trigger "mrsmile:sys00Accepted" here.
-
-       This function is already the listener
-       for that event.
-
-       Re-emitting the same event would create
-       infinite recursion.
-    */
-
-
     trigger(
         "mrsmile:sys00AcceptedProcessed",
         payload
     );
 
-
-    /*
-       Notify systems that specifically need
-       the processed state.
-    */
 
     trigger(
         "mrsmile:systemStateChanged",
@@ -2078,6 +1813,7 @@ function handleSys00Accepted(
     );
 
 }
+
 
 /* ==========================================================
    TRUST CHANGE
@@ -2124,7 +1860,8 @@ function handleTrustChanged(
                 safeCall(
                     "get trust",
                     () =>
-                        getTrust()
+                        getTrust(),
+                    0
                 ),
 
             timestamp:
