@@ -736,6 +736,40 @@ function openExplorerItem(path) {
         const data =
             readFile(path);
 
+       reportMrSmileAction({
+
+    type:
+        "file_read",
+
+    target:
+        fileName,
+
+    action:
+        "read",
+
+    reason:
+        "operator_read_internal_file",
+
+    metadata: {
+
+        path,
+
+        name:
+            fileName,
+
+        extension:
+            extension || "txt",
+
+        itemType:
+            "internal_file",
+
+        currentPath:
+            currentExplorerPath
+
+    }
+
+});
+
 
         content.innerHTML = `
 
