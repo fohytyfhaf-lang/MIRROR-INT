@@ -1,0 +1,235 @@
+/* ==========================================================
+   OMEGA OPERATOR PROFILE
+========================================================== */
+
+#operatorProfile {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* ----------------------------------------------------------
+   SECTIONS
+---------------------------------------------------------- */
+
+.operatorSection {
+    margin-bottom: 22px;
+
+    border: 1px solid #20384c;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(18, 32, 46, 0.82),
+            rgba(8, 16, 25, 0.82)
+        );
+
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.015);
+}
+
+.operatorSectionTitle {
+    padding: 10px 14px;
+
+    border-bottom: 1px solid #263f54;
+
+    background:
+        linear-gradient(
+            90deg,
+            #162738,
+            #101b27
+        );
+
+    color: #8fc9e8;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    letter-spacing: 1px;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+}
+
+/* ----------------------------------------------------------
+   IDENTIFICATION / HISTORY GRID
+---------------------------------------------------------- */
+
+.operatorGrid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 1px;
+
+    background: #1c3345;
+}
+
+.operatorField {
+    min-height: 64px;
+
+    padding: 12px 14px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            180deg,
+            #101c28,
+            #0c151f
+        );
+}
+
+.operatorField span {
+    margin-bottom: 6px;
+
+    color: #6e92aa;
+
+    font-size: 10px;
+
+    letter-spacing: 1px;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+}
+
+.operatorField strong {
+    color: #d8f2ff;
+
+    font-size: 14px;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-weight: 500;
+
+    word-break: break-word;
+}
+
+/* ----------------------------------------------------------
+   ACTIVITY STATISTICS
+---------------------------------------------------------- */
+
+.operatorStats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 1px;
+
+    background: #1c3345;
+}
+
+.operatorStats > div {
+    min-height: 72px;
+
+    padding: 12px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            180deg,
+            #101c28,
+            #0b141e
+        );
+}
+
+.operatorStats span {
+    margin-bottom: 7px;
+
+    color: #66899f;
+
+    font-size: 9px;
+
+    letter-spacing: 0.8px;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+}
+
+.operatorStats strong {
+    color: #aee2fa;
+
+    font-size: 18px;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-weight: 500;
+}
+
+/* ----------------------------------------------------------
+   STATUS VALUES
+---------------------------------------------------------- */
+
+#operatorStatus {
+    color: #9ed8b6;
+}
+
+#operatorClearance {
+    color: #b9dff2;
+}
+
+#operatorId {
+    color: #dff7ff;
+    letter-spacing: 1px;
+}
+
+/* ----------------------------------------------------------
+   FOOTER
+---------------------------------------------------------- */
+
+#operatorProfileWindow .windowFooter {
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size: 10px;
+
+    letter-spacing: 0.5px;
+}
+
+/* ----------------------------------------------------------
+   RESPONSIVE
+---------------------------------------------------------- */
+
+@media (max-width: 800px) {
+
+    .operatorGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .operatorStats {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+
+    .operatorStats {
+        grid-template-columns: 1fr;
+    }
+
+    .operatorField {
+        min-height: 58px;
+    }
+}
