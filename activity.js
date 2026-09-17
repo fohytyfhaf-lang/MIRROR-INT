@@ -21,6 +21,162 @@ import {
 
 
 let activityInitialized = false;
+/* ==========================================================
+   OMEGA EVENT CODES
+========================================================== */
+
+const EVENT_CODES = {
+
+    "login.success": {
+        code: "AUTH-OK",
+        label: "AUTHORIZATION"
+    },
+
+    "logout": {
+        code: "AUTH-END",
+        label: "SESSION CLOSED"
+    },
+
+
+    /* WINDOWS */
+
+    "window.open": {
+        code: "WIN-OPN",
+        label: "WINDOW OPEN"
+    },
+
+    "window.close": {
+        code: "WIN-CLS",
+        label: "WINDOW CLOSE"
+    },
+
+    "window.minimize": {
+        code: "WIN-MIN",
+        label: "WINDOW MINIMIZE"
+    },
+
+    "window.restore": {
+        code: "WIN-RST",
+        label: "WINDOW RESTORE"
+    },
+
+    "window.maximize": {
+        code: "WIN-MAX",
+        label: "WINDOW MAXIMIZE"
+    },
+
+    "window.focus": {
+        code: "WIN-FCS",
+        label: "WINDOW FOCUS"
+    },
+
+    "window.move": {
+        code: "WIN-MOV",
+        label: "WINDOW MOVE"
+    },
+
+
+    /* CAMERAS */
+
+    "camera.open": {
+        code: "CAM-IN",
+        label: "CAMERA OPEN"
+    },
+
+    "camera.visit": {
+        code: "CAM-SW",
+        label: "CAMERA SWITCH"
+    },
+
+    "camera.close": {
+        code: "CAM-OUT",
+        label: "CAMERA CLOSE"
+    },
+
+
+    /* CONSOLE */
+
+    "console.command": {
+        code: "CON-CMD",
+        label: "CONSOLE COMMAND"
+    },
+
+    "console.unknown": {
+        code: "CON-UNK",
+        label: "UNKNOWN COMMAND"
+    },
+
+
+    /* FILES */
+
+    "file.open": {
+        code: "FIL-OPN",
+        label: "FILE OPEN"
+    },
+
+    "file.read": {
+        code: "FIL-READ",
+        label: "FILE READ"
+    },
+
+    "restricted.file.open": {
+        code: "FIL-RES",
+        label: "RESTRICTED FILE"
+    },
+
+    "folder.open": {
+        code: "DIR-OPN",
+        label: "DIRECTORY OPEN"
+    },
+
+    "file.open.failed": {
+        code: "FIL-ERR",
+        label: "FILE ERROR"
+    },
+
+
+    /* ACCESS */
+
+    "access.denied": {
+        code: "ACL-DEN",
+        label: "ACCESS DENIED"
+    },
+
+
+    /* COMMUNICATION */
+
+    "chat.message": {
+        code: "MSG-SND",
+        label: "MESSAGE SENT"
+    },
+
+
+    /* MR.SMILE */
+
+    "mrsmile.message": {
+        code: "MRX-MSG",
+        label: "MR.SMILE MESSAGE"
+    },
+
+    "mrsmile.firstContact": {
+        code: "MRX-FC",
+        label: "MR.SMILE CONTACT"
+    },
+
+
+    /* SYSTEM */
+
+    "settings.change": {
+        code: "SYS-SET",
+        label: "SYSTEM SETTINGS"
+    },
+
+    "error": {
+        code: "SYS-ERR",
+        label: "SYSTEM ERROR"
+    }
+
+};
 
 
 /* ==========================================================
@@ -300,6 +456,21 @@ function formatDetails(
 
 
     return "—";
+
+}
+
+/* ==========================================================
+   EVENT CODE HELPERS
+========================================================== */
+
+function getEventDefinition(type) {
+
+    return (
+        EVENT_CODES[type] || {
+            code: "SYS-UNK",
+            label: "UNCLASSIFIED EVENT"
+        }
+    );
 
 }
 
