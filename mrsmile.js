@@ -8,9 +8,11 @@ let audio = null;
    INIT SYSTEM
 ========================= */
 export function initMrSmile() {
-  checkTime();
 
-  setInterval(checkTime, 60000); // проверка раз в минуту
+    console.log(
+        "[MR.SMILE] System initialized. Entity dormant."
+    );
+
 }
 
 /* =========================
