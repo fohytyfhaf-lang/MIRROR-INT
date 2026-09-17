@@ -218,10 +218,15 @@ export function loadOperatorActivity() {
     /*
      * Newest first.
      */
-
     const entries =
         [...history]
-            .reverse();
+            .reverse()
+            .filter(
+                entry =>
+                    entry?.type !==
+                    "mrsmile.interaction"
+            );
+  
 
 
     container.innerHTML =
