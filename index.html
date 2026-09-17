@@ -342,6 +342,12 @@
 
         </button>
 
+        <button onclick="openApp('activity')">
+
+            ▣ <span>Activity</span>
+
+        </button>
+
         <button onclick="openApp('personnel')">
 
             👤 <span data-lang="sidebar.personnel"></span>
@@ -374,7 +380,94 @@
 
     <section id="workspace">
 
-        
+        <!-- ==================================
+     OPERATOR ACTIVITY
+=================================== -->
+
+<div id="activityWindow" class="window hidden">
+
+    <div class="windowHeader">
+
+        <div class="windowTitle">
+
+            <span class="windowIcon">▣</span>
+
+            <span>OPERATOR ACTIVITY</span>
+
+        </div>
+
+
+        <div class="windowControls">
+
+            <button onclick="minimizeWindow('activity')">
+                ─
+            </button>
+
+            <button onclick="maximizeWindow('activity')">
+                □
+            </button>
+
+            <button onclick="closeApp('activity')">
+                ✕
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="windowBody">
+
+        <div id="activityHeader">
+
+            <div>
+
+                <span>ACTIVE OPERATOR</span>
+
+                <strong id="activityOperator">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>ENTRIES</span>
+
+                <strong id="activityCount">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div id="operatorActivityLog">
+
+            <div class="activityEmpty">
+                NO ACTIVITY RECORDED.
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="windowStatus">
+
+        <span>
+            ACTIVITY MONITOR
+        </span>
+
+        <span id="activityStatus">
+            READY
+        </span>
+
+    </div>
+
+</div>
      <!-- ==================================
      OPERATOR PROFILE
 =================================== -->
