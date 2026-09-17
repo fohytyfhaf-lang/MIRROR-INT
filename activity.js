@@ -410,9 +410,10 @@ export function loadOperatorActivity() {
 
 
     container.innerHTML =
-        entries
-            .map(
-                entry => {
+      const details =
+         formatDetails(
+             entry
+         );
 
                     const type =
                         entry?.type ||
