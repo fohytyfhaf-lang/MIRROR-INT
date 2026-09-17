@@ -63,71 +63,243 @@ function formatTime(value) {
 }
 
 
-function formatDetails(data) {
+function formatDetails(
+    entry
+) {
+
+    const type =
+        entry?.type || "";
+
+    const data =
+        entry?.data || {};
+
 
     if (
-        !data ||
-        typeof data !== "object"
-    ) {
-        return "";
-    }
-
-    const parts = [];
-
-
-    for (
-        const [key, value]
-        of Object.entries(data)
+        type === "window.open" ||
+        type === "window.close" ||
+        type === "window.minimize" ||
+        type === "window.restore" ||
+        type === "window.maximize" ||
+        type === "window.focus"
     ) {
 
-        if (
-            value === null ||
-            value === undefined ||
-            value === ""
-        ) {
-            continue;
-        }
-
-
-        let displayValue;
-
-
-        if (
-            typeof value === "object"
-        ) {
-
-            try {
-
-                displayValue =
-                    JSON.stringify(
-                        value
-                    );
-
-            } catch {
-
-                displayValue =
-                    String(value);
-
-            }
-
-        } else {
-
-            displayValue =
-                String(value);
-
-        }
-
-
-        parts.push(
-            `${key}: ${displayValue}`
+        return (
+            "TARGET: " +
+            String(
+                data.windowName ||
+                data.target ||
+                "UNKNOWN WINDOW"
+            )
         );
 
     }
 
 
-    return parts.join(
-        "  |  "
-    );
+    if (
+        type === "window.move"
+    ) {
+
+        const position =
+            data.position;
+
+        if (
+            position &&
+            typeof position === "object"
+        ) {
+
+            return (
+                `TARGET: ${
+                    data.windowName ||
+                    data.target ||
+                    "UNKNOWN WINDOW"
+                } | POSITION: ${
+                    position.left ??
+                    "?"
+                }, ${
+                    position.top ??
+                    "?"
+                }`
+            );
+
+        }
+
+        return (
+            "TARGET: " +
+            String(
+                data.windowName ||
+                data.target ||
+                "UNKNOWN WINDOW"
+            )
+        );
+
+    }
+
+
+    if (
+        type === "camera.visit"
+    ) {
+
+        const previous =
+            data.previousCamera;
+
+        const current =
+            data.currentCamera;
+
+        if (
+            previous?.id &&
+            current?.id
+        ) {
+
+            return (
+                `${previous.id} > ${current.id}` +
+                (
+                    current.name
+                        ? ` — ${current.name}`
+                        : ""
+                )
+            );
+
+        }
+
+        return (
+            data.target ||
+            "CAMERA CHANNEL"
+        );
+
+    }
+
+
+    if (
+        type === "camera.open" ||
+        type === "camera.close"
+    ) {
+
+        return (
+            data.target ||
+            data.currentCamera?.id ||
+            data.camera?.id ||
+            "CAMERA CHANNEL"
+        );
+
+    }
+
+
+    if (
+        type === "console.command" ||
+        type === "console.unknown"
+    ) {
+
+        return (
+            data.command
+                ? `COMMAND: ${data.command}`
+                : "COMMAND EXECUTED"
+        );
+
+    }
+
+
+    if (
+        type === "file.open" ||
+        type === "file.read" ||
+        type === "restricted.file.open" ||
+        type === "folder.open" ||
+        type === "file.open.failed"
+    ) {
+
+        return (
+            `RESOURCE: ${
+                data.name ||
+                data.target ||
+                data.path ||
+                "UNKNOWN"
+            }`
+        );
+
+    }
+
+
+    if (
+        type === "access.denied"
+    ) {
+
+        return (
+            `RESOURCE: ${
+                data.target ||
+                data.path ||
+                data.resource ||
+                "UNKNOWN"
+            }`
+        );
+
+    }
+
+
+    if (
+        type === "login.success"
+    ) {
+
+        return (
+            `ROLE: ${
+                data.role ||
+                "UNKNOWN"
+            } | CLEARANCE: ${
+                data.clearance ??
+                "?"
+            }`
+        );
+
+    }
+
+
+    if (
+        type === "chat.message"
+    ) {
+
+        return "OUTBOUND MESSAGE";
+
+    }
+
+
+    if (
+        type === "mrsmile.message"
+    ) {
+
+        return "PRIVATE CHANNEL EVENT";
+
+    }
+
+
+    if (
+        type === "mrsmile.firstContact"
+    ) {
+
+        return "PRIVATE CHANNEL ESTABLISHED";
+
+    }
+
+
+    if (
+        type === "settings.change"
+    ) {
+
+        return "OPERATOR SETTINGS UPDATED";
+
+    }
+
+
+    if (
+        type === "error"
+    ) {
+
+        return (
+            data.message ||
+            "SYSTEM ERROR REPORTED"
+        );
+
+    }
+
+
+    return "—";
 
 }
 
