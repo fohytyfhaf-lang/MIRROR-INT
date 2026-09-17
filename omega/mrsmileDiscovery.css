@@ -1,17 +1,15 @@
 /* ==========================================================
    OMEGA DISCOVERY SYSTEM
-   MR.SMILE / MIRROR-INT
+   MIRROR-INT / OMEGA
 
-   Visual layer for hidden anomaly discovery.
+   Visual layer for hidden discovery events.
 
-   Design goals:
-   - OMEGA internal-system appearance
-   - restrained
-   - technical
-   - believable
-   - no jumpscare styling
-   - no giant MR.SMILE branding
-   - subtle escalation
+   Design:
+   - native OMEGA system
+   - restrained technical UI
+   - no jumpscare
+   - no giant horror elements
+   - gradual visual escalation
 ========================================================== */
 
 
@@ -22,19 +20,25 @@
 #omegaDiscoveryLayer,
 .omegaDiscoveryLayer {
 
-    position: fixed;
+    position:
+        fixed;
 
-    top: 20px;
-    right: 20px;
+    top:
+        58px;
+
+    right:
+        18px;
 
     width:
         min(
-            420px,
-            calc(100vw - 40px)
+            430px,
+            calc(100vw - 36px)
         );
 
     max-height:
-        calc(100vh - 40px);
+        calc(
+            100vh - 76px
+        );
 
     display:
         flex;
@@ -43,7 +47,7 @@
         column;
 
     gap:
-        9px;
+        7px;
 
     overflow:
         hidden;
@@ -54,13 +58,13 @@
     z-index:
         2147483000;
 
+    box-sizing:
+        border-box;
+
     font-family:
         "Courier New",
         Consolas,
         monospace;
-
-    box-sizing:
-        border-box;
 
 }
 
@@ -81,58 +85,70 @@
         border-box;
 
     padding:
-        12px 14px;
+        11px 13px;
 
     background:
         rgba(
-            8,
-            11,
-            13,
-            0.97
+            10,
+            12,
+            14,
+            0.965
         );
 
     border:
         1px solid
         rgba(
-            155,
-            164,
-            168,
-            0.24
+            137,
+            145,
+            149,
+            0.26
+        );
+
+    border-left:
+        2px solid
+        rgba(
+            140,
+            148,
+            152,
+            0.38
         );
 
     box-shadow:
-        0 8px 22px
+        0 10px 28px
         rgba(
             0,
             0,
             0,
-            0.35
+            0.34
         );
 
     color:
-        #cfd4d7;
+        #c7ccce;
 
     opacity:
         0;
 
     transform:
-        translateX(
-            24px
+        translateY(
+            -7px
         );
 
     transition:
         opacity
-            0.42s
+            0.35s
             ease,
 
         transform
-            0.42s
-            cubic-bezier(
-                0.22,
-                1,
-                0.36,
-                1
-            );
+            0.35s
+            ease,
+
+        border-color
+            0.25s
+            ease,
+
+        box-shadow
+            0.25s
+            ease;
 
     overflow:
         hidden;
@@ -141,7 +157,42 @@
 
 
 /* ==========================================================
-   VISIBLE STATE
+   TOP EDGE
+========================================================== */
+
+.omegaDiscoveryNotice::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    left:
+        0;
+
+    top:
+        0;
+
+    width:
+        100%;
+
+    height:
+        1px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.07
+        );
+
+}
+
+
+/* ==========================================================
+   VISIBLE
 ========================================================== */
 
 .omegaDiscoveryNotice.visible {
@@ -150,7 +201,7 @@
         1;
 
     transform:
-        translateX(
+        translateY(
             0
         );
 
@@ -158,7 +209,7 @@
 
 
 /* ==========================================================
-   CLOSING STATE
+   CLOSING
 ========================================================== */
 
 .omegaDiscoveryNotice.closing {
@@ -167,15 +218,15 @@
         0;
 
     transform:
-        translateX(
-            18px
+        translateY(
+            -4px
         );
 
 }
 
 
 /* ==========================================================
-   TOP LINE
+   HEADER
 ========================================================== */
 
 .omegaDiscoveryHeader {
@@ -187,13 +238,13 @@
         center;
 
     gap:
-        8px;
+        7px;
 
     min-height:
-        18px;
+        17px;
 
     margin-bottom:
-        8px;
+        7px;
 
     white-space:
         nowrap;
@@ -210,17 +261,23 @@
     flex:
         0 0 auto;
 
+    width:
+        18px;
+
     font-size:
-        11px;
+        10px;
 
     line-height:
         1;
 
     color:
-        #9da5a8;
+        #858d91;
 
     opacity:
-        0.9;
+        0.85;
+
+    text-align:
+        center;
 
 }
 
@@ -244,7 +301,7 @@
         ellipsis;
 
     font-size:
-        11px;
+        10px;
 
     font-weight:
         600;
@@ -256,7 +313,7 @@
         uppercase;
 
     color:
-        #d8dcde;
+        #d0d5d7;
 
 }
 
@@ -271,13 +328,13 @@
         0 0 auto;
 
     font-size:
-        10px;
+        9px;
 
     letter-spacing:
         0.04em;
 
     color:
-        #727b7f;
+        #666f73;
 
 }
 
@@ -289,16 +346,16 @@
 .omegaDiscoveryMessage {
 
     padding:
-        1px 0 0 19px;
+        0 0 0 25px;
 
     font-size:
-        12px;
+        11px;
 
     line-height:
         1.55;
 
     color:
-        #b9c0c3;
+        #afb6b9;
 
 }
 
@@ -312,37 +369,52 @@
     margin-top:
         8px;
 
+    margin-left:
+        25px;
+
     padding:
-        6px 8px;
+        5px 8px;
+
+    box-sizing:
+        border-box;
 
     background:
         rgba(
             255,
             255,
             255,
-            0.025
+            0.018
+        );
+
+    border:
+        1px solid
+        rgba(
+            130,
+            138,
+            142,
+            0.12
         );
 
     border-left:
         2px solid
         rgba(
-            150,
-            158,
-            162,
+            129,
+            137,
+            141,
             0.24
         );
 
     font-size:
-        10px;
+        9px;
 
     line-height:
-        1.4;
+        1.45;
 
     letter-spacing:
-        0.08em;
+        0.07em;
 
     color:
-        #858d91;
+        #777f83;
 
 }
 
@@ -356,20 +428,32 @@
     margin-top:
         7px;
 
-    padding-left:
-        19px;
+    margin-left:
+        25px;
+
+    padding-top:
+        5px;
+
+    border-top:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.035
+        );
 
     font-size:
-        10px;
+        9px;
 
     line-height:
         1.4;
 
     letter-spacing:
-        0.08em;
+        0.07em;
 
     color:
-        #737b7f;
+        #70787c;
 
 }
 
@@ -380,59 +464,83 @@
 
 .omegaDiscoveryNotice.normal {
 
-    border-left:
-        2px solid
+    border-left-color:
         rgba(
-            150,
-            158,
-            162,
+            133,
+            141,
+            145,
+            0.36
+        );
+
+}
+
+
+/* ==========================================================
+   ATTENTION / RARE
+========================================================== */
+
+.omegaDiscoveryNotice.attention {
+
+    border-left-color:
+        rgba(
+            165,
+            163,
+            145,
+            0.62
+        );
+
+    box-shadow:
+        0 10px 30px
+        rgba(
+            0,
+            0,
+            0,
             0.42
         );
 
 }
 
 
-/* ==========================================================
-   RARE TRACE
-========================================================== */
+.omegaDiscoveryNotice.attention
+.omegaDiscoveryMarker {
 
-.omegaDiscoveryNotice.attention {
-
-    border-left:
-        2px solid
-        rgba(
-            181,
-            177,
-            150,
-            0.52
-        );
-
-    box-shadow:
-        0 8px 24px
-        rgba(
-            0,
-            0,
-            0,
-            0.4
-        );
+    color:
+        #a6a397;
 
 }
 
 
 /* ==========================================================
-   VERY RARE TRACE
+   CRITICAL / VERY RARE
 ========================================================== */
 
 .omegaDiscoveryNotice.critical {
 
-    border-left:
-        2px solid
+    border-left-color:
         rgba(
-            176,
-            176,
-            176,
-            0.7
+            187,
+            190,
+            191,
+            0.72
         );
+
+    box-shadow:
+        0 12px 34px
+        rgba(
+            0,
+            0,
+            0,
+            0.48
+        );
+
+}
+
+
+.omegaDiscoveryNotice.critical
+.omegaDiscoveryMarker {
+
+    color:
+        #c1c5c7;
 
 }
 
@@ -443,9 +551,12 @@
 
 .omegaDiscoveryNotice.private-channel {
 
+    padding:
+        12px 14px;
+
     background:
         rgba(
-            7,
+            8,
             10,
             12,
             0.985
@@ -454,19 +565,45 @@
     border:
         1px solid
         rgba(
-            184,
-            188,
-            190,
-            0.4
+            178,
+            183,
+            186,
+            0.36
         );
 
     border-left:
         2px solid
         rgba(
-            205,
+            202,
+            206,
             208,
-            209,
-            0.72
+            0.76
+        );
+
+    box-shadow:
+        0 14px 38px
+        rgba(
+            0,
+            0,
+            0,
+            0.55
+        );
+
+}
+
+
+/* ==========================================================
+   PRIVATE CHANNEL TOP LINE
+========================================================== */
+
+.omegaDiscoveryNotice.private-channel::before {
+
+    background:
+        rgba(
+            220,
+            224,
+            226,
+            0.12
         );
 
 }
@@ -480,7 +617,10 @@
 .omegaDiscoveryTitle {
 
     color:
-        #e0e3e4;
+        #dce0e2;
+
+    letter-spacing:
+        0.14em;
 
 }
 
@@ -493,7 +633,7 @@
 .omegaDiscoveryMessage {
 
     color:
-        #c6cbcd;
+        #c4cacc;
 
 }
 
@@ -506,14 +646,22 @@
 .omegaDiscoveryDetail {
 
     color:
-        #91999d;
+        #90989c;
+
+    border-color:
+        rgba(
+            155,
+            162,
+            165,
+            0.15
+        );
 
     border-left-color:
         rgba(
             180,
             186,
             189,
-            0.32
+            0.34
         );
 
 }
@@ -527,13 +675,13 @@
 .omegaDiscoveryStatus {
 
     color:
-        #a0a7aa;
+        #a4abad;
 
 }
 
 
 /* ==========================================================
-   SUBTLE ACTIVITY LINE
+   BOTTOM PROGRESS LINE
 ========================================================== */
 
 .omegaDiscoveryNotice::after {
@@ -561,7 +709,7 @@
             255,
             255,
             255,
-            0.045
+            0.05
         );
 
     transform:
@@ -574,7 +722,7 @@
 
     transition:
         transform
-            0.8s
+            0.75s
             ease;
 
 }
@@ -591,15 +739,15 @@
 
 
 /* ==========================================================
-   RARE TRACE SUBTLE PULSE
+   ATTENTION PULSE
 ========================================================== */
 
 .omegaDiscoveryNotice.attention.visible
 .omegaDiscoveryMarker {
 
     animation:
-        omegaDiscoveryMarkerPulse
-        1.8s
+        omegaDiscoveryAttentionPulse
+        2s
         ease-in-out
         infinite;
 
@@ -607,7 +755,7 @@
 
 
 /* ==========================================================
-   VERY RARE TRACE
+   CRITICAL PULSE
 ========================================================== */
 
 .omegaDiscoveryNotice.critical.visible
@@ -615,7 +763,7 @@
 
     animation:
         omegaDiscoveryCriticalPulse
-        1.25s
+        1.3s
         ease-in-out
         2;
 
@@ -623,7 +771,7 @@
 
 
 /* ==========================================================
-   PRIVATE CHANNEL MARKER
+   PRIVATE CHANNEL PULSE
 ========================================================== */
 
 .omegaDiscoveryNotice.private-channel.visible
@@ -631,7 +779,7 @@
 
     animation:
         omegaDiscoveryPrivatePulse
-        1.5s
+        1.7s
         ease-in-out
         infinite;
 
@@ -642,7 +790,7 @@
    ANIMATIONS
 ========================================================== */
 
-@keyframes omegaDiscoveryMarkerPulse {
+@keyframes omegaDiscoveryAttentionPulse {
 
     0%,
     100% {
@@ -668,7 +816,7 @@
     100% {
 
         opacity:
-            0.5;
+            0.45;
 
         transform:
             scale(
@@ -698,7 +846,7 @@
     100% {
 
         opacity:
-            0.55;
+            0.5;
 
     }
 
@@ -713,25 +861,20 @@
 
 
 /* ==========================================================
-   HOVER-SAFE
+   DISCOVERY LAYOUT SPACING
 ========================================================== */
 
-.omegaDiscoveryNotice:hover {
+#omegaDiscoveryLayer
+.omegaDiscoveryNotice + .omegaDiscoveryNotice {
 
-    box-shadow:
-        0 10px 26px
-        rgba(
-            0,
-            0,
-            0,
-            0.45
-        );
+    margin-top:
+        0;
 
 }
 
 
 /* ==========================================================
-   SMALL SCREENS
+   MOBILE
 ========================================================== */
 
 @media (
@@ -743,14 +886,19 @@
     .omegaDiscoveryLayer {
 
         top:
-            12px;
+            52px;
 
         right:
-            12px;
+            10px;
 
         width:
             calc(
-                100vw - 24px
+                100vw - 20px
+            );
+
+        max-height:
+            calc(
+                100vh - 64px
             );
 
     }
@@ -759,7 +907,7 @@
     .omegaDiscoveryNotice {
 
         padding:
-            11px 12px;
+            10px 11px;
 
     }
 
@@ -767,7 +915,32 @@
     .omegaDiscoveryMessage {
 
         padding-left:
-            18px;
+            23px;
+
+    }
+
+
+    .omegaDiscoveryDetail,
+    .omegaDiscoveryStatus {
+
+        margin-left:
+            23px;
+
+    }
+
+
+    .omegaDiscoveryTitle {
+
+        font-size:
+            9px;
+
+    }
+
+
+    .omegaDiscoveryTime {
+
+        font-size:
+            8px;
 
     }
 
@@ -788,25 +961,26 @@
         transition:
             opacity
             0.2s
-            ease,
-
-            transform
-            0.2s
             ease;
+
+        transform:
+            none;
 
     }
 
 
     .omegaDiscoveryNotice.visible {
 
-        transition:
-            opacity
-            0.2s
-            ease,
+        transform:
+            none;
 
-            transform
-            0.2s
-            ease;
+    }
+
+
+    .omegaDiscoveryNotice.closing {
+
+        transform:
+            none;
 
     }
 
