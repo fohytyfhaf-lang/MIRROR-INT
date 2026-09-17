@@ -183,6 +183,81 @@ function createId(
 
 }
 
+/* ==========================================================
+   OMEGA OPERATOR ID
+========================================================== */
+
+function generateOperatorId() {
+
+    const usedIds = new Set();
+
+    const localAccounts =
+        getLocalAccounts();
+
+    for (
+        const account
+        of Object.values(localAccounts)
+    ) {
+
+        if (
+            account?.operatorId
+        ) {
+
+            usedIds.add(
+                account.operatorId
+            );
+
+        }
+
+    }
+
+    const profiles =
+        getUserProfiles();
+
+    for (
+        const profile
+        of Object.values(profiles)
+    ) {
+
+        if (
+            profile?.operatorId
+        ) {
+
+            usedIds.add(
+                profile.operatorId
+            );
+
+        }
+
+    }
+
+    let id;
+
+    do {
+
+        const a =
+            Math.floor(
+                1000 +
+                Math.random() * 9000
+            );
+
+        const b =
+            Math.floor(
+                10 +
+                Math.random() * 90
+            );
+
+        id =
+            `OP-${a}-${b}`;
+
+    } while (
+        usedIds.has(id)
+    );
+
+    return id;
+
+}
+
 
 /* ==========================================================
    STORAGE SAFE HELPERS
@@ -353,7 +428,6 @@ function getAccount(
 /* ==========================================================
    ACCOUNT PROFILE DEFAULT
 ========================================================== */
-
 function createDefaultProfile(
     username,
     account
@@ -362,10 +436,22 @@ function createDefaultProfile(
     const timestamp =
         now();
 
+    const isLocal =
+        account?.local === true;
+
+    const operatorId =
+        account?.operatorId ||
+        (
+            isLocal
+                ? generateOperatorId()
+                : null
+        );
 
     return {
 
         username,
+
+        operatorId,
 
         displayName:
             account?.displayName ||
@@ -381,6 +467,36 @@ function createDefaultProfile(
                 0
             ),
 
+        department:
+            account?.department ||
+            (
+                isLocal
+                    ? "GENERAL OPERATIONS"
+                    : "UNKNOWN"
+            ),
+
+        status:
+            account?.status ||
+            (
+                isLocal
+                    ? "PROVISIONAL"
+                    : "ACTIVE"
+            ),
+
+        accountType:
+            isLocal
+                ? "operator"
+                : "system",
+
+        systemAccount:
+            account?.system === true,
+
+        localAccount:
+            account?.local === true,
+
+        registeredAt:
+            account?.createdAt ||
+            timestamp,
 
         createdAt:
             timestamp,
@@ -403,10 +519,8 @@ function createDefaultProfile(
         totalActions:
             0,
 
-
         settings:
             {},
-
 
         statistics: {
 
@@ -445,8 +559,9 @@ function createDefaultProfile(
 
         },
 
+        history: [],
 
-        history: []
+        sessions: []
 
     };
 
@@ -671,6 +786,63 @@ export function ensureUserProfile(
         account.displayName ||
         profile.displayName ||
         username;
+
+   /* ======================================================
+   OPERATOR PROFILE MIGRATION
+====================================================== */
+
+if (
+    account.local === true &&
+    !profile.operatorId
+) {
+
+    profile.operatorId =
+        account.operatorId ||
+        generateOperatorId();
+
+}
+
+if (
+    account.local === true
+) {
+
+    profile.accountType =
+        "operator";
+
+    profile.department =
+        account.department ||
+        "GENERAL OPERATIONS";
+
+    profile.status =
+        account.status ||
+        "PROVISIONAL";
+
+    profile.registeredAt =
+        account.createdAt ||
+        profile.registeredAt ||
+        now();
+
+}
+
+if (
+    !profile.department
+) {
+
+    profile.department =
+        account.department ||
+        "UNKNOWN";
+
+}
+
+if (
+    !profile.status
+) {
+
+    profile.status =
+        account.status ||
+        "ACTIVE";
+
+}
 
 
     saveUserProfiles(
@@ -1273,7 +1445,6 @@ function finishCurrentSession(
        }
    );
 ========================================================== */
-
 export function createLocalAccount(
     username,
     password,
@@ -1293,8 +1464,7 @@ export function createLocalAccount(
 
         return {
 
-            ok:
-                false,
+            ok: false,
 
             reason:
                 "invalid_username"
@@ -1313,8 +1483,7 @@ export function createLocalAccount(
 
         return {
 
-            ok:
-                false,
+            ok: false,
 
             reason:
                 "invalid_username_format"
@@ -1327,14 +1496,12 @@ export function createLocalAccount(
     if (
         typeof password !==
         "string" ||
-        password.length <
-        1
+        password.length < 1
     ) {
 
         return {
 
-            ok:
-                false,
+            ok: false,
 
             reason:
                 "invalid_password"
@@ -1352,8 +1519,7 @@ export function createLocalAccount(
 
         return {
 
-            ok:
-                false,
+            ok: false,
 
             reason:
                 "account_exists"
@@ -1363,22 +1529,21 @@ export function createLocalAccount(
     }
 
 
-    const localAccounts =
-        getLocalAccounts();
+    const operatorId =
+        generateOperatorId();
 
 
-    localAccounts[
-        normalizedUsername
-    ] = {
+    const account = {
+
+        username:
+            normalizedUsername,
 
         password,
 
+        operatorId,
+
         role:
-            cleanText(
-                options.role ||
-                "guest",
-                40
-            ),
+            "operator",
 
         displayName:
             cleanText(
@@ -1388,21 +1553,98 @@ export function createLocalAccount(
             ),
 
         clearance:
-            Math.max(
-                0,
-                Number(
-                    options.clearance ??
-                    0
-                )
-            ),
+            1,
+
+        department:
+            "GENERAL OPERATIONS",
+
+        status:
+            "PROVISIONAL",
 
         local:
             true,
 
+        system:
+            false,
+
+        accountType:
+            "operator",
+
         createdAt:
-            now()
+            now(),
+
+        permissions: {
+
+            viewPublic:
+                true,
+
+            viewInternal:
+                true,
+
+            viewRestricted:
+                false,
+
+            viewTopSecret:
+                false,
+
+            useConsole:
+                true,
+
+            useCamera:
+                true,
+
+            accessArchive:
+                true,
+
+            accessMirror:
+                false,
+
+            accessResearch:
+                false,
+
+            modifySystem:
+                false,
+
+            manageAccounts:
+                false,
+
+            debug:
+                false
+
+        },
+
+        restrictions: {
+
+            cannotModifySystem:
+                true,
+
+            cannotManageAccounts:
+                true,
+
+            cannotChangeClearance:
+                true,
+
+            readOnly:
+                false,
+
+            restrictedConsole:
+                true,
+
+            restrictedCamera:
+                false
+
+        }
 
     };
+
+
+    const localAccounts =
+        getLocalAccounts();
+
+
+    localAccounts[
+        normalizedUsername
+    ] = account;
 
 
     if (
@@ -1414,8 +1656,7 @@ export function createLocalAccount(
 
         return {
 
-            ok:
-                false,
+            ok: false,
 
             reason:
                 "storage_failed"
@@ -1425,9 +1666,36 @@ export function createLocalAccount(
     }
 
 
-    ensureUserProfile(
-        normalizedUsername
-    );
+    const profile =
+        ensureUserProfile(
+            normalizedUsername
+        );
+
+
+    if (
+        profile
+    ) {
+
+        profile.operatorId =
+            operatorId;
+
+        profile.department =
+            account.department;
+
+        profile.status =
+            account.status;
+
+        profile.accountType =
+            "operator";
+
+        profile.registeredAt =
+            account.createdAt;
+
+        saveCurrentProfile(
+            profile
+        );
+
+    }
 
 
     trigger(
@@ -1437,15 +1705,19 @@ export function createLocalAccount(
             username:
                 normalizedUsername,
 
+            operatorId,
+
             role:
-                localAccounts[
-                    normalizedUsername
-                ].role,
+                account.role,
 
             clearance:
-                localAccounts[
-                    normalizedUsername
-                ].clearance,
+                account.clearance,
+
+            department:
+                account.department,
+
+            status:
+                account.status,
 
             timestamp:
                 now()
@@ -1460,11 +1732,26 @@ export function createLocalAccount(
             true,
 
         username:
-            normalizedUsername
+            normalizedUsername,
+
+        operatorId,
+
+        role:
+            account.role,
+
+        clearance:
+            account.clearance,
+
+        department:
+            account.department,
+
+        status:
+            account.status
 
     };
 
 }
+
 
 
 /* ==========================================================
@@ -1553,6 +1840,21 @@ function authenticate(
         getAccount(
             username
         );
+   if (
+    account?.local === true &&
+    account?.role === "admin"
+) {
+
+    return {
+
+        ok: false,
+
+        reason:
+            "invalid_local_admin"
+
+    };
+
+}
 
 
     if (
@@ -2854,6 +3156,115 @@ if (
 }
 
 
+
+/* ==========================================================
+   OPERATOR API
+========================================================== */
+
+export function getCurrentOperator() {
+
+    const username =
+        getCurrentUser();
+
+    if (!username) {
+        return null;
+    }
+
+    const profile =
+        ensureUserProfile(username);
+
+    if (!profile) {
+        return null;
+    }
+
+    return {
+
+        username:
+            profile.username,
+
+        operatorId:
+            profile.operatorId ||
+            null,
+
+        displayName:
+            profile.displayName,
+
+        role:
+            profile.role,
+
+        clearance:
+            profile.clearance,
+
+        department:
+            profile.department,
+
+        status:
+            profile.status,
+
+        accountType:
+            profile.accountType,
+
+        registeredAt:
+            profile.registeredAt,
+
+        createdAt:
+            profile.createdAt,
+
+        lastLogin:
+            profile.lastLogin,
+
+        sessionCount:
+            profile.sessionCount,
+
+        totalActions:
+            profile.totalActions,
+
+        statistics:
+            {
+                ...(profile.statistics || {})
+            }
+
+    };
+
+}
+
+
+export function getOperatorId(
+    username = getCurrentUser()
+) {
+
+    if (!username) {
+        return null;
+    }
+
+    const profile =
+        ensureUserProfile(username);
+
+    return (
+        profile?.operatorId ||
+        null
+    );
+
+}
+
+
+export function isLocalOperator(
+    username = getCurrentUser()
+) {
+
+    if (!username) {
+        return false;
+    }
+
+    const account =
+        getAccount(username);
+
+    return (
+        account?.local === true
+    );
+
+}
+
 /* ==========================================================
    DEFAULT EXPORT
 ========================================================== */
@@ -2891,6 +3302,7 @@ export default {
     updateUserSettings,
 
     ensureUserProfile,
+  
 
     initOmegaLogin
 
