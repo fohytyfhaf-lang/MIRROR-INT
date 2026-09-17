@@ -1,0 +1,212 @@
+/* ==========================================================
+   OMEGA OPERATOR REGISTRATION
+========================================================== */
+
+#createOperatorBtn {
+    width: 100%;
+    margin-top: 12px;
+
+    padding: 11px 14px;
+
+    border: 1px solid #294d63;
+
+    background:
+        linear-gradient(
+            180deg,
+            #102535,
+            #0a1722
+        );
+
+    color: #82b6d2;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size: 10px;
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    transition:
+        background .15s ease,
+        border-color .15s ease,
+        color .15s ease,
+        box-shadow .15s ease;
+}
+
+#createOperatorBtn:hover {
+    background: #142d40;
+
+    border-color: #4fd8ff;
+
+    color: #dff7ff;
+
+    box-shadow:
+        0 0 12px rgba(79,216,255,.12);
+}
+
+
+/* ==========================================================
+   REGISTRATION PANEL
+========================================================== */
+
+#operatorRegistration {
+    margin-top: 18px;
+
+    padding: 16px;
+
+    border: 1px solid #23445a;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(12, 28, 40, .96),
+            rgba(5, 14, 22, .98)
+        );
+}
+
+#operatorRegistration.hidden {
+    display: none !important;
+}
+
+
+.registrationHeader {
+    margin-bottom: 14px;
+
+    padding-bottom: 9px;
+
+    border-bottom: 1px solid #25455a;
+
+    color: #8fc9e8;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+}
+
+
+/* ==========================================================
+   INPUTS
+========================================================== */
+
+#operatorRegistration input {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    margin-bottom: 9px;
+
+    padding: 10px 11px;
+
+    border: 1px solid #1e4054;
+
+    background: #07131d;
+
+    color: #dff6ff;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size: 11px;
+
+    outline: none;
+}
+
+#operatorRegistration input:focus {
+    border-color: #4fd8ff;
+
+    box-shadow:
+        0 0 8px rgba(79,216,255,.12);
+}
+
+
+/* ==========================================================
+   ACTIONS
+========================================================== */
+
+.registrationActions {
+    display: flex;
+
+    gap: 8px;
+
+    margin-top: 5px;
+}
+
+.registrationActions button {
+    flex: 1;
+
+    padding: 9px 10px;
+
+    border: 1px solid #294d63;
+
+    background: #0d1d2a;
+
+    color: #9bc5db;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size: 10px;
+
+    letter-spacing: .8px;
+
+    cursor: pointer;
+
+    transition:
+        background .15s ease,
+        border-color .15s ease,
+        color .15s ease;
+}
+
+.registrationActions button:hover {
+    background: #153247;
+
+    border-color: #4fd8ff;
+
+    color: #e4f8ff;
+}
+
+#cancelRegistrationBtn:hover {
+    border-color: #718da0;
+}
+
+
+/* ==========================================================
+   STATUS
+========================================================== */
+
+#registrationStatus {
+    margin: 12px 0 0;
+
+    color: #6f9ab3;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size: 9px;
+
+    line-height: 1.5;
+
+    letter-spacing: .5px;
+}
+
+#registrationStatus.success {
+    color: #7fd6a1;
+}
+
+#registrationStatus.error {
+    color: #df7777;
+}
