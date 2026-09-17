@@ -580,78 +580,102 @@ export function loadOperatorActivity() {
   
 
 
-    container.innerHTML =
-      const details =
-         formatDetails(
-             entry
-         );
+   container.innerHTML =
+    entries
+        .map(
+            entry => {
 
-                    const type =
-                        entry?.type ||
-                        "unknown";
-
-
-                    const details =
-                        formatDetails(
-                            entry?.data
-                        );
+                const type =
+                    entry?.type ||
+                    "unknown";
 
 
-                    const session =
-                        entry?.sessionId
-                            ? entry.sessionId
-                            : "";
+                const definition =
+                    getEventDefinition(
+                        type
+                    );
 
 
-                    return `
-                        <div class="activityEntry">
+                const details =
+                    formatDetails(
+                        entry
+                    );
 
-                            <div class="activityTime">
 
-                                ${formatTime(
+                const session =
+                    entry?.sessionId
+                        ? entry.sessionId
+                        : "";
+
+
+                return `
+                    <div
+                        class="activityEntry"
+                        data-event-type="${escapeHtml(type)}"
+                        data-event-code="${escapeHtml(definition.code)}"
+                    >
+
+                        <div class="activityTime">
+
+                            ${escapeHtml(
+                                formatTime(
                                     entry?.timestamp
-                                )}
-
-                            </div>
-
-
-                            <div
-                                class="activityType"
-                                data-type="${escapeHtml(type)}"
-                            >
-
-                                ${escapeHtml(
-                                    type
-                                )}
-
-                            </div>
-
-
-                            <div class="activityDetails">
-
-                                ${escapeHtml(
-                                    details || "—"
-                                )}
-
-                                ${
-                                    session
-                                        ? `
-                                        <span class="activitySession">
-                                            SESSION:
-                                            ${escapeHtml(session)}
-                                        </span>
-                                        `
-                                        : ""
-                                }
-
-                            </div>
+                                )
+                            )}
 
                         </div>
-                    `;
 
-                }
-            )
-            .join("");
+
+                        <div class="activityType">
+
+                            <span class="activityCode">
+
+                                ${escapeHtml(
+                                    definition.code
+                                )}
+
+                            </span>
+
+                            <span class="activityLabel">
+
+                                ${escapeHtml(
+                                    definition.label
+                                )}
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="activityDetails">
+
+                            ${escapeHtml(
+                                details || "—"
+                            )}
+
+                            ${
+                                session
+                                    ? `
+                                    <span class="activitySession">
+
+                                        SESSION:
+                                        ${escapeHtml(
+                                            session
+                                        )}
+
+                                    </span>
+                                    `
+                                    : ""
+                            }
+
+                        </div>
+
+                    </div>
+                `;
+
+            }
+        )
+        .join("");
 
 
     if (status) {
