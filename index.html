@@ -119,25 +119,109 @@
 
             </div>
 
-            <div class="loginFields">
+             <div class="loginFields">
 
-                <input
-                    id="user"
-                    type="text"
-                    placeholder="USERNAME"
-                >
+    <input
+        id="user"
+        type="text"
+        placeholder="USERNAME"
+    >
 
-                <input
-                    id="pass"
-                    type="password"
-                    placeholder="PASSWORD"
-                >
+    <input
+        id="pass"
+        type="password"
+        placeholder="PASSWORD"
+    >
 
-                <button id="loginBtn" data-lang="login.button"></button>
+    <button
+        id="loginBtn"
+        data-lang="login.button"
+    ></button>
 
-                <p id="status">
+    <p id="status">
 
-                    Awaiting authorization...
+        Awaiting authorization...
+
+    </p>
+
+
+    <!-- ==========================================
+         OPERATOR REGISTRATION
+    =========================================== -->
+
+    <button
+        id="createOperatorBtn"
+        type="button"
+    >
+        CREATE OPERATOR ACCOUNT
+    </button>
+
+
+    <div
+        id="operatorRegistration"
+        class="hidden"
+    >
+
+        <div class="registrationHeader">
+            NEW OMEGA OPERATOR
+        </div>
+
+
+        <input
+            id="registerUsername"
+            type="text"
+            placeholder="OPERATOR USERNAME"
+            maxlength="40"
+            autocomplete="off"
+        >
+
+
+        <input
+            id="registerPassword"
+            type="password"
+            placeholder="PASSWORD"
+            autocomplete="new-password"
+        >
+
+
+        <input
+            id="registerPasswordConfirm"
+            type="password"
+            placeholder="CONFIRM PASSWORD"
+            autocomplete="new-password"
+        >
+
+
+        <div class="registrationActions">
+
+            <button
+                id="registerOperatorBtn"
+                type="button"
+            >
+                REGISTER
+            </button>
+
+
+            <button
+                id="cancelRegistrationBtn"
+                type="button"
+            >
+                CANCEL
+            </button>
+
+        </div>
+
+
+        <p id="registrationStatus">
+            ACCOUNT REGISTRATION READY.
+        </p>
+
+    </div>
+
+
+</div>
+
+
 
                 </p>
 
