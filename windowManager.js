@@ -448,7 +448,21 @@ export function openWindow(name) {
 
     bringToFront(win);
 
+        /* ======================================================
+       OPERATOR PROFILE
+    ====================================================== */
 
+    if (
+        name === "operatorProfile" &&
+        typeof window !== "undefined" &&
+        typeof window.loadOperatorProfile === "function"
+    ) {
+
+        window.loadOperatorProfile();
+
+    }
+
+    
     /*
      * Инициализируем drag только один раз.
      */
