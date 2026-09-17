@@ -49,6 +49,35 @@ const WINDOW_ACTIONS = {
 
 };
 
+const CONSOLE_ACTIONS = {
+
+    execute:
+        "console.command",
+
+    unknown:
+        "console.unknown"
+
+};
+
+
+const EXPLORER_ACTIONS = {
+
+    file_open:
+        "file.open",
+
+    file_read:
+        "file.read",
+
+    restricted_file:
+        "restricted.file.open",
+
+    folder_open:
+        "folder.open",
+
+    file_open_failed:
+        "file.open.failed"
+
+};
 
 /* ==========================================================
    WINDOW DATA
@@ -214,6 +243,139 @@ function handleOperatorAction(
                 data
             )
         );
+
+        return;
+
+    }
+
+       /* ======================================================
+       CONSOLE
+    ====================================================== */
+
+    if (
+        source ===
+        "console"
+    ) {
+
+        if (
+            data.type !==
+            "console_command"
+        ) {
+            return;
+        }
+
+
+        const activityType =
+            CONSOLE_ACTIONS[
+                data.action
+            ];
+
+
+        if (
+            !activityType
+        ) {
+            return;
+        }
+
+
+        const metadata =
+            data.metadata || {};
+
+
+        recordUserAction(
+            activityType,
+            {
+
+                command:
+                    data.target ||
+                    metadata.command ||
+                    "",
+
+                knownCommand:
+                    metadata.knownCommand ??
+                    null,
+
+                executed:
+                    metadata.executed ??
+                    data.action ===
+                    "execute",
+
+                requiredClearance:
+                    metadata.requiredClearance ??
+                    null,
+
+                currentClearance:
+                    metadata.currentClearance ??
+                    null
+
+            }
+        );
+
+
+        return;
+
+    }
+
+       /* ======================================================
+       EXPLORER / FILES
+    ====================================================== */
+
+    if (
+        source ===
+        "explorer"
+    ) {
+
+        const activityType =
+            EXPLORER_ACTIONS[
+                data.type
+            ];
+
+
+        if (
+            !activityType
+        ) {
+            return;
+        }
+
+
+        const metadata =
+            data.metadata || {};
+
+
+        recordUserAction(
+            activityType,
+            {
+
+                target:
+                    data.target ||
+                    metadata.name ||
+                    metadata.path ||
+                    "",
+
+                path:
+                    metadata.path ||
+                    data.target ||
+                    null,
+
+                name:
+                    metadata.name ||
+                    null,
+
+                extension:
+                    metadata.extension ||
+                    null,
+
+                restricted:
+                    metadata.restricted ??
+                    false,
+
+                requiredClearance:
+                    metadata.clearanceRequired ??
+                    null
+
+            }
+        );
+
 
         return;
 
