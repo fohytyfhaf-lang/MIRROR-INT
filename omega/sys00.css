@@ -1,192 +1,750 @@
 /* ==========================================================
-   SYS_00 SYSTEM WINDOW
+   SYS_00 — OMEGA SYSTEM PROTOCOL
+   MIRROR-INT / OMEGA
+
+   Purpose:
+   - internal system authorization / notice
+   - functional OMEGA appearance
+   - restrained technical presentation
+   - no jumpscare styling
+========================================================== */
+
+
+/* ==========================================================
+   OVERLAY
 ========================================================== */
 
 #sys00Prompt {
 
-    position: fixed;
+    position:
+        fixed;
 
-    inset: 0;
+    inset:
+        0;
 
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
-    justify-content: center;
+    align-items:
+        center;
 
-    z-index: 2147483000;
+    justify-content:
+        center;
 
-    pointer-events: auto;
+    padding:
+        24px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            0.62
+        );
+
+    backdrop-filter:
+        blur(
+            2px
+        );
+
+    -webkit-backdrop-filter:
+        blur(
+            2px
+        );
+
+    z-index:
+        2147483000;
+
+    pointer-events:
+        auto;
 
 }
 
 
-/* WINDOW */
+/* ==========================================================
+   WINDOW
+========================================================== */
 
 .sys00Window {
 
-    width: 420px;
+    position:
+        relative;
 
-    max-width: calc(100vw - 40px);
+    width:
+        520px;
 
-    box-sizing: border-box;
+    max-width:
+        calc(
+            100vw - 48px
+        );
 
-    background: #050505;
+    box-sizing:
+        border-box;
 
-    border: 1px solid #777;
+    background:
+        linear-gradient(
+            180deg,
+            #0d0f10 0%,
+            #090b0c 100%
+        );
+
+    border:
+        1px solid
+        #444b4f;
 
     box-shadow:
-        0 0 0 1px #111,
-        0 0 25px rgba(0, 0, 0, 0.8);
+
+        0 0 0 1px
+            rgba(
+                255,
+                255,
+                255,
+                0.025
+            ),
+
+        0 18px 50px
+            rgba(
+                0,
+                0,
+                0,
+                0.7
+            );
 
     font-family:
         "Courier New",
+        Consolas,
         monospace;
+
+    color:
+        #c6cbcd;
+
+    overflow:
+        hidden;
 
 }
 
 
-/* HEADER */
+/* ==========================================================
+   TOP STATUS LINE
+========================================================== */
+
+.sys00Window::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    top:
+        0;
+
+    left:
+        0;
+
+    width:
+        100%;
+
+    height:
+        2px;
+
+    background:
+        #70777a;
+
+    opacity:
+        0.65;
+
+}
+
+
+/* ==========================================================
+   HEADER
+========================================================== */
 
 .sys00Header {
 
-    height: 36px;
+    min-height:
+        42px;
 
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
+    align-items:
+        center;
 
-    justify-content: space-between;
+    justify-content:
+        space-between;
 
-    padding: 0 12px;
+    gap:
+        16px;
 
-    box-sizing: border-box;
+    padding:
+        0 14px;
 
-    border-bottom: 1px solid #555;
+    box-sizing:
+        border-box;
 
-    background: #111;
+    border-bottom:
+        1px solid
+        #2d3235;
 
-    color: #ccc;
+    background:
+        #121516;
 
-    font-size: 12px;
+    color:
+        #d6dadd;
 
-    letter-spacing: 1px;
+    font-size:
+        11px;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        0.11em;
+
+    text-transform:
+        uppercase;
 
 }
 
 
-/* BODY */
+/* ==========================================================
+   HEADER SIDE DETAILS
+   Works even when only text is present.
+========================================================== */
+
+.sys00Header > * {
+
+    min-width:
+        0;
+
+}
+
+
+/* ==========================================================
+   BODY
+========================================================== */
 
 .sys00Body {
 
-    padding: 24px;
+    padding:
+        22px;
 
-    box-sizing: border-box;
+    box-sizing:
+        border-box;
 
-    color: #aaa;
+    color:
+        #aeb5b8;
 
-    font-size: 13px;
+    font-size:
+        12px;
 
-    line-height: 1.6;
+    line-height:
+        1.65;
 
 }
 
 
-/* WARNING */
+/* ==========================================================
+   WARNING / MAIN TITLE
+========================================================== */
 
 .sys00Warning {
 
-    margin-bottom: 18px;
+    position:
+        relative;
 
-    color: #ddd;
+    margin:
+        0 0 18px 0;
 
-    font-size: 13px;
+    padding:
+        0 0 11px 0;
 
-    letter-spacing: 1px;
+    border-bottom:
+        1px solid
+        #252a2d;
+
+    color:
+        #d5d9db;
+
+    font-size:
+        13px;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        0.08em;
+
+    text-transform:
+        uppercase;
 
 }
 
 
-/* INFORMATION */
+/* Small OMEGA-like marker */
+
+.sys00Warning::before {
+
+    content:
+        "[SYS_00]";
+
+    display:
+        block;
+
+    margin-bottom:
+        6px;
+
+    color:
+        #767e82;
+
+    font-size:
+        9px;
+
+    font-weight:
+        400;
+
+    letter-spacing:
+        0.14em;
+
+}
+
+
+/* ==========================================================
+   INFORMATION PANEL
+========================================================== */
 
 .sys00Info {
 
-    padding: 12px;
+    position:
+        relative;
 
-    margin-bottom: 20px;
+    margin:
+        0 0 18px 0;
 
-    border: 1px solid #333;
+    padding:
+        12px 13px;
 
-    background: #080808;
+    box-sizing:
+        border-box;
 
-    color: #888;
+    border:
+        1px solid
+        #292e31;
 
-    font-size: 11px;
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.018
+        );
 
-    line-height: 1.8;
+    color:
+        #8e979b;
+
+    font-size:
+        10px;
+
+    line-height:
+        1.75;
+
+    letter-spacing:
+        0.055em;
 
 }
 
 
-/* TEXT */
+/* Side marker */
+
+.sys00Info::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    left:
+        0;
+
+    top:
+        0;
+
+    bottom:
+        0;
+
+    width:
+        2px;
+
+    background:
+        #5f676b;
+
+    opacity:
+        0.55;
+
+}
+
+
+/* ==========================================================
+   MAIN TEXT
+========================================================== */
 
 .sys00Text {
 
-    color: #aaa;
+    margin:
+        0 0 22px 0;
 
-    margin-bottom: 24px;
+    color:
+        #b7bdc0;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.7;
 
 }
 
 
-/* BUTTONS */
+/* ==========================================================
+   SUBTLE SYSTEM FOOTER
+========================================================== */
+
+.sys00Body::after {
+
+    content:
+        "OMEGA INTERNAL SYSTEM";
+
+    display:
+        block;
+
+    margin-top:
+        18px;
+
+    padding-top:
+        9px;
+
+    border-top:
+        1px solid
+        #22272a;
+
+    color:
+        #535b5f;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        0.14em;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+/* ==========================================================
+   BUTTON AREA
+========================================================== */
 
 .sys00Buttons {
 
-    display: flex;
+    display:
+        flex;
 
-    justify-content: flex-end;
+    justify-content:
+        flex-end;
 
-    gap: 10px;
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    padding-top:
+        2px;
 
 }
 
 
-/* BUTTON */
+/* ==========================================================
+   BUTTON
+========================================================== */
 
 .sys00Buttons button {
 
-    min-width: 70px;
+    min-width:
+        88px;
 
-    padding: 7px 16px;
+    padding:
+        8px 15px;
 
-    border: 1px solid #555;
+    box-sizing:
+        border-box;
 
-    background: #111;
+    border:
+        1px solid
+        #454c50;
 
-    color: #aaa;
+    background:
+        #111516;
+
+    color:
+        #afb5b8;
 
     font-family:
         "Courier New",
+        Consolas,
         monospace;
 
-    font-size: 12px;
+    font-size:
+        10px;
 
-    cursor: pointer;
+    font-weight:
+        600;
+
+    letter-spacing:
+        0.07em;
+
+    text-transform:
+        uppercase;
+
+    cursor:
+        pointer;
+
+    transition:
+
+        background
+            0.16s
+            ease,
+
+        border-color
+            0.16s
+            ease,
+
+        color
+            0.16s
+            ease,
+
+        box-shadow
+            0.16s
+            ease;
 
 }
 
+
+/* ==========================================================
+   BUTTON HOVER
+========================================================== */
 
 .sys00Buttons button:hover {
 
-    background: #222;
+    background:
+        #181c1e;
 
-    color: #fff;
+    border-color:
+        #60686c;
+
+    color:
+        #d9dddf;
+
+    box-shadow:
+        0 0 0 1px
+        rgba(
+            255,
+            255,
+            255,
+            0.025
+        );
 
 }
 
 
+/* ==========================================================
+   BUTTON ACTIVE
+========================================================== */
+
 .sys00Buttons button:active {
 
-    background: #050505;
+    background:
+        #0b0d0e;
+
+    transform:
+        translateY(
+            1px
+        );
+
+}
+
+
+/* ==========================================================
+   FOCUS
+========================================================== */
+
+.sys00Buttons button:focus-visible {
+
+    outline:
+        1px solid
+        #80898d;
+
+    outline-offset:
+        2px;
+
+}
+
+
+/* ==========================================================
+   FIRST BUTTON / SECONDARY
+========================================================== */
+
+.sys00Buttons button:first-child {
+
+    background:
+        #15191a;
+
+}
+
+
+/* ==========================================================
+   LAST BUTTON / PRIMARY
+========================================================== */
+
+.sys00Buttons button:last-child {
+
+    border-color:
+        #5b6266;
+
+    color:
+        #c8cdd0;
+
+}
+
+
+/* ==========================================================
+   PRIMARY HOVER
+========================================================== */
+
+.sys00Buttons button:last-child:hover {
+
+    background:
+        #1c2022;
+
+    border-color:
+        #737b7f;
+
+    color:
+        #e1e4e5;
+
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (
+    max-width:
+        700px
+) {
+
+    #sys00Prompt {
+
+        padding:
+            14px;
+
+    }
+
+
+    .sys00Window {
+
+        width:
+            100%;
+
+        max-width:
+            none;
+
+    }
+
+
+    .sys00Body {
+
+        padding:
+            18px;
+
+    }
+
+
+    .sys00Buttons {
+
+        flex-direction:
+            column-reverse;
+
+        align-items:
+            stretch;
+
+    }
+
+
+    .sys00Buttons button {
+
+        width:
+            100%;
+
+    }
+
+}
+
+
+/* ==========================================================
+   REDUCED MOTION
+========================================================== */
+
+@media (
+    prefers-reduced-motion:
+        reduce
+) {
+
+    .sys00Buttons button {
+
+        transition:
+            none;
+
+    }
+
+}
+
+
+/* ==========================================================
+   OPTIONAL CRT COMPATIBILITY
+========================================================== */
+
+body.crtEnabled #sys00Prompt {
+
+    filter:
+        contrast(
+            1.015
+        );
+
+}
+
+
+/* ==========================================================
+   OPTIONAL SCANLINE COMPATIBILITY
+
+   Does not create scanlines itself.
+   It simply keeps SYS_00 above common
+   decorative layers.
+========================================================== */
+
+#sys00Prompt,
+#sys00Prompt * {
+
+    isolation:
+        isolate;
 
 }
