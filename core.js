@@ -30,6 +30,10 @@ import {
 import {
     initMrSmileDiscovery
 } from "./mrsmileDiscovery.js";
+
+import {
+    initMrSmileAnomalies
+} from "./mrsmileAnomalies.js";
 import { forceEnableMrSmile, forceDisableMrSmile } from "./mrsmile.js";
 import { knowledgeInit } from "./knowledge.js";
 import { Storage } from "./storage.js";
@@ -235,13 +239,15 @@ function bootSystem() {
     
     initMrSmileChat();
 
-    initMrSmileDiscovery();
+   initMrSmileDiscovery();
 
-    initMrSmileConditions();
+   initMrSmileConditions();
 
-    initMrSmileEvents();
-    
-    initChatEvents();
+   initMrSmileEvents();
+
+   initMrSmileAnomalies();
+
+   initChatEvents();
 
     if (knowledgeInit) knowledgeInit();
 
