@@ -11,6 +11,10 @@ import {
     on
 } from "./eventManager.js";
 
+import {
+    initOperatorActivityBridge
+} from "./operatorActivityBridge.js";
+
 
 let activityInitialized = false;
 
@@ -369,6 +373,8 @@ function initActivity() {
 
     activityInitialized =
         true;
+
+       initOperatorActivityBridge();
 
 
     on(
