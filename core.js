@@ -23,6 +23,13 @@ import { updatePersonality } from "./personality.js";
 import { mrSmileSay } from "./mrsmileCore.js";
 import { initMrSmileChat } from "./mrsmileChat.js";
 import { initMrSmileEvents } from "./mrsmileEvents.js";
+import {
+    initMrSmileConditions
+} from "./mrsmileConditions.js";
+
+import {
+    initMrSmileDiscovery
+} from "./mrsmileDiscovery.js";
 import { forceEnableMrSmile, forceDisableMrSmile } from "./mrsmile.js";
 import { knowledgeInit } from "./knowledge.js";
 import { Storage } from "./storage.js";
@@ -123,7 +130,7 @@ function startBoot() {
         "Initializing OMEGA...",
         "Loading modules...",
         "Connecting systems...",
-        "Starting MR.SMILE...",
+        "Starting OMEGA monitoring...",
         "Boot complete"
     ];
 
@@ -215,13 +222,25 @@ function bootSystem() {
 //maximizeWindow()
 //closeApp()
     initCamera();
+    
     initResearch();
+    
      initChats();
+    
     initMemory();
+    
     loadTrust();
+    
     updatePersonality();
+    
     initMrSmileChat();
+
+    initMrSmileDiscovery();
+
+    initMrSmileConditions();
+
     initMrSmileEvents();
+    
     initChatEvents();
 
     if (knowledgeInit) knowledgeInit();
