@@ -1,459 +1,1067 @@
 
 /* ==========================================================
    OMEGA FILE EXPLORER
+   UNIFIED TYPOGRAPHY / LAYOUT
 ========================================================== */
 
+
 /* ==========================================================
-   EXPLORER
+   01. EXPLORER
 ========================================================== */
 
 #explorer {
-    display: flex;
 
-    width: 100%;
-    height: 100%;
+    display:
+        flex;
 
-    min-width: 0;
-    min-height: 0;
+    width:
+        100%;
 
-    overflow: hidden;
+    height:
+        100%;
+
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    overflow:
+        hidden;
+
+    background:
+        #081018;
+
+    color:
+        #d9efff;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.45;
 }
 
+
 /* ==========================================================
-   SIDEBAR
+   02. SIDEBAR
 ========================================================== */
 
 #explorerSidebar {
-    flex: 0 0 230px;
 
-    width: 230px;
+    flex:
+        0 0 240px;
 
-    box-sizing: border-box;
+    width:
+        240px;
 
-    background: #0b131d;
+    min-width:
+        240px;
 
-    border-right: 1px solid #22364a;
+    min-height:
+        0;
 
-    overflow-x: hidden;
-    overflow-y: auto;
+    box-sizing:
+        border-box;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    background:
+        #0b131d;
+
+    border-right:
+        1px solid #22364a;
+
+    overflow-x:
+        hidden;
+
+    overflow-y:
+        auto;
 }
 
-#explorerSidebar h3 {
-    margin: 0;
-
-    padding: 18px;
-
-    border-bottom: 1px solid #203040;
-
-    color: #7fdfff;
-
-    font-size: 15px;
-    font-weight: 600;
-
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
 
 /* ==========================================================
-   FOLDERS
+   SIDEBAR TITLE
+========================================================== */
+
+#explorerSidebar h3 {
+
+    flex:
+        0 0 auto;
+
+    margin:
+        0;
+
+    padding:
+        13px
+        14px;
+
+    box-sizing:
+        border-box;
+
+    border-bottom:
+        1px solid #203040;
+
+    color:
+        #7fdfff;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size:
+        14px;
+
+    font-weight:
+        600;
+
+    line-height:
+        1.25;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        1px;
+}
+
+
+/* ==========================================================
+   03. FOLDERS
 ========================================================== */
 
 .explorerFolder {
-    display: flex;
-    align-items: center;
 
-    gap: 10px;
+    display:
+        flex;
 
-    box-sizing: border-box;
+    align-items:
+        center;
 
-    padding: 12px 18px;
+    gap:
+        9px;
 
-    border-left: 3px solid transparent;
+    min-height:
+        44px;
 
-    color: #d5ebff;
+    box-sizing:
+        border-box;
 
-    cursor: pointer;
+    padding:
+        9px
+        12px;
+
+    border-left:
+        3px solid transparent;
+
+    color:
+        #d5ebff;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size:
+        12px;
+
+    font-weight:
+        400;
+
+    line-height:
+        1.3;
+
+    cursor:
+        pointer;
 
     transition:
-        background .2s ease,
-        border-color .2s ease;
+        background .15s ease,
+        border-color .15s ease,
+        color .15s ease;
 }
 
-.explorerFolder:hover {
-    background: #152534;
-}
-
-.explorerFolder.active {
-    background: #1d3348;
-
-    border-left-color: #4fd8ff;
-}
 
 /* ==========================================================
-   CONTENT
+   FOLDER HOVER
+========================================================== */
+
+.explorerFolder:hover {
+
+    background:
+        #152534;
+
+    color:
+        #ffffff;
+}
+
+
+/* ==========================================================
+   ACTIVE FOLDER
+========================================================== */
+
+.explorerFolder.active {
+
+    background:
+        #1d3348;
+
+    border-left-color:
+        #4fd8ff;
+
+    color:
+        #ffffff;
+}
+
+
+/* ==========================================================
+   04. CONTENT
 ========================================================== */
 
 #explorerContent {
-    flex: 1 1 auto;
 
-    display: flex;
-    flex-direction: column;
+    flex:
+        1 1 auto;
 
-    min-width: 0;
-    min-height: 0;
+    min-width:
+        0;
 
-    overflow: hidden;
+    min-height:
+        0;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    overflow:
+        hidden;
+
+    background:
+        #081018;
 }
 
+
 /* ==========================================================
-   TOOLBAR
+   05. TOOLBAR
 ========================================================== */
 
 #explorerToolbar {
-    flex: 0 0 50px;
 
-    height: 50px;
+    flex:
+        0 0 48px;
 
-    display: flex;
-    align-items: center;
+    height:
+        48px;
 
-    gap: 10px;
+    min-height:
+        48px;
 
-    box-sizing: border-box;
+    display:
+        flex;
 
-    padding: 0 18px;
+    align-items:
+        center;
 
-    background: #101a25;
+    gap:
+        9px;
 
-    border-bottom: 1px solid #22364a;
+    box-sizing:
+        border-box;
+
+    padding:
+        0
+        14px;
+
+    background:
+        #101a25;
+
+    border-bottom:
+        1px solid #22364a;
 }
 
+
 /* ==========================================================
-   PATH
+   06. PATH
 ========================================================== */
 
 #explorerPath {
-    flex: 1 1 auto;
 
-    min-width: 0;
+    flex:
+        1 1 auto;
 
-    box-sizing: border-box;
+    min-width:
+        0;
 
-    padding: 8px 12px;
+    min-height:
+        34px;
 
-    background: #081018;
+    box-sizing:
+        border-box;
 
-    border: 1px solid #22364a;
-    border-radius: 4px;
+    display:
+        flex;
 
-    color: #8ecfff;
+    align-items:
+        center;
+
+    padding:
+        7px
+        11px;
+
+    background:
+        #081018;
+
+    border:
+        1px solid #294760;
+
+    border-radius:
+        4px;
+
+    color:
+        #8ecfff;
 
     font-family:
         Consolas,
         "Courier New",
         monospace;
 
-    font-size: 13px;
+    font-size:
+        11px;
 
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-weight:
+        400;
+
+    line-height:
+        1.3;
+
+    white-space:
+        nowrap;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
 }
 
+
 /* ==========================================================
-   FILE AREA
+   07. FILE AREA
 ========================================================== */
 
 #explorerFiles {
-    flex: 1 1 auto;
 
-    min-width: 0;
-    min-height: 0;
+    flex:
+        1 1 auto;
 
-    overflow-x: hidden;
-    overflow-y: auto;
+    min-width:
+        0;
 
-    box-sizing: border-box;
+    min-height:
+        0;
 
-    padding: 18px;
+    overflow-x:
+        hidden;
+
+    overflow-y:
+        auto;
+
+    box-sizing:
+        border-box;
+
+    padding:
+        14px;
+
+    background:
+        #081018;
 }
 
+
 /* ==========================================================
-   FOLDER / FILE GRID
+   08. FOLDER / FILE GRID
 ========================================================== */
 
 .folderGrid {
-    display: grid;
+
+    display:
+        grid;
 
     grid-template-columns:
         repeat(
             auto-fill,
-            minmax(140px, 1fr)
+            minmax(
+                130px,
+                1fr
+            )
         );
 
-    gap: 18px;
+    gap:
+        12px;
 
-    width: 100%;
+    width:
+        100%;
 }
 
+
 /* ==========================================================
-   FILE ICON
+   09. FILE ICON
 ========================================================== */
 
 .fileIcon {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 
-    gap: 12px;
+    display:
+        flex;
 
-    min-width: 0;
+    flex-direction:
+        column;
 
-    box-sizing: border-box;
+    align-items:
+        center;
 
-    padding: 16px;
+    justify-content:
+        flex-start;
 
-    border: 1px solid transparent;
-    border-radius: 8px;
+    gap:
+        9px;
 
-    cursor: pointer;
+    min-width:
+        0;
+
+    min-height:
+        116px;
+
+    box-sizing:
+        border-box;
+
+    padding:
+        11px;
+
+    border:
+        1px solid transparent;
+
+    border-radius:
+        6px;
+
+    background:
+        transparent;
+
+    cursor:
+        pointer;
 
     transition:
-        background .2s ease,
-        border-color .2s ease,
-        transform .2s ease;
+        background .15s ease,
+        border-color .15s ease,
+        transform .15s ease;
 }
 
-.fileIcon:hover {
-    background: rgba(79, 216, 255, .08);
-
-    transform: translateY(-2px);
-}
-
-.fileIcon.selected {
-    background: rgba(79, 216, 255, .15);
-
-    border-color:
-        rgba(79, 216, 255, .4);
-}
 
 /* ==========================================================
-   FILE IMAGE
+   FILE HOVER
+========================================================== */
+
+.fileIcon:hover {
+
+    background:
+        rgba(79,216,255,.08);
+
+    border-color:
+        rgba(79,216,255,.18);
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* ==========================================================
+   SELECTED FILE
+========================================================== */
+
+.fileIcon.selected {
+
+    background:
+        rgba(79,216,255,.13);
+
+    border-color:
+        rgba(79,216,255,.4);
+}
+
+
+/* ==========================================================
+   10. FILE IMAGE
 ========================================================== */
 
 .fileIcon img {
-    width: 64px;
-    height: 64px;
 
-    object-fit: contain;
+    width:
+        54px;
+
+    height:
+        54px;
+
+    object-fit:
+        contain;
 
     filter:
         drop-shadow(
             0 0 8px
-            rgba(79, 216, 255, .15)
+            rgba(79,216,255,.15)
         );
 
-    user-select: none;
-    pointer-events: none;
+    user-select:
+        none;
+
+    pointer-events:
+        none;
 }
 
+
 /* ==========================================================
-   FILE NAME
+   11. FILE NAME
 ========================================================== */
 
 .fileIcon span {
-    width: 100%;
 
-    text-align: center;
+    width:
+        100%;
 
-    color: #d9ecff;
+    min-width:
+        0;
 
-    font-size: 13px;
-    line-height: 1.3;
+    color:
+        #d9ecff;
 
-    overflow-wrap: anywhere;
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-    user-select: none;
+    font-size:
+        11px;
+
+    font-weight:
+        400;
+
+    line-height:
+        1.35;
+
+    text-align:
+        center;
+
+    overflow-wrap:
+        anywhere;
+
+    word-break:
+        break-word;
+
+    user-select:
+        none;
 }
 
+
 /* ==========================================================
-   STATUS BAR
+   12. STATUS BAR
 ========================================================== */
 
 #explorerStatus {
-    flex: 0 0 34px;
 
-    height: 34px;
+    flex:
+        0 0 32px;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    height:
+        32px;
 
-    gap: 12px;
+    min-height:
+        32px;
 
-    box-sizing: border-box;
+    display:
+        flex;
 
-    padding: 0 16px;
+    align-items:
+        center;
 
-    background: #0b131d;
+    justify-content:
+        space-between;
 
-    border-top: 1px solid #22364a;
+    gap:
+        12px;
 
-    color: #88b6d4;
+    box-sizing:
+        border-box;
 
-    font-size: 12px;
+    padding:
+        0
+        12px;
 
-    white-space: nowrap;
-    overflow: hidden;
+    background:
+        #0b131d;
+
+    border-top:
+        1px solid #22364a;
+
+    color:
+        #88b6d4;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+    line-height:
+        1.2;
+
+    white-space:
+        nowrap;
+
+    overflow:
+        hidden;
 }
 
+
 /* ==========================================================
-   EXPLORER SCROLLBARS
+   STATUS CHILDREN
+========================================================== */
+
+#explorerStatus > * {
+
+    min-width:
+        0;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+}
+
+
+/* ==========================================================
+   13. SCROLLBARS
 ========================================================== */
 
 #explorerSidebar::-webkit-scrollbar,
 #explorerFiles::-webkit-scrollbar {
-    width: 8px;
+
+    width:
+        7px;
 }
+
 
 #explorerSidebar::-webkit-scrollbar-track,
 #explorerFiles::-webkit-scrollbar-track {
-    background: #071019;
+
+    background:
+        #071019;
 }
+
 
 #explorerSidebar::-webkit-scrollbar-thumb,
 #explorerFiles::-webkit-scrollbar-thumb {
-    background: #2b4c66;
 
-    border-radius: 20px;
+    background:
+        #2b4c66;
+
+    border-radius:
+        20px;
 }
+
 
 #explorerSidebar::-webkit-scrollbar-thumb:hover,
 #explorerFiles::-webkit-scrollbar-thumb:hover {
-    background: #4fd8ff;
+
+    background:
+        #4fd8ff;
 }
 
+
 /* ==========================================================
-   RESPONSIVE
+   14. TABLET
 ========================================================== */
 
 @media (max-width: 800px) {
 
     #explorerSidebar {
-        flex-basis: 180px;
-        width: 180px;
+
+        flex-basis:
+            190px;
+
+        width:
+            190px;
+
+        min-width:
+            190px;
     }
+
 
     #explorerSidebar h3 {
-        padding: 14px;
 
-        font-size: 13px;
+        padding:
+            11px
+            12px;
+
+        font-size:
+            13px;
     }
+
 
     .explorerFolder {
-        padding: 10px 14px;
 
-        font-size: 13px;
+        min-height:
+            42px;
+
+        padding:
+            8px
+            11px;
+
+        font-size:
+            11px;
     }
+
 
     #explorerToolbar {
-        padding: 0 12px;
+
+        min-height:
+            44px;
+
+        height:
+            44px;
+
+        padding:
+            0
+            11px;
     }
+
 
     #explorerFiles {
-        padding: 12px;
+
+        padding:
+            11px;
     }
 
+
     .folderGrid {
+
         grid-template-columns:
             repeat(
                 auto-fill,
-                minmax(110px, 1fr)
+                minmax(
+                    110px,
+                    1fr
+                )
             );
 
-        gap: 12px;
+        gap:
+            10px;
     }
+
 
     .fileIcon {
-        padding: 12px;
+
+        min-height:
+            105px;
+
+        padding:
+            9px;
     }
 
+
     .fileIcon img {
-        width: 52px;
-        height: 52px;
+
+        width:
+            50px;
+
+        height:
+            50px;
+    }
+
+
+    .fileIcon span {
+
+        font-size:
+            10px;
     }
 }
+
+
+/* ==========================================================
+   15. SMALL SCREEN
+========================================================== */
 
 @media (max-width: 600px) {
 
     #explorerSidebar {
-        flex-basis: 145px;
-        width: 145px;
+
+        flex-basis:
+            150px;
+
+        width:
+            150px;
+
+        min-width:
+            150px;
     }
+
 
     #explorerSidebar h3 {
-        padding: 12px;
 
-        font-size: 11px;
-        letter-spacing: .7px;
+        padding:
+            10px;
+
+        font-size:
+            11px;
+
+        letter-spacing:
+            .7px;
     }
+
 
     .explorerFolder {
-        gap: 7px;
 
-        padding: 9px 10px;
+        min-height:
+            40px;
 
-        font-size: 12px;
+        gap:
+            6px;
+
+        padding:
+            8px
+            9px;
+
+        font-size:
+            10px;
     }
+
 
     #explorerToolbar {
-        flex-basis: 44px;
-        height: 44px;
 
-        padding: 0 8px;
+        flex-basis:
+            40px;
+
+        height:
+            40px;
+
+        min-height:
+            40px;
+
+        padding:
+            0
+            7px;
     }
+
 
     #explorerPath {
-        padding: 7px 9px;
 
-        font-size: 11px;
+        min-height:
+            30px;
+
+        padding:
+            6px
+            8px;
+
+        font-size:
+            10px;
     }
+
 
     #explorerFiles {
-        padding: 10px;
+
+        padding:
+            9px;
     }
 
+
     .folderGrid {
+
         grid-template-columns:
             repeat(
                 auto-fill,
-                minmax(90px, 1fr)
+                minmax(
+                    90px,
+                    1fr
+                )
             );
 
-        gap: 8px;
+        gap:
+            8px;
     }
+
 
     .fileIcon {
-        gap: 8px;
-        padding: 9px;
+
+        min-height:
+            92px;
+
+        gap:
+            6px;
+
+        padding:
+            7px;
     }
+
 
     .fileIcon img {
-        width: 44px;
-        height: 44px;
+
+        width:
+            44px;
+
+        height:
+            44px;
     }
+
 
     .fileIcon span {
-        font-size: 11px;
+
+        font-size:
+            10px;
+
+        line-height:
+            1.3;
     }
 
+
     #explorerStatus {
-        flex-basis: 30px;
-        height: 30px;
 
-        padding: 0 10px;
+        flex-basis:
+            28px;
 
-        font-size: 10px;
+        height:
+            28px;
+
+        min-height:
+            28px;
+
+        padding:
+            0
+            8px;
+
+        font-size:
+            9px;
     }
 }
 
+
+/* ==========================================================
+   16. VERY SMALL SCREEN
+========================================================== */
+
+@media (max-width: 400px) {
+
+    #explorerSidebar {
+
+        flex-basis:
+            125px;
+
+        width:
+            125px;
+
+        min-width:
+            125px;
+    }
+
+
+    #explorerSidebar h3 {
+
+        font-size:
+            10px;
+    }
+
+
+    .explorerFolder {
+
+        padding:
+            7px;
+
+        font-size:
+            9px;
+    }
+
+
+    #explorerToolbar {
+
+        padding:
+            0
+            5px;
+    }
+
+
+    #explorerFiles {
+
+        padding:
+            7px;
+    }
+
+
+    .folderGrid {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+
+        gap:
+            6px;
+    }
+
+
+    .fileIcon {
+
+        min-height:
+            86px;
+
+        padding:
+            6px;
+    }
+
+
+    .fileIcon img {
+
+        width:
+            38px;
+
+        height:
+            38px;
+    }
+
+
+    .fileIcon span {
+
+        font-size:
+            9px;
+    }
+}
+
+
+/* ==========================================================
+   17. REDUCED MOTION
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .explorerFolder,
+    .fileIcon {
+
+        transition:
+            none;
+    }
+}
+
+
+/* ==========================================================
+   END OMEGA FILE EXPLORER
+========================================================== */
