@@ -5,7 +5,7 @@
 
 
 /* ==========================================================
-   MAIN WINDOW
+   01. MAIN WINDOW
 ========================================================== */
 
 #personnelWindow {
@@ -23,13 +23,13 @@
         hidden;
 
     background:
-        #060d14;
+        #08111a;
 
 }
 
 
 /* ==========================================================
-   PERSONNEL LIST
+   02. PERSONNEL LIST
 ========================================================== */
 
 #personnelList {
@@ -42,6 +42,24 @@
 
     min-height:
         0;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(
+                285px,
+                1fr
+            )
+        );
+
+    align-content:
+        start;
+
+    gap:
+        10px;
 
     padding:
         14px;
@@ -58,42 +76,15 @@
     background:
         linear-gradient(
             180deg,
-            #08111a,
-            #060d14
+            #0c1621,
+            #08111a
         );
 
 }
 
 
 /* ==========================================================
-   CARD GRID
-========================================================== */
-
-#personnelList {
-
-    display:
-        grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fill,
-            minmax(
-                280px,
-                1fr
-            )
-        );
-
-    align-content:
-        start;
-
-    gap:
-        10px;
-
-}
-
-
-/* ==========================================================
-   PERSON CARD
+   03. PERSONNEL CARD
 ========================================================== */
 
 .personCard {
@@ -104,6 +95,9 @@
     min-width:
         0;
 
+    min-height:
+        128px;
+
     padding:
         14px 15px;
 
@@ -113,17 +107,17 @@
     background:
         linear-gradient(
             145deg,
-            #0d1b28,
-            #09131d
+            #111f2d,
+            #0c1721
         );
 
     border:
         1px solid
-        #1d3549;
+        #243d52;
 
     border-left:
         3px solid
-        #29475d;
+        #31516a;
 
     cursor:
         pointer;
@@ -134,46 +128,14 @@
     transition:
         background .16s ease,
         border-color .16s ease,
-        transform .16s ease,
-        box-shadow .16s ease;
+        box-shadow .16s ease,
+        transform .16s ease;
 
 }
 
 
 /* ==========================================================
-   CARD TECHNICAL LINE
-========================================================== */
-
-.personCard::before {
-
-    content:
-        "PERSONNEL RECORD";
-
-    display:
-        block;
-
-    margin:
-        0 0 10px 0;
-
-    color:
-        #486b82;
-
-    font-family:
-        Consolas,
-        "Courier New",
-        monospace;
-
-    font-size:
-        9px;
-
-    letter-spacing:
-        .13em;
-
-}
-
-
-/* ==========================================================
-   CARD CORNER
+   CARD CORNER MARK
 ========================================================== */
 
 .personCard::after {
@@ -184,10 +146,10 @@
     position:
         absolute;
 
-    right:
+    top:
         0;
 
-    top:
+    right:
         0;
 
     width:
@@ -205,13 +167,51 @@
         #36566d;
 
     opacity:
-        .65;
+        .7;
+
+    pointer-events:
+        none;
 
 }
 
 
 /* ==========================================================
-   HOVER
+   CARD TOP TECHNICAL LABEL
+========================================================== */
+
+.personCard::before {
+
+    content:
+        "PERSONNEL RECORD";
+
+    display:
+        block;
+
+    margin:
+        0 0 10px 0;
+
+    color:
+        #57778d;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+    font-weight:
+        500;
+
+    letter-spacing:
+        .11em;
+
+}
+
+
+/* ==========================================================
+   CARD HOVER
 ========================================================== */
 
 .personCard:hover {
@@ -219,8 +219,8 @@
     background:
         linear-gradient(
             145deg,
-            #102334,
-            #0b1823
+            #14283a,
+            #0d1b27
         );
 
     border-color:
@@ -229,25 +229,25 @@
     border-left-color:
         #4fd8ff;
 
-    transform:
-        translateY(
-            -1px
-        );
-
     box-shadow:
-        0 7px 20px
+        0 10px 24px
         rgba(
             0,
             0,
             0,
-            .24
+            .28
+        );
+
+    transform:
+        translateY(
+            -1px
         );
 
 }
 
 
 /* ==========================================================
-   PERSON HEADER
+   04. PERSON HEADER
 ========================================================== */
 
 .personHeader {
@@ -271,7 +271,7 @@
 
 
 /* ==========================================================
-   NAME
+   PERSON NAME
 ========================================================== */
 
 .personHeader h3 {
@@ -286,7 +286,12 @@
         0;
 
     color:
-        #e7f5ff;
+        #e6f5ff;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
     font-size:
         14px;
@@ -295,7 +300,10 @@
         600;
 
     line-height:
-        1.35;
+        1.3;
+
+    letter-spacing:
+        .01em;
 
     overflow-wrap:
         anywhere;
@@ -304,7 +312,7 @@
 
 
 /* ==========================================================
-   STATUS BADGE
+   05. STATUS BADGE
 ========================================================== */
 
 .badge {
@@ -313,7 +321,7 @@
         0 0 auto;
 
     min-height:
-        23px;
+        24px;
 
     display:
         flex;
@@ -328,17 +336,17 @@
         border-box;
 
     background:
-        #173149;
+        #162a3a;
 
     border:
         1px solid
-        #2b4f68;
+        #2d5068;
 
     border-radius:
-        2px;
+        3px;
 
     color:
-        #8dc8e6;
+        #9ecbe2;
 
     font-family:
         Consolas,
@@ -351,6 +359,9 @@
     font-weight:
         600;
 
+    line-height:
+        1;
+
     letter-spacing:
         .06em;
 
@@ -361,49 +372,7 @@
 
 
 /* ==========================================================
-   STATUS COLORS
-========================================================== */
-
-.personCard:has(.badge) .badge {
-
-    color:
-        #8dc8e6;
-
-}
-
-
-.badge[data-status="ACTIVE"],
-.badge[data-status="ONLINE"] {
-
-    color:
-        #6ce4a4;
-
-    border-color:
-        #2b6849;
-
-    background:
-        #123224;
-
-}
-
-
-.badge[data-status="UNKNOWN"],
-.badge[data-status="UNSTABLE"] {
-
-    color:
-        #e6c85c;
-
-    border-color:
-        #665722;
-
-    background:
-        #29230e;
-
-}
-
-
-/* ==========================================================
-   PERSON INFO
+   06. PERSON INFORMATION
 ========================================================== */
 
 .personInfo {
@@ -412,7 +381,7 @@
         0;
 
     margin-top:
-        12px;
+        13px;
 
     padding-top:
         10px;
@@ -423,22 +392,26 @@
             255,
             255,
             255,
-            .055
+            .06
         );
 
 }
 
 
+/* ==========================================================
+   INFORMATION ROW
+========================================================== */
+
 .personInfo p {
 
     margin:
-        5px 0;
+        6px 0;
 
     color:
-        #93adbd;
+        #b5cad7;
 
     font-size:
-        11px;
+        12px;
 
     line-height:
         1.4;
@@ -449,10 +422,14 @@
 }
 
 
+/* ==========================================================
+   INFORMATION LABEL
+========================================================== */
+
 .personInfo b {
 
     color:
-        #5d849d;
+        #66879c;
 
     font-family:
         Consolas,
@@ -472,10 +449,13 @@
 
 
 /* ==========================================================
-   PROFILE PAGE
+   07. PROFILE
 ========================================================== */
 
 .personProfile {
+
+    grid-column:
+        1 / -1;
 
     position:
         relative;
@@ -487,7 +467,7 @@
         100%;
 
     padding:
-        20px;
+        18px;
 
     box-sizing:
         border-box;
@@ -495,15 +475,54 @@
     background:
         linear-gradient(
             180deg,
-            #0a151f,
-            #070f17
+            #0b1722,
+            #08121b
         );
+
+    border:
+        1px solid
+        #21394d;
 
 }
 
 
 /* ==========================================================
-   BACK BUTTON
+   PROFILE TOP LINE
+========================================================== */
+
+.personProfile::before {
+
+    content:
+        "OMEGA / PERSONNEL / INDIVIDUAL RECORD";
+
+    display:
+        block;
+
+    margin:
+        0 0 14px 0;
+
+    color:
+        #587a90;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+    font-weight:
+        500;
+
+    letter-spacing:
+        .12em;
+
+}
+
+
+/* ==========================================================
+   08. BACK BUTTON
 ========================================================== */
 
 #backBtn {
@@ -514,11 +533,14 @@
     align-items:
         center;
 
+    justify-content:
+        center;
+
     min-height:
-        29px;
+        30px;
 
     margin:
-        0 0 24px 0;
+        0 0 18px 0;
 
     padding:
         0 12px;
@@ -527,23 +549,28 @@
         border-box;
 
     background:
-        #102536;
+        #122638;
 
     border:
         1px solid
-        #2a4d66;
+        #2b4c63;
 
     border-radius:
-        3px;
+        4px;
 
     color:
-        #9acbe3;
+        #b8d8e8;
 
     font-family:
-        inherit;
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
     font-size:
         12px;
+
+    font-weight:
+        500;
 
     cursor:
         pointer;
@@ -559,19 +586,31 @@
 #backBtn:hover {
 
     background:
-        #17344a;
+        #18354a;
 
     border-color:
         #4fd8ff;
 
     color:
-        #e3f6ff;
+        #e8f8ff;
+
+}
+
+
+#backBtn:focus-visible {
+
+    outline:
+        1px solid
+        #4fd8ff;
+
+    outline-offset:
+        1px;
 
 }
 
 
 /* ==========================================================
-   PROFILE NAME
+   09. PROFILE NAME
 ========================================================== */
 
 .personProfile h2 {
@@ -582,14 +621,22 @@
     color:
         #edf8ff;
 
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
     font-size:
-        18px;
+        14px;
 
     font-weight:
         600;
 
     line-height:
-        1.3;
+        1.35;
+
+    letter-spacing:
+        .03em;
 
     overflow-wrap:
         anywhere;
@@ -598,7 +645,7 @@
 
 
 /* ==========================================================
-   PROFILE BLOCK
+   10. PROFILE DATA
 ========================================================== */
 
 .profileBlock {
@@ -618,11 +665,15 @@
     gap:
         8px;
 
-    margin-bottom:
-        18px;
+    margin:
+        0 0 14px 0;
 
 }
 
+
+/* ==========================================================
+   PROFILE FIELD
+========================================================== */
 
 .profileBlock p {
 
@@ -633,20 +684,20 @@
         0;
 
     padding:
-        12px;
+        11px 12px;
 
     box-sizing:
         border-box;
 
     background:
-        #0c1a25;
+        #0d1a25;
 
     border:
         1px solid
-        #1e394d;
+        #20394d;
 
     color:
-        #afc7d6;
+        #bdd2df;
 
     font-size:
         12px;
@@ -660,16 +711,20 @@
 }
 
 
+/* ==========================================================
+   PROFILE FIELD LABEL
+========================================================== */
+
 .profileBlock b {
 
     display:
         block;
 
-    margin-bottom:
-        5px;
+    margin:
+        0 0 5px 0;
 
     color:
-        #5d849d;
+        #638399;
 
     font-family:
         Consolas,
@@ -689,7 +744,7 @@
 
 
 /* ==========================================================
-   PROFILE NOTES
+   11. NOTES
 ========================================================== */
 
 .profileNotes {
@@ -698,24 +753,28 @@
         relative;
 
     padding:
-        16px 17px;
+        14px 15px;
 
     box-sizing:
         border-box;
 
     background:
-        #09151f;
+        #0a161f;
 
     border:
         1px solid
-        #1c3447;
+        #1e3547;
 
     border-left:
         3px solid
-        #4d7087;
+        #4a6c83;
 
 }
 
+
+/* ==========================================================
+   NOTES LABEL
+========================================================== */
 
 .profileNotes::before {
 
@@ -725,11 +784,11 @@
     display:
         block;
 
-    margin-bottom:
-        9px;
+    margin:
+        0 0 8px 0;
 
     color:
-        #587b91;
+        #64849a;
 
     font-family:
         Consolas,
@@ -737,16 +796,20 @@
         monospace;
 
     font-size:
-        9px;
+        10px;
 
     font-weight:
         600;
 
     letter-spacing:
-        .14em;
+        .12em;
 
 }
 
+
+/* ==========================================================
+   NOTES TEXT
+========================================================== */
 
 .profileNotes p {
 
@@ -760,7 +823,7 @@
         12px;
 
     line-height:
-        1.7;
+        1.65;
 
     overflow-wrap:
         anywhere;
@@ -769,7 +832,48 @@
 
 
 /* ==========================================================
-   SCROLLBAR
+   12. EMPTY STATE
+========================================================== */
+
+#personnelList:empty::before {
+
+    content:
+        "NO PERSONNEL RECORDS AVAILABLE";
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    min-height:
+        120px;
+
+    grid-column:
+        1 / -1;
+
+    color:
+        #60788a;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+    letter-spacing:
+        .08em;
+
+}
+
+
+/* ==========================================================
+   13. SCROLLBAR
 ========================================================== */
 
 #personnelList::-webkit-scrollbar {
@@ -791,10 +895,10 @@
 #personnelList::-webkit-scrollbar-thumb {
 
     background:
-        #294a61;
+        #2c4d64;
 
     border-radius:
-        8px;
+        10px;
 
 }
 
@@ -808,7 +912,7 @@
 
 
 /* ==========================================================
-   MOBILE
+   14. TABLET
 ========================================================== */
 
 @media (
@@ -822,13 +926,27 @@
             repeat(
                 auto-fill,
                 minmax(
-                    240px,
+                    235px,
                     1fr
                 )
             );
 
+        gap:
+            8px;
+
         padding:
             11px;
+
+    }
+
+
+    .personCard {
+
+        min-height:
+            120px;
+
+        padding:
+            12px 13px;
 
     }
 
@@ -840,8 +958,20 @@
 
     }
 
+
+    .personProfile {
+
+        padding:
+            15px;
+
+    }
+
 }
 
+
+/* ==========================================================
+   15. MOBILE
+========================================================== */
 
 @media (
     max-width:
@@ -855,6 +985,12 @@
 
         flex-direction:
             column;
+
+        gap:
+            8px;
+
+        padding:
+            9px;
 
     }
 
@@ -870,7 +1006,7 @@
     .personProfile {
 
         padding:
-            14px;
+            12px;
 
     }
 
@@ -878,7 +1014,15 @@
     .personProfile h2 {
 
         font-size:
-            16px;
+            14px;
+
+    }
+
+
+    .profileBlock {
+
+        grid-template-columns:
+            1fr;
 
     }
 
@@ -886,7 +1030,7 @@
 
 
 /* ==========================================================
-   REDUCED MOTION
+   16. REDUCED MOTION
 ========================================================== */
 
 @media (
