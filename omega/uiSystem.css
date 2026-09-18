@@ -1,0 +1,2843 @@
+/* ==========================================================
+   OMEGA UI SYSTEM
+   ----------------------------------------------------------
+   FINAL SHARED UI LAYER
+
+   Purpose:
+   - unify window dimensions
+   - unify headers / controls
+   - unify spacing
+   - unify panels / lists / inputs
+   - unify typography
+   - unify scrollbars
+   - unify responsive behavior
+   - preserve individual application layouts
+
+   IMPORTANT:
+   This file should be imported LAST.
+========================================================== */
+
+
+/* ==========================================================
+   01. OMEGA UI VARIABLES
+========================================================== */
+
+:root {
+
+    /* ------------------------------------------------------
+       WINDOW
+    ------------------------------------------------------ */
+
+    --omega-ui-window-width: 950px;
+    --omega-ui-window-height: 640px;
+
+    --omega-ui-window-min-width: 700px;
+    --omega-ui-window-min-height: 440px;
+
+    --omega-ui-window-radius: 6px;
+
+
+    /* ------------------------------------------------------
+       HEADER
+    ------------------------------------------------------ */
+
+    --omega-ui-header-height: 44px;
+
+
+    /* ------------------------------------------------------
+       SIDEBARS
+    ------------------------------------------------------ */
+
+    --omega-ui-sidebar-width: 250px;
+
+    --omega-ui-research-category-width: 240px;
+    --omega-ui-research-files-width: 280px;
+
+
+    /* ------------------------------------------------------
+       SPACING
+    ------------------------------------------------------ */
+
+    --omega-ui-space-1: 4px;
+    --omega-ui-space-2: 6px;
+    --omega-ui-space-3: 8px;
+    --omega-ui-space-4: 10px;
+    --omega-ui-space-5: 12px;
+    --omega-ui-space-6: 14px;
+    --omega-ui-space-7: 16px;
+    --omega-ui-space-8: 18px;
+    --omega-ui-space-9: 20px;
+    --omega-ui-space-10: 24px;
+
+
+    /* ------------------------------------------------------
+       TEXT
+    ------------------------------------------------------ */
+
+    --omega-ui-font-xs: 9px;
+    --omega-ui-font-sm: 10px;
+    --omega-ui-font-md: 12px;
+    --omega-ui-font-lg: 14px;
+    --omega-ui-font-xl: 16px;
+
+
+    /* ------------------------------------------------------
+       BORDERS
+    ------------------------------------------------------ */
+
+    --omega-ui-border: #223b50;
+    --omega-ui-border-light: #294760;
+    --omega-ui-border-active: #4fd8ff;
+
+
+    /* ------------------------------------------------------
+       BACKGROUNDS
+    ------------------------------------------------------ */
+
+    --omega-ui-bg-main: #081018;
+    --omega-ui-bg-dark: #061018;
+    --omega-ui-bg-panel: #0c1722;
+    --omega-ui-bg-panel-light: #101c28;
+    --omega-ui-bg-input: #071019;
+    --omega-ui-bg-hover: #142638;
+    --omega-ui-bg-active: #183149;
+
+
+    /* ------------------------------------------------------
+       TEXT COLORS
+    ------------------------------------------------------ */
+
+    --omega-ui-text: #d9efff;
+    --omega-ui-text-soft: #b8d2e1;
+    --omega-ui-text-muted: #6d8ca1;
+    --omega-ui-text-dim: #536d7d;
+
+
+    /* ------------------------------------------------------
+       STATUS
+    ------------------------------------------------------ */
+
+    --omega-ui-success: #66ff99;
+    --omega-ui-warning: #ffd45a;
+    --omega-ui-danger: #ff6262;
+    --omega-ui-info: #7fdfff;
+
+
+    /* ------------------------------------------------------
+       SHADOWS
+    ------------------------------------------------------ */
+
+    --omega-ui-shadow-window:
+        0 16px 42px rgba(0, 0, 0, .52);
+
+    --omega-ui-shadow-active:
+        0 18px 48px rgba(0, 0, 0, .58),
+        0 0 18px rgba(79, 216, 255, .16);
+
+    --omega-ui-shadow-panel:
+        0 5px 16px rgba(0, 0, 0, .18);
+
+
+    /* ------------------------------------------------------
+       MONOSPACE
+    ------------------------------------------------------ */
+
+    --omega-ui-mono:
+        Consolas,
+        "Courier New",
+        monospace;
+
+
+    /* ------------------------------------------------------
+       TRANSITION
+    ------------------------------------------------------ */
+
+    --omega-ui-transition:
+        background .15s ease,
+        border-color .15s ease,
+        color .15s ease,
+        box-shadow .15s ease;
+}
+
+
+/* ==========================================================
+   02. GLOBAL OMEGA WINDOW
+========================================================== */
+
+.window {
+
+    width:
+        min(
+            var(--omega-ui-window-width),
+            calc(100vw - 40px)
+        );
+
+    height:
+        min(
+            var(--omega-ui-window-height),
+            calc(100vh - 105px)
+        );
+
+    min-width:
+        var(--omega-ui-window-min-width);
+
+    min-height:
+        var(--omega-ui-window-min-height);
+
+    border-radius:
+        var(--omega-ui-window-radius);
+
+    border:
+        1px solid var(--omega-ui-border);
+
+    background:
+        linear-gradient(
+            180deg,
+            #0e1823,
+            #09121b
+        );
+
+    box-shadow:
+        var(--omega-ui-shadow-window);
+
+    overflow:
+        hidden;
+}
+
+
+/* ==========================================================
+   ACTIVE WINDOW
+========================================================== */
+
+.window.active {
+
+    border-color:
+        var(--omega-ui-border-active);
+
+    box-shadow:
+        var(--omega-ui-shadow-active);
+}
+
+
+/* ==========================================================
+   03. WINDOW HEADER
+========================================================== */
+
+.windowHeader {
+
+    flex:
+        0 0 var(--omega-ui-header-height);
+
+    height:
+        var(--omega-ui-header-height);
+
+    min-height:
+        var(--omega-ui-header-height);
+
+    padding:
+        0
+        12px;
+
+    gap:
+        12px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #162433,
+            #101a25
+        );
+
+    border-bottom:
+        1px solid #22394d;
+}
+
+
+/* ==========================================================
+   WINDOW TITLE
+========================================================== */
+
+.windowTitle {
+
+    min-width:
+        0;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    color:
+        var(--omega-ui-text);
+
+    font-size:
+        var(--omega-ui-font-lg);
+
+    font-weight:
+        600;
+
+    line-height:
+        1.2;
+
+    letter-spacing:
+        .7px;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+
+    white-space:
+        nowrap;
+}
+
+
+.windowIcon {
+
+    flex:
+        0 0 auto;
+
+    font-size:
+        15px;
+
+    line-height:
+        1;
+}
+
+
+/* ==========================================================
+   WINDOW CONTROLS
+========================================================== */
+
+.windowControls {
+
+    flex:
+        0 0 auto;
+
+    gap:
+        4px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+}
+
+
+.windowControls button {
+
+    width:
+        30px;
+
+    height:
+        27px;
+
+    min-width:
+        30px;
+
+    min-height:
+        27px;
+
+    padding:
+        0;
+
+    border:
+        1px solid transparent;
+
+    border-radius:
+        4px;
+
+    background:
+        #162635;
+
+    color:
+        #b9d8eb;
+
+    font-family:
+        var(--omega-ui-mono);
+
+    font-size:
+        12px;
+
+    transition:
+        var(--omega-ui-transition);
+}
+
+
+.windowControls button:hover {
+
+    background:
+        #24445b;
+
+    border-color:
+        #315d78;
+
+    color:
+        #ffffff;
+}
+
+
+.windowControls button:last-child:hover {
+
+    background:
+        #8f2c2f;
+
+    border-color:
+        #c2474b;
+
+    color:
+        #ffffff;
+}
+
+
+.windowControls button:focus-visible {
+
+    outline:
+        1px solid var(--omega-ui-info);
+
+    outline-offset:
+        1px;
+
+    box-shadow:
+        0 0 8px rgba(79, 216, 255, .15);
+}
+
+
+/* ==========================================================
+   04. COMMON WINDOW CONTENT
+========================================================== */
+
+.windowBody {
+
+    background:
+        linear-gradient(
+            180deg,
+            #0c1722,
+            #08111a
+        );
+}
+
+
+.windowContent {
+
+    padding:
+        var(--omega-ui-space-9);
+
+    background:
+        linear-gradient(
+            180deg,
+            #0c1722,
+            #08111a
+        );
+}
+
+
+/* ==========================================================
+   05. COMMON PANEL
+========================================================== */
+
+.omegaPanel,
+.operatorSection,
+.omegaDesktopPanel {
+
+    border:
+        1px solid var(--omega-ui-border);
+
+    border-radius:
+        4px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(15, 29, 42, .94),
+            rgba(8, 17, 26, .94)
+        );
+
+    box-shadow:
+        var(--omega-ui-shadow-panel);
+}
+
+
+/* ==========================================================
+   COMMON SECTION HEADER
+========================================================== */
+
+.omegaPanelHeader,
+.operatorSectionTitle,
+.researchBlockTitle {
+
+    min-height:
+        34px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    padding:
+        7px
+        12px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #152535,
+            #101b27
+        );
+
+    border-bottom:
+        1px solid #243d53;
+
+    color:
+        var(--omega-ui-info);
+
+    font-size:
+        var(--omega-ui-font-sm);
+
+    font-family:
+        var(--omega-ui-mono);
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        1px;
+
+    text-transform:
+        uppercase;
+}
+
+
+/* ==========================================================
+   06. COMMON INPUTS
+========================================================== */
+
+input,
+textarea,
+select {
+
+    box-sizing:
+        border-box;
+
+    border:
+        1px solid var(--omega-ui-border-light);
+
+    border-radius:
+        4px;
+
+    background:
+        var(--omega-ui-bg-input);
+
+    color:
+        var(--omega-ui-text);
+
+    font-size:
+        var(--omega-ui-font-md);
+
+    outline:
+        none;
+
+    transition:
+        border-color .15s ease,
+        box-shadow .15s ease,
+        background .15s ease;
+}
+
+
+input:focus,
+textarea:focus,
+select:focus {
+
+    border-color:
+        var(--omega-ui-border-active);
+
+    box-shadow:
+        0 0 8px rgba(79, 216, 255, .12);
+
+    background:
+        #09131d;
+}
+
+
+input::placeholder,
+textarea::placeholder {
+
+    color:
+        var(--omega-ui-text-dim);
+}
+
+
+/* ==========================================================
+   07. COMMON BUTTON SYSTEM
+========================================================== */
+
+.logsControls button,
+.consoleButton,
+.cameraControlButton,
+#sendBtn {
+
+    min-height:
+        34px;
+
+    padding:
+        7px
+        12px;
+
+    box-sizing:
+        border-box;
+
+    border:
+        1px solid #2a4c64;
+
+    border-radius:
+        4px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #173149,
+            #12283b
+        );
+
+    color:
+        #cfeaff;
+
+    font-family:
+        var(--omega-ui-mono);
+
+    font-size:
+        var(--omega-ui-font-sm);
+
+    transition:
+        var(--omega-ui-transition);
+}
+
+
+.logsControls button:hover,
+.consoleButton:hover,
+.cameraControlButton:hover,
+#sendBtn:hover {
+
+    background:
+        #1e435c;
+
+    border-color:
+        #39708f;
+
+    color:
+        #ffffff;
+
+    box-shadow:
+        0 0 8px rgba(79, 216, 255, .08);
+}
+
+
+.logsControls button:focus-visible,
+.consoleButton:focus-visible,
+.cameraControlButton:focus-visible,
+#sendBtn:focus-visible {
+
+    outline:
+        1px solid var(--omega-ui-info);
+
+    outline-offset:
+        1px;
+}
+
+
+/* ==========================================================
+   08. STANDARD LIST ITEM
+========================================================== */
+
+.explorerFolder,
+.researchFile,
+.personCard,
+.chatListItem {
+
+    min-height:
+        44px;
+
+    padding:
+        9px
+        12px;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, .035);
+
+    box-sizing:
+        border-box;
+}
+
+
+/* ==========================================================
+   LIST ITEM HOVER
+========================================================== */
+
+.explorerFolder:hover,
+.researchFile:hover,
+.personCard:hover,
+.chatListItem:hover {
+
+    background:
+        var(--omega-ui-bg-hover);
+}
+
+
+/* ==========================================================
+   LIST ITEM ACTIVE
+========================================================== */
+
+.explorerFolder.active,
+.researchFile.active,
+.personCard.active,
+.chatListItem.active {
+
+    background:
+        var(--omega-ui-bg-active);
+
+    border-left-color:
+        var(--omega-ui-border-active);
+}
+
+
+/* ==========================================================
+   09. EXPLORER
+========================================================== */
+
+#explorerSidebar {
+
+    width:
+        var(--omega-ui-sidebar-width);
+
+    min-width:
+        var(--omega-ui-sidebar-width);
+
+    background:
+        #0a131d;
+
+    border-right:
+        1px solid var(--omega-ui-border);
+}
+
+
+#explorerToolbar {
+
+    height:
+        44px;
+
+    min-height:
+        44px;
+
+    padding:
+        0
+        12px;
+
+    gap:
+        8px;
+
+    background:
+        #101a25;
+
+    border-bottom:
+        1px solid var(--omega-ui-border);
+}
+
+
+#explorerPath {
+
+    padding:
+        8px
+        10px;
+
+    border-radius:
+        4px;
+
+    font-size:
+        11px;
+}
+
+
+#explorerFiles {
+
+    padding:
+        14px;
+}
+
+
+.folderGrid {
+
+    gap:
+        10px;
+}
+
+
+.fileIcon {
+
+    min-height:
+        110px;
+
+    padding:
+        12px;
+
+    border-radius:
+        5px;
+}
+
+
+.fileIcon img {
+
+    width:
+        56px;
+
+    height:
+        56px;
+}
+
+
+.fileName {
+
+    font-size:
+        11px;
+
+    line-height:
+        1.35;
+}
+
+
+/* ==========================================================
+   10. PERSONNEL
+========================================================== */
+
+#personnelSidebar {
+
+    width:
+        var(--omega-ui-sidebar-width);
+
+    min-width:
+        var(--omega-ui-sidebar-width);
+
+    background:
+        #0a131d;
+
+    border-right:
+        1px solid var(--omega-ui-border);
+}
+
+
+#personnelSearch {
+
+    padding:
+        12px;
+
+    background:
+        #0d1722;
+
+    border-bottom:
+        1px solid var(--omega-ui-border);
+}
+
+
+#personnelSearch input {
+
+    min-height:
+        34px;
+
+    padding:
+        7px
+        10px;
+
+    font-size:
+        var(--omega-ui-font-sm);
+}
+
+
+.personCard {
+
+    gap:
+        10px;
+
+    padding:
+        10px
+        12px;
+}
+
+
+.personAvatar {
+
+    width:
+        52px;
+
+    height:
+        52px;
+
+    min-width:
+        52px;
+
+    border-radius:
+        6px;
+}
+
+
+.personName {
+
+    font-size:
+        14px;
+
+    line-height:
+        1.25;
+}
+
+
+.personRole {
+
+    font-size:
+        10px;
+}
+
+
+.personStatus {
+
+    font-size:
+        9px;
+}
+
+
+/* ==========================================================
+   PERSONNEL PROFILE
+========================================================== */
+
+#personnelViewer,
+#personnelProfile {
+
+    background:
+        #081018;
+}
+
+
+.personSection {
+
+    margin-bottom:
+        12px;
+
+    border:
+        1px solid var(--omega-ui-border);
+
+    border-radius:
+        4px;
+
+    background:
+        #0b1621;
+}
+
+
+.personSectionTitle {
+
+    padding:
+        8px
+        12px;
+
+    border-bottom:
+        1px solid var(--omega-ui-border);
+
+    color:
+        var(--omega-ui-info);
+
+    font-size:
+        var(--omega-ui-font-sm);
+
+    font-family:
+        var(--omega-ui-mono);
+
+    letter-spacing:
+        1px;
+}
+
+
+/* ==========================================================
+   11. RESEARCH
+========================================================== */
+
+#researchCategories {
+
+    flex:
+        0 0 var(--omega-ui-research-category-width);
+
+    width:
+        var(--omega-ui-research-category-width);
+
+    min-width:
+        var(--omega-ui-research-category-width);
+
+    padding:
+        10px;
+
+    background:
+        #09131d;
+
+    border-right:
+        1px solid var(--omega-ui-border);
+}
+
+
+#researchFiles {
+
+    flex:
+        0 0 var(--omega-ui-research-files-width);
+
+    width:
+        var(--omega-ui-research-files-width);
+
+    min-width:
+        var(--omega-ui-research-files-width);
+
+    background:
+        #0d1722;
+
+    border-right:
+        1px solid var(--omega-ui-border);
+}
+
+
+.researchCategory {
+
+    min-height:
+        38px;
+
+    margin-bottom:
+        5px;
+
+    padding:
+        8px
+        10px;
+
+    border-radius:
+        4px;
+
+    font-size:
+        11px;
+}
+
+
+.researchFile {
+
+    padding:
+        10px
+        12px;
+}
+
+
+.researchFile b {
+
+    font-size:
+        12px;
+}
+
+
+.researchFile small {
+
+    font-size:
+        10px;
+}
+
+
+#viewerHeader {
+
+    min-height:
+        48px;
+
+    padding:
+        10px
+        14px;
+
+    background:
+        #101c28;
+
+    border-bottom:
+        1px solid var(--omega-ui-border);
+}
+
+
+#viewerTitle {
+
+    font-size:
+        17px;
+
+    line-height:
+        1.25;
+
+    letter-spacing:
+        .5px;
+}
+
+
+#viewerLevel {
+
+    padding:
+        5px
+        9px;
+
+    border-radius:
+        4px;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        .8px;
+}
+
+
+/* ==========================================================
+   12. ACTIVITY
+========================================================== */
+
+#activityHeader {
+
+    padding:
+        11px
+        14px;
+
+    gap:
+        18px;
+
+    background:
+        #101b27;
+
+    border-bottom:
+        1px solid var(--omega-ui-border);
+}
+
+
+#operatorActivityLog {
+
+    padding:
+        4px
+        0;
+}
+
+
+.activityEntry {
+
+    grid-template-columns:
+        74px
+        132px
+        minmax(0, 1fr);
+
+    gap:
+        10px;
+
+    padding:
+        9px
+        14px;
+}
+
+
+.activityTime,
+.activityType,
+.activityDetails {
+
+    font-size:
+        9px;
+}
+
+
+/* ==========================================================
+   13. LOG / COMMUNICATIONS
+========================================================== */
+
+#logsToolbar {
+
+    padding:
+        9px
+        12px;
+
+    gap:
+        10px;
+
+    background:
+        #101a25;
+
+    border-bottom:
+        1px solid var(--omega-ui-border);
+}
+
+
+#logsToolbar h2 {
+
+    font-size:
+        15px;
+
+    letter-spacing:
+        .8px;
+}
+
+
+#logsSearch {
+
+    padding:
+        10px
+        12px;
+
+    background:
+        #0d1722;
+
+    border-bottom:
+        1px solid var(--omega-ui-border);
+}
+
+
+#logsSearch input {
+
+    min-height:
+        34px;
+
+    padding:
+        7px
+        10px;
+
+    font-size:
+        11px;
+}
+
+
+.logEntry {
+
+    grid-template-columns:
+        150px
+        105px
+        minmax(0, 1fr);
+
+    gap:
+        12px;
+
+    padding:
+        10px
+        14px;
+}
+
+
+.logTime,
+.logType,
+.logMessage {
+
+    font-size:
+        10px;
+}
+
+
+#logsFooter {
+
+    height:
+        32px;
+
+    min-height:
+        32px;
+
+    padding:
+        0
+        12px;
+
+    font-size:
+        10px;
+}
+
+
+/* ==========================================================
+   14. CHAT SYSTEM
+========================================================== */
+
+.chatSystem {
+
+    height:
+        100%;
+
+    min-height:
+        0;
+}
+
+
+.chatSidebar {
+
+    width:
+        var(--omega-ui-sidebar-width);
+
+    min-width:
+        var(--omega-ui-sidebar-width);
+
+    background:
+        #0a121b;
+
+    border-right:
+        1px solid var(--omega-ui-border);
+}
+
+
+.chatSidebarHeader {
+
+    height:
+        40px;
+
+    min-height:
+        40px;
+
+    padding:
+        0
+        12px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    background:
+        #101b26;
+
+    border-bottom:
+        1px solid var(--omega-ui-border);
+
+    font-size:
+        var(--omega-ui-font-sm);
+}
+
+
+.chatListItem {
+
+    gap:
+        9px;
+
+    min-height:
+        54px;
+
+    padding:
+        8px
+        10px;
+}
+
+
+.chatAvatar {
+
+    width:
+        34px;
+
+    height:
+        34px;
+
+    min-width:
+        34px;
+
+    font-size:
+        13px;
+}
+
+
+.chatListName {
+
+    font-size:
+        11px;
+}
+
+
+.chatListStatus {
+
+    margin-top:
+        3px;
+
+    font-size:
+        9px;
+}
+
+
+.chatHeader {
+
+    min-height:
+        52px;
+
+    padding:
+        9px
+        14px;
+
+    background:
+        #101c28;
+
+    border-bottom:
+        1px solid var(--omega-ui-border);
+}
+
+
+#activeChatName {
+
+    font-size:
+        13px;
+}
+
+
+#activeChatStatus {
+
+    margin-top:
+        3px;
+
+    font-size:
+        9px;
+}
+
+
+#activeChatClearance {
+
+    font-size:
+        9px;
+}
+
+
+.chatMessages {
+
+    padding:
+        14px;
+}
+
+
+.chatMessage {
+
+    max-width:
+        82%;
+
+    margin-bottom:
+        14px;
+}
+
+
+.messageMeta {
+
+    gap:
+        8px;
+
+    margin-bottom:
+        4px;
+}
+
+
+.messageUser {
+
+    font-size:
+        10px;
+}
+
+
+.messageTime {
+
+    font-size:
+        9px;
+}
+
+
+.messageText {
+
+    padding:
+        8px
+        10px;
+
+    border-radius:
+        4px;
+
+    font-size:
+        11px;
+
+    line-height:
+        1.45;
+}
+
+
+.chatInputArea {
+
+    gap:
+        6px;
+
+    padding:
+        9px;
+
+    background:
+        #0d1823;
+
+    border-top:
+        1px solid var(--omega-ui-border);
+}
+
+
+#chatInput {
+
+    min-height:
+        34px;
+
+    padding:
+        7px
+        10px;
+
+    font-size:
+        11px;
+}
+
+
+#sendBtn {
+
+    min-height:
+        34px;
+
+    padding:
+        0
+        14px;
+}
+
+
+/* ==========================================================
+   15. CAMERA
+========================================================== */
+
+#cameraWindow {
+
+    background:
+        #071019;
+}
+
+
+.cameraSystem {
+
+    min-width:
+        0;
+
+    min-height:
+        0;
+}
+
+
+.cameraChannelPanel {
+
+    width:
+        var(--omega-ui-sidebar-width);
+
+    min-width:
+        var(--omega-ui-sidebar-width);
+
+    background:
+        #0a131d;
+
+    border-right:
+        1px solid var(--omega-ui-border);
+}
+
+
+.cameraPanelTitle {
+
+    min-height:
+        40px;
+
+    padding:
+        0
+        12px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    background:
+        #101b26;
+
+    border-bottom:
+        1px solid var(--omega-ui-border);
+
+    font-size:
+        var(--omega-ui-font-sm);
+}
+
+
+.cameraChannelList {
+
+    overflow-y:
+        auto;
+}
+
+
+.cameraPanelStatus {
+
+    padding:
+        10px;
+
+    border-top:
+        1px solid var(--omega-ui-border);
+
+    background:
+        #09131d;
+}
+
+
+.cameraTechnicalBar {
+
+    min-height:
+        48px;
+
+    padding:
+        6px
+        10px;
+
+    gap:
+        8px;
+
+    background:
+        #0c1722;
+
+    border-top:
+        1px solid var(--omega-ui-border);
+
+    border-bottom:
+        1px solid var(--omega-ui-border);
+}
+
+
+.cameraTechnicalItem span {
+
+    font-size:
+        8px;
+}
+
+
+.cameraTechnicalItem strong {
+
+    font-size:
+        10px;
+}
+
+
+.cameraEventPanel {
+
+    border-top:
+        1px solid var(--omega-ui-border);
+}
+
+
+.cameraEventHeader {
+
+    min-height:
+        32px;
+
+    padding:
+        0
+        10px;
+
+    background:
+        #101b27;
+
+    border-bottom:
+        1px solid var(--omega-ui-border);
+
+    font-size:
+        9px;
+}
+
+
+.cameraControlBar {
+
+    min-height:
+        40px;
+
+    padding:
+        5px
+        8px;
+
+    gap:
+        8px;
+
+    background:
+        #0d1823;
+
+    border-top:
+        1px solid var(--omega-ui-border);
+}
+
+
+.cameraControlButton {
+
+    min-height:
+        30px;
+
+    padding:
+        5px
+        10px;
+
+    font-size:
+        9px;
+}
+
+
+.cameraLiveStatus span,
+.cameraControlCurrent span {
+
+    font-size:
+        8px;
+}
+
+
+.cameraLiveStatus strong,
+.cameraControlCurrent strong {
+
+    font-size:
+        10px;
+}
+
+
+/* ==========================================================
+   16. CONSOLE
+========================================================== */
+
+#consoleWindow {
+
+    background:
+        #05090d;
+}
+
+
+#consoleOutput {
+
+    padding:
+        14px;
+
+    font-size:
+        11px;
+
+    line-height:
+        1.55;
+}
+
+
+.consoleLine {
+
+    margin-bottom:
+        6px;
+}
+
+
+#consoleInputArea {
+
+    min-height:
+        46px;
+
+    padding:
+        7px
+        10px;
+
+    gap:
+        8px;
+
+    background:
+        #101821;
+
+    border-top:
+        1px solid var(--omega-ui-border);
+}
+
+
+.consolePrompt {
+
+    font-size:
+        12px;
+}
+
+
+#consoleInput {
+
+    min-height:
+        32px;
+
+    padding:
+        7px
+        9px;
+
+    font-size:
+        11px;
+}
+
+
+/* Legacy console footer compatibility */
+
+#consoleWindow .windowFooter {
+
+    min-height:
+        46px;
+
+    padding:
+        7px
+        10px;
+
+    gap:
+        8px;
+
+    background:
+        #101821;
+
+    border-top:
+        1px solid var(--omega-ui-border);
+}
+
+
+/* ==========================================================
+   17. SETTINGS
+========================================================== */
+
+#settingsSidebar {
+
+    width:
+        var(--omega-ui-sidebar-width);
+
+    min-width:
+        var(--omega-ui-sidebar-width);
+
+    padding:
+        10px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #08131d,
+            #050b11
+        );
+
+    border-right:
+        1px solid var(--omega-ui-border);
+}
+
+
+#settingsSidebar::before {
+
+    margin:
+        2px
+        4px
+        12px;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        1.8px;
+}
+
+
+.settingsTab {
+
+    min-height:
+        36px;
+
+    margin-bottom:
+        3px;
+
+    padding:
+        8px
+        10px;
+
+    gap:
+        8px;
+
+    border-radius:
+        4px;
+
+    font-size:
+        10px;
+}
+
+
+#settingsContent {
+
+    padding:
+        20px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #07131d,
+            #050b11
+        );
+}
+
+
+/* ==========================================================
+   18. OPERATOR PROFILE
+========================================================== */
+
+#operatorProfile {
+
+    width:
+        100%;
+
+    max-width:
+        100%;
+}
+
+
+.operatorSection {
+
+    margin-bottom:
+        14px;
+
+    border-radius:
+        4px;
+
+    overflow:
+        hidden;
+}
+
+
+.operatorSectionTitle {
+
+    min-height:
+        34px;
+
+    padding:
+        7px
+        12px;
+
+    font-size:
+        9px;
+}
+
+
+.operatorField {
+
+    min-height:
+        56px;
+
+    padding:
+        10px
+        12px;
+}
+
+
+.operatorField span {
+
+    margin-bottom:
+        4px;
+
+    font-size:
+        8px;
+}
+
+
+.operatorField strong {
+
+    font-size:
+        12px;
+}
+
+
+.operatorStats {
+
+    gap:
+        1px;
+}
+
+
+.operatorStats > div {
+
+    min-height:
+        64px;
+
+    padding:
+        10px;
+}
+
+
+.operatorStats span {
+
+    margin-bottom:
+        5px;
+
+    font-size:
+        8px;
+}
+
+
+.operatorStats strong {
+
+    font-size:
+        15px;
+}
+
+
+/* ==========================================================
+   19. DESKTOP HOME
+========================================================== */
+
+#omegaDesktopHome {
+
+    inset:
+        14px;
+}
+
+
+.omegaDesktopLayout {
+
+    gap:
+        10px;
+}
+
+
+.omegaDesktopPanel {
+
+    border-radius:
+        5px;
+}
+
+
+.omegaDesktopPanelHeader {
+
+    min-height:
+        32px;
+
+    padding:
+        7px
+        10px;
+
+    font-size:
+        10px;
+}
+
+
+.omegaDesktopPanelHeader span:last-child {
+
+    font-size:
+        8px;
+}
+
+
+.omegaDesktopMetric {
+
+    padding:
+        9px;
+}
+
+
+.omegaDesktopMetric span {
+
+    margin-bottom:
+        5px;
+
+    font-size:
+        8px;
+}
+
+
+.omegaDesktopMetric strong {
+
+    font-size:
+        14px;
+}
+
+
+.omegaDesktopFacilityRow {
+
+    padding:
+        5px
+        10px;
+
+    gap:
+        10px;
+}
+
+
+.omegaDesktopPersonnelRow {
+
+    padding:
+        7px
+        10px;
+}
+
+
+.omegaDesktopPersonName {
+
+    font-size:
+        10px;
+}
+
+
+.omegaDesktopPersonLocation,
+.omegaDesktopPersonStatus {
+
+    font-size:
+        9px;
+}
+
+
+.omegaDesktopActivityRow {
+
+    padding:
+        5px
+        9px;
+
+    gap:
+        7px;
+
+    font-size:
+        8px;
+}
+
+
+.omegaDesktopEmpty {
+
+    padding:
+        14px
+        10px;
+
+    font-size:
+        8px;
+}
+
+
+.omegaDesktopNotice {
+
+    padding:
+        8px
+        10px;
+
+    font-size:
+        8px;
+}
+
+
+.omegaDesktopNetworkItem {
+
+    padding:
+        6px
+        8px;
+}
+
+
+.omegaDesktopNetworkItem span {
+
+    font-size:
+        7px;
+}
+
+
+.omegaDesktopNetworkItem strong {
+
+    font-size:
+        8px;
+}
+
+
+/* ==========================================================
+   20. STATUS BAR
+========================================================== */
+
+.windowStatus {
+
+    min-height:
+        30px;
+
+    height:
+        30px;
+
+    padding:
+        0
+        12px;
+
+    background:
+        #0b141d;
+
+    border-top:
+        1px solid var(--omega-ui-border);
+
+    color:
+        #7192a8;
+
+    font-size:
+        9px;
+
+    font-family:
+        var(--omega-ui-mono);
+
+    letter-spacing:
+        .4px;
+}
+
+
+/* ==========================================================
+   21. COMMON SCROLLBARS
+========================================================== */
+
+.windowBody::-webkit-scrollbar,
+.windowContent::-webkit-scrollbar,
+#explorerSidebar::-webkit-scrollbar,
+#explorerFiles::-webkit-scrollbar,
+#personnelList::-webkit-scrollbar,
+#personnelSidebar::-webkit-scrollbar,
+#researchCategories::-webkit-scrollbar,
+#researchFiles::-webkit-scrollbar,
+#operatorActivityLog::-webkit-scrollbar,
+#logsList::-webkit-scrollbar,
+.chatList::-webkit-scrollbar,
+.chatMessages::-webkit-scrollbar,
+#consoleOutput::-webkit-scrollbar,
+#settingsSidebar::-webkit-scrollbar,
+#settingsContent::-webkit-scrollbar,
+.cameraChannelList::-webkit-scrollbar,
+.cameraEventList::-webkit-scrollbar,
+.omegaDesktopPersonnel::-webkit-scrollbar,
+.omegaDesktopActivity::-webkit-scrollbar {
+
+    width:
+        6px;
+
+}
+
+
+.windowBody::-webkit-scrollbar-track,
+.windowContent::-webkit-scrollbar-track,
+#explorerSidebar::-webkit-scrollbar-track,
+#explorerFiles::-webkit-scrollbar-track,
+#personnelList::-webkit-scrollbar-track,
+#personnelSidebar::-webkit-scrollbar-track,
+#researchCategories::-webkit-scrollbar-track,
+#researchFiles::-webkit-scrollbar-track,
+#operatorActivityLog::-webkit-scrollbar-track,
+#logsList::-webkit-scrollbar-track,
+.chatList::-webkit-scrollbar-track,
+.chatMessages::-webkit-scrollbar-track,
+#consoleOutput::-webkit-scrollbar-track,
+#settingsSidebar::-webkit-scrollbar-track,
+#settingsContent::-webkit-scrollbar-track,
+.cameraChannelList::-webkit-scrollbar-track,
+.cameraEventList::-webkit-scrollbar-track,
+.omegaDesktopPersonnel::-webkit-scrollbar-track,
+.omegaDesktopActivity::-webkit-scrollbar-track {
+
+    background:
+        #060d13;
+
+}
+
+
+.windowBody::-webkit-scrollbar-thumb,
+.windowContent::-webkit-scrollbar-thumb,
+#explorerSidebar::-webkit-scrollbar-thumb,
+#explorerFiles::-webkit-scrollbar-thumb,
+#personnelList::-webkit-scrollbar-thumb,
+#personnelSidebar::-webkit-scrollbar-thumb,
+#researchCategories::-webkit-scrollbar-thumb,
+#researchFiles::-webkit-scrollbar-thumb,
+#operatorActivityLog::-webkit-scrollbar-thumb,
+#logsList::-webkit-scrollbar-thumb,
+.chatList::-webkit-scrollbar-thumb,
+.chatMessages::-webkit-scrollbar-thumb,
+#consoleOutput::-webkit-scrollbar-thumb,
+#settingsSidebar::-webkit-scrollbar-thumb,
+#settingsContent::-webkit-scrollbar-thumb,
+.cameraChannelList::-webkit-scrollbar-thumb,
+.cameraEventList::-webkit-scrollbar-thumb,
+.omegaDesktopPersonnel::-webkit-scrollbar-thumb,
+.omegaDesktopActivity::-webkit-scrollbar-thumb {
+
+    background:
+        #2d5067;
+
+    border-radius:
+        20px;
+}
+
+
+.windowBody::-webkit-scrollbar-thumb:hover,
+.windowContent::-webkit-scrollbar-thumb:hover,
+#explorerSidebar::-webkit-scrollbar-thumb:hover,
+#explorerFiles::-webkit-scrollbar-thumb:hover,
+#personnelList::-webkit-scrollbar-thumb:hover,
+#personnelSidebar::-webkit-scrollbar-thumb:hover,
+#researchCategories::-webkit-scrollbar-thumb:hover,
+#researchFiles::-webkit-scrollbar-thumb:hover,
+#operatorActivityLog::-webkit-scrollbar-thumb:hover,
+#logsList::-webkit-scrollbar-thumb:hover,
+.chatList::-webkit-scrollbar-thumb:hover,
+.chatMessages::-webkit-scrollbar-thumb:hover,
+#consoleOutput::-webkit-scrollbar-thumb:hover,
+#settingsSidebar::-webkit-scrollbar-thumb:hover,
+#settingsContent::-webkit-scrollbar-thumb:hover,
+.cameraChannelList::-webkit-scrollbar-thumb:hover,
+.cameraEventList::-webkit-scrollbar-thumb:hover,
+.omegaDesktopPersonnel::-webkit-scrollbar-thumb:hover,
+.omegaDesktopActivity::-webkit-scrollbar-thumb:hover {
+
+    background:
+        #4fd8ff;
+}
+
+
+/* ==========================================================
+   22. ACCESSIBILITY / FOCUS
+========================================================== */
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+
+    outline:
+        1px solid var(--omega-ui-info);
+
+    outline-offset:
+        1px;
+}
+
+
+/* ==========================================================
+   23. RESPONSIVE WINDOW
+========================================================== */
+
+@media (max-width: 1100px) {
+
+    .window {
+
+        width:
+            calc(100vw - 30px);
+
+        height:
+            calc(100vh - 95px);
+
+        min-width:
+            640px;
+
+        min-height:
+            420px;
+    }
+
+
+    #personnelSidebar,
+    #settingsSidebar,
+    #explorerSidebar,
+    .chatSidebar,
+    .cameraChannelPanel {
+
+        width:
+            220px;
+
+        min-width:
+            220px;
+    }
+
+
+    #researchCategories {
+
+        width:
+            210px;
+
+        min-width:
+            210px;
+    }
+
+
+    #researchFiles {
+
+        width:
+            250px;
+
+        min-width:
+            250px;
+    }
+
+
+    .omegaDesktopLayout {
+
+        gap:
+            8px;
+    }
+}
+
+
+/* ==========================================================
+   24. TABLET
+========================================================== */
+
+@media (max-width: 820px) {
+
+    .window {
+
+        width:
+            calc(100vw - 20px);
+
+        height:
+            calc(100vh - 80px);
+
+        min-width:
+            0;
+
+        min-height:
+            0;
+    }
+
+
+    .windowHeader {
+
+        height:
+            42px;
+
+        min-height:
+            42px;
+
+        padding:
+            0
+            10px;
+    }
+
+
+    .windowTitle {
+
+        font-size:
+            12px;
+    }
+
+
+    .windowControls button {
+
+        width:
+            28px;
+
+        min-width:
+            28px;
+
+        height:
+            26px;
+    }
+
+
+    #personnelSidebar,
+    #settingsSidebar,
+    #explorerSidebar,
+    .chatSidebar,
+    .cameraChannelPanel {
+
+        width:
+            190px;
+
+        min-width:
+            190px;
+    }
+
+
+    #researchCategories {
+
+        width:
+            180px;
+
+        min-width:
+            180px;
+    }
+
+
+    #researchFiles {
+
+        width:
+            220px;
+
+        min-width:
+            220px;
+    }
+
+
+    .folderGrid {
+
+        grid-template-columns:
+            repeat(
+                auto-fill,
+                minmax(120px, 1fr)
+            );
+    }
+
+
+    .activityEntry {
+
+        grid-template-columns:
+            64px
+            110px
+            minmax(0, 1fr);
+
+        gap:
+            8px;
+    }
+
+
+    .logEntry {
+
+        grid-template-columns:
+            120px
+            90px
+            minmax(0, 1fr);
+
+        gap:
+            8px;
+    }
+}
+
+
+/* ==========================================================
+   25. SMALL SCREEN
+========================================================== */
+
+@media (max-width: 620px) {
+
+    .window {
+
+        width:
+            calc(100vw - 10px);
+
+        height:
+            calc(100vh - 70px);
+
+        left:
+            5px !important;
+
+        top:
+            5px !important;
+    }
+
+
+    .windowHeader {
+
+        height:
+            40px;
+
+        min-height:
+            40px;
+    }
+
+
+    .windowTitle {
+
+        font-size:
+            11px;
+    }
+
+
+    .windowControls {
+
+        gap:
+            3px;
+    }
+
+
+    .windowControls button {
+
+        width:
+            27px;
+
+        min-width:
+            27px;
+
+        height:
+            25px;
+
+        font-size:
+            11px;
+    }
+
+
+    #personnelSidebar,
+    #settingsSidebar,
+    #explorerSidebar,
+    .chatSidebar,
+    .cameraChannelPanel {
+
+        width:
+            150px;
+
+        min-width:
+            150px;
+    }
+
+
+    #researchCategories {
+
+        width:
+            140px;
+
+        min-width:
+            140px;
+    }
+
+
+    #researchFiles {
+
+        width:
+            180px;
+
+        min-width:
+            180px;
+    }
+
+
+    .windowContent {
+
+        padding:
+            12px;
+    }
+
+
+    #settingsContent {
+
+        padding:
+            12px;
+    }
+
+
+    .operatorGrid {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .operatorStats {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+
+    .activityEntry,
+    .logEntry {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            4px;
+    }
+
+
+    .chatMessage {
+
+        max-width:
+            92%;
+    }
+
+
+    #viewerTitle {
+
+        font-size:
+            14px;
+    }
+}
+
+
+/* ==========================================================
+   26. VERY SMALL SCREEN
+========================================================== */
+
+@media (max-width: 440px) {
+
+    #personnelSidebar,
+    #settingsSidebar,
+    #explorerSidebar,
+    .chatSidebar,
+    .cameraChannelPanel {
+
+        width:
+            125px;
+
+        min-width:
+            125px;
+    }
+
+
+    #researchCategories {
+
+        width:
+            120px;
+
+        min-width:
+            120px;
+    }
+
+
+    #researchFiles {
+
+        width:
+            150px;
+
+        min-width:
+            150px;
+    }
+
+
+    .operatorStats {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .folderGrid {
+
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+
+    .chatSidebarHeader {
+
+        padding:
+            0
+            8px;
+    }
+
+
+    .chatListItem {
+
+        padding:
+            7px;
+    }
+}
+
+
+/* ==========================================================
+   27. REDUCED MOTION
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .window,
+    .windowControls button,
+    .logsControls button,
+    .consoleButton,
+    .cameraControlButton,
+    #sendBtn,
+    input,
+    textarea,
+    select,
+    .explorerFolder,
+    .researchFile,
+    .personCard,
+    .chatListItem {
+
+        animation:
+            none !important;
+
+        transition:
+            none !important;
+    }
+}
+
+
+/* ==========================================================
+   28. IMPORTANT COMPATIBILITY RULES
+========================================================== */
+
+/*
+   Do NOT force display:flex on individual windows here.
+
+   WindowManager controls:
+       hidden
+       minimized
+       active
+       workspace mode
+
+   Therefore we only normalize visual properties.
+*/
+
+
+.window.hidden {
+
+    display:
+        none !important;
+}
+
+
+/*
+   Camera workspace mode keeps its own special layout.
+*/
+
+#cameraWindow.cameraWorkspaceMode {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    min-width:
+        0;
+
+    min-height:
+        0;
+}
+
+
+/*
+   Desktop home is not a normal draggable window.
+*/
+
+#omegaDesktopHome {
+
+    pointer-events:
+        none;
+}
+
+
+/*
+   Preserve anomaly / MR.SMILE systems.
+*/
+
+#mrSmileManifestation,
+#mrSmileOverlay,
+#mrSmileContainer,
+#nullSpace,
+.nullAnomaly,
+.nullSiteCorrupted {
+
+    /*
+       Intentionally untouched.
+       ARG-specific styles must remain
+       stronger than the neutral UI system.
+    */
+}
+
+
+/* ==========================================================
+   29. FINAL NORMALIZATION
+========================================================== */
+
+#workspace > .window {
+
+    box-sizing:
+        border-box;
+}
+
+
+#workspace > .window > * {
+
+    box-sizing:
+        border-box;
+}
+
+
+#workspace button,
+#workspace input,
+#workspace textarea,
+#workspace select {
+
+    font-family:
+        inherit;
+}
+
+
+/* ==========================================================
+   END OF OMEGA UI SYSTEM
+========================================================== */
