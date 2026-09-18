@@ -2,16 +2,18 @@
    SYS_00 — OMEGA SYSTEM PROTOCOL
    MIRROR-INT / OMEGA
 
-   Purpose:
-   - internal system authorization / notice
-   - functional OMEGA appearance
-   - restrained technical presentation
-   - no jumpscare styling
+   Internal authorization / protocol notice.
+
+   Typography:
+       14px = important title
+       12px = primary text
+       11px = secondary information
+       10px = technical information
 ========================================================== */
 
 
 /* ==========================================================
-   OVERLAY
+   01. OVERLAY
 ========================================================== */
 
 #sys00Prompt {
@@ -31,29 +33,25 @@
     justify-content:
         center;
 
-    padding:
-        24px;
-
     box-sizing:
         border-box;
 
+    padding:
+        24px;
+
     background:
         rgba(
-            0,
-            0,
-            0,
-            0.62
+            2,
+            7,
+            11,
+            .72
         );
 
     backdrop-filter:
-        blur(
-            2px
-        );
+        blur(2px);
 
     -webkit-backdrop-filter:
-        blur(
-            2px
-        );
+        blur(2px);
 
     z-index:
         2147483000;
@@ -65,7 +63,7 @@
 
 
 /* ==========================================================
-   WINDOW
+   02. SYS_00 WINDOW
 ========================================================== */
 
 .sys00Window {
@@ -74,52 +72,29 @@
         relative;
 
     width:
-        520px;
+        540px;
 
     max-width:
-        calc(
-            100vw - 48px
-        );
+        calc(100vw - 40px);
 
     box-sizing:
         border-box;
 
     background:
-        linear-gradient(
-            180deg,
-            #0d0f10 0%,
-            #090b0c 100%
-        );
+        #09151f;
 
     border:
         1px solid
-        #444b4f;
+        var(--omega-border);
 
     box-shadow:
-
-        0 0 0 1px
-            rgba(
-                255,
-                255,
-                255,
-                0.025
-            ),
-
-        0 18px 50px
-            rgba(
-                0,
-                0,
-                0,
-                0.7
-            );
-
-    font-family:
-        "Courier New",
-        Consolas,
-        monospace;
+        var(--shadow-large);
 
     color:
-        #c6cbcd;
+        var(--color-text);
+
+    font-family:
+        var(--font-system);
 
     overflow:
         hidden;
@@ -128,7 +103,7 @@
 
 
 /* ==========================================================
-   TOP STATUS LINE
+   TOP SYSTEM LINE
 ========================================================== */
 
 .sys00Window::before {
@@ -139,10 +114,10 @@
     position:
         absolute;
 
-    top:
+    left:
         0;
 
-    left:
+    top:
         0;
 
     width:
@@ -152,22 +127,22 @@
         2px;
 
     background:
-        #70777a;
+        var(--omega-cyan);
 
     opacity:
-        0.65;
+        .55;
 
 }
 
 
 /* ==========================================================
-   HEADER
+   03. HEADER
 ========================================================== */
 
 .sys00Header {
 
     min-height:
-        42px;
+        44px;
 
     display:
         flex;
@@ -179,23 +154,31 @@
         space-between;
 
     gap:
-        16px;
-
-    padding:
-        0 14px;
+        14px;
 
     box-sizing:
         border-box;
 
-    border-bottom:
-        1px solid
-        #2d3235;
+    padding:
+        0 14px;
 
     background:
-        #121516;
+        #0c1a25;
+
+    border-bottom:
+        1px solid
+        rgba(
+            45,
+            96,
+            120,
+            .45
+        );
 
     color:
-        #d6dadd;
+        var(--color-text);
+
+    font-family:
+        var(--font-system);
 
     font-size:
         10px;
@@ -203,8 +186,11 @@
     font-weight:
         600;
 
+    line-height:
+        1.2;
+
     letter-spacing:
-        0.11em;
+        1px;
 
     text-transform:
         uppercase;
@@ -213,7 +199,7 @@
 
 
 /* ==========================================================
-   HEADER SIDE DETAILS
+   HEADER DETAILS
 ========================================================== */
 
 .sys00Header > * {
@@ -225,31 +211,37 @@
 
 
 /* ==========================================================
-   BODY
+   04. BODY
 ========================================================== */
 
 .sys00Body {
 
-    padding:
-        22px;
-
     box-sizing:
         border-box;
 
+    padding:
+        20px;
+
+    background:
+        #08131d;
+
     color:
-        #aeb5b8;
+        var(--color-text-soft);
+
+    font-family:
+        var(--font-system);
 
     font-size:
         12px;
 
     line-height:
-        1.65;
+        1.6;
 
 }
 
 
 /* ==========================================================
-   WARNING / MAIN TITLE
+   05. WARNING / TITLE
 ========================================================== */
 
 .sys00Warning {
@@ -258,17 +250,25 @@
         relative;
 
     margin:
-        0 0 18px 0;
+        0 0 16px;
 
     padding:
-        0 0 11px 0;
+        0 0 11px;
 
     border-bottom:
         1px solid
-        #252a2d;
+        rgba(
+            45,
+            96,
+            120,
+            .35
+        );
 
     color:
-        #d5d9db;
+        var(--omega-cyan-light);
+
+    font-family:
+        var(--font-system);
 
     font-size:
         14px;
@@ -276,8 +276,11 @@
     font-weight:
         600;
 
+    line-height:
+        1.3;
+
     letter-spacing:
-        0.08em;
+        .5px;
 
     text-transform:
         uppercase;
@@ -285,7 +288,9 @@
 }
 
 
-/* Small OMEGA-like marker */
+/* ==========================================================
+   SYS_00 MARKER
+========================================================== */
 
 .sys00Warning::before {
 
@@ -299,7 +304,10 @@
         6px;
 
     color:
-        #767e82;
+        #587b8c;
+
+    font-family:
+        var(--font-mono);
 
     font-size:
         10px;
@@ -307,14 +315,17 @@
     font-weight:
         400;
 
+    line-height:
+        1;
+
     letter-spacing:
-        0.14em;
+        1.2px;
 
 }
 
 
 /* ==========================================================
-   INFORMATION PANEL
+   06. INFORMATION PANEL
 ========================================================== */
 
 .sys00Info {
@@ -323,83 +334,63 @@
         relative;
 
     margin:
-        0 0 18px 0;
+        0 0 17px;
 
     padding:
-        12px 13px;
+        11px
+        13px;
 
     box-sizing:
         border-box;
 
+    background:
+        #07111a;
+
     border:
         1px solid
-        #292e31;
-
-    background:
         rgba(
-            255,
-            255,
-            255,
-            0.018
+            45,
+            96,
+            120,
+            .30
         );
 
+    border-left:
+        2px solid
+        var(--omega-cyan-dark);
+
     color:
-        #8e979b;
+        #82a7b9;
+
+    font-family:
+        var(--font-mono);
 
     font-size:
         10px;
 
     line-height:
-        1.75;
+        1.7;
 
     letter-spacing:
-        0.055em;
-
-}
-
-
-/* Side marker */
-
-.sys00Info::before {
-
-    content:
-        "";
-
-    position:
-        absolute;
-
-    left:
-        0;
-
-    top:
-        0;
-
-    bottom:
-        0;
-
-    width:
-        2px;
-
-    background:
-        #5f676b;
-
-    opacity:
-        0.55;
+        .4px;
 
 }
 
 
 /* ==========================================================
-   MAIN TEXT
+   07. MAIN TEXT
 ========================================================== */
 
 .sys00Text {
 
     margin:
-        0 0 22px 0;
+        0 0 20px;
 
     color:
-        #b7bdc0;
+        var(--color-text-soft);
+
+    font-family:
+        var(--font-system);
 
     font-size:
         12px;
@@ -411,7 +402,7 @@
 
 
 /* ==========================================================
-   SUBTLE SYSTEM FOOTER
+   08. FOOTER MARKER
 ========================================================== */
 
 .sys00Body::after {
@@ -423,23 +414,34 @@
         block;
 
     margin-top:
-        18px;
+        17px;
 
     padding-top:
-        9px;
+        8px;
 
     border-top:
         1px solid
-        #22272a;
+        rgba(
+            45,
+            96,
+            120,
+            .25
+        );
 
     color:
-        #535b5f;
+        #4e7283;
+
+    font-family:
+        var(--font-mono);
 
     font-size:
         10px;
 
+    line-height:
+        1.2;
+
     letter-spacing:
-        0.14em;
+        1.2px;
 
     text-transform:
         uppercase;
@@ -448,7 +450,7 @@
 
 
 /* ==========================================================
-   BUTTON AREA
+   09. BUTTON AREA
 ========================================================== */
 
 .sys00Buttons {
@@ -472,67 +474,52 @@
 
 
 /* ==========================================================
-   BUTTON
+   10. BUTTON
 ========================================================== */
 
 .sys00Buttons button {
 
     min-width:
-        88px;
+        94px;
 
-    padding:
-        8px 15px;
+    min-height:
+        34px;
 
     box-sizing:
         border-box;
 
-    border:
-        1px solid
-        #454c50;
+    padding:
+        0 14px;
 
     background:
-        #111516;
+        #0b1822;
+
+    border:
+        1px solid
+        var(--omega-border);
 
     color:
-        #afb5b8;
+        var(--color-text-soft);
 
     font-family:
-        "Courier New",
-        Consolas,
-        monospace;
+        var(--font-system);
 
     font-size:
         12px;
 
     font-weight:
-        600;
+        500;
 
-    letter-spacing:
-        0.07em;
-
-    text-transform:
-        uppercase;
+    line-height:
+        32px;
 
     cursor:
         pointer;
 
     transition:
-
-        background
-            0.16s
-            ease,
-
-        border-color
-            0.16s
-            ease,
-
-        color
-            0.16s
-            ease,
-
-        box-shadow
-            0.16s
-            ease;
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast);
 
 }
 
@@ -544,22 +531,13 @@
 .sys00Buttons button:hover {
 
     background:
-        #181c1e;
+        #102635;
 
     border-color:
-        #60686c;
+        var(--omega-border-light);
 
     color:
-        #d9dddf;
-
-    box-shadow:
-        0 0 0 1px
-        rgba(
-            255,
-            255,
-            255,
-            0.025
-        );
+        #ffffff;
 
 }
 
@@ -571,55 +549,33 @@
 .sys00Buttons button:active {
 
     background:
-        #0b0d0e;
+        #07131d;
 
     transform:
-        translateY(
-            1px
-        );
+        translateY(1px);
 
 }
 
 
 /* ==========================================================
-   FOCUS
-========================================================== */
-
-.sys00Buttons button:focus-visible {
-
-    outline:
-        1px solid
-        #80898d;
-
-    outline-offset:
-        2px;
-
-}
-
-
-/* ==========================================================
-   FIRST BUTTON / SECONDARY
-========================================================== */
-
-.sys00Buttons button:first-child {
-
-    background:
-        #15191a;
-
-}
-
-
-/* ==========================================================
-   LAST BUTTON / PRIMARY
+   11. PRIMARY BUTTON
 ========================================================== */
 
 .sys00Buttons button:last-child {
 
+    background:
+        #0d202d;
+
     border-color:
-        #5b6266;
+        rgba(
+            79,
+            216,
+            255,
+            .40
+        );
 
     color:
-        #c8cdd0;
+        var(--omega-cyan-light);
 
 }
 
@@ -631,25 +587,123 @@
 .sys00Buttons button:last-child:hover {
 
     background:
-        #1c2022;
+        #123044;
 
     border-color:
-        #737b7f;
+        var(--omega-cyan);
 
     color:
-        #e1e4e5;
+        #ffffff;
+
+    box-shadow:
+        var(--omega-glow);
 
 }
 
 
 /* ==========================================================
-   RESPONSIVE
+   12. FIRST BUTTON
 ========================================================== */
 
-@media (
-    max-width:
-        700px
-) {
+.sys00Buttons button:first-child {
+
+    color:
+        #829eac;
+
+}
+
+
+/* ==========================================================
+   13. FOCUS
+========================================================== */
+
+.sys00Buttons button:focus-visible {
+
+    outline:
+        1px solid
+        var(--omega-cyan);
+
+    outline-offset:
+        2px;
+
+}
+
+
+/* ==========================================================
+   14. WARNING STATE
+   ----------------------------------------------------------
+   Optional modifier for more serious SYS_00 messages.
+========================================================== */
+
+.sys00Window.warning {
+
+    border-color:
+        rgba(
+            255,
+            212,
+            90,
+            .35
+        );
+
+}
+
+
+.sys00Window.warning::before {
+
+    background:
+        var(--omega-yellow);
+
+}
+
+
+.sys00Window.warning
+.sys00Warning {
+
+    color:
+        var(--omega-yellow);
+
+}
+
+
+/* ==========================================================
+   15. ERROR STATE
+========================================================== */
+
+.sys00Window.error {
+
+    border-color:
+        rgba(
+            255,
+            79,
+            94,
+            .35
+        );
+
+}
+
+
+.sys00Window.error::before {
+
+    background:
+        var(--omega-red);
+
+}
+
+
+.sys00Window.error
+.sys00Warning {
+
+    color:
+        var(--omega-red);
+
+}
+
+
+/* ==========================================================
+   16. MOBILE
+========================================================== */
+
+@media (max-width: 700px) {
 
     #sys00Prompt {
 
@@ -670,10 +724,21 @@
     }
 
 
+    .sys00Header {
+
+        min-height:
+            42px;
+
+        padding:
+            0 12px;
+
+    }
+
+
     .sys00Body {
 
         padding:
-            18px;
+            17px;
 
     }
 
@@ -700,7 +765,55 @@
 
 
 /* ==========================================================
-   REDUCED MOTION
+   17. SMALL MOBILE
+========================================================== */
+
+@media (max-width: 450px) {
+
+    #sys00Prompt {
+
+        padding:
+            10px;
+
+    }
+
+
+    .sys00Header {
+
+        font-size:
+            9px;
+
+    }
+
+
+    .sys00Warning {
+
+        font-size:
+            13px;
+
+    }
+
+
+    .sys00Body {
+
+        padding:
+            14px;
+
+    }
+
+
+    .sys00Text {
+
+        font-size:
+            11px;
+
+    }
+
+}
+
+
+/* ==========================================================
+   18. REDUCED MOTION
 ========================================================== */
 
 @media (
@@ -719,25 +832,20 @@
 
 
 /* ==========================================================
-   OPTIONAL CRT COMPATIBILITY
+   19. CRT COMPATIBILITY
 ========================================================== */
 
-body.crtEnabled #sys00Prompt {
+body.crtEnabled
+#sys00Prompt {
 
     filter:
-        contrast(
-            1.015
-        );
+        contrast(1.01);
 
 }
 
 
 /* ==========================================================
-   OPTIONAL SCANLINE COMPATIBILITY
-
-   Does not create scanlines itself.
-   It simply keeps SYS_00 above common
-   decorative layers.
+   20. LAYER ISOLATION
 ========================================================== */
 
 #sys00Prompt,
@@ -747,3 +855,8 @@ body.crtEnabled #sys00Prompt {
         isolate;
 
 }
+
+
+/* ==========================================================
+   END SYS_00
+========================================================== */
