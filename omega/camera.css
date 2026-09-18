@@ -1,44 +1,532 @@
- /* ==========================================================
-    OMEGA SECURITY CAMERA SYSTEM
- ========================================================== */
+/* ==========================================================
+   OMEGA SECURITY SURVEILLANCE
+   CAMERA SYSTEM
+========================================================== */
+
+
+/* ==========================================================
+   CAMERA WINDOW
+========================================================== */
 
 #cameraWindow {
-    display: flex;
-    flex-direction: column;
 
-    overflow: hidden;
+    width: 1060px;
+    height: 700px;
+
+    min-width: 760px;
+    min-height: 480px;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    overflow: hidden !important;
+
+    background:
+        #0a1219 !important;
+
+    border:
+        1px solid
+        #2a4254 !important;
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.55);
+
 }
 
 
 /* ==========================================================
-   CAMERA HEADER
+   WINDOW HEADER
 ========================================================== */
 
-#cameraWindow .windowHeader {
-    flex: 0 0 46px;
+#cameraWindow > .windowHeader {
+
+    flex:
+        0 0 46px !important;
+
+    height:
+        46px !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            #172633,
+            #111d28
+        ) !important;
+
+    border-bottom:
+        1px solid
+        #2b4659 !important;
+
 }
 
 
 /* ==========================================================
-   CAMERA BODY
+   CAMERA SYSTEM
 ========================================================== */
 
-#cameraWindow .windowBody {
+#cameraWindow .cameraSystem {
 
-    position: relative;
+    flex:
+        1 1 auto;
 
-    flex: 1 1 auto;
+    min-width:
+        0;
 
-    width: 100%;
-    min-width: 0;
-    min-height: 0;
+    min-height:
+        0;
 
-    padding: 0;
+    display:
+        grid;
 
-    overflow: hidden;
+    grid-template-columns:
+        210px
+        minmax(
+            0,
+            1fr
+        );
 
-    display: flex;
-    flex-direction: column;
+    overflow:
+        hidden;
+
+    background:
+        #05090d;
+
+}
+
+
+/* ==========================================================
+   CHANNEL PANEL
+========================================================== */
+
+#cameraWindow .cameraChannelPanel {
+
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    background:
+        #0b141c;
+
+    border-right:
+        1px solid
+        #263d4d;
+
+}
+
+
+/* ==========================================================
+   CHANNEL PANEL HEADER
+========================================================== */
+
+#cameraWindow .cameraPanelTitle {
+
+    flex:
+        0 0 39px;
+
+    height:
+        39px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    padding:
+        0 12px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        #101d27;
+
+    border-bottom:
+        1px solid
+        #263d4d;
+
+    color:
+        #83a6ba;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        9px;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        1.2px;
+
+}
+
+
+/* ==========================================================
+   CHANNEL LIST
+========================================================== */
+
+#cameraWindow .cameraChannelList {
+
+    flex:
+        1 1 auto;
+
+    min-height:
+        0;
+
+    overflow-y:
+        auto;
+
+    padding:
+        7px;
+
+    box-sizing:
+        border-box;
+
+}
+
+
+/* ==========================================================
+   CHANNEL BUTTON
+========================================================== */
+
+#cameraWindow .cameraChannel {
+
+    position:
+        relative;
+
+    width:
+        100%;
+
+    min-height:
+        55px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        9px;
+
+    padding:
+        7px 8px;
+
+    margin:
+        0 0 3px;
+
+    box-sizing:
+        border-box;
+
+    border:
+        1px solid
+        transparent;
+
+    border-radius:
+        2px;
+
+    background:
+        transparent;
+
+    color:
+        #7895a7;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    text-align:
+        left;
+
+    cursor:
+        pointer;
+
+    transition:
+        background .12s ease,
+        border-color .12s ease,
+        color .12s ease;
+
+}
+
+
+#cameraWindow .cameraChannel:hover {
+
+    background:
+        #101f2a;
+
+    border-color:
+        #294658;
+
+    color:
+        #b9d6e5;
+
+}
+
+
+#cameraWindow .cameraChannel.active {
+
+    background:
+        #142630;
+
+    border-color:
+        #3a6177;
+
+    color:
+        #d4edf8;
+
+}
+
+
+#cameraWindow .cameraChannel.active::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    left:
+        0;
+
+    top:
+        5px;
+
+    bottom:
+        5px;
+
+    width:
+        2px;
+
+    background:
+        #66d393;
+
+}
+
+
+/* ==========================================================
+   CHANNEL LED
+========================================================== */
+
+#cameraWindow .cameraChannelDot {
+
+    flex:
+        0 0 7px;
+
+    width:
+        7px;
+
+    height:
+        7px;
+
+    border-radius:
+        50%;
+
+    background:
+        #425663;
+
+}
+
+
+#cameraWindow .cameraChannel.active
+.cameraChannelDot {
+
+    background:
+        #6bd99b;
+
+    box-shadow:
+        0 0 5px
+        rgba(
+            107,
+            217,
+            155,
+            .35
+        );
+
+}
+
+
+/* ==========================================================
+   CHANNEL INFORMATION
+========================================================== */
+
+#cameraWindow .cameraChannelInfo {
+
+    min-width:
+        0;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        3px;
+
+}
+
+
+#cameraWindow .cameraChannelInfo strong {
+
+    display:
+        block;
+
+    overflow:
+        hidden;
+
+    color:
+        #c8e1ed;
+
+    font-size:
+        10px;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        .7px;
+
+    white-space:
+        nowrap;
+
+    text-overflow:
+        ellipsis;
+
+}
+
+
+#cameraWindow .cameraChannelInfo small {
+
+    display:
+        block;
+
+    overflow:
+        hidden;
+
+    color:
+        #587180;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        .35px;
+
+    white-space:
+        nowrap;
+
+    text-overflow:
+        ellipsis;
+
+}
+
+
+/* ==========================================================
+   CHANNEL PANEL STATUS
+========================================================== */
+
+#cameraWindow .cameraPanelStatus {
+
+    flex:
+        0 0 auto;
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+    padding:
+        9px 11px;
+
+    background:
+        #0d1922;
+
+    border-top:
+        1px solid
+        #263d4d;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+}
+
+
+#cameraWindow .cameraPanelStatus span {
+
+    color:
+        #4e6676;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        1px;
+
+}
+
+
+#cameraWindow .cameraPanelStatus strong {
+
+    color:
+        #67d59a;
+
+    font-size:
+        8px;
+
+    font-weight:
+        500;
+
+    letter-spacing:
+        .9px;
+
+}
+
+
+/* ==========================================================
+   MAIN VIDEO AREA
+========================================================== */
+
+#cameraWindow .cameraMain {
+
+    position:
+        relative;
+
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    overflow:
+        hidden;
+
+    padding:
+        10px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        #05090d;
 
 }
 
@@ -47,21 +535,35 @@
    CAMERA VIEW
 ========================================================== */
 
-#cameraView {
+#cameraWindow #cameraView {
 
-    position: relative;
+    position:
+        relative !important;
 
-    flex: 1 1 auto;
+    width:
+        100% !important;
 
-    width: 100%;
-    height: auto;
+    height:
+        100% !important;
 
-    min-width: 0;
-    min-height: 0;
+    min-width:
+        0 !important;
 
-    overflow: hidden;
+    min-height:
+        0 !important;
 
-    background: #020406;
+    overflow:
+        hidden !important;
+
+    background:
+        #020507 !important;
+
+    border:
+        1px solid
+        #2c4454 !important;
+
+    box-sizing:
+        border-box !important;
 
 }
 
@@ -70,94 +572,125 @@
    CAMERA SCREEN
 ========================================================== */
 
-.cameraScreen {
+#cameraWindow .cameraScreen {
 
-    position: relative;
+    position:
+        absolute;
 
-    width: 100%;
-    height: 100%;
+    inset:
+        0;
 
-    min-width: 0;
-    min-height: 0;
+    width:
+        100%;
 
-    overflow: hidden;
+    height:
+        100%;
 
-    background: #020406;
-
-    box-sizing: border-box;
-
-    font-family:
-        Consolas,
-        "Courier New",
-        monospace;
-
-    border: 1px solid #263b4c;
-
-}
-
-
-/* ==========================================================
-   CAMERA IMAGE
-========================================================== */
-
-.cameraImage {
-
-    position: absolute;
-
-    inset: 0;
-
-    width: 100%;
-    height: 100%;
-
-    min-width: 0;
-    min-height: 0;
-
-    display: block;
-
-    object-fit: cover;
-
-    filter:
-        brightness(.82)
-        contrast(1.08)
-        saturate(.75);
-
-    z-index: 1;
-
-    pointer-events: none;
-
-    user-select: none;
-
-}
-
-
-/* ==========================================================
-   CAMERA OVERLAY
-========================================================== */
-
-.cameraOverlay {
-
-    position: absolute;
-
-    inset: 0;
-
-    z-index: 10;
-
-    pointer-events: none;
-
-    color: #fff;
-
-    font-family:
-        Consolas,
-        "Courier New",
-        monospace;
-
-    text-shadow:
-        0 1px 4px #000;
+    overflow:
+        hidden;
 
     background:
-        linear-gradient(
-            rgba(255,255,255,.015),
-            rgba(0,0,0,.05)
+        #020507;
+
+    border:
+        none;
+
+    box-sizing:
+        border-box;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+}
+
+
+/* ==========================================================
+   VIDEO IMAGE
+========================================================== */
+
+#cameraWindow .cameraImage {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    display:
+        block;
+
+    object-fit:
+        cover;
+
+    background:
+        #020507;
+
+    filter:
+        brightness(.76)
+        contrast(1.10)
+        saturate(.72);
+
+    transform:
+        scale(1.005);
+
+    z-index:
+        1;
+
+    pointer-events:
+        none;
+
+    user-select:
+        none;
+
+}
+
+
+/* ==========================================================
+   INNER SCREEN BORDER
+========================================================== */
+
+#cameraWindow .cameraScreen::after {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    z-index:
+        25;
+
+    pointer-events:
+        none;
+
+    box-shadow:
+        inset
+        0
+        0
+        0
+        1px
+        rgba(
+            220,
+            240,
+            248,
+            .07
         );
 
 }
@@ -167,26 +700,188 @@
    SCANLINES
 ========================================================== */
 
-.cameraScanlines {
+#cameraWindow .cameraScanlines {
 
-    position: absolute;
+    position:
+        absolute;
 
-    inset: 0;
+    inset:
+        0;
 
-    z-index: 15;
+    z-index:
+        10;
 
-    pointer-events: none;
+    pointer-events:
+        none;
 
     background:
         repeating-linear-gradient(
             to bottom,
 
-            rgba(255,255,255,.025) 0px,
-            rgba(255,255,255,.025) 1px,
+            rgba(
+                255,
+                255,
+                255,
+                .028
+            )
+            0px,
 
-            rgba(0,0,0,.08) 2px,
-            rgba(0,0,0,.08) 4px
+            rgba(
+                255,
+                255,
+                255,
+                .028
+            )
+            1px,
+
+            rgba(
+                0,
+                0,
+                0,
+                .09
+            )
+            2px,
+
+            rgba(
+                0,
+                0,
+                0,
+                .09
+            )
+            4px
         );
+
+    opacity:
+        .72;
+
+    animation:
+        omegaCameraScan
+        7s
+        linear
+        infinite;
+
+}
+
+
+@keyframes omegaCameraScan {
+
+    from {
+        background-position:
+            0 0;
+    }
+
+    to {
+        background-position:
+            0 160px;
+    }
+
+}
+
+
+/* ==========================================================
+   CAMERA NOISE
+========================================================== */
+
+#cameraWindow .cameraNoise {
+
+    position:
+        absolute;
+
+    inset:
+        -15%;
+
+    z-index:
+        11;
+
+    pointer-events:
+        none;
+
+    opacity:
+        .08;
+
+    background-image:
+        radial-gradient(
+            rgba(
+                255,
+                255,
+                255,
+                .85
+            )
+            1px,
+
+            transparent
+            1px
+        );
+
+    background-size:
+        3px
+        3px;
+
+    animation:
+        omegaCameraNoise
+        .14s
+        steps(2)
+        infinite;
+
+}
+
+
+@keyframes omegaCameraNoise {
+
+    0% {
+        transform:
+            translate(
+                0,
+                0
+            );
+
+        opacity:
+            .06;
+    }
+
+    25% {
+        transform:
+            translate(
+                -2px,
+                1px
+            );
+
+        opacity:
+            .10;
+    }
+
+    50% {
+        transform:
+            translate(
+                1px,
+                -2px
+            );
+
+        opacity:
+            .07;
+    }
+
+    75% {
+        transform:
+            translate(
+                2px,
+                2px
+            );
+
+        opacity:
+            .11;
+    }
+
+    100% {
+        transform:
+            translate(
+                -1px,
+                -1px
+            );
+
+        opacity:
+            .08;
+    }
 
 }
 
@@ -195,261 +890,893 @@
    VIGNETTE
 ========================================================== */
 
-.cameraVignette {
+#cameraWindow .cameraVignette {
 
-    position: absolute;
+    position:
+        absolute;
 
-    inset: 0;
+    inset:
+        0;
 
-    z-index: 16;
+    z-index:
+        12;
 
-    pointer-events: none;
+    pointer-events:
+        none;
 
     background:
         radial-gradient(
             ellipse at center,
 
-            transparent 45%,
+            transparent 42%,
 
-            rgba(0,0,0,.45) 100%
+            rgba(
+                0,
+                0,
+                0,
+                .18
+            )
+            67%,
+
+            rgba(
+                0,
+                0,
+                0,
+                .72
+            )
+            100%
         );
 
 }
 
 
 /* ==========================================================
-   TOP
+   CAMERA OVERLAY
 ========================================================== */
 
-.cameraTop {
+#cameraWindow .cameraOverlay {
 
-    position: absolute;
+    position:
+        absolute;
 
-    top: 14px;
+    inset:
+        0;
 
-    left: 16px;
-    right: 16px;
+    z-index:
+        30;
 
-    z-index: 20;
+    pointer-events:
+        none;
 
-    display: flex;
+    color:
+        #e5f0f5;
 
-    justify-content: space-between;
-
-    align-items: center;
-
-    font-size: 13px;
-
-    color: #d9f5ff;
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
 
 }
 
 
 /* ==========================================================
-   CAMERA ID
+   FEED HEADER
 ========================================================== */
 
-.cameraID {
+#cameraWindow .cameraTop {
 
-    letter-spacing: 1px;
+    position:
+        absolute;
+
+    top:
+        13px;
+
+    left:
+        14px;
+
+    right:
+        14px;
+
+    min-height:
+        23px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    padding:
+        0 7px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        rgba(
+            2,
+            7,
+            10,
+            .48
+        );
+
+    border-left:
+        2px solid
+        rgba(
+            140,
+            210,
+            229,
+            .35
+        );
+
+    color:
+        #e3edf2;
+
+    font-size:
+        10px;
+
+    letter-spacing:
+        .7px;
+
+    text-shadow:
+        0
+        1px
+        3px
+        rgba(
+            0,
+            0,
+            0,
+            .85
+        );
+
+}
+
+
+#cameraWindow .cameraFeedIdentity {
+
+    min-width:
+        0;
+
+    overflow:
+        hidden;
+
+    white-space:
+        nowrap;
+
+    text-overflow:
+        ellipsis;
+
+}
+
+
+#cameraWindow .cameraFeedSeparator {
+
+    margin:
+        0 4px;
+
+    color:
+        #718792;
 
 }
 
 
 /* ==========================================================
-   REC
+   REC INDICATOR
 ========================================================== */
 
-.cameraRec {
+#cameraWindow .cameraRec {
 
-    color: #ff6868;
+    flex:
+        0 0 auto;
 
-    font-weight: bold;
+    display:
+        flex;
 
-    letter-spacing: 1px;
+    align-items:
+        center;
 
-    animation:
-        cameraRecBlink 1.2s infinite;
+    gap:
+        5px;
+
+    padding:
+        3px
+        6px;
+
+    border:
+        1px solid
+        rgba(
+            220,
+            65,
+            65,
+            .35
+        );
+
+    background:
+        rgba(
+            75,
+            0,
+            0,
+            .18
+        );
+
+    color:
+        #e96a6a;
+
+    font-size:
+        8px;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        1px;
 
 }
 
 
-.recDot {
+#cameraWindow .recDot {
+
+    display:
+        inline-block;
+
+    color:
+        #ee5f5f;
 
     animation:
-        cameraRecBlink 1.2s infinite;
+        omegaCameraRec
+        1.3s
+        steps(1)
+        infinite;
 
 }
 
 
-@keyframes cameraRecBlink {
+@keyframes omegaCameraRec {
 
     0%,
     45% {
-        opacity: 1;
+        opacity:
+            1;
     }
 
-    50%,
+    46%,
     100% {
-        opacity: .3;
+        opacity:
+            .25;
     }
 
 }
 
 
 /* ==========================================================
-   STATUS
+   NETWORK LABEL
 ========================================================== */
 
-.cameraStatus {
+#cameraWindow .cameraStatus {
 
-    position: absolute;
+    position:
+        absolute;
 
-    top: 42px;
+    top:
+        43px;
 
-    left: 16px;
+    left:
+        16px;
 
-    z-index: 20;
+    padding:
+        4px
+        7px;
+
+    background:
+        rgba(
+            2,
+            7,
+            10,
+            .42
+        );
 
     color:
-        rgba(210,235,245,.65);
+        rgba(
+            211,
+            230,
+            238,
+            .62
+        );
 
-    font-size: 10px;
+    font-size:
+        8px;
 
-    letter-spacing: 1px;
+    letter-spacing:
+        1px;
+
+    text-shadow:
+        0
+        1px
+        3px
+        #000;
+
+}
+
+
+#cameraWindow .cameraStatusDivider {
+
+    margin:
+        0 5px;
+
+    color:
+        #5f7079;
 
 }
 
 
 /* ==========================================================
-   BOTTOM
+   CHANNEL MARKER
 ========================================================== */
 
-.cameraBottom {
+#cameraWindow .cameraChannelMarker {
 
-    position: absolute;
+    position:
+        absolute;
 
-    left: 16px;
-    right: 16px;
+    top:
+        46px;
 
-    bottom: 14px;
+    right:
+        17px;
 
-    z-index: 20;
+    padding:
+        3px
+        6px;
 
-    display: flex;
+    background:
+        rgba(
+            2,
+            7,
+            10,
+            .42
+        );
 
-    justify-content: space-between;
+    color:
+        rgba(
+            208,
+            228,
+            236,
+            .58
+        );
 
-    align-items: center;
+    font-size:
+        8px;
 
-    color: #e3f7ff;
-
-    font-size: 12px;
+    letter-spacing:
+        1px;
 
 }
 
 
 /* ==========================================================
-   CAMERA NAME
+   FRAME CORNERS
 ========================================================== */
 
-.cameraName {
+#cameraWindow .cameraFrame {
 
-    letter-spacing: 1px;
+    position:
+        absolute;
+
+    width:
+        22px;
+
+    height:
+        22px;
+
+    opacity:
+        .42;
+
+}
+
+
+/* TOP LEFT */
+
+#cameraWindow .cameraFrameTL {
+
+    left:
+        13px;
+
+    top:
+        12px;
+
+    border-left:
+        1px solid
+        rgba(
+            220,
+            240,
+            248,
+            .65
+        );
+
+    border-top:
+        1px solid
+        rgba(
+            220,
+            240,
+            248,
+            .65
+        );
+
+}
+
+
+/* TOP RIGHT */
+
+#cameraWindow .cameraFrameTR {
+
+    right:
+        13px;
+
+    top:
+        12px;
+
+    border-right:
+        1px solid
+        rgba(
+            220,
+            240,
+            248,
+            .65
+        );
+
+    border-top:
+        1px solid
+        rgba(
+            220,
+            240,
+            248,
+            .65
+        );
+
+}
+
+
+/* BOTTOM LEFT */
+
+#cameraWindow .cameraFrameBL {
+
+    left:
+        13px;
+
+    bottom:
+        12px;
+
+    border-left:
+        1px solid
+        rgba(
+            220,
+            240,
+            248,
+            .65
+        );
+
+    border-bottom:
+        1px solid
+        rgba(
+            220,
+            240,
+            248,
+            .65
+        );
+
+}
+
+
+/* BOTTOM RIGHT */
+
+#cameraWindow .cameraFrameBR {
+
+    right:
+        13px;
+
+    bottom:
+        12px;
+
+    border-right:
+        1px solid
+        rgba(
+            220,
+            240,
+            248,
+            .65
+        );
+
+    border-bottom:
+        1px solid
+        rgba(
+            220,
+            240,
+            248,
+            .65
+        );
 
 }
 
 
 /* ==========================================================
-   SIGNAL
+   CENTER RETICLE
 ========================================================== */
 
-.cameraSignal {
+#cameraWindow .cameraReticle {
 
-    color: #ccecf5;
+    position:
+        absolute;
+
+    left:
+        50%;
+
+    top:
+        50%;
+
+    width:
+        20px;
+
+    height:
+        20px;
+
+    transform:
+        translate(
+            -50%,
+            -50%
+        );
+
+    opacity:
+        .16;
 
 }
 
 
-.cameraSignal b {
+#cameraWindow .cameraReticle::before,
+#cameraWindow .cameraReticle::after {
 
-    color: #78ff9e;
+    content:
+        "";
 
-    font-weight: normal;
+    position:
+        absolute;
+
+    background:
+        rgba(
+            225,
+            241,
+            246,
+            .8
+        );
+
+}
+
+
+#cameraWindow .cameraReticle::before {
+
+    left:
+        50%;
+
+    top:
+        0;
+
+    bottom:
+        0;
+
+    width:
+        1px;
+
+    transform:
+        translateX(
+            -50%
+        );
+
+}
+
+
+#cameraWindow .cameraReticle::after {
+
+    top:
+        50%;
+
+    left:
+        0;
+
+    right:
+        0;
+
+    height:
+        1px;
+
+    transform:
+        translateY(
+            -50%
+        );
 
 }
 
 
 /* ==========================================================
-   TIME
+   BOTTOM FEED INFO
 ========================================================== */
 
-.cameraTime {
+#cameraWindow .cameraBottom {
 
-    position: absolute;
+    position:
+        absolute;
 
-    right: 16px;
+    left:
+        14px;
 
-    bottom: 39px;
+    right:
+        14px;
 
-    z-index: 20;
+    bottom:
+        13px;
 
-    color: #a8e6ff;
+    min-height:
+        25px;
 
-    font-size: 12px;
+    display:
+        flex;
 
-    letter-spacing: 1px;
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        15px;
+
+    padding:
+        0 7px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        rgba(
+            2,
+            7,
+            10,
+            .50
+        );
+
+    border-top:
+        1px solid
+        rgba(
+            210,
+            235,
+            244,
+            .08
+        );
+
+    color:
+        #dcebf1;
+
+    font-size:
+        9px;
+
+    text-shadow:
+        0
+        1px
+        3px
+        #000;
+
+}
+
+
+#cameraWindow .cameraLocation {
+
+    min-width:
+        0;
+
+    overflow:
+        hidden;
+
+    white-space:
+        nowrap;
+
+    text-overflow:
+        ellipsis;
+
+    letter-spacing:
+        .6px;
+
+}
+
+
+#cameraWindow .cameraFeedMeta {
+
+    flex:
+        0 0 auto;
+
+    color:
+        #91aab6;
+
+    white-space:
+        nowrap;
+
+}
+
+
+#cameraWindow .cameraFeedMeta b {
+
+    color:
+        #a8d6b8;
+
+    font-weight:
+        500;
+
+}
+
+
+#cameraWindow .cameraMetaDivider {
+
+    margin:
+        0 6px;
+
+    color:
+        #52636d;
 
 }
 
 
 /* ==========================================================
-   CAMERA STARTUP
+   TIMESTAMP
 ========================================================== */
 
-.cameraBoot {
+#cameraWindow .cameraTime {
+
+    position:
+        absolute;
+
+    right:
+        15px;
+
+    bottom:
+        45px;
+
+    padding:
+        3px
+        6px;
+
+    background:
+        rgba(
+            2,
+            7,
+            10,
+            .52
+        );
+
+    color:
+        #b1c9d2;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        1px;
+
+    text-shadow:
+        0
+        1px
+        3px
+        #000;
+
+}
+
+
+/* ==========================================================
+   CAMERA COUNTER
+========================================================== */
+
+#cameraWindow .cameraIndex {
+
+    position:
+        absolute;
+
+    left:
+        15px;
+
+    bottom:
+        46px;
+
+    padding:
+        3px
+        6px;
+
+    color:
+        rgba(
+            205,
+            225,
+            232,
+            .48
+        );
+
+    background:
+        rgba(
+            2,
+            7,
+            10,
+            .42
+        );
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        .8px;
+
+}
+
+
+/* ==========================================================
+   CAMERA BOOT
+========================================================== */
+
+#cameraWindow .cameraBoot {
 
     animation:
-        cameraBoot .35s steps(3);
+        omegaCameraBoot
+        .32s
+        steps(4);
 
 }
 
 
-@keyframes cameraBoot {
+@keyframes omegaCameraBoot {
 
     0% {
 
-        opacity: 0;
+        opacity:
+            0;
 
-        filter: brightness(2);
+        filter:
+            brightness(2.4);
 
-        transform: scale(1.015);
-
-    }
-
-    30% {
-
-        opacity: .4;
-
-        transform: translateX(-2px);
+        transform:
+            scale(1.01);
 
     }
 
-    60% {
+    25% {
 
-        opacity: .8;
+        opacity:
+            .35;
 
-        transform: translateX(2px);
+    }
+
+    50% {
+
+        opacity:
+            .75;
+
+        filter:
+            brightness(.7);
+
+    }
+
+    75% {
+
+        opacity:
+            .9;
 
     }
 
     100% {
 
-        opacity: 1;
+        opacity:
+            1;
 
-        filter: brightness(1);
+        filter:
+            brightness(1);
 
-        transform: translateX(0);
+        transform:
+            scale(1);
 
     }
 
@@ -460,309 +1787,644 @@
    CAMERA SWITCH
 ========================================================== */
 
-.cameraSwitch {
+#cameraWindow .cameraSwitch {
 
     animation:
-        cameraSwitch .35s steps(4);
+        omegaCameraSwitch
+        .30s
+        steps(4);
 
 }
 
 
-@keyframes cameraSwitch {
+@keyframes omegaCameraSwitch {
 
     0% {
 
-        filter: brightness(1);
+        opacity:
+            .7;
 
-        transform: translateX(0);
+        transform:
+            translateX(
+                0
+            );
+
+        filter:
+            brightness(1);
 
     }
 
     20% {
 
-        filter:
-            brightness(1.6)
-            contrast(1.5);
+        opacity:
+            .45;
 
-        transform: translateX(-3px);
-
-    }
-
-    40% {
-
-        filter:
-            brightness(.45)
-            contrast(1.8);
-
-        transform: translateX(3px);
-
-    }
-
-    60% {
+        transform:
+            translateX(
+                -3px
+            );
 
         filter:
             brightness(1.4)
-            contrast(1.4);
-
-        transform: translateX(-2px);
-
-    }
-
-    80% {
-
-        filter:
-            brightness(.7)
-            contrast(1.5);
-
-        transform: translateX(1px);
-
-    }
-
-    100% {
-
-        filter:
-            brightness(1)
-            contrast(1);
-
-        transform: translateX(0);
-
-    }
-
-}
-
-
-/* ==========================================================
-   INTERFERENCE
-========================================================== */
-
-.cameraInterference {
-
-    animation:
-        cameraInterference .7s steps(5);
-
-}
-
-
-@keyframes cameraInterference {
-
-    0% {
-
-        filter:
-            brightness(1)
-            contrast(1);
-
-        transform: translateX(0);
-
-    }
-
-    15% {
-
-        filter:
-            brightness(1.7)
-            contrast(1.8);
-
-        transform: translateX(-3px);
-
-    }
-
-    30% {
-
-        filter:
-            brightness(.35)
-            contrast(2);
-
-        transform: translateX(3px);
+            contrast(1.35);
 
     }
 
     45% {
 
-        filter:
-            brightness(1.4)
-            contrast(1.5);
+        opacity:
+            .8;
 
-        transform: translateX(-2px);
+        transform:
+            translateX(
+                3px
+            );
+
+        filter:
+            brightness(.6)
+            contrast(1.5);
 
     }
 
-    60% {
+    70% {
 
-        filter:
-            brightness(.5)
-            contrast(1.8);
-
-        transform: translateX(2px);
+        transform:
+            translateX(
+                -1px
+            );
 
     }
 
     100% {
+
+        opacity:
+            1;
+
+        transform:
+            translateX(
+                0
+            );
 
         filter:
             brightness(1)
             contrast(1);
 
-        transform: translateX(0);
-
     }
 
 }
 
 
 /* ==========================================================
-   FLICKER
+   RANDOM FLICKER
 ========================================================== */
 
-.cameraFlicker {
+#cameraWindow .cameraScreen::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    z-index:
+        20;
+
+    pointer-events:
+        none;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .025
+        );
+
+    opacity:
+        0;
 
     animation:
-        cameraFlicker .5s steps(4);
+        omegaCameraFlicker
+        4s
+        infinite
+        steps(1);
 
 }
 
 
-@keyframes cameraFlicker {
+@keyframes omegaCameraFlicker {
 
     0%,
+    86%,
     100% {
-        opacity: 1;
+        opacity:
+            0;
     }
 
-    20% {
-        opacity: .35;
+    87% {
+        opacity:
+            .18;
     }
 
-    40% {
-        opacity: .85;
+    88% {
+        opacity:
+            0;
     }
 
-    60% {
-        opacity: .25;
+    92% {
+        opacity:
+            .09;
     }
 
-    80% {
-        opacity: .9;
+    93% {
+        opacity:
+            0;
     }
 
 }
 
 
 /* ==========================================================
-   OFFLINE
+   SIGNAL LOST
 ========================================================== */
 
-.cameraOffline {
+#cameraWindow .cameraOffline {
 
-    position: absolute;
+    position:
+        absolute;
 
-    inset: 0;
+    inset:
+        0;
 
-    z-index: 50;
+    z-index:
+        60;
 
-    display: flex;
+    display:
+        flex;
 
-    justify-content: center;
+    align-items:
+        center;
 
-    align-items: center;
+    justify-content:
+        center;
 
-    text-align: center;
-
-    background: #030506;
-
-    color: #ff6767;
+    background:
+        #030608;
 
     font-family:
         Consolas,
         "Courier New",
         monospace;
 
-    font-size: 20px;
+}
 
-    letter-spacing: 3px;
+
+#cameraWindow .cameraOfflineInner {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    gap:
+        7px;
+
+    padding:
+        25px 40px;
+
+    border:
+        1px solid
+        #293843;
+
+    background:
+        #091117;
+
+}
+
+
+#cameraWindow .cameraOfflineInner strong {
+
+    color:
+        #c75e5e;
+
+    font-size:
+        14px;
+
+    font-weight:
+        500;
+
+    letter-spacing:
+        2px;
+
+}
+
+
+#cameraWindow .cameraOfflineInner span {
+
+    color:
+        #718792;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        1px;
+
+}
+
+
+#cameraWindow .cameraOfflineInner small {
+
+    color:
+        #455762;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        .7px;
 
 }
 
 
 /* ==========================================================
-   CAMERA FOOTER
+   CONTROL BAR
 ========================================================== */
 
-#cameraWindow .windowFooter {
+#cameraWindow .cameraControlBar {
 
-    flex: 0 0 auto;
+    flex:
+        0 0 54px;
 
-    display: flex;
+    min-width:
+        0;
 
-    justify-content: flex-end;
+    display:
+        grid;
 
-    align-items: center;
+    grid-template-columns:
+        1fr
+        auto
+        1fr;
 
-    gap: 8px;
+    align-items:
+        center;
 
-    padding: 8px 12px;
+    gap:
+        16px;
 
-    background: #0b141d;
+    padding:
+        8px
+        11px;
 
-    border-top: 1px solid #203547;
+    box-sizing:
+        border-box;
+
+    background:
+        #0b151e;
+
+    border-top:
+        1px solid
+        #293f50;
 
 }
 
 
 /* ==========================================================
-   CAMERA FOOTER BUTTONS
+   LEFT CONTROLS
 ========================================================== */
 
-#cameraWindow .windowFooter button {
+#cameraWindow .cameraControlLeft {
 
-    padding: 7px 14px;
+    display:
+        flex;
 
-    background: #162738;
+    align-items:
+        center;
 
-    border: 1px solid #29435b;
+    gap:
+        5px;
 
-    border-radius: 5px;
+}
 
-    color: #b8dfff;
+
+#cameraWindow .cameraControlButton {
+
+    height:
+        31px;
+
+    min-width:
+        94px;
+
+    padding:
+        0 12px;
+
+    box-sizing:
+        border-box;
+
+    border:
+        1px solid
+        #304858;
+
+    border-radius:
+        2px;
+
+    background:
+        #121f29;
+
+    color:
+        #9fb7c4;
 
     font-family:
         Consolas,
         "Courier New",
         monospace;
 
-    cursor: pointer;
+    font-size:
+        9px;
+
+    letter-spacing:
+        .8px;
+
+    cursor:
+        pointer;
 
     transition:
-        background .2s,
-        border-color .2s,
-        color .2s;
+        background .12s ease,
+        border-color .12s ease,
+        color .12s ease;
 
 }
 
 
-#cameraWindow .windowFooter button:hover {
+#cameraWindow .cameraControlButton:hover {
 
-    background: #24445f;
+    background:
+        #182c38;
 
-    border-color: #4fd8ff;
+    border-color:
+        #4d6d80;
 
-    color: #fff;
+    color:
+        #d3e8f0;
 
 }
 
 
-#cameraWindow .windowFooter button:active {
+#cameraWindow .cameraControlButton:active {
 
-    transform: translateY(1px);
+    background:
+        #0c171f;
+
+    transform:
+        translateY(
+            1px
+        );
 
 }
 
 
 /* ==========================================================
-   CAMERA HOVER
+   LIVE STATUS
 ========================================================== */
 
-.cameraScreen:hover {
+#cameraWindow .cameraLiveStatus {
 
-    border-color: #3d8eac;
+    height:
+        30px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        9px;
+
+    padding:
+        0 11px;
+
+    box-sizing:
+        border-box;
+
+    border:
+        1px solid
+        #2c4555;
+
+    background:
+        #0d1a24;
+
+}
+
+
+#cameraWindow .cameraStatusLabel {
+
+    color:
+        #536c7b;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        .9px;
+
+}
+
+
+#cameraWindow .cameraLiveStatus strong {
+
+    color:
+        #6bd59a;
+
+    font-size:
+        9px;
+
+    font-weight:
+        500;
+
+    letter-spacing:
+        1px;
+
+}
+
+
+#cameraWindow .cameraLiveStatus strong::before {
+
+    content:
+        "●";
+
+    display:
+        inline-block;
+
+    margin-right:
+        5px;
+
+    font-size:
+        7px;
+
+}
+
+
+/* ==========================================================
+   SIGNAL
+========================================================== */
+
+#cameraWindow .cameraSignalInfo {
+
+    justify-self:
+        end;
+
+    display:
+        flex;
+
+    align-items:
+        baseline;
+
+    gap:
+        7px;
+
+}
+
+
+#cameraWindow .cameraSignalInfo span {
+
+    color:
+        #4f6674;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        1px;
+
+}
+
+
+#cameraWindow .cameraSignalInfo strong {
+
+    color:
+        #9bbdc9;
+
+    font-size:
+        10px;
+
+    font-weight:
+        500;
+
+}
+
+
+/* ==========================================================
+   SCROLLBARS
+========================================================== */
+
+#cameraWindow .cameraChannelList::-webkit-scrollbar {
+
+    width:
+        5px;
+
+}
+
+
+#cameraWindow .cameraChannelList::-webkit-scrollbar-track {
+
+    background:
+        #081118;
+
+}
+
+
+#cameraWindow .cameraChannelList::-webkit-scrollbar-thumb {
+
+    background:
+        #2a4659;
+
+}
+
+
+#cameraWindow .cameraChannelList::-webkit-scrollbar-thumb:hover {
+
+    background:
+        #3b6176;
+
+}
+
+
+/* ==========================================================
+   FOCUS
+========================================================== */
+
+#cameraWindow .cameraChannel:focus-visible,
+#cameraWindow .cameraControlButton:focus-visible {
+
+    outline:
+        1px solid
+        #52839b;
+
+    outline-offset:
+        -1px;
+
+}
+
+
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width: 950px) {
+
+    #cameraWindow {
+
+        width:
+            95vw;
+
+        height:
+            88vh;
+
+        min-width:
+            0;
+
+        min-height:
+            0;
+
+    }
+
+
+    #cameraWindow .cameraSystem {
+
+        grid-template-columns:
+            170px
+            minmax(
+                0,
+                1fr
+            );
+
+    }
+
+
+    #cameraWindow .cameraControlBar {
+
+        grid-template-columns:
+            1fr
+            auto;
+
+    }
+
+
+    #cameraWindow .cameraSignalInfo {
+
+        display:
+            none;
+
+    }
 
 }
 
@@ -771,935 +2433,102 @@
    MOBILE
 ========================================================== */
 
-@media(max-width:900px) {
+@media (max-width: 700px) {
 
-    #cameraWindow {
+    #cameraWindow .cameraSystem {
 
-        min-width: 0;
-
-    }
-
-    #cameraWindow .windowHeader {
-
-        flex-basis: 46px;
-
-    }
-
-    #cameraView {
-
-        min-height: 0;
+        grid-template-columns:
+            128px
+            minmax(
+                0,
+                1fr
+            );
 
     }
 
-    .cameraScreen {
 
-        min-height: 0;
+    #cameraWindow .cameraChannel {
+
+        min-height:
+            47px;
 
     }
 
-}
 
-/* =========================================
-   CAMERA SYSTEM
-========================================= */
+    #cameraWindow .cameraChannelInfo small {
 
-#cameraWindow {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
+        display:
+            none;
 
-#cameraWindow .windowHeader {
-    flex: 0 0 46px;
-    position: relative;
-    z-index: 100;
-}
-
-#cameraWindow .windowBody {
-    position: relative;
-    flex: 1 1 auto;
-    width: 100%;
-    min-width: 0;
-    min-height: 0;
-    padding: 0;
-    overflow: hidden;
-    display: flex;
-}
-
-#cameraView {
-    position: relative;
-    flex: 1 1 auto;
-    width: 100%;
-    height: 100%;
-    min-width: 0;
-    min-height: 0;
-    overflow: hidden;
-    background: #020406;
-}
-
-/* =========================================
-   CAMERA SCREEN
-========================================= */
-
-.cameraScreen {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #020406;
-
-    font-family: Consolas, "Courier New", monospace;
-
-    border: 1px solid #263b4c;
-    box-sizing: border-box;
-}
-
-/* =========================================
-   IMAGE
-========================================= */
-
-.cameraImage {
-    position: absolute;
-
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-
-    z-index: 1;
-
-    pointer-events: none;
-    user-select: none;
-
-    filter:
-        brightness(.78)
-        contrast(1.15)
-        saturate(.7);
-
-    transform: scale(1.01);
-}
-
-/* =========================================
-   SCANLINES
-========================================= */
-
-.cameraScanlines {
-    position: absolute;
-    inset: 0;
-
-    z-index: 10;
-
-    pointer-events: none;
-
-    background:
-        repeating-linear-gradient(
-            to bottom,
-            rgba(255,255,255,.035) 0px,
-            rgba(255,255,255,.035) 1px,
-            transparent 1px,
-            transparent 4px
-        );
-
-    opacity: .65;
-
-    animation: cameraScan 8s linear infinite;
-}
-
-@keyframes cameraScan {
-
-    0% {
-        background-position: 0 0;
     }
 
-    100% {
-        background-position: 0 100px;
+
+    #cameraWindow .cameraMain {
+
+        padding:
+            6px;
+
     }
 
-}
 
-/* =========================================
-   NOISE
-========================================= */
+    #cameraWindow .cameraControlBar {
 
-.cameraNoise {
-    position: absolute;
-    inset: -20%;
+        grid-template-columns:
+            1fr;
 
-    z-index: 11;
+        height:
+            auto;
 
-    pointer-events: none;
+        gap:
+            7px;
 
-    opacity: .08;
-
-    background-image:
-        repeating-radial-gradient(
-            circle at 0 0,
-            rgba(255,255,255,.7) 0,
-            rgba(255,255,255,.7) 1px,
-            transparent 1px,
-            transparent 3px
-        );
-
-    animation:
-        cameraNoiseMove .15s steps(2) infinite,
-        cameraNoiseFlicker .3s steps(2) infinite;
-}
-
-@keyframes cameraNoiseMove {
-
-    0% {
-        transform: translate(0,0);
     }
 
-    25% {
-        transform: translate(-3%,2%);
+
+    #cameraWindow .cameraControlLeft {
+
+        width:
+            100%;
+
     }
 
-    50% {
-        transform: translate(2%,-2%);
+
+    #cameraWindow .cameraControlButton {
+
+        flex:
+            1;
+
+        min-width:
+            0;
+
     }
 
-    75% {
-        transform: translate(3%,3%);
+
+    #cameraWindow .cameraLiveStatus {
+
+        justify-content:
+            center;
+
     }
 
-    100% {
-        transform: translate(-2%,-3%);
-    }
-
-}
-
-@keyframes cameraNoiseFlicker {
-
-    0% {
-        opacity: .04;
-    }
-
-    50% {
-        opacity: .11;
-    }
-
-    100% {
-        opacity: .06;
-    }
-
-}
-
-/* =========================================
-   VIGNETTE
-========================================= */
-
-.cameraVignette {
-    position: absolute;
-    inset: 0;
-
-    z-index: 12;
-
-    pointer-events: none;
-
-    background:
-        radial-gradient(
-            ellipse at center,
-            transparent 45%,
-            rgba(0,0,0,.25) 70%,
-            rgba(0,0,0,.75) 100%
-        );
-}
-
-/* =========================================
-   CAMERA UI
-========================================= */
-
-.cameraOverlay {
-    position: absolute;
-    inset: 0;
-
-    z-index: 20;
-
-    pointer-events: none;
-}
-
-.cameraTop {
-    position: absolute;
-
-    top: 15px;
-    left: 18px;
-    right: 18px;
-
-    display: flex;
-    justify-content: space-between;
-
-    color: #d8f7ff;
-
-    font-size: 14px;
-
-    text-shadow:
-        0 0 5px rgba(79,216,255,.8);
-}
-
-.cameraRec {
-    color: #ff5555;
-}
-
-.recDot {
-    display: inline-block;
-
-    animation: recBlink 1s infinite;
-}
-
-@keyframes recBlink {
-
-    0%, 45% {
-        opacity: 1;
-    }
-
-    50%, 100% {
-        opacity: .25;
-    }
-
-}
-
-.cameraStatus {
-    position: absolute;
-
-    top: 45px;
-    left: 18px;
-
-    color: rgba(190,230,245,.7);
-
-    font-size: 11px;
-
-    letter-spacing: 1px;
-}
-
-.cameraBottom {
-    position: absolute;
-
-    left: 18px;
-    right: 18px;
-    bottom: 16px;
-
-    display: flex;
-    justify-content: space-between;
-
-    color: #d8f7ff;
-
-    font-size: 13px;
-
-    text-shadow:
-        0 0 5px rgba(79,216,255,.7);
-}
-
-.cameraTime {
-    position: absolute;
-
-    right: 18px;
-    bottom: 40px;
-
-    color: #9ddfff;
-
-    font-size: 12px;
-
-    text-shadow:
-        0 0 5px rgba(79,216,255,.8);
-}
-
-/* =========================================
-   CAMERA BOOT / SWITCH EFFECT
-========================================= */
-
-.cameraBoot {
-    animation: cameraBoot .35s steps(4);
-}
-
-@keyframes cameraBoot {
-
-    0% {
-        opacity: 0;
-        transform: scale(1.02);
-        filter: brightness(3);
-    }
-
-    30% {
-        opacity: .4;
-    }
-
-    60% {
-        opacity: .8;
-        filter: brightness(.6);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1);
-        filter: brightness(1);
-    }
-
-}
-
-/* =========================================
-   RANDOM FLICKER
-========================================= */
-
-.cameraScreen::before {
-    content: "";
-
-    position: absolute;
-    inset: 0;
-
-    z-index: 14;
-
-    pointer-events: none;
-
-    background: rgba(255,255,255,.03);
-
-    animation: cameraFlicker 4s infinite steps(1);
-}
-
-@keyframes cameraFlicker {
-
-    0%, 89%, 100% {
-        opacity: 0;
-    }
-
-    90% {
-        opacity: .25;
-    }
-
-    91% {
-        opacity: 0;
-    }
-
-    94% {
-        opacity: .12;
-    }
-
-    95% {
-        opacity: 0;
-    }
-
-}
-
-/* =========================================
-   FOOTER
-========================================= */
-
-#cameraWindow .windowFooter {
-    position: relative;
-
-    z-index: 90;
-
-    flex: 0 0 auto;
-
-    display: flex;
-    justify-content: space-between;
-
-    padding: 10px 14px;
-
-    background: #0b141d;
-
-    border-top: 1px solid #263b4c;
-}
-
-#cameraWindow .windowFooter button {
-    min-width: 150px;
-
-    padding: 9px 16px;
-
-    border: 1px solid #31516a;
-    border-radius: 5px;
-
-    background: #132333;
-
-    color: #bdeaff;
-
-    font-family: Consolas, monospace;
-
-    cursor: pointer;
-
-    transition: .15s;
-}
-
-#cameraWindow .windowFooter button:hover {
-    background: #1d3a50;
-
-    border-color: #4fd8ff;
-
-    color: white;
-
-    box-shadow:
-        0 0 10px rgba(79,216,255,.2);
-}
-
-#cameraWindow .windowFooter button:active {
-    transform: translateY(1px);
 }
 
 
 /* ==========================================================
-   OMEGA CAMERA — FINAL OVERRIDE
+   REDUCED MOTION
 ========================================================== */
 
-#cameraWindow {
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-}
+@media (prefers-reduced-motion: reduce) {
 
-/* HEADER */
+    #cameraWindow .cameraScanlines,
+    #cameraWindow .cameraNoise,
+    #cameraWindow .cameraRec,
+    #cameraWindow .recDot,
+    #cameraWindow .cameraScreen::before {
 
-#cameraWindow > .windowHeader {
-    flex: 0 0 46px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    position: relative !important;
-    z-index: 100 !important;
-}
+        animation:
+            none;
 
-/* BODY */
-
-#cameraWindow > .windowBody {
-    position: relative !important;
-
-    display: block !important;
-
-    flex: 1 1 auto !important;
-
-    width: 100% !important;
-    height: auto !important;
-
-    min-width: 0 !important;
-    min-height: 0 !important;
-
-    padding: 0 !important;
-    margin: 0 !important;
-
-    overflow: hidden !important;
-
-    box-sizing: border-box !important;
-}
-
-/* CAMERA VIEW */
-
-#cameraWindow #cameraView {
-    position: absolute !important;
-
-    left: 0 !important;
-    top: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-
-    width: auto !important;
-    height: auto !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    overflow: hidden !important;
-
-    background: #020406 !important;
-}
-
-/* SCREEN */
-
-#cameraWindow #cameraView .cameraScreen {
-    position: absolute !important;
-
-    left: 0 !important;
-    top: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-
-    width: auto !important;
-    height: auto !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    overflow: hidden !important;
-
-    background: #020406 !important;
-
-    box-sizing: border-box !important;
-}
-
-/* IMAGE */
-
-#cameraWindow #cameraView .cameraImage {
-    position: absolute !important;
-
-    left: 0 !important;
-    top: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-
-    width: 100% !important;
-    height: 100% !important;
-
-    max-width: none !important;
-    max-height: none !important;
-
-    min-width: 0 !important;
-    min-height: 0 !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    display: block !important;
-
-    object-fit: cover !important;
-
-    z-index: 1 !important;
-
-    pointer-events: none !important;
-}
-
-/* ==========================================================
-   EFFECT LAYERS
-========================================================== */
-
-#cameraWindow #cameraView .cameraScanlines {
-    position: absolute !important;
-
-    left: 0 !important;
-    top: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-
-    width: auto !important;
-    height: auto !important;
-
-    z-index: 10 !important;
-
-    pointer-events: none !important;
-
-    background:
-        repeating-linear-gradient(
-            to bottom,
-            rgba(255,255,255,.08) 0px,
-            rgba(255,255,255,.08) 1px,
-            rgba(0,0,0,.08) 2px,
-            rgba(0,0,0,.08) 4px
-        ) !important;
-
-    opacity: .8 !important;
-
-    animation: omegaCameraScan 4s linear infinite !important;
-}
-
-@keyframes omegaCameraScan {
-
-    from {
-        background-position: 0 0;
     }
 
-    to {
-        background-position: 0 120px;
-    }
-
-}
-
-/* NOISE */
-
-#cameraWindow #cameraView .cameraNoise {
-    position: absolute !important;
-
-    left: 0 !important;
-    top: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-
-    width: auto !important;
-    height: auto !important;
-
-    z-index: 11 !important;
-
-    pointer-events: none !important;
-
-    opacity: .12 !important;
-
-    background-image:
-        radial-gradient(
-            rgba(255,255,255,.8) 1px,
-            transparent 1px
-        ) !important;
-
-    background-size: 3px 3px !important;
-
-    animation: omegaCameraNoise .12s steps(2) infinite !important;
-}
-
-@keyframes omegaCameraNoise {
-
-    0% {
-        transform: translate(0,0);
-        opacity: .08;
-    }
-
-    25% {
-        transform: translate(-2px,1px);
-        opacity: .15;
-    }
-
-    50% {
-        transform: translate(1px,-2px);
-        opacity: .09;
-    }
-
-    75% {
-        transform: translate(2px,2px);
-        opacity: .14;
-    }
-
-    100% {
-        transform: translate(-1px,-1px);
-        opacity: .1;
-    }
-
-}
-
-/* VIGNETTE */
-
-#cameraWindow #cameraView .cameraVignette {
-    position: absolute !important;
-
-    left: 0 !important;
-    top: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-
-    z-index: 12 !important;
-
-    pointer-events: none !important;
-
-    background:
-        radial-gradient(
-            ellipse at center,
-            transparent 40%,
-            rgba(0,0,0,.2) 65%,
-            rgba(0,0,0,.75) 100%
-        ) !important;
-}
-
-/* ==========================================================
-   CAMERA INTERFACE
-========================================================== */
-
-#cameraWindow #cameraView .cameraOverlay {
-    position: absolute !important;
-
-    left: 0 !important;
-    top: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-
-    width: auto !important;
-    height: auto !important;
-
-    z-index: 30 !important;
-
-    display: block !important;
-
-    visibility: visible !important;
-
-    opacity: 1 !important;
-
-    pointer-events: none !important;
-
-    color: white !important;
-}
-
-/* TOP */
-
-#cameraWindow #cameraView .cameraTop {
-    position: absolute !important;
-
-    top: 18px !important;
-    left: 20px !important;
-    right: 20px !important;
-
-    z-index: 31 !important;
-
-    display: flex !important;
-
-    justify-content: space-between !important;
-
-    color: #e8faff !important;
-
-    font-family: Consolas, monospace !important;
-    font-size: 14px !important;
-
-    text-shadow:
-        0 0 6px rgba(0,0,0,.9),
-        0 0 5px rgba(79,216,255,.7) !important;
-}
-
-/* STATUS */
-
-#cameraWindow #cameraView .cameraStatus {
-    position: absolute !important;
-
-    top: 48px !important;
-    left: 20px !important;
-
-    z-index: 31 !important;
-
-    display: block !important;
-
-    color: rgba(220,245,255,.8) !important;
-
-    font-family: Consolas, monospace !important;
-    font-size: 11px !important;
-
-    letter-spacing: 1px !important;
-
-    text-shadow:
-        0 0 5px #000 !important;
-}
-
-/* REC */
-
-#cameraWindow #cameraView .cameraRec {
-    color: #ff4d4d !important;
-
-    font-weight: bold !important;
-
-    text-shadow:
-        0 0 6px rgba(255,0,0,.7) !important;
-}
-
-#cameraWindow #cameraView .recDot {
-    display: inline-block !important;
-
-    animation: omegaRecBlink 1s infinite steps(1) !important;
-}
-
-@keyframes omegaRecBlink {
-
-    0%, 49% {
-        opacity: 1;
-    }
-
-    50%, 100% {
-        opacity: .2;
-    }
-
-}
-
-/* BOTTOM */
-
-#cameraWindow #cameraView .cameraBottom {
-    position: absolute !important;
-
-    left: 20px !important;
-    right: 20px !important;
-    bottom: 18px !important;
-
-    z-index: 31 !important;
-
-    display: flex !important;
-
-    justify-content: space-between !important;
-
-    color: #e8faff !important;
-
-    font-family: Consolas, monospace !important;
-    font-size: 13px !important;
-
-    text-shadow:
-        0 0 6px rgba(0,0,0,.9),
-        0 0 5px rgba(79,216,255,.7) !important;
-}
-
-/* TIME */
-
-#cameraWindow #cameraView .cameraTime {
-    position: absolute !important;
-
-    right: 20px !important;
-    bottom: 43px !important;
-
-    z-index: 31 !important;
-
-    display: block !important;
-
-    color: #a9eaff !important;
-
-    font-family: Consolas, monospace !important;
-    font-size: 12px !important;
-
-    text-shadow:
-        0 0 6px rgba(0,0,0,.9),
-        0 0 5px rgba(79,216,255,.7) !important;
-}
-
-/* ==========================================================
-   SCREEN FLICKER
-========================================================== */
-
-#cameraWindow #cameraView .cameraScreen::before {
-    content: "" !important;
-
-    position: absolute !important;
-
-    left: 0 !important;
-    top: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-
-    z-index: 20 !important;
-
-    pointer-events: none !important;
-
-    background: rgba(255,255,255,.025) !important;
-
-    animation: omegaCameraFlicker 3s infinite steps(1) !important;
-}
-
-@keyframes omegaCameraFlicker {
-
-    0%, 85%, 100% {
-        opacity: 0;
-    }
-
-    86% {
-        opacity: .25;
-    }
-
-    87% {
-        opacity: 0;
-    }
-
-    92% {
-        opacity: .12;
-    }
-
-    93% {
-        opacity: 0;
-    }
-
-}
-
-/* FOOTER */
-
-#cameraWindow > .windowFooter {
-    position: relative !important;
-
-    z-index: 100 !important;
-
-    flex: 0 0 auto !important;
-
-    display: flex !important;
-
-    justify-content: flex-end !important;
-
-    align-items: center !important;
-
-    gap: 8px !important;
-
-    width: 100% !important;
-
-    box-sizing: border-box !important;
 }
