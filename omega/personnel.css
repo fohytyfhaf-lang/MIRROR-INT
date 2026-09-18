@@ -1,5 +1,6 @@
 /* ==========================================================
    OMEGA PERSONNEL DATABASE
+   INTERNAL PERSONNEL RECORDS
 ========================================================== */
 
 
@@ -8,95 +9,22 @@
 ========================================================== */
 
 #personnelWindow {
-    display: flex;
 
-    min-width: 0;
-    min-height: 0;
+    display:
+        flex;
 
-    overflow: hidden;
-}
+    min-width:
+        0;
 
+    min-height:
+        0;
 
-/* ==========================================================
-   SIDEBAR
-========================================================== */
+    overflow:
+        hidden;
 
-#personnelSidebar {
-    flex: 0 0 320px;
+    background:
+        #060d14;
 
-    width: 320px;
-
-    min-width: 0;
-    min-height: 0;
-
-    display: flex;
-    flex-direction: column;
-
-    box-sizing: border-box;
-
-    background: #0b131d;
-
-    border-right: 1px solid #22364a;
-
-    overflow: hidden;
-}
-
-
-/* ==========================================================
-   SEARCH
-========================================================== */
-
-#personnelSearch {
-    flex: 0 0 auto;
-
-    padding: 18px;
-
-    box-sizing: border-box;
-
-    background: #0d1722;
-
-    border-bottom: 1px solid #22364a;
-}
-
-
-#personnelSearch input {
-    display: block;
-
-    width: 100%;
-    min-width: 0;
-
-    box-sizing: border-box;
-
-    padding: 10px 14px;
-
-    background: #081018;
-
-    border: 1px solid #294760;
-    border-radius: 5px;
-
-    color: #dff6ff;
-
-    font-family: inherit;
-    font-size: 13px;
-
-    outline: none;
-
-    transition:
-        border-color .2s ease,
-        box-shadow .2s ease;
-}
-
-
-#personnelSearch input::placeholder {
-    color: #68869d;
-}
-
-
-#personnelSearch input:focus {
-    border-color: #4fd8ff;
-
-    box-shadow:
-        0 0 8px rgba(79,216,255,.12);
 }
 
 
@@ -105,13 +33,62 @@
 ========================================================== */
 
 #personnelList {
-    flex: 1 1 auto;
 
-    min-width: 0;
-    min-height: 0;
+    flex:
+        1 1 auto;
 
-    overflow-x: hidden;
-    overflow-y: auto;
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    padding:
+        14px;
+
+    box-sizing:
+        border-box;
+
+    overflow-x:
+        hidden;
+
+    overflow-y:
+        auto;
+
+    background:
+        linear-gradient(
+            180deg,
+            #08111a,
+            #060d14
+        );
+
+}
+
+
+/* ==========================================================
+   CARD GRID
+========================================================== */
+
+#personnelList {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(
+                280px,
+                1fr
+            )
+        );
+
+    align-content:
+        start;
+
+    gap:
+        10px;
+
 }
 
 
@@ -120,72 +97,308 @@
 ========================================================== */
 
 .personCard {
-    position: relative;
 
-    display: flex;
+    position:
+        relative;
 
-    align-items: flex-start;
+    min-width:
+        0;
 
-    gap: 15px;
+    padding:
+        14px 15px;
 
-    min-width: 0;
+    box-sizing:
+        border-box;
 
-    box-sizing: border-box;
+    background:
+        linear-gradient(
+            145deg,
+            #0d1b28,
+            #09131d
+        );
 
-    padding: 14px;
+    border:
+        1px solid
+        #1d3549;
 
-    border-left: 4px solid transparent;
-    border-bottom: 1px solid rgba(255,255,255,.05);
+    border-left:
+        3px solid
+        #29475d;
 
-    background: transparent;
+    cursor:
+        pointer;
 
-    cursor: pointer;
+    overflow:
+        hidden;
 
     transition:
-        background .2s ease,
-        border-color .2s ease;
-}
+        background .16s ease,
+        border-color .16s ease,
+        transform .16s ease,
+        box-shadow .16s ease;
 
-
-.personCard:hover {
-    background: #17293b;
-}
-
-
-.personCard.active {
-    background: #20394f;
-
-    border-left-color: #4fd8ff;
-}
-
-
-.personCard:focus-visible {
-    outline: 1px solid #4fd8ff;
-    outline-offset: -1px;
 }
 
 
 /* ==========================================================
-   AVATAR
+   CARD TECHNICAL LINE
 ========================================================== */
 
-.personAvatar {
-    flex: 0 0 64px;
+.personCard::before {
 
-    width: 64px;
-    height: 64px;
+    content:
+        "PERSONNEL RECORD";
 
-    box-sizing: border-box;
+    display:
+        block;
 
-    object-fit: cover;
+    margin:
+        0 0 10px 0;
 
-    border-radius: 8px;
+    color:
+        #486b82;
 
-    border: 1px solid #294760;
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
 
-    background: #081018;
+    font-size:
+        9px;
 
-    user-select: none;
+    letter-spacing:
+        .13em;
+
+}
+
+
+/* ==========================================================
+   CARD CORNER
+========================================================== */
+
+.personCard::after {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    right:
+        0;
+
+    top:
+        0;
+
+    width:
+        18px;
+
+    height:
+        18px;
+
+    border-top:
+        1px solid
+        #36566d;
+
+    border-right:
+        1px solid
+        #36566d;
+
+    opacity:
+        .65;
+
+}
+
+
+/* ==========================================================
+   HOVER
+========================================================== */
+
+.personCard:hover {
+
+    background:
+        linear-gradient(
+            145deg,
+            #102334,
+            #0b1823
+        );
+
+    border-color:
+        #31546d;
+
+    border-left-color:
+        #4fd8ff;
+
+    transform:
+        translateY(
+            -1px
+        );
+
+    box-shadow:
+        0 7px 20px
+        rgba(
+            0,
+            0,
+            0,
+            .24
+        );
+
+}
+
+
+/* ==========================================================
+   PERSON HEADER
+========================================================== */
+
+.personHeader {
+
+    display:
+        flex;
+
+    align-items:
+        flex-start;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    min-width:
+        0;
+
+}
+
+
+/* ==========================================================
+   NAME
+========================================================== */
+
+.personHeader h3 {
+
+    flex:
+        1 1 auto;
+
+    min-width:
+        0;
+
+    margin:
+        0;
+
+    color:
+        #e7f5ff;
+
+    font-size:
+        14px;
+
+    font-weight:
+        600;
+
+    line-height:
+        1.35;
+
+    overflow-wrap:
+        anywhere;
+
+}
+
+
+/* ==========================================================
+   STATUS BADGE
+========================================================== */
+
+.badge {
+
+    flex:
+        0 0 auto;
+
+    min-height:
+        23px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    padding:
+        0 8px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        #173149;
+
+    border:
+        1px solid
+        #2b4f68;
+
+    border-radius:
+        2px;
+
+    color:
+        #8dc8e6;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        .06em;
+
+    white-space:
+        nowrap;
+
+}
+
+
+/* ==========================================================
+   STATUS COLORS
+========================================================== */
+
+.personCard:has(.badge) .badge {
+
+    color:
+        #8dc8e6;
+
+}
+
+
+.badge[data-status="ACTIVE"],
+.badge[data-status="ONLINE"] {
+
+    color:
+        #6ce4a4;
+
+    border-color:
+        #2b6849;
+
+    background:
+        #123224;
+
+}
+
+
+.badge[data-status="UNKNOWN"],
+.badge[data-status="UNSTABLE"] {
+
+    color:
+        #e6c85c;
+
+    border-color:
+        #665722;
+
+    background:
+        #29230e;
+
 }
 
 
@@ -194,550 +407,481 @@
 ========================================================== */
 
 .personInfo {
-    flex: 1 1 auto;
 
-    min-width: 0;
+    min-width:
+        0;
+
+    margin-top:
+        12px;
+
+    padding-top:
+        10px;
+
+    border-top:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .055
+        );
+
 }
 
 
-.personName {
-    color: #ffffff;
+.personInfo p {
 
-    font-size: 17px;
-    font-weight: bold;
+    margin:
+        5px 0;
 
-    line-height: 1.3;
+    color:
+        #93adbd;
 
-    overflow-wrap: anywhere;
+    font-size:
+        11px;
+
+    line-height:
+        1.4;
+
+    overflow-wrap:
+        anywhere;
+
 }
 
 
-.personRole {
-    margin-top: 4px;
+.personInfo b {
 
-    color: #7fdfff;
+    color:
+        #5d849d;
 
-    font-size: 13px;
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
 
-    line-height: 1.4;
+    font-size:
+        10px;
 
-    overflow-wrap: anywhere;
-}
+    font-weight:
+        600;
 
+    letter-spacing:
+        .04em;
 
-.personLevel {
-    display: inline-block;
-
-    margin-top: 8px;
-
-    padding: 3px 8px;
-
-    box-sizing: border-box;
-
-    background: #173149;
-
-    border: 1px solid rgba(79,216,255,.08);
-
-    border-radius: 4px;
-
-    color: #bfe8ff;
-
-    font-size: 11px;
-
-    letter-spacing: .4px;
-}
-
-
-/* ==========================================================
-   PERSON STATUS
-========================================================== */
-
-.personStatus {
-    margin-top: 8px;
-
-    font-size: 12px;
-
-    line-height: 1.4;
-}
-
-
-.statusOnline {
-    color: #66ff99;
-}
-
-
-.statusMission {
-    color: #ffd54a;
-}
-
-
-.statusMissing {
-    color: #ff9d4d;
-}
-
-
-.statusDead {
-    color: #ff6666;
 }
 
 
 /* ==========================================================
-   PERSONNEL VIEWER
+   PROFILE PAGE
 ========================================================== */
 
-#personnelViewer {
-    flex: 1 1 auto;
+.personProfile {
 
-    min-width: 0;
-    min-height: 0;
+    position:
+        relative;
 
-    display: flex;
-    flex-direction: column;
+    min-width:
+        0;
 
-    overflow: hidden;
+    min-height:
+        100%;
 
-    background: #081018;
+    padding:
+        20px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        linear-gradient(
+            180deg,
+            #0a151f,
+            #070f17
+        );
+
 }
 
 
 /* ==========================================================
-   PERSONNEL HEADER
+   BACK BUTTON
 ========================================================== */
 
-#personnelHeader {
-    flex: 0 0 auto;
+#backBtn {
 
-    display: flex;
+    display:
+        inline-flex;
 
-    align-items: center;
+    align-items:
+        center;
 
-    gap: 25px;
+    min-height:
+        29px;
 
-    min-width: 0;
+    margin:
+        0 0 24px 0;
 
-    padding: 25px;
+    padding:
+        0 12px;
 
-    box-sizing: border-box;
+    box-sizing:
+        border-box;
 
-    background: #101a25;
+    background:
+        #102536;
 
-    border-bottom: 1px solid #22364a;
+    border:
+        1px solid
+        #2a4d66;
+
+    border-radius:
+        3px;
+
+    color:
+        #9acbe3;
+
+    font-family:
+        inherit;
+
+    font-size:
+        12px;
+
+    cursor:
+        pointer;
+
+    transition:
+        background .15s ease,
+        border-color .15s ease,
+        color .15s ease;
+
 }
 
 
-#personnelHeader img {
-    flex: 0 0 140px;
+#backBtn:hover {
 
-    width: 140px;
-    height: 140px;
+    background:
+        #17344a;
 
-    box-sizing: border-box;
+    border-color:
+        #4fd8ff;
 
-    object-fit: cover;
+    color:
+        #e3f6ff;
 
-    border-radius: 10px;
-
-    border: 2px solid #315774;
-
-    background: #081018;
-
-    user-select: none;
 }
 
 
 /* ==========================================================
-   PROFILE
+   PROFILE NAME
 ========================================================== */
 
-#personnelProfile {
-    flex: 1 1 auto;
+.personProfile h2 {
 
-    min-width: 0;
-}
+    margin:
+        0 0 18px 0;
 
+    color:
+        #edf8ff;
 
-#personnelProfile h2 {
-    margin: 0;
+    font-size:
+        18px;
 
-    color: #ffffff;
+    font-weight:
+        600;
 
-    font-size: 28px;
-    font-weight: 600;
+    line-height:
+        1.3;
 
-    line-height: 1.2;
+    overflow-wrap:
+        anywhere;
 
-    overflow-wrap: anywhere;
-}
-
-
-#personnelProfile h3 {
-    margin: 8px 0 0;
-
-    color: #7fdfff;
-
-    font-size: 17px;
-    font-weight: 500;
-
-    line-height: 1.4;
-
-    overflow-wrap: anywhere;
-}
-
-
-#personnelProfile p {
-    margin: 10px 0 0;
-
-    color: #bddcf0;
-
-    font-size: 14px;
-
-    line-height: 1.7;
-
-    overflow-wrap: anywhere;
 }
 
 
 /* ==========================================================
-   CONTENT
+   PROFILE BLOCK
 ========================================================== */
 
-#personnelContent {
-    flex: 1 1 auto;
+.profileBlock {
 
-    min-width: 0;
-    min-height: 0;
+    display:
+        grid;
 
-    overflow-x: hidden;
-    overflow-y: auto;
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(
+                0,
+                1fr
+            )
+        );
 
-    padding: 30px;
+    gap:
+        8px;
 
-    box-sizing: border-box;
+    margin-bottom:
+        18px;
 
-    background: #081018;
+}
+
+
+.profileBlock p {
+
+    min-width:
+        0;
+
+    margin:
+        0;
+
+    padding:
+        12px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        #0c1a25;
+
+    border:
+        1px solid
+        #1e394d;
+
+    color:
+        #afc7d6;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.45;
+
+    overflow-wrap:
+        anywhere;
+
+}
+
+
+.profileBlock b {
+
+    display:
+        block;
+
+    margin-bottom:
+        5px;
+
+    color:
+        #5d849d;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        .05em;
+
 }
 
 
 /* ==========================================================
-   PROFILE SECTIONS
+   PROFILE NOTES
 ========================================================== */
 
-.personSection {
-    margin-bottom: 30px;
+.profileNotes {
 
-    min-width: 0;
+    position:
+        relative;
+
+    padding:
+        16px 17px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        #09151f;
+
+    border:
+        1px solid
+        #1c3447;
+
+    border-left:
+        3px solid
+        #4d7087;
+
 }
 
 
-.personSection:last-child {
-    margin-bottom: 0;
+.profileNotes::before {
+
+    content:
+        "NOTES";
+
+    display:
+        block;
+
+    margin-bottom:
+        9px;
+
+    color:
+        #587b91;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        9px;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        .14em;
+
 }
 
 
-.personSection h3 {
-    margin: 0 0 12px;
+.profileNotes p {
 
-    padding-bottom: 8px;
+    margin:
+        0;
 
-    color: #4fd8ff;
+    color:
+        #bfd2df;
 
-    font-size: 16px;
-    font-weight: 600;
+    font-size:
+        12px;
 
-    line-height: 1.3;
+    line-height:
+        1.7;
 
-    border-bottom: 1px solid #22364a;
-}
+    overflow-wrap:
+        anywhere;
 
-
-.personSection p {
-    margin: 0;
-
-    color: #d4e7f6;
-
-    font-size: 14px;
-
-    line-height: 1.8;
-
-    overflow-wrap: anywhere;
 }
 
 
 /* ==========================================================
-   BADGES
+   SCROLLBAR
 ========================================================== */
 
-.personBadge {
-    display: inline-block;
+#personnelList::-webkit-scrollbar {
 
-    margin: 4px;
+    width:
+        7px;
 
-    padding: 6px 12px;
+}
 
-    box-sizing: border-box;
 
-    border-radius: 20px;
+#personnelList::-webkit-scrollbar-track {
 
-    background: #173149;
+    background:
+        #050c12;
 
-    border: 1px solid rgba(79,216,255,.08);
+}
 
-    color: #dff6ff;
 
-    font-size: 12px;
+#personnelList::-webkit-scrollbar-thumb {
 
-    line-height: 1.2;
+    background:
+        #294a61;
+
+    border-radius:
+        8px;
+
+}
+
+
+#personnelList::-webkit-scrollbar-thumb:hover {
+
+    background:
+        #4fd8ff;
+
 }
 
 
 /* ==========================================================
-   CLEARANCE
+   MOBILE
 ========================================================== */
 
-.clearanceBadge {
-    display: inline-block;
-
-    margin-top: 10px;
-
-    padding: 8px 14px;
-
-    box-sizing: border-box;
-
-    border-radius: 4px;
-
-    background: #204d35;
-
-    border: 1px solid rgba(109,255,178,.12);
-
-    color: #6dffb2;
-
-    font-size: 12px;
-    font-weight: bold;
-
-    letter-spacing: 1px;
-}
-
-
-/* ==========================================================
-   WARNING
-========================================================== */
-
-.personWarning {
-    margin-top: 20px;
-
-    padding: 15px;
-
-    box-sizing: border-box;
-
-    background: #451616;
-
-    border: 1px solid rgba(255,68,68,.12);
-
-    border-left: 4px solid #ff4444;
-
-    color: #ffc0c0;
-
-    font-size: 13px;
-
-    line-height: 1.6;
-
-    overflow-wrap: anywhere;
-}
-
-
-/* ==========================================================
-   SCROLLBARS
-========================================================== */
-
-#personnelList::-webkit-scrollbar,
-#personnelContent::-webkit-scrollbar {
-    width: 8px;
-}
-
-
-#personnelList::-webkit-scrollbar-track,
-#personnelContent::-webkit-scrollbar-track {
-    background: #071019;
-}
-
-
-#personnelList::-webkit-scrollbar-thumb,
-#personnelContent::-webkit-scrollbar-thumb {
-    background: #315774;
-
-    border-radius: 20px;
-}
-
-
-#personnelList::-webkit-scrollbar-thumb:hover,
-#personnelContent::-webkit-scrollbar-thumb:hover {
-    background: #4fd8ff;
-}
-
-
-/* ==========================================================
-   RESPONSIVE — TABLET
-========================================================== */
-
-@media (max-width: 900px) {
-
-    #personnelSidebar {
-        flex-basis: 250px;
-        width: 250px;
-    }
-
-    #personnelSearch {
-        padding: 14px;
-    }
-
-    .personCard {
-        gap: 12px;
-
-        padding: 12px;
-    }
-
-    .personAvatar {
-        flex-basis: 54px;
-
-        width: 54px;
-        height: 54px;
-    }
-
-    .personName {
-        font-size: 15px;
-    }
-
-    .personRole {
-        font-size: 12px;
-    }
-
-    #personnelHeader {
-        gap: 18px;
-
-        padding: 20px;
-    }
-
-    #personnelHeader img {
-        flex-basis: 110px;
-
-        width: 110px;
-        height: 110px;
-    }
-
-    #personnelProfile h2 {
-        font-size: 23px;
-    }
-
-    #personnelProfile h3 {
-        font-size: 15px;
-    }
-
-    #personnelContent {
-        padding: 22px;
-    }
-}
-
-
-/* ==========================================================
-   RESPONSIVE — MOBILE
-========================================================== */
-
-@media (max-width: 650px) {
-
-    #personnelWindow {
-        flex-direction: column;
-    }
-
-    #personnelSidebar {
-        flex:
-            0 0 190px;
-
-        width: 100%;
-        height: 190px;
-
-        border-right: none;
-
-        border-bottom:
-            1px solid #22364a;
-    }
-
-    #personnelSearch {
-        padding: 10px;
-    }
+@media (
+    max-width:
+        800px
+) {
 
     #personnelList {
-        display: flex;
 
-        overflow-x: auto;
-        overflow-y: hidden;
+        grid-template-columns:
+            repeat(
+                auto-fill,
+                minmax(
+                    240px,
+                    1fr
+                )
+            );
+
+        padding:
+            11px;
+
     }
+
+
+    .profileBlock {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+}
+
+
+@media (
+    max-width:
+        520px
+) {
+
+    #personnelList {
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+    }
+
 
     .personCard {
-        flex:
-            0 0 210px;
 
-        border-left: none;
+        width:
+            100%;
 
-        border-bottom:
-            3px solid transparent;
     }
 
-    .personCard.active {
-        border-left-color:
-            transparent;
 
-        border-bottom-color:
-            #4fd8ff;
+    .personProfile {
+
+        padding:
+            14px;
+
     }
 
-    #personnelViewer {
-        flex: 1 1 auto;
 
-        min-height: 0;
+    .personProfile h2 {
+
+        font-size:
+            16px;
+
     }
 
-    #personnelHeader {
-        gap: 14px;
-
-        padding: 15px;
-    }
-
-    #personnelHeader img {
-        flex-basis: 82px;
-
-        width: 82px;
-        height: 82px;
-    }
-
-    #personnelProfile h2 {
-        font-size: 20px;
-    }
-
-    #personnelProfile h3 {
-        margin-top: 5px;
-
-        font-size: 13px;
-    }
-
-    #personnelProfile p {
-        font-size: 12px;
-
-        line-height: 1.5;
-    }
-
-    #personnelContent {
-        padding: 18px;
-    }
-
-    .personSection {
-        margin-bottom: 22px;
-    }
-
-    .personSection p {
-        font-size: 13px;
-
-        line-height: 1.7;
-    }
 }
 
 
@@ -745,13 +889,17 @@
    REDUCED MOTION
 ========================================================== */
 
-@media (prefers-reduced-motion: reduce) {
+@media (
+    prefers-reduced-motion:
+        reduce
+) {
 
-    .personCard {
-        transition: none;
+    .personCard,
+    #backBtn {
+
+        transition:
+            none;
+
     }
 
-    #personnelSearch input {
-        transition: none;
-    }
 }
