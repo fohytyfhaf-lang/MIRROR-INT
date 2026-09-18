@@ -136,8 +136,12 @@ const DEFAULT_STATE = {
     lastEventId:
         null,
 
+ 
     postContact:
         false,
+
+    behavior:
+        createBehaviorState(),
 
     seen:
         [],
@@ -145,8 +149,7 @@ const DEFAULT_STATE = {
     eventLog:
         []
 
-};
-
+    };
 
 /* ==========================================================
    RUNTIME
