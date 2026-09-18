@@ -1849,8 +1849,207 @@ function hasExclusion(
 }
 
 
+function matchesBehavior(
+    anomaly,
+    action = null
+) {
+
+    if (
+        !anomaly
+    ) {
+
+        return false;
+
+    }
+
+    ensureBehaviorState();
+
+    const type =
+        clean(
+            action?.type ||
+            action?.action
+        );
+
+    const target =
+        getActionTarget(
+            action || {}
+        );
+
+
+    /* ======================================================
+       A-02
+       Re-reading the same file.
+    ====================================================== */
+
+    if (
+        anomaly.id ===
+        "A-02"
+    ) {
+
+        return (
+            type ===
+            "file_read" &&
+            getFileReadCount(
+                target
+            ) >= 2
+        );
+
+    }
+
+
+    /* ======================================================
+       C-01
+       Rapid camera switching.
+    ====================================================== */
+
+    if (
+        anomaly.id ===
+        "C-01"
+    ) {
+
+        return (
+            type ===
+            "camera_switch" &&
+            hasRapidCameraActivity()
+        );
+
+    }
+
+
+    /* ======================================================
+       X-02
+       Archive → Console transition.
+    ====================================================== */
+
+    if (
+        anomaly.id ===
+        "X-02"
+    ) {
+
+        return (
+            type ===
+            "console_command" &&
+            hasArchiveThenConsole()
+        );
+
+    }
+
+
+    /* ======================================================
+       X-03
+       Two console commands almost immediately.
+    ====================================================== */
+
+    if (
+        anomaly.id ===
+        "X-03"
+    ) {
+
+        return (
+            type ===
+            "console_command" &&
+            hasRapidConsoleSequence()
+        );
+
+    }
+
+
+    /* ======================================================
+       C-03
+       Camera action carrying a conflicting timestamp.
+    ====================================================== */
+
+    if (
+        anomaly.id ===
+        "C-03"
+    ) {
+
+        const metadata =
+            action?.metadata &&
+            typeof action.metadata ===
+            "object"
+                ? action.metadata
+                : {};
+
+        const cameraTime =
+            Number(
+                metadata.timestamp ||
+                metadata.cameraTimestamp ||
+                NaN
+            );
+
+        if (
+            !Number.isFinite(
+                cameraTime
+            )
+        ) {
+
+            return false;
+
+        }
+
+        return (
+            Math.abs(
+                now() -
+                cameraTime
+            ) >= 60000
+        );
+
+    }
+
+
+    /* ======================================================
+       M-02
+       Returning to a previously read file after contact.
+    ====================================================== */
+
+    if (
+        anomaly.id ===
+        "M-02"
+    ) {
+
+        return (
+            type ===
+            "file_read" &&
+            state.postContact &&
+            wasFileReadBefore(
+                target
+            )
+        );
+
+    }
+
+
+    /* ======================================================
+       M-03
+       Operator remains active after First Contact.
+    ====================================================== */
+
+    if (
+        anomaly.id ===
+        "M-03"
+    ) {
+
+        return (
+            state.postContact &&
+            hasPostContactPersistence()
+        );
+
+    }
+
+
+    /*
+     * Other anomalies keep their normal
+     * probability-driven behavior.
+     */
+
+    return true;
+
+}
+
 function canTrigger(
-    anomaly
+    anomaly,
+    action = null
 ) {
 
     if (
@@ -1955,6 +2154,21 @@ function canTrigger(
         !anomaly.postContact &&
         anomaly.category ===
         "direct"
+    ) {
+
+        return false;
+
+    }
+
+       /*
+     * Behavior-driven conditions.
+     */
+
+    if (
+        !matchesBehavior(
+            anomaly,
+            action
+        )
     ) {
 
         return false;
