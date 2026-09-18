@@ -1524,6 +1524,8 @@ async function runRecovery(
             }
         );
 
+       window.MRSMILE_EFFECTS?.setPhase(2);
+
 
         await sleep(
             TIMING.recoveryDelay
@@ -1551,6 +1553,8 @@ async function runRecovery(
 
             }
         );
+
+       window.MRSMILE_EFFECTS?.setPhase(6);
 
 
         return true;
