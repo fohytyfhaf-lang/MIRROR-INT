@@ -1053,18 +1053,21 @@ export function initOmegaTime() {
     loadState();
 
 
-    if (
-        !Number.isFinite(
-            Number(
-                state.sessionStartedAt
-            )
+   if (
+    !Number.isFinite(
+        Number(
+            state.sessionStartedAt
         )
-    ) {
+    ) ||
+    Number(
+        state.sessionStartedAt
+    ) <= 0
+) {
 
-        state.sessionStartedAt =
-            now();
+    state.sessionStartedAt =
+        now();
 
-    }
+}
 
 
     state.lastWallTime =
