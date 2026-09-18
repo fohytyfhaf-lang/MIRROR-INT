@@ -2357,13 +2357,14 @@ function emitAnomaly(
         options.force ===
         true;
 
-
-    if (
-        !force &&
-        !canTrigger(
-            anomaly
-        )
-    ) {
+       if (
+           !force &&
+           !canTrigger(
+               anomaly,
+               action
+           )
+       ) {
+   
 
         return false;
 
