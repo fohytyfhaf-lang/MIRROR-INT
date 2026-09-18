@@ -2219,6 +2219,38 @@ function startFault(
 
     }
 
+   if (
+    !Number.isFinite(
+        camera.baseSignal
+    )
+) {
+
+    camera.baseSignal =
+        camera.signal;
+
+}
+
+
+if (
+    !camera.baseStatus
+) {
+
+    camera.baseStatus =
+        camera.status;
+
+}
+
+
+if (
+    typeof camera.baseRecording !==
+    "boolean"
+) {
+
+    camera.baseRecording =
+        camera.recording;
+
+}
+
 
     lastFaultAt =
         now();
