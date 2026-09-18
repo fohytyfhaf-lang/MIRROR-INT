@@ -198,7 +198,7 @@
         #d6dadd;
 
     font-size:
-        11px;
+        10px;
 
     font-weight:
         600;
@@ -214,7 +214,6 @@
 
 /* ==========================================================
    HEADER SIDE DETAILS
-   Works even when only text is present.
 ========================================================== */
 
 .sys00Header > * {
@@ -272,7 +271,7 @@
         #d5d9db;
 
     font-size:
-        13px;
+        14px;
 
     font-weight:
         600;
@@ -303,7 +302,7 @@
         #767e82;
 
     font-size:
-        9px;
+        10px;
 
     font-weight:
         400;
@@ -437,7 +436,7 @@
         #535b5f;
 
     font-size:
-        8px;
+        10px;
 
     letter-spacing:
         0.14em;
@@ -503,7 +502,7 @@
         monospace;
 
     font-size:
-        10px;
+        12px;
 
     font-weight:
         600;
