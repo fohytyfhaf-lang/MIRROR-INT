@@ -2806,7 +2806,6 @@ function handleOmegaTimeConflict(
 /* ==========================================================
    VISIBILITY OBSERVER
 ========================================================== */
-
 function startVisibilityObserver() {
 
     const cameraWindow =
@@ -2822,29 +2821,67 @@ function startVisibilityObserver() {
     }
 
 
+    const syncVisibility = () => {
+
+        const hiddenByClass =
+            cameraWindow.classList.contains(
+                "hidden"
+            );
+
+
+        const hiddenByStyle =
+            getComputedStyle(
+                cameraWindow
+            ).display ===
+            "none";
+
+
+        const visible =
+            !hiddenByClass &&
+            !hiddenByStyle;
+
+
+        /*
+         * OPEN
+         */
+
+        if (
+            visible &&
+            !cameraVisible
+        ) {
+
+            cameraVisible =
+                true;
+
+            cameraOpened();
+
+            return;
+
+        }
+
+
+        /*
+         * CLOSE / MINIMIZE
+         */
+
+        if (
+            !visible &&
+            cameraVisible
+        ) {
+
+            cameraVisible =
+                false;
+
+            cameraClosed();
+
+        }
+
+    };
+
+
     const observer =
         new MutationObserver(
-            () => {
-
-                const hidden =
-                    cameraWindow.classList.contains(
-                        "hidden"
-                    );
-
-
-                if (
-                    hidden
-                ) {
-
-                    leaveWorkspaceMode();
-
-                } else {
-
-                    cameraOpened();
-
-                }
-
-            }
+            syncVisibility
         );
 
 
@@ -2856,11 +2893,15 @@ function startVisibilityObserver() {
                 true,
 
             attributeFilter: [
-                "class"
+                "class",
+                "style"
             ]
 
         }
     );
+
+
+    syncVisibility();
 
 }
 
