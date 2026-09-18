@@ -1,11 +1,29 @@
 /* ==========================================================
-   OMEGA CAMERA SYSTEM
-   Camera System + MR.SMILE Context Integration
+   OMEGA SECURITY SURVEILLANCE SYSTEM
+   MIRROR-INT / OMEGA
+
+   Responsibilities:
+   - camera channel management
+   - live feed rendering
+   - channel selection
+   - surveillance UI state
+   - OMEGA time integration
+   - operator action reporting
+   - MR.SMILE context integration
+
+   Does NOT:
+   - create anomaly events
+   - control MR.SMILE behavior
+   - create horror effects
 ========================================================== */
 
 import {
     trigger
 } from "./eventManager.js";
+
+import {
+    formatOmegaTime
+} from "./omegaTime.js";
 
 
 /* ==========================================================
@@ -13,11 +31,12 @@ import {
 ========================================================== */
 
 let currentCam = 0;
+
 let clockTimer = null;
 
 
 /* ==========================================================
-   CAMERAS
+   CAMERA DATABASE
 ========================================================== */
 
 const cameras = [
@@ -26,52 +45,114 @@ const cameras = [
         id: "CAM 01",
         name: "BASE AREA",
         image: "./images/cam_ba.jpg",
-        signal: 98
+        signal: 98,
+        status: "ONLINE"
     },
 
     {
         id: "CAM 02",
         name: "CORRIDOR",
         image: "./images/cam_cor.jpg",
-        signal: 97
+        signal: 97,
+        status: "ONLINE"
     },
 
     {
         id: "CAM 03",
         name: "SERVER ROOM",
         image: "./images/cam_server.jpg",
-        signal: 99
+        signal: 99,
+        status: "ONLINE"
     },
 
     {
         id: "CAM 04",
         name: "EXIT",
         image: "./images/cam_exit.jpg",
-        signal: 96
+        signal: 96,
+        status: "ONLINE"
     },
 
     {
         id: "CAM 05",
         name: "BLACK ZONE",
         image: "./images/cam_black.jpg",
-        signal: 72
+        signal: 72,
+        status: "DEGRADED"
     },
 
     {
         id: "CAM 06",
         name: "UNKNOWN AREA",
         image: "./images/ooooo.jpg",
-        signal: 84
+        signal: 84,
+        status: "ONLINE"
     },
 
     {
         id: "CAM 07",
         name: "RESTRICTED AREA",
         image: "./images/cam_secret.gif",
-        signal: 91
+        signal: 91,
+        status: "RESTRICTED"
     }
 
 ];
+
+
+/* ==========================================================
+   HELPERS
+========================================================== */
+
+function getCurrentCameraData() {
+
+    return (
+        cameras[currentCam] ||
+        null
+    );
+
+}
+
+
+function getCameraNumber(
+    camera
+) {
+
+    if (!camera) {
+
+        return "--";
+
+    }
+
+    return String(
+        cameras.indexOf(
+            camera
+        ) + 1
+    ).padStart(
+        2,
+        "0"
+    );
+
+}
+
+
+function safeText(
+    value,
+    fallback = ""
+) {
+
+    const text =
+        String(
+            value ??
+            ""
+        ).trim();
+
+    return (
+        text ||
+        fallback
+    );
+
+}
 
 
 /* ==========================================================
@@ -79,9 +160,8 @@ const cameras = [
 ========================================================== */
 
 /*
-    Camera only reports operator actions.
-
-    It does NOT decide what MR.SMILE should do.
+    Camera system only reports
+    operator actions.
 
     Flow:
 
@@ -89,15 +169,12 @@ const cameras = [
            ↓
         operatorAction
            ↓
-        mrsmileContext.js
+        MR.SMILE context
            ↓
-        mrsmileBehavior.js
+        MR.SMILE behavior
            ↓
-        Decision
-           ↓
-        mrsmileActions.js
+        decision
 */
-
 
 function reportMrSmileCameraAction(
     data = {}
@@ -109,9 +186,11 @@ function reportMrSmileCameraAction(
             "mrsmile:operatorAction",
             {
 
-                source: "camera",
+                source:
+                    "camera",
 
-                page: "camera",
+                page:
+                    "camera",
 
                 operator:
                     data.operator ||
@@ -121,7 +200,6 @@ function reportMrSmileCameraAction(
 
             }
         );
-
 
     } catch (error) {
 
@@ -136,20 +214,243 @@ function reportMrSmileCameraAction(
 
 
 /* ==========================================================
-   INIT
+   UI HELPERS
 ========================================================== */
 
-export function initCamera() {
+function updateCameraChannelUI() {
 
-    showCamera();
+    const channels =
+        document.querySelectorAll(
+            ".cameraChannel"
+        );
 
-    startClock();
+
+    channels.forEach(
+        (
+            button,
+            index
+        ) => {
+
+            button.classList.toggle(
+                "active",
+                index === currentCam
+            );
+
+        }
+    );
+
+
+    const camera =
+        getCurrentCameraData();
+
+
+    if (!camera) {
+
+        return;
+
+    }
+
+
+    const signal =
+        document.getElementById(
+            "cameraSignalValue"
+        );
+
+
+    if (signal) {
+
+        signal.textContent =
+            `${camera.signal}%`;
+
+    }
+
+
+    const connection =
+        document.getElementById(
+            "cameraConnectionStatus"
+        );
+
+
+    if (connection) {
+
+        connection.textContent =
+            camera.status;
+
+        connection.dataset.state =
+            camera.status.toLowerCase();
+
+    }
+
+
+    /*
+     * Update optional
+     * current-channel elements.
+     */
+
+    const currentId =
+        document.getElementById(
+            "cameraCurrentId"
+        );
+
+
+    if (currentId) {
+
+        currentId.textContent =
+            camera.id;
+
+    }
+
+
+    const currentName =
+        document.getElementById(
+            "cameraCurrentName"
+        );
+
+
+    if (currentName) {
+
+        currentName.textContent =
+            camera.name;
+
+    }
+
+
+    const currentChannel =
+        document.getElementById(
+            "cameraCurrentChannel"
+        );
+
+
+    if (currentChannel) {
+
+        currentChannel.textContent =
+            `CH ${getCameraNumber(camera)}`;
+
+    }
 
 }
 
 
 /* ==========================================================
-   SHOW CAMERA
+   CHANNEL LIST
+========================================================== */
+
+/*
+    The HTML already contains the
+    cameraChannel buttons.
+
+    This function can also repair
+    the list if they are missing.
+*/
+
+function ensureCameraChannelUI() {
+
+    const root =
+        document.getElementById(
+            "cameraChannelList"
+        );
+
+
+    if (!root) {
+
+        return;
+
+    }
+
+
+    const existing =
+        root.querySelectorAll(
+            ".cameraChannel"
+        );
+
+
+    if (
+        existing.length ===
+        cameras.length
+    ) {
+
+        updateCameraChannelUI();
+
+        return;
+
+    }
+
+
+    root.innerHTML =
+        cameras
+            .map(
+                (
+                    camera,
+                    index
+                ) => `
+
+                    <button
+                        class="cameraChannel"
+                        type="button"
+                        onclick="selectCamera(${index})"
+                        data-camera-index="${index}"
+                    >
+
+                        <span
+                            class="cameraChannelDot"
+                        ></span>
+
+
+                        <span
+                            class="cameraChannelInfo"
+                        >
+
+                            <strong>
+                                ${escapeHtml(
+                                    camera.id
+                                )}
+                            </strong>
+
+                            <small>
+                                ${escapeHtml(
+                                    camera.name
+                                )}
+                            </small>
+
+                        </span>
+
+                    </button>
+
+                `
+            )
+            .join("");
+
+
+    updateCameraChannelUI();
+
+}
+
+
+/* ==========================================================
+   INIT
+========================================================== */
+
+export function initCamera() {
+
+    ensureCameraChannelUI();
+
+    showCamera();
+
+    startClock();
+
+    console.log(
+        "[OMEGA CAMERA] Surveillance system initialized.",
+        {
+            cameras:
+                cameras.length
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   LIVE CAMERA VIEW
 ========================================================== */
 
 function showCamera() {
@@ -172,7 +473,7 @@ function showCamera() {
 
 
     const camera =
-        cameras[currentCam];
+        getCurrentCameraData();
 
 
     if (!camera) {
@@ -187,39 +488,100 @@ function showCamera() {
     }
 
 
+    const channelNumber =
+        getCameraNumber(
+            camera
+        );
+
+
     view.innerHTML = `
 
-        <div class="cameraScreen">
+        <div
+            class="cameraScreen"
+            data-camera="${escapeAttribute(
+                camera.id
+            )}"
+        >
+
+
+            <!-- ======================================
+                 VIDEO
+            ======================================= -->
 
             <img
                 class="cameraImage"
-                src="${escapeAttribute(camera.image)}"
-                alt="${escapeAttribute(camera.name)}"
+                src="${escapeAttribute(
+                    camera.image
+                )}"
+                alt="${escapeAttribute(
+                    camera.name
+                )}"
+                draggable="false"
             >
 
-            <!-- EFFECTS -->
 
-            <div class="cameraScanlines"></div>
+            <!-- ======================================
+                 EFFECTS
+            ======================================= -->
 
-            <div class="cameraNoise"></div>
+            <div
+                class="cameraScanlines"
+            ></div>
 
-            <div class="cameraVignette"></div>
+            <div
+                class="cameraNoise"
+            ></div>
+
+            <div
+                class="cameraVignette"
+            ></div>
 
 
-            <!-- INTERFACE -->
+            <!-- ======================================
+                 CAMERA UI
+            ======================================= -->
 
-            <div class="cameraOverlay">
+            <div
+                class="cameraOverlay"
+            >
 
-                <div class="cameraTop">
 
-                    <span>
-                        ${escapeHtml(camera.id)}
+                <!-- TOP LEFT -->
+
+                <div
+                    class="cameraTop"
+                >
+
+                    <span
+                        class="cameraFeedIdentity"
+                    >
+
+                        ${escapeHtml(
+                            camera.id
+                        )}
+
+                        <span
+                            class="cameraFeedSeparator"
+                        >
+                            /
+                        </span>
+
+                        ${escapeHtml(
+                            camera.name
+                        )}
+
                     </span>
 
 
-                    <span class="cameraRec">
+                    <!-- TOP RIGHT -->
 
-                        <span class="recDot">
+                    <span
+                        class="cameraRec"
+                    >
+
+                        <span
+                            class="recDot"
+                        >
                             ●
                         </span>
 
@@ -230,32 +592,128 @@ function showCamera() {
                 </div>
 
 
-                <div class="cameraStatus">
+                <!-- SYSTEM LABEL -->
+
+                <div
+                    class="cameraStatus"
+                >
 
                     OMEGA SECURITY NETWORK
 
-                </div>
-
-
-                <div class="cameraBottom">
-
-                    <span>
-                        ${escapeHtml(camera.name)}
+                    <span
+                        class="cameraStatusDivider"
+                    >
+                        //
                     </span>
 
-                    <span>
-                        SIGNAL:
-                        <b>${camera.signal}%</b>
-                    </span>
+                    DIGITAL SURVEILLANCE
 
                 </div>
 
 
-                <div class="cameraTime">
+                <!-- CHANNEL MARKER -->
 
+                <div
+                    class="cameraChannelMarker"
+                >
+
+                    CH-${channelNumber}
+
+                </div>
+
+
+                <!-- FRAME CORNERS -->
+
+                <div
+                    class="cameraFrame cameraFrameTL"
+                ></div>
+
+                <div
+                    class="cameraFrame cameraFrameTR"
+                ></div>
+
+                <div
+                    class="cameraFrame cameraFrameBL"
+                ></div>
+
+                <div
+                    class="cameraFrame cameraFrameBR"
+                ></div>
+
+
+                <!-- CENTER RETICLE -->
+
+                <div
+                    class="cameraReticle"
+                ></div>
+
+
+                <!-- BOTTOM INFO -->
+
+                <div
+                    class="cameraBottom"
+                >
+
+
+                    <span
+                        class="cameraLocation"
+                    >
+                        ${escapeHtml(
+                            camera.name
+                        )}
+                    </span>
+
+
+                    <span
+                        class="cameraFeedMeta"
+                    >
+
+                        SIGNAL
+                        <b>
+                            ${camera.signal}%
+                        </b>
+
+                        <span
+                            class="cameraMetaDivider"
+                        >
+                            |
+                        </span>
+
+                        ${escapeHtml(
+                            camera.status
+                        )}
+
+                    </span>
+
+                </div>
+
+
+                <!-- TIME -->
+
+                <div
+                    class="cameraTime"
+                >
                     ${getCameraTime()}
+                </div>
+
+
+                <!-- CAMERA NUMBER -->
+
+                <div
+                    class="cameraIndex"
+                >
+
+                    ${channelNumber}
+                    /
+                    ${String(
+                        cameras.length
+                    ).padStart(
+                        2,
+                        "0"
+                    )}
 
                 </div>
+
 
             </div>
 
@@ -297,11 +755,6 @@ function showCamera() {
                 }
 
 
-                /*
-                    Prevent duplicate
-                    SIGNAL LOST elements.
-                */
-
                 if (
                     screen.querySelector(
                         ".cameraOffline"
@@ -315,15 +768,37 @@ function showCamera() {
 
                 screen.insertAdjacentHTML(
                     "beforeend",
+
                     `
 
-                        <div class="cameraOffline">
+                        <div
+                            class="cameraOffline"
+                        >
 
-                            SIGNAL LOST
+                            <div
+                                class="cameraOfflineInner"
+                            >
+
+                                <strong>
+                                    SIGNAL LOST
+                                </strong>
+
+                                <span>
+                                    ${escapeHtml(
+                                        camera.id
+                                    )}
+                                </span>
+
+                                <small>
+                                    VIDEO SOURCE UNAVAILABLE
+                                </small>
+
+                            </div>
 
                         </div>
 
                     `
+
                 );
 
             }
@@ -344,11 +819,25 @@ function showCamera() {
 
     if (screen) {
 
+        screen.classList.remove(
+            "cameraSwitch"
+        );
+
+        void screen.offsetWidth;
+
         screen.classList.add(
             "cameraBoot"
         );
 
     }
+
+
+    /*
+     * Refresh the channel panel
+     * after the new feed exists.
+     */
+
+    updateCameraChannelUI();
 
 }
 
@@ -360,14 +849,14 @@ function showCamera() {
 export function nextCam() {
 
     const previousCamera =
-        cameras[currentCam];
+        getCurrentCameraData();
 
 
     currentCam++;
 
-
     if (
-        currentCam >= cameras.length
+        currentCam >=
+        cameras.length
     ) {
 
         currentCam = 0;
@@ -376,7 +865,7 @@ export function nextCam() {
 
 
     const newCamera =
-        cameras[currentCam];
+        getCurrentCameraData();
 
 
     console.log(
@@ -386,10 +875,6 @@ export function nextCam() {
         newCamera?.id
     );
 
-
-    /* ======================================================
-       REPORT TO MR.SMILE
-    ====================================================== */
 
     reportMrSmileCameraAction({
 
@@ -407,6 +892,9 @@ export function nextCam() {
             "operator_switched_camera",
 
         metadata: {
+
+            direction:
+                "next",
 
             previousCamera: {
 
@@ -432,6 +920,10 @@ export function nextCam() {
 
                 signal:
                     newCamera?.signal ??
+                    null,
+
+                status:
+                    newCamera?.status ||
                     null
 
             },
@@ -456,7 +948,7 @@ export function nextCam() {
 export function previousCam() {
 
     const previousCamera =
-        cameras[currentCam];
+        getCurrentCameraData();
 
 
     currentCam--;
@@ -473,7 +965,7 @@ export function previousCam() {
 
 
     const newCamera =
-        cameras[currentCam];
+        getCurrentCameraData();
 
 
     console.log(
@@ -528,6 +1020,10 @@ export function previousCam() {
 
                 signal:
                     newCamera?.signal ??
+                    null,
+
+                status:
+                    newCamera?.status ||
                     null
 
             },
@@ -546,18 +1042,32 @@ export function previousCam() {
 
 
 /* ==========================================================
-   SELECT CAMERA
+   SELECT SPECIFIC CAMERA
 ========================================================== */
 
-export function selectCamera(index) {
+export function selectCamera(
+    index
+) {
 
     const parsedIndex =
         Number(index);
 
+
     if (
-        !Number.isInteger(parsedIndex) ||
+        !Number.isInteger(
+            parsedIndex
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    if (
         parsedIndex < 0 ||
-        parsedIndex >= cameras.length
+        parsedIndex >=
+        cameras.length
     ) {
 
         return;
@@ -566,7 +1076,7 @@ export function selectCamera(index) {
 
 
     const previousCamera =
-        cameras[currentCam];
+        getCurrentCameraData();
 
 
     currentCam =
@@ -574,13 +1084,21 @@ export function selectCamera(index) {
 
 
     const newCamera =
-        cameras[currentCam];
+        getCurrentCameraData();
 
 
     if (
         previousCamera?.id !==
         newCamera?.id
     ) {
+
+        console.log(
+            "[OMEGA CAMERA] SELECT:",
+            previousCamera?.id,
+            "→",
+            newCamera?.id
+        );
+
 
         reportMrSmileCameraAction({
 
@@ -619,84 +1137,25 @@ export function selectCamera(index) {
 
     showCamera();
 
-    updateCameraChannelUI();
-
 }
 
-/* ==========================================================
-   CHANNEL UI
-========================================================== */
-
-function updateCameraChannelUI() {
-
-    const channels =
-        document.querySelectorAll(
-            ".cameraChannel"
-        );
-
-
-    channels.forEach(
-        (
-            button,
-            index
-        ) => {
-
-            button.classList.toggle(
-                "active",
-                index === currentCam
-            );
-
-        }
-    );
-
-
-    const camera =
-        cameras[currentCam];
-
-
-    const signal =
-        document.getElementById(
-            "cameraSignalValue"
-        );
-
-
-    if (signal) {
-
-        signal.textContent =
-            `${camera.signal}%`;
-
-    }
-
-
-    const status =
-        document.getElementById(
-            "cameraConnectionStatus"
-        );
-
-
-    if (status) {
-
-        status.textContent =
-            "LIVE";
-
-    }
-
-}
 
 /* ==========================================================
-   GET CURRENT CAMERA
+   CURRENT CAMERA
 ========================================================== */
 
 export function getCurrentCamera() {
 
-    return cameras[currentCam] ||
-        null;
+    return (
+        cameras[currentCam] ||
+        null
+    );
 
 }
 
 
 /* ==========================================================
-   GET CAMERA INDEX
+   CURRENT CAMERA INDEX
 ========================================================== */
 
 export function getCurrentCameraIndex() {
@@ -707,7 +1166,7 @@ export function getCurrentCameraIndex() {
 
 
 /* ==========================================================
-   GET ALL CAMERAS
+   ALL CAMERAS
 ========================================================== */
 
 export function getCameras() {
@@ -726,7 +1185,14 @@ export function getCameras() {
 export function reportCameraOpened() {
 
     const camera =
-        cameras[currentCam];
+        getCurrentCameraData();
+
+
+    if (!camera) {
+
+        return;
+
+    }
 
 
     reportMrSmileCameraAction({
@@ -735,8 +1201,7 @@ export function reportCameraOpened() {
             "camera_open",
 
         target:
-            camera?.id ||
-            null,
+            camera.id,
 
         action:
             "open",
@@ -749,16 +1214,16 @@ export function reportCameraOpened() {
             camera: {
 
                 id:
-                    camera?.id ||
-                    null,
+                    camera.id,
 
                 name:
-                    camera?.name ||
-                    null,
+                    camera.name,
 
                 signal:
-                    camera?.signal ??
-                    null
+                    camera.signal,
+
+                status:
+                    camera.status
 
             },
 
@@ -779,7 +1244,14 @@ export function reportCameraOpened() {
 export function reportCameraClosed() {
 
     const camera =
-        cameras[currentCam];
+        getCurrentCameraData();
+
+
+    if (!camera) {
+
+        return;
+
+    }
 
 
     reportMrSmileCameraAction({
@@ -788,8 +1260,7 @@ export function reportCameraClosed() {
             "camera_close",
 
         target:
-            camera?.id ||
-            null,
+            camera.id,
 
         action:
             "close",
@@ -800,12 +1271,13 @@ export function reportCameraClosed() {
         metadata: {
 
             cameraId:
-                camera?.id ||
-                null,
+                camera.id,
 
             cameraName:
-                camera?.name ||
-                null
+                camera.name,
+
+            cameraIndex:
+                currentCam
 
         }
 
@@ -815,7 +1287,7 @@ export function reportCameraClosed() {
 
 
 /* ==========================================================
-   CLOCK
+   CAMERA CLOCK
 ========================================================== */
 
 function startClock() {
@@ -862,31 +1334,49 @@ function startClock() {
 
 function getCameraTime() {
 
-    const now =
-        new Date();
+    try {
+
+        return formatOmegaTime(
+            true
+        );
+
+    } catch {
+
+        const now =
+            new Date();
 
 
-    return now.toLocaleTimeString(
-        "en-GB",
-        {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit"
-        }
-    );
+        return now.toLocaleTimeString(
+            "en-GB",
+            {
+                hour:
+                    "2-digit",
+
+                minute:
+                    "2-digit",
+
+                second:
+                    "2-digit"
+            }
+        );
+
+    }
 
 }
 
 
 /* ==========================================================
-   ESCAPE HTML
+   HTML ESCAPE
 ========================================================== */
 
 function escapeHtml(
     text
 ) {
 
-    return String(text)
+    return String(
+        text ??
+        ""
+    )
 
         .replaceAll(
             "&",
@@ -917,14 +1407,17 @@ function escapeHtml(
 
 
 /* ==========================================================
-   ESCAPE ATTRIBUTE
+   ATTRIBUTE ESCAPE
 ========================================================== */
 
 function escapeAttribute(
     text
 ) {
 
-    return String(text)
+    return String(
+        text ??
+        ""
+    )
 
         .replaceAll(
             "&",
@@ -950,78 +1443,109 @@ function escapeAttribute(
 
 
 /* ==========================================================
-   GLOBAL CAMERA API
+   GLOBAL API
 ========================================================== */
 
-window.nextCam =
-    nextCam;
+if (
+    typeof window !==
+    "undefined"
+) {
+
+    window.nextCam =
+        nextCam;
 
 
-window.previousCam =
-    previousCam;
+    window.previousCam =
+        previousCam;
 
 
-window.getCurrentCamera =
-    getCurrentCamera;
+    window.selectCamera =
+        selectCamera;
 
 
-window.getCurrentCameraIndex =
-    getCurrentCameraIndex;
+    window.getCurrentCamera =
+        getCurrentCamera;
+
+
+    window.getCurrentCameraIndex =
+        getCurrentCameraIndex;
+
+}
 
 
 /* ==========================================================
    DEBUG CAMERA API
 ========================================================== */
 
-window.OMEGA_CAMERA = {
+if (
+    typeof window !==
+    "undefined"
+) {
 
-    status() {
+    window.OMEGA_CAMERA = {
 
-        return {
+        status() {
 
-            index:
-                currentCam,
-
-            camera:
-                getCurrentCamera(),
-
-            total:
-                cameras.length
-
-        };
-
-    },
+            const camera =
+                getCurrentCameraData();
 
 
-    next() {
+            return {
 
-        return nextCam();
+                index:
+                    currentCam,
 
-    },
+                camera,
 
+                total:
+                    cameras.length,
 
-    previous() {
+                time:
+                    getCameraTime()
 
-        return previousCam();
+            };
 
-    },
-
-
-    open() {
-
-        reportCameraOpened();
-
-    },
+        },
 
 
-    close() {
+        next() {
 
-        reportCameraClosed();
+            return nextCam();
 
-    }
-
-};
+        },
 
 
-window.selectCamera =
-    selectCamera;
+        previous() {
+
+            return previousCam();
+
+        },
+
+
+        select(
+            index
+        ) {
+
+            return selectCamera(
+                index
+            );
+
+        },
+
+
+        open() {
+
+            return reportCameraOpened();
+
+        },
+
+
+        close() {
+
+            return reportCameraClosed();
+
+        }
+
+    };
+
+}
