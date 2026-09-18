@@ -1,53 +1,79 @@
 /* ==========================================================
    OMEGA CODEX
+   INTERNAL SYSTEM CODE DATABASE
+========================================================== */
+
+
+/* ==========================================================
+   01. WINDOW
 ========================================================== */
 
 #omegaCodexWindow {
 
-    width: 920px;
-    height: 680px;
+    width:
+        920px;
 
-    min-width: 620px;
-    min-height: 430px;
+    height:
+        680px;
+
+    min-width:
+        620px;
+
+    min-height:
+        430px;
 
 }
 
 
 /* ==========================================================
-   CODEX BODY
+   02. CODEX BODY
 ========================================================== */
 
 #omegaCodexWindow .omegaCodexBody {
 
-    display: flex;
-    flex-direction: column;
+    display:
+        flex;
 
-    padding: 0;
+    flex-direction:
+        column;
 
-    overflow: hidden;
+    padding:
+        0;
+
+    overflow:
+        hidden;
 
     background:
         linear-gradient(
             180deg,
-            #0d1622,
-            #09111a
+            #0c1621,
+            #081019
         );
 
 }
 
 
 /* ==========================================================
-   INTRO
+   03. INTRO HEADER
 ========================================================== */
 
 .omegaCodexIntro {
 
-    flex: 0 0 auto;
+    position:
+        relative;
 
-    padding: 16px 18px;
+    flex:
+        0 0 auto;
+
+    padding:
+        14px 16px;
+
+    box-sizing:
+        border-box;
 
     border-bottom:
-        1px solid #20384c;
+        1px solid
+        #20384c;
 
     background:
         linear-gradient(
@@ -59,75 +85,153 @@
 }
 
 
-.omegaCodexTitle {
+/* ==========================================================
+   INTRO ACCENT
+========================================================== */
 
-    color: #dff5ff;
+.omegaCodexIntro::after {
 
-    font-family:
-        Consolas,
-        "Courier New",
-        monospace;
+    content:
+        "";
 
-    font-size: 13px;
+    position:
+        absolute;
 
-    letter-spacing: 1px;
+    left:
+        16px;
 
-}
+    bottom:
+        -1px;
 
+    width:
+        42px;
 
-.omegaCodexSubtitle {
+    height:
+        2px;
 
-    margin-top: 5px;
+    background:
+        #4fd8ff;
 
-    color: #5d8298;
-
-    font-family:
-        Consolas,
-        "Courier New",
-        monospace;
-
-    font-size: 9px;
-
-    letter-spacing: .7px;
+    opacity:
+        .8;
 
 }
 
 
 /* ==========================================================
-   SEARCH / FILTER
+   CODEX TITLE
 ========================================================== */
 
-.omegaCodexTools {
+.omegaCodexTitle {
 
-    display: flex;
+    color:
+        #e1f5ff;
 
-    gap: 8px;
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
 
-    padding: 10px 14px;
+    font-size:
+        14px;
 
-    border-bottom:
-        1px solid #1d3446;
+    font-weight:
+        600;
 
-    background:
-        #0b141d;
+    line-height:
+        1.3;
+
+    letter-spacing:
+        .07em;
+
+    text-transform:
+        uppercase;
 
 }
 
 
+/* ==========================================================
+   CODEX SUBTITLE
+========================================================== */
+
+.omegaCodexSubtitle {
+
+    margin-top:
+        5px;
+
+    color:
+        #68869b;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+    line-height:
+        1.4;
+
+    letter-spacing:
+        .05em;
+
+}
+
+
+/* ==========================================================
+   04. SEARCH / FILTER TOOLS
+========================================================== */
+
+.omegaCodexTools {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    padding:
+        9px 12px;
+
+    box-sizing:
+        border-box;
+
+    border-bottom:
+        1px solid
+        #1d3446;
+
+    background:
+        #0a131c;
+
+}
+
+
+/* ==========================================================
+   SEARCH + FILTER
+========================================================== */
+
 #omegaCodexSearch,
 #omegaCodexFilter {
 
-    height: 32px;
+    height:
+        30px;
 
-    box-sizing: border-box;
+    box-sizing:
+        border-box;
 
     border:
-        1px solid #29465d;
+        1px solid
+        #29465d;
 
-    border-radius: 4px;
+    border-radius:
+        3px;
 
     background:
-        #0b1721;
+        #09141e;
 
     color:
         #cde8f5;
@@ -137,18 +241,29 @@
         "Courier New",
         monospace;
 
-    font-size: 10px;
+    font-size:
+        12px;
 
-    outline: none;
+    line-height:
+        1.2;
+
+    outline:
+        none;
+
+    transition:
+        border-color .16s ease,
+        box-shadow .16s ease;
 
 }
 
 
 #omegaCodexSearch {
 
-    flex: 1 1 auto;
+    flex:
+        1 1 auto;
 
-    min-width: 0;
+    min-width:
+        0;
 
     padding:
         0 10px;
@@ -167,13 +282,21 @@
 }
 
 
+/* ==========================================================
+   INPUT PLACEHOLDER
+========================================================== */
+
 #omegaCodexSearch::placeholder {
 
     color:
-        #496679;
+        #547287;
 
 }
 
+
+/* ==========================================================
+   INPUT FOCUS
+========================================================== */
 
 #omegaCodexSearch:focus,
 #omegaCodexFilter:focus {
@@ -182,14 +305,19 @@
         #4fd8ff;
 
     box-shadow:
-        0 0 9px
-        rgba(79,216,255,.10);
+        0 0 0 1px
+        rgba(
+            79,
+            216,
+            255,
+            .08
+        );
 
 }
 
 
 /* ==========================================================
-   CODE LIST
+   05. CODE LIST
 ========================================================== */
 
 .omegaCodexList {
@@ -197,31 +325,46 @@
     flex:
         1 1 auto;
 
+    min-width:
+        0;
+
     min-height:
         0;
+
+    overflow-x:
+        hidden;
 
     overflow-y:
         auto;
 
     padding:
-        8px 0;
+        4px 0;
+
+    background:
+        #071019;
 
 }
 
 
 /* ==========================================================
-   CODE ENTRY
+   06. CODE ENTRY
 ========================================================== */
 
 .omegaCodexEntry {
+
+    position:
+        relative;
 
     display:
         grid;
 
     grid-template-columns:
-        110px
-        minmax(0, 1fr)
-        110px;
+        120px
+        minmax(
+            0,
+            1fr
+        )
+        115px;
 
     align-items:
         center;
@@ -230,7 +373,7 @@
         12px;
 
     min-height:
-        60px;
+        58px;
 
     padding:
         8px 14px;
@@ -252,33 +395,69 @@
             8,
             18,
             27,
-            .55
+            .48
         );
 
     transition:
-        background .15s ease;
-
-}
-
-
-.omegaCodexEntry:hover {
-
-    background:
-        rgba(
-            22,
-            42,
-            57,
-            .65
-        );
+        background .15s ease,
+        border-color .15s ease;
 
 }
 
 
 /* ==========================================================
-   CODE
+   ENTRY HOVER
+========================================================== */
+
+.omegaCodexEntry:hover {
+
+    background:
+        #0d1d2a;
+
+    border-bottom-color:
+        #29465c;
+
+}
+
+
+/* ==========================================================
+   ENTRY ACTIVE MARK
+========================================================== */
+
+.omegaCodexEntry:hover::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    left:
+        0;
+
+    top:
+        0;
+
+    bottom:
+        0;
+
+    width:
+        2px;
+
+    background:
+        #4fd8ff;
+
+}
+
+
+/* ==========================================================
+   07. CODE
 ========================================================== */
 
 .omegaCodexCode {
+
+    min-width:
+        0;
 
     color:
         #8fd4f4;
@@ -294,17 +473,26 @@
     font-weight:
         600;
 
+    line-height:
+        1.35;
+
     letter-spacing:
-        .7px;
+        .05em;
 
     white-space:
         nowrap;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
 
 }
 
 
 /* ==========================================================
-   MAIN DESCRIPTION
+   08. MAIN DESCRIPTION
 ========================================================== */
 
 .omegaCodexMain {
@@ -315,10 +503,62 @@
 }
 
 
+/* ==========================================================
+   MEANING
+========================================================== */
+
 .omegaCodexMeaning {
 
+    min-width:
+        0;
+
     color:
-        #c3dbe7;
+        #c4dae6;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.45;
+
+    overflow-wrap:
+        anywhere;
+
+}
+
+
+/* ==========================================================
+   09. CATEGORY
+========================================================== */
+
+.omegaCodexCategory {
+
+    justify-self:
+        end;
+
+    min-width:
+        0;
+
+    padding:
+        5px 8px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        #0c1924;
+
+    border:
+        1px solid
+        #29465c;
+
+    color:
+        #7295a8;
 
     font-family:
         Consolas,
@@ -329,54 +569,34 @@
         10px;
 
     line-height:
-        1.5;
-
-}
-
-
-/* ==========================================================
-   CATEGORY
-========================================================== */
-
-.omegaCodexCategory {
-
-    justify-self:
-        end;
-
-    padding:
-        4px 7px;
-
-    border:
-        1px solid #27445a;
-
-    color:
-        #6d95ab;
-
-    font-family:
-        Consolas,
-        "Courier New",
-        monospace;
-
-    font-size:
-        8px;
+        1.2;
 
     letter-spacing:
-        .5px;
+        .05em;
+
+    text-transform:
+        uppercase;
 
     white-space:
         nowrap;
 
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+
 }
 
 
 /* ==========================================================
-   SCROLLBAR
+   10. SCROLLBAR
 ========================================================== */
 
 .omegaCodexList::-webkit-scrollbar {
 
     width:
-        8px;
+        7px;
 
 }
 
@@ -384,7 +604,7 @@
 .omegaCodexList::-webkit-scrollbar-track {
 
     background:
-        #0a131c;
+        #050c12;
 
 }
 
@@ -392,7 +612,7 @@
 .omegaCodexList::-webkit-scrollbar-thumb {
 
     background:
-        #2d4d64;
+        #2c4d64;
 
     border-radius:
         10px;
@@ -409,11 +629,12 @@
 
 
 /* ==========================================================
-   MOBILE
+   11. MOBILE
 ========================================================== */
 
 @media (
-    max-width: 700px
+    max-width:
+        700px
 ) {
 
     #omegaCodexWindow {
@@ -436,8 +657,11 @@
     .omegaCodexEntry {
 
         grid-template-columns:
-            90px
-            minmax(0, 1fr);
+            100px
+            minmax(
+                0,
+                1fr
+            );
 
     }
 
@@ -453,7 +677,8 @@
 
 
 @media (
-    max-width: 520px
+    max-width:
+        520px
 ) {
 
     .omegaCodexTools {
@@ -461,16 +686,55 @@
         flex-direction:
             column;
 
+        align-items:
+            stretch;
+
     }
 
 
+    #omegaCodexSearch,
     #omegaCodexFilter {
 
         width:
             100%;
 
+    }
+
+
+    #omegaCodexFilter {
+
         flex-basis:
-            32px;
+            30px;
+
+    }
+
+
+    .omegaCodexEntry {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            5px;
+
+        padding:
+            10px 12px;
+
+    }
+
+
+    .omegaCodexCode {
+
+        font-size:
+            10px;
+
+    }
+
+
+    .omegaCodexMeaning {
+
+        font-size:
+            12px;
 
     }
 
@@ -478,14 +742,17 @@
 
 
 /* ==========================================================
-   REDUCED MOTION
+   12. REDUCED MOTION
 ========================================================== */
 
 @media (
-    prefers-reduced-motion: reduce
+    prefers-reduced-motion:
+        reduce
 ) {
 
-    .omegaCodexEntry {
+    .omegaCodexEntry,
+    #omegaCodexSearch,
+    #omegaCodexFilter {
 
         transition:
             none;
