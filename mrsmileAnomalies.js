@@ -839,6 +839,8 @@ function loadState() {
             ...saved
 
         };
+       
+        ensureBehaviorState();
 
 
         if (
