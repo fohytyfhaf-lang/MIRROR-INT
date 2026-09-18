@@ -161,6 +161,530 @@ let initialized =
 let intervalId =
     null;
 
+/* ==========================================================
+   BEHAVIOR MEMORY
+========================================================== */
+
+const BEHAVIOR_CONFIG = {
+
+    recentActionsLimit:
+        40,
+
+    repeatFileWindow:
+        120000,
+
+    rapidCameraWindow:
+        7000,
+
+    rapidCameraCount:
+        3,
+
+    rapidConsoleWindow:
+        1500,
+
+    archiveConsoleWindow:
+        12000,
+
+    postContactActionLimit:
+        3
+
+};
+
+
+function createBehaviorState() {
+
+    return {
+
+        recentActions:
+            [],
+
+        fileReads:
+            {},
+
+        fileOpens:
+            {},
+
+        cameraSwitches:
+            [],
+
+        consoleCommands:
+            [],
+
+        lastFile:
+            null,
+
+        lastCamera:
+            null,
+
+        lastConsole:
+            null,
+
+        lastActionAt:
+            0,
+
+        contactAt:
+            null,
+
+        postContactActions:
+            0
+
+    };
+
+}
+
+
+function ensureBehaviorState() {
+
+    if (
+        !state.behavior ||
+        typeof state.behavior !==
+        "object"
+    ) {
+
+        state.behavior =
+            createBehaviorState();
+
+    }
+
+    if (
+        !Array.isArray(
+            state.behavior.recentActions
+        )
+    ) {
+
+        state.behavior.recentActions =
+            [];
+
+    }
+
+    if (
+        !Array.isArray(
+            state.behavior.cameraSwitches
+        )
+    ) {
+
+        state.behavior.cameraSwitches =
+            [];
+
+    }
+
+    if (
+        !Array.isArray(
+            state.behavior.consoleCommands
+        )
+    ) {
+
+        state.behavior.consoleCommands =
+            [];
+
+    }
+
+    if (
+        typeof state.behavior.fileReads !==
+        "object"
+    ) {
+
+        state.behavior.fileReads =
+            {};
+
+    }
+
+    if (
+        typeof state.behavior.fileOpens !==
+        "object"
+    ) {
+
+        state.behavior.fileOpens =
+            {};
+
+    }
+
+}
+
+
+function getActionTarget(
+    data = {}
+) {
+
+    const metadata =
+        data.metadata &&
+        typeof data.metadata ===
+        "object"
+            ? data.metadata
+            : {};
+
+    return clean(
+        data.target ||
+        metadata.path ||
+        metadata.name ||
+        metadata.file ||
+        metadata.cameraId ||
+        metadata.camera ||
+        data.camera ||
+        data.command ||
+        metadata.command ||
+        data.window ||
+        ""
+    );
+
+}
+
+
+function incrementMap(
+    map,
+    key
+) {
+
+    const value =
+        clean(key);
+
+    if (!value) {
+
+        return;
+
+    }
+
+    map[value] =
+        Number(map[value] || 0) + 1;
+
+}
+
+
+function trackBehavior(
+    data = {}
+) {
+
+    ensureBehaviorState();
+
+    const timestamp =
+        now();
+
+    const type =
+        clean(
+            data.type ||
+            data.action
+        );
+
+    const category =
+        getActionCategory(
+            data
+        );
+
+    const target =
+        getActionTarget(
+            data
+        );
+
+    const action =
+        {
+            type,
+            category,
+            target,
+            timestamp
+        };
+
+    state.behavior.recentActions.push(
+        action
+    );
+
+    if (
+        state.behavior.recentActions.length >
+        BEHAVIOR_CONFIG.recentActionsLimit
+    ) {
+
+        state.behavior.recentActions =
+            state.behavior.recentActions.slice(
+                -BEHAVIOR_CONFIG.recentActionsLimit
+            );
+
+    }
+
+
+    if (
+        type ===
+        "file_read"
+    ) {
+
+        incrementMap(
+            state.behavior.fileReads,
+            target
+        );
+
+        state.behavior.lastFile =
+            target || null;
+
+    }
+
+
+    if (
+        type ===
+        "file_open"
+    ) {
+
+        incrementMap(
+            state.behavior.fileOpens,
+            target
+        );
+
+        state.behavior.lastFile =
+            target || null;
+
+    }
+
+
+    if (
+        type ===
+        "camera_switch"
+    ) {
+
+        state.behavior.cameraSwitches.push(
+            {
+                target:
+                    target || null,
+                timestamp
+            }
+        );
+
+        state.behavior.cameraSwitches =
+            state.behavior.cameraSwitches.filter(
+                entry =>
+                    timestamp -
+                    entry.timestamp <=
+                    BEHAVIOR_CONFIG.rapidCameraWindow
+            );
+
+        state.behavior.lastCamera =
+            target || null;
+
+    }
+
+
+    if (
+        type ===
+        "console_command"
+    ) {
+
+        state.behavior.consoleCommands.push(
+            {
+                target:
+                    target || null,
+                timestamp
+            }
+        );
+
+        state.behavior.consoleCommands =
+            state.behavior.consoleCommands.slice(
+                -20
+            );
+
+        state.behavior.lastConsole =
+            target || null;
+
+    }
+
+
+    if (
+        state.postContact
+    ) {
+
+        state.behavior.postContactActions +=
+            1;
+
+    }
+
+
+    state.behavior.lastActionAt =
+        timestamp;
+
+    saveState();
+
+}
+
+
+function getRecentAction(
+    type,
+    windowMs
+) {
+
+    ensureBehaviorState();
+
+    const cutoff =
+        now() -
+        windowMs;
+
+    for (
+        let i =
+            state.behavior.recentActions.length - 1;
+        i >= 0;
+        i--
+    ) {
+
+        const action =
+            state.behavior.recentActions[i];
+
+        if (
+            action.timestamp < cutoff
+        ) {
+
+            break;
+
+        }
+
+        if (
+            action.type === type
+        ) {
+
+            return action;
+
+        }
+
+    }
+
+    return null;
+
+}
+
+
+function getFileReadCount(
+    target
+) {
+
+    ensureBehaviorState();
+
+    const key =
+        clean(target);
+
+    if (!key) {
+
+        return 0;
+
+    }
+
+    return Number(
+        state.behavior.fileReads[key] || 0
+    );
+
+}
+
+
+function wasFileReadBefore(
+    target
+) {
+
+    return (
+        getFileReadCount(
+            target
+        ) > 0
+    );
+
+}
+
+
+function hasRapidCameraActivity() {
+
+    ensureBehaviorState();
+
+    const cutoff =
+        now() -
+        BEHAVIOR_CONFIG.rapidCameraWindow;
+
+    const recent =
+        state.behavior.cameraSwitches.filter(
+            entry =>
+                entry.timestamp >= cutoff
+        );
+
+    return (
+        recent.length >=
+        BEHAVIOR_CONFIG.rapidCameraCount
+    );
+
+}
+
+
+function hasArchiveThenConsole() {
+
+    const cutoff =
+        now() -
+        BEHAVIOR_CONFIG.archiveConsoleWindow;
+
+    for (
+        let i =
+            state.behavior.recentActions.length - 1;
+        i >= 0;
+        i--
+    ) {
+
+        const action =
+            state.behavior.recentActions[i];
+
+        if (
+            action.timestamp <
+            cutoff
+        ) {
+
+            break;
+
+        }
+
+        if (
+            action.category ===
+            "archive"
+        ) {
+
+            return true;
+
+        }
+
+    }
+
+    return false;
+
+}
+
+
+function hasRapidConsoleSequence() {
+
+    const commands =
+        state.behavior.consoleCommands;
+
+    if (
+        commands.length < 2
+    ) {
+
+        return false;
+
+    }
+
+    const last =
+        commands[
+            commands.length - 1
+        ];
+
+    const previous =
+        commands[
+            commands.length - 2
+        ];
+
+    return (
+        last.timestamp -
+        previous.timestamp <=
+        BEHAVIOR_CONFIG.rapidConsoleWindow
+    );
+
+}
+
+
+function hasPostContactPersistence() {
+
+    return (
+        state.postContact &&
+        state.behavior.postContactActions >=
+        BEHAVIOR_CONFIG.postContactActionLimit
+    );
+
+}
+
 
 /* ==========================================================
    HELPERS
