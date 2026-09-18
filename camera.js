@@ -2452,32 +2452,16 @@ function recoverFault() {
         "signal_degraded"
     ) {
 
-        if (
-            camera.id ===
-            "CAM 05"
-        ) {
+       camera.signal =
+    Number.isFinite(
+        camera.baseSignal
+    )
+        ? camera.baseSignal
+        : camera.signal;
 
-            camera.signal =
-                72;
-
-        } else if (
-            camera.id ===
-            "CAM 06"
-        ) {
-
-            camera.signal =
-                84;
-
-        } else {
-
-            camera.signal =
-                96;
-
-        }
-
-
-        camera.status =
-            "ONLINE";
+camera.status =
+    camera.baseStatus ||
+    "ONLINE";
 
 
         addCameraEvent({
@@ -2532,36 +2516,24 @@ function recoverFault() {
         "offline"
     ) {
 
-        camera.status =
-            "ONLINE";
+      camera.status =
+    camera.baseStatus ||
+    "ONLINE";
 
 
-        camera.recording =
-            true;
+camera.recording =
+    typeof camera.baseRecording ===
+    "boolean"
+        ? camera.baseRecording
+        : true;
 
 
-        if (
-            camera.id ===
-            "CAM 05"
-        ) {
-
-            camera.signal =
-                72;
-
-        } else if (
-            camera.id ===
-            "CAM 06"
-        ) {
-
-            camera.signal =
-                84;
-
-        } else {
-
-            camera.signal =
-                96;
-
-        }
+camera.signal =
+    Number.isFinite(
+        camera.baseSignal
+    )
+        ? camera.baseSignal
+        : camera.signal;
 
 
         addCameraEvent({
