@@ -42,6 +42,9 @@ import { initPersonnel } from "./personnel.js";
 import {
     initPersonnelRuntime
 } from "./personnelRuntime.js";
+import {
+    initPersonnelLife
+} from "./personnelLife.js";
 import { initResearch } from "./research.js";
 import { initChats } from "./chats.js";
 import { initSettings } from "./settings2.js";
@@ -224,6 +227,7 @@ function bootSystem() {
         updateClock(); 
         initPersonnel();
         initPersonnelRuntime();
+        initPersonnelLife();
         openExplorer();
         initConsole();
         //minimizeWindow()
