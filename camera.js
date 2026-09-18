@@ -546,6 +546,144 @@ export function previousCam() {
 
 
 /* ==========================================================
+   SELECT CAMERA
+========================================================== */
+
+export function selectCamera(index) {
+
+    const parsedIndex =
+        Number(index);
+
+    if (
+        !Number.isInteger(parsedIndex) ||
+        parsedIndex < 0 ||
+        parsedIndex >= cameras.length
+    ) {
+
+        return;
+
+    }
+
+
+    const previousCamera =
+        cameras[currentCam];
+
+
+    currentCam =
+        parsedIndex;
+
+
+    const newCamera =
+        cameras[currentCam];
+
+
+    if (
+        previousCamera?.id !==
+        newCamera?.id
+    ) {
+
+        reportMrSmileCameraAction({
+
+            type:
+                "camera_switch",
+
+            target:
+                newCamera?.id ||
+                null,
+
+            action:
+                "select",
+
+            reason:
+                "operator_selected_camera",
+
+            metadata: {
+
+                previousCamera:
+                    previousCamera?.id ||
+                    null,
+
+                currentCamera:
+                    newCamera?.id ||
+                    null,
+
+                cameraIndex:
+                    currentCam
+
+            }
+
+        });
+
+    }
+
+
+    showCamera();
+
+    updateCameraChannelUI();
+
+}
+
+/* ==========================================================
+   CHANNEL UI
+========================================================== */
+
+function updateCameraChannelUI() {
+
+    const channels =
+        document.querySelectorAll(
+            ".cameraChannel"
+        );
+
+
+    channels.forEach(
+        (
+            button,
+            index
+        ) => {
+
+            button.classList.toggle(
+                "active",
+                index === currentCam
+            );
+
+        }
+    );
+
+
+    const camera =
+        cameras[currentCam];
+
+
+    const signal =
+        document.getElementById(
+            "cameraSignalValue"
+        );
+
+
+    if (signal) {
+
+        signal.textContent =
+            `${camera.signal}%`;
+
+    }
+
+
+    const status =
+        document.getElementById(
+            "cameraConnectionStatus"
+        );
+
+
+    if (status) {
+
+        status.textContent =
+            "LIVE";
+
+    }
+
+}
+
+/* ==========================================================
    GET CURRENT CAMERA
 ========================================================== */
 
@@ -883,3 +1021,7 @@ window.OMEGA_CAMERA = {
     }
 
 };
+
+
+window.selectCamera =
+    selectCamera;
