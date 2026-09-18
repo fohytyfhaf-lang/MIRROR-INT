@@ -2528,27 +2528,29 @@ function evaluateAction(
     }
 
 
-    state.actionCount +=
-        1;
+   state.actionCount +=
+    1;
 
-    state.lastActionTime =
-        now();
+state.lastActionTime =
+    now();
 
-
-    saveState();
+trackBehavior(
+    data
+);
 
 
     const eligible =
         ANOMALIES.filter(
             anomaly =>
                 !anomaly.disabled &&
-                eventMatchesAction(
-                    anomaly,
-                    actionType
-                ) &&
-                canTrigger(
-                    anomaly
-                )
+              eventMatchesAction(
+                  anomaly,
+                  actionType
+              ) &&
+              canTrigger(
+                  anomaly,
+                  data
+              )
         );
 
 
