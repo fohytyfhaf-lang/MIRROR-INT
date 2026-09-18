@@ -1368,7 +1368,8 @@ async function runIntegritySequence(
 
             }
         );
-
+       
+        window.MRSMILE_EFFECTS?.setPhase(1);
 
         await sleep(
             300
@@ -1389,6 +1390,8 @@ async function runIntegritySequence(
 
             }
         );
+
+       window.MRSMILE_EFFECTS?.setPhase(2);
 
 
         await sleep(
@@ -1411,6 +1414,8 @@ async function runIntegritySequence(
             }
         );
 
+       window.MRSMILE_EFFECTS?.setPhase(3);
+
 
         await sleep(
             450
@@ -1428,6 +1433,8 @@ async function runIntegritySequence(
 
             }
         );
+
+       window.MRSMILE_EFFECTS?.setPhase(6);
 
 
         return true;
