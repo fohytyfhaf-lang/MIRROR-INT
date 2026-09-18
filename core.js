@@ -39,6 +39,9 @@ import { knowledgeInit } from "./knowledge.js";
 import { Storage } from "./storage.js";
 import { startClock } from "./clock.js";
 import { initPersonnel } from "./personnel.js";
+import {
+    initPersonnelRuntime
+} from "./personnelRuntime.js";
 import { initResearch } from "./research.js";
 import { initChats } from "./chats.js";
 import { initSettings } from "./settings2.js";
@@ -220,6 +223,7 @@ function bootSystem() {
     initSettings();
         updateClock(); 
         initPersonnel();
+        initPersonnelRuntime();
         openExplorer();
         initConsole();
         //minimizeWindow()
