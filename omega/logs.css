@@ -1,449 +1,814 @@
-
 /* ==========================================================
    OMEGA SYSTEM LOGS
 ========================================================== */
+
 
 /* ==========================================================
    LOGS WINDOW
 ========================================================== */
 
 #logsWindow {
-    display: flex;
-    flex-direction: column;
 
-    min-width: 0;
-    min-height: 0;
+    display:
+        flex;
 
-    overflow: hidden;
+    flex-direction:
+        column;
+
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    overflow:
+        hidden;
+
 }
+
 
 /* ==========================================================
    TOOLBAR
 ========================================================== */
 
 #logsToolbar {
-    flex: 0 0 auto;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex:
+        0 0 auto;
 
-    gap: 16px;
+    display:
+        flex;
 
-    padding: 12px 18px;
+    align-items:
+        center;
 
-    box-sizing: border-box;
+    justify-content:
+        space-between;
 
-    background: #101a25;
-    border-bottom: 1px solid #22364a;
+    gap:
+        14px;
+
+    padding:
+        11px 16px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        #101a25;
+
+    border-bottom:
+        1px solid
+        #22364a;
+
 }
+
 
 #logsToolbar h2 {
-    margin: 0;
 
-    color: #7fdfff;
+    margin:
+        0;
 
-    font-size: 18px;
-    font-weight: 600;
+    color:
+        #7fdfff;
 
-    letter-spacing: 1px;
+    font-size:
+        14px;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        0.08em;
+
 }
+
 
 /* ==========================================================
    CONTROLS
 ========================================================== */
 
 .logsControls {
-    display: flex;
-    align-items: center;
 
-    gap: 10px;
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
 }
+
 
 .logsControls button {
-    box-sizing: border-box;
 
-    padding: 8px 14px;
+    box-sizing:
+        border-box;
 
-    background: #173149;
-    border: 1px solid #29506d;
-    border-radius: 4px;
+    min-height:
+        29px;
 
-    color: #dff6ff;
+    padding:
+        7px 12px;
 
-    font-family: inherit;
-    font-size: 13px;
+    background:
+        #173149;
 
-    cursor: pointer;
+    border:
+        1px solid
+        #29506d;
+
+    border-radius:
+        4px;
+
+    color:
+        #dff6ff;
+
+    font-family:
+        inherit;
+
+    font-size:
+        12px;
+
+    cursor:
+        pointer;
 
     transition:
-        background .2s ease,
-        border-color .2s ease,
-        box-shadow .2s ease;
+
+        background
+            0.2s
+            ease,
+
+        border-color
+            0.2s
+            ease,
+
+        box-shadow
+            0.2s
+            ease;
+
 }
+
 
 .logsControls button:hover {
-    background: #255178;
+
+    background:
+        #255178;
+
 }
 
-.logsControls button:focus-visible {
-    outline: none;
 
-    border-color: #4fd8ff;
+.logsControls button:focus-visible {
+
+    outline:
+        none;
+
+    border-color:
+        #4fd8ff;
 
     box-shadow:
         0 0 8px
-        rgba(79, 216, 255, .2);
+        rgba(
+            79,
+            216,
+            255,
+            .2
+        );
+
 }
+
 
 /* ==========================================================
    SEARCH
 ========================================================== */
 
 #logsSearch {
-    flex: 0 0 auto;
 
-    padding: 15px 18px;
+    flex:
+        0 0 auto;
 
-    box-sizing: border-box;
+    padding:
+        12px 16px;
 
-    background: #0d1722;
-    border-bottom: 1px solid #22364a;
+    box-sizing:
+        border-box;
+
+    background:
+        #0d1722;
+
+    border-bottom:
+        1px solid
+        #22364a;
+
 }
 
+
 #logsSearch input {
-    display: block;
 
-    width: 100%;
-    min-width: 0;
+    display:
+        block;
 
-    box-sizing: border-box;
+    width:
+        100%;
 
-    padding: 10px 14px;
+    min-width:
+        0;
 
-    background: #081018;
-    border: 1px solid #294760;
-    border-radius: 4px;
+    box-sizing:
+        border-box;
 
-    color: #dff6ff;
+    padding:
+        9px 12px;
+
+    background:
+        #081018;
+
+    border:
+        1px solid
+        #294760;
+
+    border-radius:
+        4px;
+
+    color:
+        #dff6ff;
 
     font-family:
         Consolas,
         "Courier New",
         monospace;
 
-    font-size: 13px;
+    font-size:
+        12px;
 
-    outline: none;
+    outline:
+        none;
 
     transition:
-        border-color .2s ease,
-        box-shadow .2s ease;
+
+        border-color
+            0.2s
+            ease,
+
+        box-shadow
+            0.2s
+            ease;
+
 }
+
 
 #logsSearch input::placeholder {
-    color: #68869d;
+
+    color:
+        #68869d;
+
 }
 
+
 #logsSearch input:focus {
-    border-color: #4fd8ff;
+
+    border-color:
+        #4fd8ff;
 
     box-shadow:
         0 0 8px
-        rgba(79, 216, 255, .12);
+        rgba(
+            79,
+            216,
+            255,
+            .12
+        );
+
 }
+
 
 /* ==========================================================
    LOG LIST
 ========================================================== */
 
 #logsList {
-    flex: 1 1 auto;
 
-    min-width: 0;
-    min-height: 0;
+    flex:
+        1 1 auto;
 
-    overflow-x: hidden;
-    overflow-y: auto;
+    min-width:
+        0;
 
-    background: #081018;
+    min-height:
+        0;
+
+    overflow-x:
+        hidden;
+
+    overflow-y:
+        auto;
+
+    background:
+        #081018;
+
 }
+
 
 /* ==========================================================
    LOG ENTRY
 ========================================================== */
 
 .logEntry {
-    display: grid;
+
+    display:
+        grid;
 
     grid-template-columns:
-        170px
-        120px
-        minmax(0, 1fr);
+        150px
+        110px
+        minmax(
+            0,
+            1fr
+        );
 
-    align-items: center;
+    align-items:
+        center;
 
-    gap: 18px;
+    gap:
+        14px;
 
-    box-sizing: border-box;
+    box-sizing:
+        border-box;
 
-    min-width: 0;
+    min-width:
+        0;
 
-    padding: 14px 18px;
+    padding:
+        12px 16px;
 
-    border-left: 4px solid transparent;
-    border-bottom: 1px solid rgba(255, 255, 255, .05);
+    border-left:
+        4px solid
+        transparent;
+
+    border-bottom:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .05
+        );
 
     transition:
-        background .2s ease,
-        border-color .2s ease;
+
+        background
+            0.2s
+            ease,
+
+        border-color
+            0.2s
+            ease;
+
 }
 
+
 .logEntry:hover {
-    background: #112233;
+
+    background:
+        #112233;
+
 }
+
 
 /* ==========================================================
    LOG TIME
 ========================================================== */
 
 .logTime {
-    min-width: 0;
 
-    color: #86bddd;
+    min-width:
+        0;
+
+    color:
+        #86bddd;
 
     font-family:
         Consolas,
         "Courier New",
         monospace;
 
-    font-size: 13px;
+    font-size:
+        11px;
 
-    white-space: nowrap;
+    white-space:
+        nowrap;
+
 }
+
 
 /* ==========================================================
    LOG TYPE
 ========================================================== */
 
 .logType {
-    min-width: 0;
 
-    font-size: 12px;
-    font-weight: bold;
+    min-width:
+        0;
 
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-size:
+        10px;
 
-    overflow-wrap: anywhere;
+    font-weight:
+        bold;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.08em;
+
+    overflow-wrap:
+        anywhere;
+
 }
+
 
 /* ==========================================================
    LOG TYPE COLORS
 ========================================================== */
 
 .logInfo {
-    color: #66ccff;
+
+    color:
+        #66ccff;
+
 }
+
 
 .logWarning {
-    color: #ffd65a;
+
+    color:
+        #ffd65a;
+
 }
+
 
 .logDanger {
-    color: #ff6767;
+
+    color:
+        #ff6767;
+
 }
 
+
 .logSuccess {
-    color: #66ff99;
+
+    color:
+        #66ff99;
+
 }
+
 
 /* ==========================================================
    LOG MESSAGE
 ========================================================== */
 
 .logMessage {
-    min-width: 0;
 
-    color: #d8ecff;
+    min-width:
+        0;
 
-    line-height: 1.6;
+    color:
+        #d8ecff;
 
-    overflow-wrap: anywhere;
-    word-break: break-word;
+    font-size:
+        12px;
+
+    line-height:
+        1.5;
+
+    overflow-wrap:
+        anywhere;
+
+    word-break:
+        break-word;
+
 }
+
 
 /* ==========================================================
    SELECTED ENTRY
 ========================================================== */
 
 .logEntry.selected {
-    background: #183149;
 
-    border-left-color: #4fd8ff;
+    background:
+        #183149;
+
+    border-left-color:
+        #4fd8ff;
 
     box-shadow:
         inset 0 0 12px
-        rgba(79, 216, 255, .04);
+        rgba(
+            79,
+            216,
+            255,
+            .04
+        );
+
 }
+
 
 /* ==========================================================
    FOOTER
 ========================================================== */
 
 #logsFooter {
-    flex: 0 0 36px;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex:
+        0 0 34px;
 
-    gap: 12px;
+    display:
+        flex;
 
-    height: 36px;
+    align-items:
+        center;
 
-    padding: 0 16px;
+    justify-content:
+        space-between;
 
-    box-sizing: border-box;
+    gap:
+        10px;
 
-    background: #101821;
-    border-top: 1px solid #22364a;
+    height:
+        34px;
 
-    color: #8fb9d7;
+    padding:
+        0 14px;
 
-    font-size: 12px;
+    box-sizing:
+        border-box;
 
-    white-space: nowrap;
-    overflow: hidden;
+    background:
+        #101821;
+
+    border-top:
+        1px solid
+        #22364a;
+
+    color:
+        #8fb9d7;
+
+    font-size:
+        10px;
+
+    white-space:
+        nowrap;
+
+    overflow:
+        hidden;
+
 }
+
 
 /* ==========================================================
    LOG SCROLLBAR
 ========================================================== */
 
 #logsList::-webkit-scrollbar {
-    width: 8px;
+
+    width:
+        8px;
+
 }
+
 
 #logsList::-webkit-scrollbar-track {
-    background: #071019;
+
+    background:
+        #071019;
+
 }
+
 
 #logsList::-webkit-scrollbar-thumb {
-    background: #315774;
 
-    border-radius: 20px;
+    background:
+        #315774;
+
+    border-radius:
+        20px;
+
 }
+
 
 #logsList::-webkit-scrollbar-thumb:hover {
-    background: #4fd8ff;
+
+    background:
+        #4fd8ff;
+
 }
+
 
 /* ==========================================================
    PRIORITY
 ========================================================== */
 
 .priorityLow {
-    color: #7fdfff;
+
+    color:
+        #7fdfff;
+
 }
+
 
 .priorityMedium {
-    color: #ffd54a;
+
+    color:
+        #ffd54a;
+
 }
+
 
 .priorityHigh {
-    color: #ff8844;
+
+    color:
+        #ff8844;
+
 }
 
-.priorityCritical {
-    color: #ff4444;
 
-    font-weight: bold;
+.priorityCritical {
+
+    color:
+        #ff4444;
+
+    font-weight:
+        bold;
 
     text-shadow:
         0 0 8px
-        rgba(255, 68, 68, .35);
+        rgba(
+            255,
+            68,
+            68,
+            .35
+        );
+
 }
+
 
 /* ==========================================================
    RESPONSIVE
 ========================================================== */
 
-@media (max-width: 800px) {
+@media (
+    max-width:
+        800px
+) {
 
     #logsToolbar {
-        padding: 10px 12px;
+
+        padding:
+            10px 12px;
+
     }
+
 
     #logsToolbar h2 {
-        font-size: 15px;
+
+        font-size:
+            14px;
+
     }
+
 
     .logsControls {
-        gap: 6px;
+
+        gap:
+            6px;
+
     }
 
+
     .logsControls button {
-        padding: 7px 10px;
-        font-size: 12px;
+
+        padding:
+            7px 10px;
+
+        font-size:
+            12px;
+
     }
+
 
     #logsSearch {
-        padding: 12px;
+
+        padding:
+            11px 12px;
+
     }
+
 
     .logEntry {
+
         grid-template-columns:
-            130px
-            100px
-            minmax(0, 1fr);
+            125px
+            95px
+            minmax(
+                0,
+                1fr
+            );
 
-        gap: 10px;
+        gap:
+            10px;
 
-        padding: 12px;
+        padding:
+            11px 12px;
+
     }
+
 
     #logsFooter {
-        padding: 0 12px;
+
+        padding:
+            0 12px;
+
     }
+
 }
 
-@media (max-width: 600px) {
+
+@media (
+    max-width:
+        600px
+) {
 
     #logsToolbar {
-        flex-wrap: wrap;
+
+        flex-wrap:
+            wrap;
+
     }
+
 
     .logsControls {
-        width: 100%;
+
+        width:
+            100%;
+
     }
+
 
     .logsControls button {
-        flex: 1;
+
+        flex:
+            1;
+
     }
+
 
     .logEntry {
-        grid-template-columns: 1fr;
 
-        gap: 5px;
+        grid-template-columns:
+            1fr;
 
-        padding: 12px 14px;
+        gap:
+            5px;
+
+        padding:
+            11px 13px;
+
     }
+
 
     .logTime {
-        font-size: 11px;
+
+        font-size:
+            10px;
+
     }
+
 
     .logType {
-        font-size: 11px;
+
+        font-size:
+            10px;
+
     }
+
 
     .logMessage {
-        font-size: 12px;
+
+        font-size:
+            12px;
+
     }
+
 
     #logsFooter {
-        font-size: 10px;
-    }
-}
 
+        font-size:
+            10px;
+
+    }
+
+}
