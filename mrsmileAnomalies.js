@@ -2614,7 +2614,6 @@ trackBehavior(
 /* ==========================================================
    INTERVAL ANOMALIES
 ========================================================== */
-
 function evaluateInterval() {
 
     if (
@@ -2646,61 +2645,59 @@ function evaluateInterval() {
     }
 
 
-    const eligible =
-        ANOMALIES.filter(
-            anomaly =>
-                !anomaly.disabled &&
-                anomaly.triggerTypes.includes(
-                    "interval"
-                ) &&
-                canTrigger(
-                    anomaly
-                )
+    /*
+     * Ask the real OMEGA time system
+     * to check the clock.
+     */
+
+    observeOmegaTime(
+        {
+            source:
+                "mrsmileAnomalies",
+
+            type:
+                "interval",
+
+            action:
+                "system_monitor"
+
+        }
+    );
+
+
+    /*
+     * S-03 remains the only
+     * normal random interval event.
+     */
+
+    const anomaly =
+        getAnomaly(
+            "S-03"
         );
 
 
-    if (
-        eligible.length ===
-        0
-    ) {
+    if (!anomaly) {
 
         return false;
 
     }
 
 
-    const shuffled =
-        [...eligible].sort(
-            () =>
-                Math.random() -
-                0.5
-        );
+    return emitAnomaly(
+        anomaly,
+        {
 
+            source:
+                "mrsmileAnomalies",
 
-    for (
-        const anomaly of shuffled
-    ) {
+            type:
+                "interval",
 
-        if (
-            emitAnomaly(
-                anomaly,
-                {
-                    type:
-                        "interval",
-                    action:
-                        "system_monitor"
-                }
-            )
-        ) {
-
-            return true;
+            action:
+                "system_monitor"
 
         }
-
-    }
-
-
-    return false;
+    );
 
 }
 
@@ -3098,6 +3095,11 @@ export function initMrSmileAnomalies() {
     on(
         "mrsmile:firstContactCompleted",
         handleFirstContactCompleted
+    );
+
+   on(
+       "omega:timeConflict",
+        handleOmegaTimeConflict
     );
 
 
