@@ -50,6 +50,10 @@ import {
     getMrSmileState
 } from "./mrsmileState.js";
 
+import {
+    observeOmegaTime
+} from "./omegaTime.js";
+
 
 /* ==========================================================
    STORAGE
@@ -2535,6 +2539,10 @@ function evaluateAction(
 state.lastActionTime =
     now();
 
+observeOmegaTime(
+    data
+);
+
 trackBehavior(
     data
 );
@@ -2961,7 +2969,85 @@ function exposeDebugAPI() {
 
 }
 
+/* ==========================================================
+   OMEGA TIME CONFLICTS
+========================================================== */
 
+function handleOmegaTimeConflict(
+    data = {}
+) {
+
+    if (
+        !initialized
+    ) {
+
+        return false;
+
+    }
+
+
+    const mapping = {
+
+        time_backward:
+            "T-01",
+
+        time_future_event:
+            "T-02",
+
+        time_old_event:
+            "T-03"
+
+    };
+
+
+    const anomalyId =
+        mapping[
+            data.reason
+        ];
+
+
+    if (!anomalyId) {
+
+        return false;
+
+    }
+
+
+    const anomaly =
+        getAnomaly(
+            anomalyId
+        );
+
+
+    if (!anomaly) {
+
+        return false;
+
+    }
+
+
+    return emitAnomaly(
+        anomaly,
+        {
+
+            source:
+                "omegaTime",
+
+            type:
+                "interval",
+
+            action:
+                "time_conflict",
+
+            metadata:
+                clone(
+                    data
+                )
+
+        }
+    );
+
+}
 /* ==========================================================
    INITIALIZATION
 ========================================================== */
