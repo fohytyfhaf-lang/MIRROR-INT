@@ -1,14 +1,30 @@
 /* ==========================================================
    OMEGA OPERATOR REGISTRATION
+   UNIFIED OMEGA AUTHORIZATION UI
+========================================================== */
+
+
+/* ==========================================================
+   01. CREATE OPERATOR BUTTON
 ========================================================== */
 
 #createOperatorBtn {
-    width: 100%;
-    margin-top: 12px;
 
-    padding: 11px 14px;
+    width:
+        100%;
 
-    border: 1px solid #294d63;
+    margin-top:
+        10px;
+
+    padding:
+        9px 12px;
+
+    box-sizing:
+        border-box;
+
+    border:
+        1px solid
+        #294d63;
 
     background:
         linear-gradient(
@@ -17,196 +33,587 @@
             #0a1722
         );
 
-    color: #82b6d2;
+    color:
+        #9bc9df;
 
     font-family:
         Consolas,
         "Courier New",
         monospace;
 
-    font-size: 10px;
-    letter-spacing: 1px;
+    font-size:
+        12px;
 
-    cursor: pointer;
+    font-weight:
+        500;
+
+    line-height:
+        1.3;
+
+    letter-spacing:
+        .05em;
+
+    cursor:
+        pointer;
 
     transition:
-        background .15s ease,
-        border-color .15s ease,
-        color .15s ease,
-        box-shadow .15s ease;
+        background .16s ease,
+        border-color .16s ease,
+        color .16s ease,
+        box-shadow .16s ease;
+
 }
 
+
 #createOperatorBtn:hover {
-    background: #142d40;
 
-    border-color: #4fd8ff;
+    background:
+        #142d40;
 
-    color: #dff7ff;
+    border-color:
+        #4fd8ff;
+
+    color:
+        #e4f8ff;
 
     box-shadow:
-        0 0 12px rgba(79,216,255,.12);
+        0 0 10px
+        rgba(
+            79,
+            216,
+            255,
+            .10
+        );
+
+}
+
+
+#createOperatorBtn:focus-visible {
+
+    outline:
+        1px solid
+        #4fd8ff;
+
+    outline-offset:
+        2px;
+
 }
 
 
 /* ==========================================================
-   REGISTRATION PANEL
+   02. REGISTRATION PANEL
 ========================================================== */
 
 #operatorRegistration {
-    margin-top: 18px;
 
-    padding: 16px;
+    position:
+        relative;
 
-    border: 1px solid #23445a;
+    margin-top:
+        12px;
+
+    padding:
+        13px;
+
+    box-sizing:
+        border-box;
+
+    border:
+        1px solid
+        #23445a;
 
     background:
         linear-gradient(
             180deg,
-            rgba(12, 28, 40, .96),
-            rgba(5, 14, 22, .98)
+            rgba(
+                12,
+                28,
+                40,
+                .96
+            ),
+            rgba(
+                5,
+                14,
+                22,
+                .98
+            )
         );
+
 }
+
+
+/* ==========================================================
+   REGISTRATION PANEL TOP LINE
+========================================================== */
+
+#operatorRegistration::before {
+
+    content:
+        "";
+
+    display:
+        block;
+
+    width:
+        32px;
+
+    height:
+        2px;
+
+    margin:
+        0 0 11px 0;
+
+    background:
+        #4fd8ff;
+
+    opacity:
+        .7;
+
+}
+
 
 #operatorRegistration.hidden {
-    display: none !important;
+
+    display:
+        none !important;
+
 }
 
 
+/* ==========================================================
+   03. REGISTRATION HEADER
+========================================================== */
+
 .registrationHeader {
-    margin-bottom: 14px;
 
-    padding-bottom: 9px;
+    margin:
+        0 0 12px 0;
 
-    border-bottom: 1px solid #25455a;
+    padding:
+        0 0 9px 0;
 
-    color: #8fc9e8;
+    border-bottom:
+        1px solid
+        #25455a;
+
+    color:
+        #8fc9e8;
 
     font-family:
         Consolas,
         "Courier New",
         monospace;
 
-    font-size: 11px;
+    font-size:
+        14px;
 
-    letter-spacing: 1px;
+    font-weight:
+        600;
+
+    line-height:
+        1.3;
+
+    letter-spacing:
+        .06em;
+
+    text-transform:
+        uppercase;
+
 }
 
 
 /* ==========================================================
-   INPUTS
+   04. REGISTRATION INPUTS
 ========================================================== */
 
 #operatorRegistration input {
-    width: 100%;
 
-    box-sizing: border-box;
+    display:
+        block;
 
-    margin-bottom: 9px;
+    width:
+        100%;
 
-    padding: 10px 11px;
+    min-width:
+        0;
 
-    border: 1px solid #1e4054;
+    margin:
+        0 0 8px 0;
 
-    background: #07131d;
+    padding:
+        9px 10px;
 
-    color: #dff6ff;
+    box-sizing:
+        border-box;
+
+    border:
+        1px solid
+        #1e4054;
+
+    border-radius:
+        3px;
+
+    background:
+        #07131d;
+
+    color:
+        #dff6ff;
 
     font-family:
-        Consolas,
-        "Courier New",
-        monospace;
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-    font-size: 11px;
+    font-size:
+        12px;
 
-    outline: none;
+    line-height:
+        1.3;
+
+    outline:
+        none;
+
+    transition:
+        border-color .16s ease,
+        box-shadow .16s ease;
+
 }
 
+
+#operatorRegistration input::placeholder {
+
+    color:
+        #617f91;
+
+}
+
+
 #operatorRegistration input:focus {
-    border-color: #4fd8ff;
+
+    border-color:
+        #4fd8ff;
 
     box-shadow:
-        0 0 8px rgba(79,216,255,.12);
+        0 0 8px
+        rgba(
+            79,
+            216,
+            255,
+            .10
+        );
+
 }
 
 
 /* ==========================================================
-   ACTIONS
+   05. REGISTRATION ACTIONS
 ========================================================== */
 
 .registrationActions {
-    display: flex;
 
-    gap: 8px;
+    display:
+        flex;
 
-    margin-top: 5px;
+    gap:
+        7px;
+
+    margin-top:
+        4px;
+
 }
+
 
 .registrationActions button {
-    flex: 1;
 
-    padding: 9px 10px;
+    flex:
+        1 1 0;
 
-    border: 1px solid #294d63;
+    min-width:
+        0;
 
-    background: #0d1d2a;
+    min-height:
+        29px;
 
-    color: #9bc5db;
+    padding:
+        0 10px;
+
+    box-sizing:
+        border-box;
+
+    border:
+        1px solid
+        #294d63;
+
+    border-radius:
+        3px;
+
+    background:
+        #0d1d2a;
+
+    color:
+        #a8ccdc;
 
     font-family:
-        Consolas,
-        "Courier New",
-        monospace;
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-    font-size: 10px;
+    font-size:
+        12px;
 
-    letter-spacing: .8px;
+    font-weight:
+        500;
 
-    cursor: pointer;
+    line-height:
+        1.2;
+
+    cursor:
+        pointer;
 
     transition:
-        background .15s ease,
-        border-color .15s ease,
-        color .15s ease;
+        background .16s ease,
+        border-color .16s ease,
+        color .16s ease,
+        box-shadow .16s ease;
+
 }
+
 
 .registrationActions button:hover {
-    background: #153247;
 
-    border-color: #4fd8ff;
+    background:
+        #153247;
 
-    color: #e4f8ff;
+    border-color:
+        #4fd8ff;
+
+    color:
+        #e4f8ff;
+
+    box-shadow:
+        0 0 8px
+        rgba(
+            79,
+            216,
+            255,
+            .07
+        );
+
 }
 
+
+.registrationActions button:focus-visible {
+
+    outline:
+        1px solid
+        #4fd8ff;
+
+    outline-offset:
+        2px;
+
+}
+
+
 #cancelRegistrationBtn:hover {
-    border-color: #718da0;
+
+    border-color:
+        #718da0;
+
 }
 
 
 /* ==========================================================
-   STATUS
+   06. REGISTRATION STATUS
 ========================================================== */
 
 #registrationStatus {
-    margin: 12px 0 0;
 
-    color: #6f9ab3;
+    margin:
+        10px 0 0 0;
+
+    padding:
+        0;
+
+    color:
+        #6f9ab3;
 
     font-family:
         Consolas,
         "Courier New",
         monospace;
 
-    font-size: 9px;
+    font-size:
+        10px;
 
-    line-height: 1.5;
+    font-weight:
+        500;
 
-    letter-spacing: .5px;
+    line-height:
+        1.5;
+
+    letter-spacing:
+        .03em;
+
+    overflow-wrap:
+        anywhere;
+
 }
+
 
 #registrationStatus.success {
-    color: #7fd6a1;
+
+    color:
+        #7fd6a1;
+
 }
 
+
 #registrationStatus.error {
-    color: #df7777;
+
+    color:
+        #df7777;
+
+}
+
+
+/* ==========================================================
+   07. AUTHORIZATION EMPHASIS
+========================================================== */
+
+#registrationStatus.success::before {
+
+    content:
+        "OK  ";
+
+    color:
+        #5cc78a;
+
+}
+
+
+#registrationStatus.error::before {
+
+    content:
+        "ERR  ";
+
+    color:
+        #d76565;
+
+}
+
+
+/* ==========================================================
+   08. LOGIN COMPATIBILITY
+========================================================== */
+
+#loginScreen #operatorRegistration {
+
+    width:
+        100%;
+
+}
+
+
+#loginScreen #operatorRegistration input {
+
+    appearance:
+        none;
+
+}
+
+
+#loginScreen #operatorRegistration button {
+
+    appearance:
+        none;
+
+}
+
+
+/* ==========================================================
+   09. SMALL SCREENS
+========================================================== */
+
+@media (
+    max-width:
+        500px
+) {
+
+    #operatorRegistration {
+
+        margin-top:
+            10px;
+
+        padding:
+            11px;
+
+    }
+
+
+    .registrationHeader {
+
+        font-size:
+            12px;
+
+    }
+
+
+    #operatorRegistration input {
+
+        padding:
+            8px 9px;
+
+        font-size:
+            12px;
+
+    }
+
+
+    .registrationActions {
+
+        gap:
+            6px;
+
+    }
+
+
+    .registrationActions button {
+
+        min-height:
+            28px;
+
+        font-size:
+            12px;
+
+    }
+
+
+    #registrationStatus {
+
+        font-size:
+            10px;
+
+    }
+
+}
+
+
+/* ==========================================================
+   10. REDUCED MOTION
+========================================================== */
+
+@media (
+    prefers-reduced-motion:
+        reduce
+) {
+
+    #createOperatorBtn,
+    #operatorRegistration input,
+    .registrationActions button {
+
+        transition:
+            none;
+
+    }
+
 }
