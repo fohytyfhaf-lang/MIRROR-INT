@@ -34,3 +34,8 @@
 @import url("omega/mrsmile.css");
 @import url("omega/effects.css");
 @import url("omega/omegaDesktop.css");
+
+@import url("chats.css");
+
+/* FINAL UI LAYER */
+@import url("omega/uiSystem.css");
