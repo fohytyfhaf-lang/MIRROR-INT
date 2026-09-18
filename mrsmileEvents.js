@@ -2003,6 +2003,16 @@ function initializeSubsystems() {
         }
     );
 
+
+    safeCall(
+    "initialize effects",
+    () => {
+
+        initMrSmileEffects();
+
+    }
+);
+
 }
 
 
