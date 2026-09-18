@@ -1,37 +1,106 @@
 /* ==========================================================
    OMEGA OPERATOR PROFILE
+   UNIFIED OMEGA INTERFACE
+========================================================== */
+
+
+/* ==========================================================
+   01. MAIN PROFILE
 ========================================================== */
 
 #operatorProfile {
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
+
+    width:
+        100%;
+
+    max-width:
+        1100px;
+
+    margin:
+        0 auto;
+
+    box-sizing:
+        border-box;
+
 }
 
-/* ----------------------------------------------------------
-   SECTIONS
----------------------------------------------------------- */
+
+/* ==========================================================
+   02. PROFILE SECTION
+========================================================== */
 
 .operatorSection {
-    margin-bottom: 22px;
 
-    border: 1px solid #20384c;
+    min-width:
+        0;
+
+    margin:
+        0 0 14px 0;
 
     background:
         linear-gradient(
             180deg,
-            rgba(18, 32, 46, 0.82),
-            rgba(8, 16, 25, 0.82)
+            rgba(
+                18,
+                32,
+                46,
+                .82
+            ),
+            rgba(
+                8,
+                16,
+                25,
+                .82
+            )
         );
 
+    border:
+        1px solid
+        #20384c;
+
     box-shadow:
-        inset 0 0 0 1px rgba(255, 255, 255, 0.015);
+        inset 0 0 0 1px
+        rgba(
+            255,
+            255,
+            255,
+            .015
+        );
+
 }
 
-.operatorSectionTitle {
-    padding: 10px 14px;
 
-    border-bottom: 1px solid #263f54;
+.operatorSection:last-child {
+
+    margin-bottom:
+        0;
+
+}
+
+
+/* ==========================================================
+   03. SECTION TITLE
+========================================================== */
+
+.operatorSectionTitle {
+
+    position:
+        relative;
+
+    min-height:
+        40px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    padding:
+        0 13px;
+
+    box-sizing:
+        border-box;
 
     background:
         linear-gradient(
@@ -40,42 +109,116 @@
             #101b27
         );
 
-    color: #8fc9e8;
+    border-bottom:
+        1px solid
+        #263f54;
 
-    font-size: 12px;
-    font-weight: 600;
-
-    letter-spacing: 1px;
+    color:
+        #8fc9e8;
 
     font-family:
         Consolas,
         "Courier New",
         monospace;
+
+    font-size:
+        12px;
+
+    font-weight:
+        600;
+
+    line-height:
+        1.3;
+
+    letter-spacing:
+        .07em;
+
+    text-transform:
+        uppercase;
+
 }
 
-/* ----------------------------------------------------------
-   IDENTIFICATION / HISTORY GRID
----------------------------------------------------------- */
+
+/* ==========================================================
+   SECTION ACCENT
+========================================================== */
+
+.operatorSectionTitle::before {
+
+    content:
+        "";
+
+    width:
+        3px;
+
+    height:
+        14px;
+
+    margin-right:
+        9px;
+
+    background:
+        #4fd8ff;
+
+    opacity:
+        .75;
+
+}
+
+
+/* ==========================================================
+   04. IDENTIFICATION / HISTORY GRID
+========================================================== */
 
 .operatorGrid {
-    display: grid;
+
+    display:
+        grid;
 
     grid-template-columns:
-        repeat(2, minmax(0, 1fr));
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
 
-    gap: 1px;
+    gap:
+        1px;
 
-    background: #1c3345;
+    background:
+        #1c3345;
+
 }
 
+
+/* ==========================================================
+   PROFILE FIELD
+========================================================== */
+
 .operatorField {
-    min-height: 64px;
 
-    padding: 12px 14px;
+    min-width:
+        0;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    min-height:
+        62px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    justify-content:
+        center;
+
+    padding:
+        11px 13px;
+
+    box-sizing:
+        border-box;
 
     background:
         linear-gradient(
@@ -83,61 +226,133 @@
             #101c28,
             #0c151f
         );
+
 }
+
+
+/* ==========================================================
+   FIELD LABEL
+========================================================== */
 
 .operatorField span {
-    margin-bottom: 6px;
 
-    color: #6e92aa;
+    margin:
+        0 0 5px 0;
 
-    font-size: 10px;
-
-    letter-spacing: 1px;
+    color:
+        #6e92aa;
 
     font-family:
         Consolas,
         "Courier New",
         monospace;
+
+    font-size:
+        10px;
+
+    font-weight:
+        500;
+
+    line-height:
+        1.3;
+
+    letter-spacing:
+        .06em;
+
+    text-transform:
+        uppercase;
+
 }
+
+
+/* ==========================================================
+   FIELD VALUE
+========================================================== */
 
 .operatorField strong {
-    color: #d8f2ff;
 
-    font-size: 14px;
+    min-width:
+        0;
+
+    color:
+        #d8f2ff;
 
     font-family:
         Consolas,
         "Courier New",
         monospace;
 
-    font-weight: 500;
+    font-size:
+        12px;
 
-    word-break: break-word;
+    font-weight:
+        500;
+
+    line-height:
+        1.4;
+
+    overflow-wrap:
+        anywhere;
+
+    word-break:
+        break-word;
+
 }
 
-/* ----------------------------------------------------------
-   ACTIVITY STATISTICS
----------------------------------------------------------- */
+
+/* ==========================================================
+   05. ACTIVITY STATISTICS
+========================================================== */
 
 .operatorStats {
-    display: grid;
+
+    display:
+        grid;
 
     grid-template-columns:
-        repeat(4, minmax(0, 1fr));
+        repeat(
+            4,
+            minmax(
+                0,
+                1fr
+            )
+        );
 
-    gap: 1px;
+    gap:
+        1px;
 
-    background: #1c3345;
+    background:
+        #1c3345;
+
 }
 
+
+/* ==========================================================
+   STAT ITEM
+========================================================== */
+
 .operatorStats > div {
-    min-height: 72px;
 
-    padding: 12px;
+    min-width:
+        0;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    min-height:
+        68px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    justify-content:
+        center;
+
+    padding:
+        11px;
+
+    box-sizing:
+        border-box;
 
     background:
         linear-gradient(
@@ -145,91 +360,325 @@
             #101c28,
             #0b141e
         );
+
 }
+
+
+/* ==========================================================
+   STAT LABEL
+========================================================== */
 
 .operatorStats span {
-    margin-bottom: 7px;
 
-    color: #66899f;
+    min-width:
+        0;
 
-    font-size: 9px;
+    margin:
+        0 0 5px 0;
 
-    letter-spacing: 0.8px;
+    color:
+        #66899f;
 
     font-family:
         Consolas,
         "Courier New",
         monospace;
+
+    font-size:
+        10px;
+
+    font-weight:
+        500;
+
+    line-height:
+        1.3;
+
+    letter-spacing:
+        .05em;
+
+    text-transform:
+        uppercase;
+
+    overflow-wrap:
+        anywhere;
+
 }
+
+
+/* ==========================================================
+   STAT VALUE
+========================================================== */
 
 .operatorStats strong {
-    color: #aee2fa;
 
-    font-size: 18px;
+    color:
+        #aee2fa;
 
     font-family:
         Consolas,
         "Courier New",
         monospace;
 
-    font-weight: 500;
+    font-size:
+        14px;
+
+    font-weight:
+        500;
+
+    line-height:
+        1.3;
+
 }
 
-/* ----------------------------------------------------------
-   STATUS VALUES
----------------------------------------------------------- */
+
+/* ==========================================================
+   06. STATUS VALUES
+========================================================== */
 
 #operatorStatus {
-    color: #9ed8b6;
+
+    color:
+        #9ed8b6;
+
 }
+
 
 #operatorClearance {
-    color: #b9dff2;
+
+    color:
+        #b9dff2;
+
 }
+
 
 #operatorId {
-    color: #dff7ff;
-    letter-spacing: 1px;
+
+    color:
+        #dff7ff;
+
+    letter-spacing:
+        .06em;
+
 }
 
-/* ----------------------------------------------------------
-   FOOTER
----------------------------------------------------------- */
+
+/* ==========================================================
+   07. SPECIAL VALUE STATES
+========================================================== */
+
+#operatorStatus[data-state="ACTIVE"],
+#operatorStatus[data-state="ONLINE"] {
+
+    color:
+        #6bd297;
+
+}
+
+
+#operatorStatus[data-state="UNKNOWN"] {
+
+    color:
+        #d3bd68;
+
+}
+
+
+#operatorStatus[data-state="OFFLINE"] {
+
+    color:
+        #c76363;
+
+}
+
+
+/* ==========================================================
+   08. PROFILE WINDOW FOOTER
+========================================================== */
 
 #operatorProfileWindow .windowFooter {
+
     font-family:
         Consolas,
         "Courier New",
         monospace;
 
-    font-size: 10px;
+    font-size:
+        10px;
 
-    letter-spacing: 0.5px;
+    line-height:
+        1.3;
+
+    letter-spacing:
+        .04em;
+
 }
 
-/* ----------------------------------------------------------
-   RESPONSIVE
----------------------------------------------------------- */
 
-@media (max-width: 800px) {
+/* ==========================================================
+   09. PROFILE SCROLLING
+========================================================== */
+
+#operatorProfileWindow .windowContent::-webkit-scrollbar {
+
+    width:
+        7px;
+
+}
+
+
+#operatorProfileWindow .windowContent::-webkit-scrollbar-track {
+
+    background:
+        #071019;
+
+}
+
+
+#operatorProfileWindow .windowContent::-webkit-scrollbar-thumb {
+
+    background:
+        #2d5067;
+
+    border-radius:
+        10px;
+
+}
+
+
+#operatorProfileWindow .windowContent::-webkit-scrollbar-thumb:hover {
+
+    background:
+        #4fd8ff;
+
+}
+
+
+/* ==========================================================
+   10. TABLET
+========================================================== */
+
+@media (
+    max-width:
+        800px
+) {
+
+    #operatorProfile {
+
+        max-width:
+            none;
+
+    }
+
 
     .operatorGrid {
-        grid-template-columns: 1fr;
-    }
 
-    .operatorStats {
         grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-    }
-}
+            1fr;
 
-@media (max-width: 520px) {
+    }
+
 
     .operatorStats {
-        grid-template-columns: 1fr;
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+
     }
+
 
     .operatorField {
-        min-height: 58px;
+
+        min-height:
+            58px;
+
     }
+
+}
+
+
+/* ==========================================================
+   11. MOBILE
+========================================================== */
+
+@media (
+    max-width:
+        520px
+) {
+
+    .operatorSection {
+
+        margin-bottom:
+            10px;
+
+    }
+
+
+    .operatorSectionTitle {
+
+        min-height:
+            38px;
+
+        padding:
+            0 10px;
+
+        font-size:
+            11px;
+
+    }
+
+
+    .operatorStats {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .operatorStats > div {
+
+        min-height:
+            58px;
+
+        padding:
+            10px;
+
+    }
+
+
+    .operatorField {
+
+        padding:
+            10px 11px;
+
+    }
+
+
+    .operatorField strong {
+
+        font-size:
+            12px;
+
+    }
+
+}
+
+
+/* ==========================================================
+   12. REDUCED MOTION
+========================================================== */
+
+@media (
+    prefers-reduced-motion:
+        reduce
+) {
+
+    /* No decorative animation used here. */
+
 }
