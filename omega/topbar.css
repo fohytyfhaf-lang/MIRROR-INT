@@ -1,28 +1,55 @@
+
 /* ==========================================================
    OMEGA TOP BAR
+   UNIFIED TYPOGRAPHY
+========================================================== */
+
+
+/* ==========================================================
+   01. TOP BAR
 ========================================================== */
 
 #topBar {
-    position: absolute;
 
-    top: 0;
-    left: 0;
-    right: 0;
+    position:
+        absolute;
 
-    width: 100%;
-    height: 64px;
+    top:
+        0;
 
-    min-width: 0;
+    left:
+        0;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    right:
+        0;
 
-    gap: 20px;
+    width:
+        100%;
 
-    padding: 0 22px;
+    height:
+        64px;
 
-    box-sizing: border-box;
+    min-width:
+        0;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        20px;
+
+    padding:
+        0
+        20px;
+
+    box-sizing:
+        border-box;
 
     background:
         linear-gradient(
@@ -31,97 +58,175 @@
             #0b141e
         );
 
-    border-bottom: 1px solid #253d52;
+    border-bottom:
+        1px solid #253d52;
 
     box-shadow:
         0 3px 15px rgba(0,0,0,.35);
 
-    z-index: 500;
+    z-index:
+        500;
+
+    color:
+        #d9f3ff;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
 }
 
 
 /* ==========================================================
-   OMEGA LOGO
+   02. OMEGA LOGO
 ========================================================== */
 
 #omegaLogo {
-    flex: 1 1 auto;
 
-    min-width: 0;
+    flex:
+        1 1 auto;
 
-    display: flex;
-    align-items: center;
+    min-width:
+        0;
 
-    gap: 16px;
+    display:
+        flex;
 
-    overflow: hidden;
+    align-items:
+        center;
+
+    gap:
+        14px;
+
+    overflow:
+        hidden;
 }
+
 
 #omegaLogo img {
-    flex: 0 0 42px;
 
-    width: 42px;
-    height: 42px;
+    flex:
+        0 0 40px;
 
-    object-fit: contain;
+    width:
+        40px;
 
-    user-select: none;
-    pointer-events: none;
-}
+    height:
+        40px;
 
-#omegaLogo h2 {
-    min-width: 0;
+    object-fit:
+        contain;
 
-    margin: 0;
+    user-select:
+        none;
 
-    color: #dff5ff;
-
-    font-size: 20px;
-    font-weight: 600;
-    line-height: 1.2;
-
-    letter-spacing: 1px;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-#omegaLogo span {
-    display: block;
-
-    min-width: 0;
-
-    margin-top: 3px;
-
-    color: #7fb5d6;
-
-    font-size: 12px;
-    line-height: 1.2;
-
-    letter-spacing: 1px;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    pointer-events:
+        none;
 }
 
 
 /* ==========================================================
-   SYSTEM INFORMATION
+   LOGO TITLE
+========================================================== */
+
+#omegaLogo h2 {
+
+    min-width:
+        0;
+
+    margin:
+        0;
+
+    color:
+        #dff5ff;
+
+    font-size:
+        14px;
+
+    font-weight:
+        600;
+
+    line-height:
+        1.25;
+
+    letter-spacing:
+        1px;
+
+    white-space:
+        nowrap;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+}
+
+
+/* ==========================================================
+   LOGO SUBTITLE
+========================================================== */
+
+#omegaLogo span {
+
+    display:
+        block;
+
+    min-width:
+        0;
+
+    margin-top:
+        3px;
+
+    color:
+        #7fb5d6;
+
+    font-size:
+        10px;
+
+    font-weight:
+        400;
+
+    line-height:
+        1.25;
+
+    letter-spacing:
+        1px;
+
+    white-space:
+        nowrap;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+}
+
+
+/* ==========================================================
+   03. SYSTEM INFORMATION
 ========================================================== */
 
 #systemInfo {
-    flex: 0 1 auto;
 
-    min-width: 0;
+    flex:
+        0 1 auto;
 
-    display: flex;
-    align-items: center;
+    min-width:
+        0;
 
-    gap: 30px;
+    display:
+        flex;
 
-    overflow: hidden;
+    align-items:
+        center;
+
+    gap:
+        26px;
+
+    overflow:
+        hidden;
 }
 
 
@@ -130,64 +235,120 @@
 ========================================================== */
 
 .systemItem {
-    flex: 0 1 auto;
 
-    min-width: 0;
+    flex:
+        0 1 auto;
 
-    display: flex;
-    flex-direction: column;
+    min-width:
+        0;
 
-    gap: 4px;
+    display:
+        flex;
 
-    color: #7fa8c2;
+    flex-direction:
+        column;
 
-    font-size: 11px;
-    line-height: 1.2;
+    gap:
+        3px;
 
-    text-transform: uppercase;
+    color:
+        #7fa8c2;
 
-    letter-spacing: 1px;
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-    white-space: nowrap;
-}
+    font-size:
+        10px;
 
-.systemItem span {
-    display: flex;
-    align-items: center;
+    font-weight:
+        500;
 
-    min-width: 0;
+    line-height:
+        1.2;
 
-    gap: 8px;
+    text-transform:
+        uppercase;
 
-    color: #d9f3ff;
+    letter-spacing:
+        1px;
 
-    font-size: 14px;
-    line-height: 1.25;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space:
+        nowrap;
 }
 
 
 /* ==========================================================
-   STATUS LIGHT
+   SYSTEM VALUE
+========================================================== */
+
+.systemItem > span {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    min-width:
+        0;
+
+    gap:
+        7px;
+
+    color:
+        #d9f3ff;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size:
+        12px;
+
+    font-weight:
+        500;
+
+    line-height:
+        1.25;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+}
+
+
+/* ==========================================================
+   04. STATUS LIGHT
 ========================================================== */
 
 #statusLight {
-    flex: 0 0 10px;
 
-    width: 10px;
-    height: 10px;
+    flex:
+        0 0 9px;
 
-    border-radius: 50%;
+    width:
+        9px;
 
-    background: #00ff88;
+    height:
+        9px;
+
+    border-radius:
+        50%;
+
+    background:
+        #00ff88;
 
     box-shadow:
-        0 0 8px #00ff88,
-        0 0 16px #00ff88;
+        0 0 7px #00ff88,
+        0 0 14px #00ff88;
 
-    animation: statusPulse 2s infinite;
+    animation:
+        statusPulse 2s infinite;
 }
 
 
@@ -199,240 +360,396 @@
 
     0%,
     100% {
-        opacity: 1;
-        transform: scale(1);
+
+        opacity:
+            1;
+
+        transform:
+            scale(1);
     }
 
     50% {
-        opacity: .5;
-        transform: scale(.85);
+
+        opacity:
+            .5;
+
+        transform:
+            scale(.85);
     }
 }
 
 
 /* ==========================================================
-   CLOCK
+   05. CLOCK
 ========================================================== */
 
 #clock {
-    flex: 0 0 auto;
+
+    flex:
+        0 0 auto;
+
+    color:
+        #dff5ff;
 
     font-family:
         Consolas,
         "Courier New",
         monospace;
 
-    font-size: 18px;
-    line-height: 1.2;
+    font-size:
+        16px;
 
-    color: #dff5ff;
+    font-weight:
+        500;
 
-    letter-spacing: 1px;
+    line-height:
+        1.2;
 
-    white-space: nowrap;
+    letter-spacing:
+        1px;
+
+    white-space:
+        nowrap;
 }
 
 
 /* ==========================================================
-   STATUS STATES
+   06. STATUS STATES
 ========================================================== */
 
-.systemItem.warning span {
-    color: #ffd36a;
+.systemItem.warning > span {
+
+    color:
+        #ffd36a;
 }
 
-.systemItem.error span {
-    color: #ff6666;
+
+.systemItem.error > span {
+
+    color:
+        #ff6666;
 }
 
 
 /* ==========================================================
-   TABLET
+   07. OPERATOR IDENTITY
+========================================================== */
+
+#operatorSystemItem {
+
+    max-width:
+        210px;
+}
+
+
+#topbarOperatorName {
+
+    display:
+        block;
+
+    min-width:
+        0;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+
+    color:
+        #dff5ff;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        12px;
+
+    font-weight:
+        500;
+
+    line-height:
+        1.25;
+}
+
+
+#topbarOperatorId {
+
+    display:
+        block;
+
+    margin-top:
+        1px;
+
+    color:
+        #6f9bb4;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+    font-weight:
+        400;
+
+    line-height:
+        1.2;
+
+    letter-spacing:
+        .5px;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+}
+
+
+/* ==========================================================
+   08. TABLET
 ========================================================== */
 
 @media (max-width: 900px) {
 
     #topBar {
-        padding: 0 12px;
 
-        gap: 12px;
+        padding:
+            0
+            12px;
+
+        gap:
+            12px;
     }
+
 
     #omegaLogo {
-        gap: 10px;
+
+        gap:
+            10px;
     }
 
-    #omegaLogo span {
-        display: none;
+
+    #omegaLogo img {
+
+        flex-basis:
+            36px;
+
+        width:
+            36px;
+
+        height:
+            36px;
     }
+
 
     #omegaLogo h2 {
-        font-size: 17px;
+
+        font-size:
+            13px;
     }
+
+
+    #omegaLogo span {
+
+        display:
+            none;
+    }
+
 
     #systemInfo {
-        gap: 15px;
+
+        gap:
+            14px;
     }
+
 
     .systemItem {
-        font-size: 10px;
+
+        font-size:
+            9px;
     }
 
-    .systemItem span {
-        font-size: 12px;
+
+    .systemItem > span {
+
+        font-size:
+            11px;
     }
+
+
+    #operatorSystemItem {
+
+        max-width:
+            150px;
+    }
+
+
+    #topbarOperatorName {
+
+        font-size:
+            11px;
+    }
+
+
+    #topbarOperatorId {
+
+        font-size:
+            9px;
+    }
+
 
     #clock {
-        font-size: 16px;
+
+        font-size:
+            14px;
     }
 }
 
 
 /* ==========================================================
-   SMALL MOBILE
+   09. SMALL MOBILE
 ========================================================== */
 
 @media (max-width: 650px) {
 
     #topBar {
-        height: 60px;
 
-        padding: 0 10px;
+        height:
+            60px;
 
-        gap: 8px;
+        padding:
+            0
+            9px;
+
+        gap:
+            8px;
     }
+
 
     #omegaLogo {
-        flex: 1 1 auto;
 
-        gap: 8px;
+        gap:
+            8px;
     }
+
 
     #omegaLogo img {
-        flex-basis: 34px;
 
-        width: 34px;
-        height: 34px;
+        flex-basis:
+            32px;
+
+        width:
+            32px;
+
+        height:
+            32px;
     }
+
 
     #omegaLogo h2 {
-        font-size: 15px;
-        letter-spacing: .7px;
+
+        font-size:
+            12px;
+
+        letter-spacing:
+            .7px;
     }
+
 
     #systemInfo {
-        flex: 0 1 auto;
 
-        gap: 8px;
+        gap:
+            8px;
     }
+
 
     .systemItem {
-        display: none;
+
+        display:
+            none;
     }
 
+
+    #operatorSystemItem {
+
+        display:
+            none;
+    }
+
+
     #clock {
-        font-size: 14px;
-        letter-spacing: .5px;
+
+        font-size:
+            13px;
+
+        letter-spacing:
+            .5px;
     }
 }
 
 
 /* ==========================================================
-   VERY SMALL MOBILE
+   10. VERY SMALL SCREEN
 ========================================================== */
 
 @media (max-width: 400px) {
 
     #topBar {
-        padding: 0 8px;
+
+        padding:
+            0
+            7px;
     }
+
 
     #omegaLogo img {
-        flex-basis: 30px;
 
-        width: 30px;
-        height: 30px;
+        flex-basis:
+            29px;
+
+        width:
+            29px;
+
+        height:
+            29px;
     }
+
 
     #omegaLogo h2 {
-        font-size: 13px;
+
+        font-size:
+            11px;
     }
 
+
     #clock {
-        font-size: 12px;
+
+        font-size:
+            12px;
     }
 }
 
 
 /* ==========================================================
-   REDUCED MOTION
+   11. REDUCED MOTION
 ========================================================== */
 
 @media (prefers-reduced-motion: reduce) {
 
     #statusLight {
-        animation: none;
+
+        animation:
+            none;
     }
 }
+
 
 /* ==========================================================
-   OPERATOR IDENTITY
+   END OMEGA TOP BAR
 ========================================================== */
-
-#operatorSystemItem {
-    max-width: 210px;
-}
-
-#topbarOperatorName {
-    display: block;
-
-    min-width: 0;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    color: #dff5ff;
-
-    font-family:
-        Consolas,
-        "Courier New",
-        monospace;
-
-    font-size: 13px;
-}
-
-#topbarOperatorId {
-    display: block;
-
-    margin-top: 1px;
-
-    color: #6f9bb4;
-
-    font-family:
-        Consolas,
-        "Courier New",
-        monospace;
-
-    font-size: 9px;
-
-    letter-spacing: .7px;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-@media (max-width: 900px) {
-
-    #operatorSystemItem {
-        max-width: 150px;
-    }
-
-}
-
-@media (max-width: 650px) {
-
-    #operatorSystemItem {
-        display: none;
-    }
-
-}
