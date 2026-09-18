@@ -2444,16 +2444,7 @@ function recoverFault() {
         activeFault.type;
 
 
-    /*
-     * Restore baseline values.
-     */
-
-    const baseline =
-        cameras[
-            cameras.indexOf(
-                camera
-            )
-        ];
+   
 
 
     if (
