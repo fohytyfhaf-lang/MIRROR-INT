@@ -1,78 +1,153 @@
+
 /* ==========================================================
    OMEGA WINDOWS
+   UNIFIED BASE WINDOW STYLE
+========================================================== */
+
+
+/* ==========================================================
+   01. BASE VARIABLES
+========================================================== */
+
+:root {
+
+    --omega-window-width: 950px;
+    --omega-window-height: 640px;
+
+    --omega-window-min-width: 620px;
+    --omega-window-min-height: 420px;
+
+    --omega-window-header-height: 44px;
+
+    --omega-window-font-size: 12px;
+    --omega-window-title-size: 14px;
+    --omega-window-small-size: 10px;
+
+    --omega-window-border: #29435b;
+
+    --omega-window-bg-top: #0f1825;
+    --omega-window-bg-bottom: #0b121c;
+
+    --omega-window-header-top: #172535;
+    --omega-window-header-bottom: #111c29;
+
+    --omega-window-control-bg: #162738;
+    --omega-window-control-hover: #24445f;
+
+    --omega-window-text: #d9efff;
+    --omega-window-text-soft: #b8d2e1;
+    --omega-window-text-muted: #7895a8;
+
+    --omega-window-accent: #4fd8ff;
+}
+
+
+/* ==========================================================
+   02. BASE WINDOW
 ========================================================== */
 
 .window {
+
     position: absolute;
 
     display: flex;
+
     flex-direction: column;
 
-    width: 950px;
-    height: 650px;
+    width:
+        var(--omega-window-width);
 
-    min-width: 620px;
-    min-height: 420px;
+    height:
+        var(--omega-window-height);
 
-    box-sizing: border-box;
+    min-width:
+        var(--omega-window-min-width);
 
-    overflow: hidden;
+    min-height:
+        var(--omega-window-min-height);
+
+    box-sizing:
+        border-box;
+
+    overflow:
+        hidden;
 
     background:
         linear-gradient(
             180deg,
-            #0f1825,
-            #0b121c
+            var(--omega-window-bg-top),
+            var(--omega-window-bg-bottom)
         );
 
-    border: 1px solid #29435b;
-    border-radius: 10px;
+    border:
+        1px solid var(--omega-window-border);
+
+    border-radius:
+        7px;
 
     box-shadow:
         0 18px 45px rgba(0,0,0,.55),
         0 0 25px rgba(79,216,255,.05);
 
-    backdrop-filter: blur(10px);
+    backdrop-filter:
+        blur(8px);
 
-    animation: windowAppear .18s ease;
+    color:
+        var(--omega-window-text);
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size:
+        var(--omega-window-font-size);
+
+    line-height:
+        1.45;
+
+    animation:
+        windowAppear .18s ease;
 }
 
 
 /* ==========================================================
-   WINDOW BODY
-========================================================== */
-
-.windowBody {
-    position: relative;
-
-    flex: 1 1 auto;
-
-    width: 100%;
-    min-width: 0;
-    min-height: 0;
-
-    box-sizing: border-box;
-
-    overflow: hidden;
-}
-
-
-/* ==========================================================
-   ACTIVE / INACTIVE WINDOW
+   03. NORMAL WINDOW STATE
 ========================================================== */
 
 .window {
-    opacity: .92;
+
+    opacity:
+        .94;
 }
 
-.window.active {
-    opacity: 1;
 
-    border-color: #4fd8ff;
+/* ==========================================================
+   ACTIVE WINDOW
+========================================================== */
+
+.window.active {
+
+    opacity:
+        1;
+
+    border-color:
+        var(--omega-window-accent);
 
     box-shadow:
-        0 20px 55px rgba(0,0,0,.6),
-        0 0 20px rgba(79,216,255,.25);
+        0 20px 55px rgba(0,0,0,.60),
+        0 0 20px rgba(79,216,255,.20);
+}
+
+
+/* ==========================================================
+   HIDDEN
+========================================================== */
+
+.window.hidden {
+
+    display:
+        none !important;
 }
 
 
@@ -81,158 +156,279 @@
 ========================================================== */
 
 .window.minimized {
-    display: none;
+
+    display:
+        none;
 }
 
 
 /* ==========================================================
-   HEADER
+   04. WINDOW HEADER
 ========================================================== */
 
 .windowHeader {
-    position: relative;
 
-    z-index: 100;
+    position:
+        relative;
 
-    flex: 0 0 46px;
+    z-index:
+        100;
 
-    height: 46px;
-    min-width: 0;
+    flex:
+        0 0 var(--omega-window-header-height);
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    width:
+        100%;
 
-    gap: 15px;
+    height:
+        var(--omega-window-header-height);
 
-    padding: 0 14px;
+    min-height:
+        var(--omega-window-header-height);
 
-    box-sizing: border-box;
+    min-width:
+        0;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    padding:
+        0
+        12px;
+
+    box-sizing:
+        border-box;
 
     background:
         linear-gradient(
             180deg,
-            #172535,
-            #111c29
+            var(--omega-window-header-top),
+            var(--omega-window-header-bottom)
         );
 
-    border-bottom: 1px solid #243d54;
+    border-bottom:
+        1px solid #243d54;
 
-    user-select: none;
+    user-select:
+        none;
 
-    cursor: move;
+    cursor:
+        move;
 }
 
 
 /* ==========================================================
-   WINDOW TITLE
+   05. WINDOW TITLE
 ========================================================== */
 
 .windowTitle {
-    flex: 1 1 auto;
 
-    min-width: 0;
+    flex:
+        1 1 auto;
 
-    display: flex;
-    align-items: center;
+    min-width:
+        0;
 
-    gap: 10px;
+    display:
+        flex;
 
-    color: #e2f4ff;
+    align-items:
+        center;
 
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1.3;
+    gap:
+        8px;
 
-    letter-spacing: .5px;
+    color:
+        #e2f4ff;
 
-    overflow: hidden;
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size:
+        14px;
+
+    font-weight:
+        600;
+
+    line-height:
+        1.2;
+
+    letter-spacing:
+        .6px;
+
+    white-space:
+        nowrap;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+
+    overflow-wrap:
+        normal;
 }
+
 
 .windowTitle > * {
-    min-width: 0;
+
+    min-width:
+        0;
 }
 
-.windowTitle {
-    overflow-wrap: anywhere;
-}
 
 .windowIcon {
-    flex: 0 0 auto;
 
-    font-size: 18px;
+    flex:
+        0 0 auto;
 
-    line-height: 1;
+    font-size:
+        15px;
 
-    user-select: none;
+    line-height:
+        1;
+
+    user-select:
+        none;
 }
 
 
 /* ==========================================================
-   WINDOW CONTROLS
+   06. WINDOW CONTROLS
 ========================================================== */
 
 .windowControls {
-    position: relative;
 
-    z-index: 110;
+    position:
+        relative;
 
-    flex: 0 0 auto;
+    z-index:
+        110;
 
-    display: flex;
-    align-items: center;
+    flex:
+        0 0 auto;
 
-    gap: 6px;
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        4px;
 }
+
 
 .windowControls button {
-    position: relative;
 
-    z-index: 111;
+    position:
+        relative;
 
-    flex: 0 0 32px;
+    z-index:
+        111;
 
-    width: 32px;
-    height: 28px;
+    flex:
+        0 0 30px;
 
-    padding: 0;
+    width:
+        30px;
 
-    box-sizing: border-box;
+    height:
+        27px;
 
-    border: 1px solid transparent;
-    border-radius: 6px;
+    min-width:
+        30px;
 
-    background: #162738;
+    min-height:
+        27px;
 
-    color: #b8dfff;
+    padding:
+        0;
 
-    font-family: inherit;
-    font-size: 13px;
+    box-sizing:
+        border-box;
 
-    cursor: pointer;
+    border:
+        1px solid transparent;
+
+    border-radius:
+        4px;
+
+    background:
+        var(--omega-window-control-bg);
+
+    color:
+        #b8dfff;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size:
+        12px;
+
+    font-weight:
+        500;
+
+    line-height:
+        1;
+
+    cursor:
+        pointer;
 
     transition:
-        background .2s ease,
-        border-color .2s ease,
-        color .2s ease,
-        box-shadow .2s ease;
+        background .15s ease,
+        border-color .15s ease,
+        color .15s ease,
+        box-shadow .15s ease;
 }
+
 
 .windowControls button:hover {
-    background: #24445f;
 
-    color: #ffffff;
+    background:
+        var(--omega-window-control-hover);
+
+    color:
+        #ffffff;
+
+    border-color:
+        #315d78;
 }
+
 
 .windowControls button:last-child:hover {
-    background: #a72b2b;
 
-    border-color: #d84a4a;
+    background:
+        #a72b2b;
+
+    border-color:
+        #d84a4a;
+
+    color:
+        #ffffff;
 }
 
+
 .windowControls button:focus-visible {
-    outline: 1px solid #4fd8ff;
-    outline-offset: 1px;
+
+    outline:
+        1px solid var(--omega-window-accent);
+
+    outline-offset:
+        1px;
 
     box-shadow:
         0 0 8px rgba(79,216,255,.15);
@@ -240,21 +436,71 @@
 
 
 /* ==========================================================
-   WINDOW CONTENT
+   07. WINDOW BODY
+========================================================== */
+
+.windowBody {
+
+    position:
+        relative;
+
+    flex:
+        1 1 auto;
+
+    width:
+        100%;
+
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    box-sizing:
+        border-box;
+
+    overflow:
+        hidden;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.45;
+}
+
+
+/* ==========================================================
+   08. WINDOW CONTENT
 ========================================================== */
 
 .windowContent {
-    flex: 1 1 auto;
 
-    min-width: 0;
-    min-height: 0;
+    flex:
+        1 1 auto;
 
-    box-sizing: border-box;
+    min-width:
+        0;
 
-    overflow-x: hidden;
-    overflow-y: auto;
+    min-height:
+        0;
 
-    padding: 20px;
+    box-sizing:
+        border-box;
+
+    overflow-x:
+        hidden;
+
+    overflow-y:
+        auto;
+
+    padding:
+        18px;
 
     background:
         linear-gradient(
@@ -262,143 +508,297 @@
             #0d1622,
             #09111a
         );
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.5;
 }
 
 
 /* ==========================================================
-   STATUS BAR
+   09. COMMON TEXT NORMALIZATION
+========================================================== */
+
+.window p {
+
+    font-size:
+        12px;
+
+    line-height:
+        1.5;
+}
+
+
+.window li {
+
+    font-size:
+        12px;
+
+    line-height:
+        1.5;
+}
+
+
+.window small {
+
+    font-size:
+        10px;
+
+    line-height:
+        1.35;
+}
+
+
+.window label {
+
+    font-size:
+        10px;
+
+    line-height:
+        1.3;
+}
+
+
+/* ==========================================================
+   10. COMMON BUTTON NORMALIZATION
+========================================================== */
+
+.window button {
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.2;
+}
+
+
+/* ==========================================================
+   11. COMMON INPUT NORMALIZATION
+========================================================== */
+
+.window input,
+.window textarea,
+.window select {
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.3;
+
+    box-sizing:
+        border-box;
+}
+
+
+/* ==========================================================
+   12. STATUS BAR
 ========================================================== */
 
 .windowStatus {
-    flex: 0 0 30px;
 
-    height: 30px;
-    min-width: 0;
+    flex:
+        0 0 30px;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    height:
+        30px;
 
-    gap: 12px;
+    min-height:
+        30px;
 
-    padding: 0 14px;
+    min-width:
+        0;
 
-    box-sizing: border-box;
+    display:
+        flex;
 
-    background: #0b141d;
+    align-items:
+        center;
 
-    border-top: 1px solid #203547;
+    justify-content:
+        space-between;
 
-    color: #79a8c6;
+    gap:
+        12px;
 
-    font-size: 12px;
-    line-height: 1.2;
+    padding:
+        0
+        12px;
 
-    white-space: nowrap;
+    box-sizing:
+        border-box;
 
-    overflow: hidden;
+    background:
+        #0b141d;
+
+    border-top:
+        1px solid #203547;
+
+    color:
+        var(--omega-window-text-muted);
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+    line-height:
+        1.2;
+
+    white-space:
+        nowrap;
+
+    overflow:
+        hidden;
 }
 
-.windowStatus > * {
-    min-width: 0;
 
-    overflow: hidden;
-    text-overflow: ellipsis;
+.windowStatus > * {
+
+    min-width:
+        0;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
 }
 
 
 /* ==========================================================
-   WINDOW FOOTER
+   13. WINDOW FOOTER
 ========================================================== */
 
 .windowFooter {
-    position: relative;
 
-    z-index: 90;
+    position:
+        relative;
 
-    flex: 0 0 auto;
+    z-index:
+        90;
 
-    min-width: 0;
+    flex:
+        0 0 auto;
 
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
+    min-width:
+        0;
 
-    gap: 8px;
+    display:
+        flex;
 
-    padding: 8px 12px;
+    align-items:
+        center;
 
-    box-sizing: border-box;
+    justify-content:
+        flex-end;
 
-    background: #0b141d;
+    gap:
+        8px;
 
-    border-top: 1px solid #203547;
+    padding:
+        7px
+        10px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        #0b141d;
+
+    border-top:
+        1px solid #203547;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.3;
 }
 
 
 /* ==========================================================
-   WINDOW SCROLLBAR
+   14. WINDOW SCROLLBAR
 ========================================================== */
 
 .windowContent::-webkit-scrollbar {
-    width: 8px;
+
+    width:
+        7px;
 }
+
 
 .windowContent::-webkit-scrollbar-track {
-    background: #0c141d;
+
+    background:
+        #0c141d;
 }
+
 
 .windowContent::-webkit-scrollbar-thumb {
-    background: #32526b;
 
-    border-radius: 20px;
+    background:
+        #32526b;
+
+    border-radius:
+        20px;
 }
+
 
 .windowContent::-webkit-scrollbar-thumb:hover {
-    background: #4fd8ff;
+
+    background:
+        #4fd8ff;
 }
 
 
 /* ==========================================================
-   WINDOW APPEAR
-========================================================== */
-
-@keyframes windowAppear {
-
-    from {
-        opacity: 0;
-
-        transform:
-            translateY(18px)
-            scale(.96);
-    }
-
-    to {
-        opacity: 1;
-
-        transform:
-            translateY(0)
-            scale(1);
-    }
-}
-
-
-/* ==========================================================
-   RESIZE HANDLE
+   15. RESIZE HANDLE
 ========================================================== */
 
 .window::after {
-    content: "";
 
-    position: absolute;
+    content:
+        "";
 
-    right: 0;
-    bottom: 0;
+    position:
+        absolute;
 
-    width: 18px;
-    height: 18px;
+    right:
+        0;
 
-    box-sizing: border-box;
+    bottom:
+        0;
+
+    width:
+        16px;
+
+    height:
+        16px;
+
+    box-sizing:
+        border-box;
 
     background:
         linear-gradient(
@@ -409,22 +809,31 @@
             transparent 55%
         );
 
-    cursor: nwse-resize;
+    cursor:
+        nwse-resize;
 
-    pointer-events: auto;
+    pointer-events:
+        auto;
 }
 
 
 /* ==========================================================
-   DOCUMENT WINDOW
+   16. DOCUMENT WINDOW
 ========================================================== */
 
 #documentWindow {
-    width: 950px;
-    height: 700px;
 
-    min-width: 700px;
-    min-height: 500px;
+    width:
+        var(--omega-window-width);
+
+    height:
+        var(--omega-window-height);
+
+    min-width:
+        var(--omega-window-min-width);
+
+    min-height:
+        var(--omega-window-min-height);
 }
 
 
@@ -433,20 +842,33 @@
 ========================================================== */
 
 #documentWindow .windowBody {
-    flex: 1 1 auto;
 
-    width: 100%;
-    min-width: 0;
-    min-height: 0;
+    flex:
+        1 1 auto;
 
-    padding: 0;
+    width:
+        100%;
 
-    box-sizing: border-box;
+    min-width:
+        0;
 
-    overflow: hidden;
+    min-height:
+        0;
 
-    display: flex;
-    flex-direction: column;
+    padding:
+        0;
+
+    box-sizing:
+        border-box;
+
+    overflow:
+        hidden;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
 }
 
 
@@ -455,17 +877,27 @@
 ========================================================== */
 
 #documentWindow #documentContent {
-    flex: 1 1 auto;
 
-    width: 100%;
-    min-width: 0;
-    min-height: 0;
+    flex:
+        1 1 auto;
 
-    padding: 0;
+    width:
+        100%;
 
-    box-sizing: border-box;
+    min-width:
+        0;
 
-    overflow: hidden;
+    min-height:
+        0;
+
+    padding:
+        0;
+
+    box-sizing:
+        border-box;
+
+    overflow:
+        hidden;
 }
 
 
@@ -474,192 +906,374 @@
 ========================================================== */
 
 #documentWindow .omegaPdfViewer {
-    display: block;
 
-    width: 100%;
-    height: 100%;
+    display:
+        block;
 
-    min-width: 0;
-    min-height: 0;
+    width:
+        100%;
 
-    border: none;
+    height:
+        100%;
 
-    background: #080f16;
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    border:
+        none;
+
+    background:
+        #080f16;
 }
 
 
 /* ==========================================================
-   TABLET
+   17. RESPONSIVE — TABLET
 ========================================================== */
 
 @media (max-width: 900px) {
 
     .window {
-        width: 95vw;
-        height: 90vh;
 
-        min-width: 0;
-        min-height: 0;
+        width:
+            calc(100vw - 30px);
 
-        border-radius: 8px;
+        height:
+            calc(100vh - 95px);
+
+        min-width:
+            0;
+
+        min-height:
+            0;
+
+        border-radius:
+            6px;
     }
+
 
     .windowHeader {
-        flex-basis: 44px;
 
-        height: 44px;
+        flex-basis:
+            42px;
 
-        padding: 0 12px;
+        height:
+            42px;
+
+        min-height:
+            42px;
+
+        padding:
+            0
+            10px;
     }
+
 
     .windowTitle {
-        font-size: 13px;
+
+        font-size:
+            13px;
     }
+
+
+    .windowIcon {
+
+        font-size:
+            14px;
+    }
+
 
     .windowContent {
-        padding: 16px;
+
+        padding:
+            14px;
     }
 
-    #documentWindow {
-        width: 95vw;
-        height: 90vh;
 
-        min-width: 0;
-        min-height: 0;
+    #documentWindow {
+
+        width:
+            calc(100vw - 30px);
+
+        height:
+            calc(100vh - 95px);
+
+        min-width:
+            0;
+
+        min-height:
+            0;
     }
 }
 
 
 /* ==========================================================
-   MOBILE
+   18. RESPONSIVE — MOBILE
 ========================================================== */
 
 @media (max-width: 650px) {
 
     .window {
-        width: calc(100vw - 24px);
-        height: calc(100vh - 84px);
 
-        min-width: 0;
-        min-height: 0;
+        width:
+            calc(100vw - 20px);
 
-        border-radius: 7px;
+        height:
+            calc(100vh - 80px);
+
+        min-width:
+            0;
+
+        min-height:
+            0;
+
+        border-radius:
+            6px;
     }
+
 
     .windowHeader {
-        flex-basis: 42px;
 
-        height: 42px;
+        flex-basis:
+            40px;
 
-        gap: 8px;
+        height:
+            40px;
 
-        padding: 0 9px;
+        min-height:
+            40px;
+
+        gap:
+            7px;
+
+        padding:
+            0
+            8px;
     }
+
 
     .windowTitle {
-        gap: 7px;
 
-        font-size: 12px;
+        gap:
+            6px;
+
+        font-size:
+            12px;
     }
+
 
     .windowIcon {
-        font-size: 16px;
+
+        font-size:
+            13px;
     }
+
 
     .windowControls {
-        gap: 4px;
+
+        gap:
+            3px;
     }
+
 
     .windowControls button {
-        flex-basis: 28px;
 
-        width: 28px;
-        height: 26px;
+        flex-basis:
+            27px;
 
-        border-radius: 5px;
+        width:
+            27px;
+
+        height:
+            25px;
+
+        min-width:
+            27px;
+
+        min-height:
+            25px;
     }
+
 
     .windowContent {
-        padding: 14px;
+
+        padding:
+            12px;
     }
+
 
     .windowStatus {
-        flex-basis: 28px;
 
-        height: 28px;
+        flex-basis:
+            28px;
 
-        padding: 0 10px;
+        height:
+            28px;
 
-        font-size: 10px;
+        min-height:
+            28px;
+
+        padding:
+            0
+            9px;
+
+        font-size:
+            9px;
     }
+
 
     .windowFooter {
-        padding: 7px 9px;
+
+        padding:
+            6px
+            8px;
     }
+
 
     .window::after {
-        width: 15px;
-        height: 15px;
+
+        width:
+            14px;
+
+        height:
+            14px;
     }
 
-    #documentWindow {
-        width: calc(100vw - 24px);
-        height: calc(100vh - 84px);
 
-        min-width: 0;
-        min-height: 0;
+    #documentWindow {
+
+        width:
+            calc(100vw - 20px);
+
+        height:
+            calc(100vh - 80px);
+
+        min-width:
+            0;
+
+        min-height:
+            0;
     }
 }
 
 
 /* ==========================================================
-   VERY SMALL SCREENS
+   19. VERY SMALL SCREENS
 ========================================================== */
 
 @media (max-width: 400px) {
 
     .window {
-        width: calc(100vw - 16px);
-        height: calc(100vh - 76px);
+
+        width:
+            calc(100vw - 12px);
+
+        height:
+            calc(100vh - 70px);
     }
+
 
     .windowHeader {
-        padding: 0 7px;
+
+        padding:
+            0
+            6px;
     }
+
 
     .windowTitle {
-        font-size: 11px;
+
+        font-size:
+            11px;
     }
+
 
     .windowControls button {
-        flex-basis: 26px;
 
-        width: 26px;
-        height: 24px;
+        flex-basis:
+            25px;
+
+        width:
+            25px;
+
+        height:
+            23px;
+
+        min-width:
+            25px;
+
+        min-height:
+            23px;
     }
+
 
     .windowContent {
-        padding: 10px;
+
+        padding:
+            9px;
     }
 
+
     #documentWindow {
-        width: calc(100vw - 16px);
-        height: calc(100vh - 76px);
+
+        width:
+            calc(100vw - 12px);
+
+        height:
+            calc(100vh - 70px);
     }
 }
 
 
 /* ==========================================================
-   REDUCED MOTION
+   20. REDUCED MOTION
 ========================================================== */
 
 @media (prefers-reduced-motion: reduce) {
 
     .window {
-        animation: none;
+
+        animation:
+            none;
     }
 
+
     .windowControls button {
-        transition: none;
+
+        transition:
+            none;
     }
 }
+
+
+/* ==========================================================
+   21. WINDOW APPEAR
+========================================================== */
+
+@keyframes windowAppear {
+
+    from {
+
+        opacity:
+            0;
+
+        transform:
+            translateY(12px)
+            scale(.985);
+    }
+
+
+    to {
+
+        opacity:
+            1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
