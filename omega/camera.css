@@ -2532,3 +2532,158 @@
     }
 
 }
+
+/* ==========================================================
+   CAMERA READABILITY
+========================================================== */
+
+#cameraWindow .cameraPanelTitle {
+
+    font-size:
+        11px;
+
+}
+
+
+#cameraWindow .cameraChannel {
+
+    font-size:
+        12px;
+
+}
+
+
+#cameraWindow .cameraChannelInfo strong {
+
+    font-size:
+        12px;
+
+}
+
+
+#cameraWindow .cameraChannelInfo small {
+
+    font-size:
+        10px;
+
+}
+
+
+#cameraWindow .cameraPanelStatus span {
+
+    font-size:
+        9px;
+
+}
+
+
+#cameraWindow .cameraPanelStatus strong {
+
+    font-size:
+        9px;
+
+}
+
+
+/* ==========================================================
+   VIDEO TEXT
+========================================================== */
+
+#cameraWindow .cameraTop {
+
+    font-size:
+        13px !important;
+
+}
+
+
+#cameraWindow .cameraStatus {
+
+    font-size:
+        10px !important;
+
+}
+
+
+#cameraWindow .cameraChannelMarker {
+
+    font-size:
+        10px !important;
+
+}
+
+
+#cameraWindow .cameraBottom {
+
+    font-size:
+        12px !important;
+
+}
+
+
+#cameraWindow .cameraFeedMeta {
+
+    font-size:
+        10px;
+
+}
+
+
+#cameraWindow .cameraTime {
+
+    font-size:
+        11px !important;
+
+}
+
+
+#cameraWindow .cameraIndex {
+
+    font-size:
+        10px;
+
+}
+
+
+/* ==========================================================
+   CONTROL BAR
+========================================================== */
+
+#cameraWindow .cameraControlButton {
+
+    font-size:
+        11px;
+
+}
+
+
+#cameraWindow .cameraStatusLabel {
+
+    font-size:
+        9px;
+
+}
+
+
+#cameraWindow .cameraLiveStatus strong {
+
+    font-size:
+        10px;
+
+}
+
+
+#cameraWindow .cameraSignalInfo span {
+
+    font-size:
+        9px;
+
+}
+
+
+#cameraWindow .cameraSignalInfo strong {
+
+    font-size:
+        11px;
+
+}
