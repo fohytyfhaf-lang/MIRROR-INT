@@ -1179,8 +1179,8 @@
 
 </div>
 
-         <!-- ==================================
-            CAMERAS
+     <!-- ==================================
+        SECURITY CAMERAS
 =================================== -->
 
 <div id="cameraWindow" class="window hidden">
@@ -1189,50 +1189,297 @@
 
         <div class="windowTitle">
 
-            📷 SECURITY CAMERAS
+            <span class="windowIcon">
+                ◉
+            </span>
+
+            <span>
+                SECURITY SURVEILLANCE
+            </span>
 
         </div>
 
         <div class="windowControls">
 
-            <button onclick="minimizeWindow('camera')">─</button>
+            <button onclick="minimizeWindow('camera')">
+                ─
+            </button>
 
-            <button onclick="maximizeWindow('camera')">□</button>
+            <button onclick="maximizeWindow('camera')">
+                □
+            </button>
 
-            <button onclick="closeApp('camera')">✕</button>
-
-        </div>
-
-    </div>
-
-    <div class="windowBody">
-
-        <div id="cameraView">
-
-            NO SIGNAL
+            <button onclick="closeApp('camera')">
+                ✕
+            </button>
 
         </div>
 
     </div>
 
-    <div class="windowFooter">
 
-        <button onclick="previousCam()">
+    <div class="cameraSystem">
 
-            ◀ PREVIOUS
 
-        </button>
+        <!-- ==================================
+             CHANNEL LIST
+        =================================== -->
 
-        <button onclick="nextCam()">
+        <aside class="cameraChannelPanel">
 
-            NEXT ▶
+            <div class="cameraPanelTitle">
+                CAMERA CHANNELS
+            </div>
 
-        </button>
+
+            <div
+                id="cameraChannelList"
+                class="cameraChannelList"
+            >
+
+                <button
+                    class="cameraChannel active"
+                    onclick="selectCamera(0)"
+                >
+
+                    <span class="cameraChannelDot"></span>
+
+                    <span class="cameraChannelInfo">
+
+                        <strong>
+                            CAM 01
+                        </strong>
+
+                        <small>
+                            BASE AREA
+                        </small>
+
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="cameraChannel"
+                    onclick="selectCamera(1)"
+                >
+
+                    <span class="cameraChannelDot"></span>
+
+                    <span class="cameraChannelInfo">
+
+                        <strong>
+                            CAM 02
+                        </strong>
+
+                        <small>
+                            CORRIDOR
+                        </small>
+
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="cameraChannel"
+                    onclick="selectCamera(2)"
+                >
+
+                    <span class="cameraChannelDot"></span>
+
+                    <span class="cameraChannelInfo">
+
+                        <strong>
+                            CAM 03
+                        </strong>
+
+                        <small>
+                            SERVER ROOM
+                        </small>
+
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="cameraChannel"
+                    onclick="selectCamera(3)"
+                >
+
+                    <span class="cameraChannelDot"></span>
+
+                    <span class="cameraChannelInfo">
+
+                        <strong>
+                            CAM 04
+                        </strong>
+
+                        <small>
+                            EXIT
+                        </small>
+
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="cameraChannel"
+                    onclick="selectCamera(4)"
+                >
+
+                    <span class="cameraChannelDot"></span>
+
+                    <span class="cameraChannelInfo">
+
+                        <strong>
+                            CAM 05
+                        </strong>
+
+                        <small>
+                            BLACK ZONE
+                        </small>
+
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="cameraChannel"
+                    onclick="selectCamera(5)"
+                >
+
+                    <span class="cameraChannelDot"></span>
+
+                    <span class="cameraChannelInfo">
+
+                        <strong>
+                            CAM 06
+                        </strong>
+
+                        <small>
+                            UNKNOWN AREA
+                        </small>
+
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="cameraChannel"
+                    onclick="selectCamera(6)"
+                >
+
+                    <span class="cameraChannelDot"></span>
+
+                    <span class="cameraChannelInfo">
+
+                        <strong>
+                            CAM 07
+                        </strong>
+
+                        <small>
+                            RESTRICTED AREA
+                        </small>
+
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <div class="cameraPanelStatus">
+
+                <span>
+                    NETWORK
+                </span>
+
+                <strong>
+                    ONLINE
+                </strong>
+
+            </div>
+
+        </aside>
+
+
+        <!-- ==================================
+             VIDEO
+        =================================== -->
+
+        <main class="cameraMain">
+
+            <div id="cameraView">
+
+                NO SIGNAL
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <!-- ==================================
+         CAMERA CONTROLS
+    =================================== -->
+
+    <div class="cameraControlBar">
+
+
+        <div class="cameraControlLeft">
+
+            <button
+                class="cameraControlButton"
+                onclick="previousCam()"
+            >
+                ◀ PREVIOUS
+            </button>
+
+            <button
+                class="cameraControlButton"
+                onclick="nextCam()"
+            >
+                NEXT ▶
+            </button>
+
+        </div>
+
+
+        <div class="cameraLiveStatus">
+
+            <span class="cameraStatusLabel">
+                CHANNEL STATUS
+            </span>
+
+            <strong id="cameraConnectionStatus">
+                LIVE
+            </strong>
+
+        </div>
+
+
+        <div class="cameraSignalInfo">
+
+            <span>
+                SIGNAL
+            </span>
+
+            <strong id="cameraSignalValue">
+                --%
+            </strong>
+
+        </div>
+
 
     </div>
 
 </div>
-
          <!-- ==================================
             SYSTEM CONSOLE
 =================================== -->
