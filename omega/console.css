@@ -1,312 +1,680 @@
-```css
 /* ==========================================================
-   OMEGA CONSOLE
+   OMEGA SYSTEM CONSOLE
+   UNIFIED OMEGA INTERFACE
+========================================================== */
+
+
+/* ==========================================================
+   01. CONSOLE WINDOW
 ========================================================== */
 
 #consoleWindow {
-    display: flex;
-    flex-direction: column;
 
-    background: #05090d;
+    background:
+        #05090d;
+
 }
+
 
 /* ==========================================================
-   HEADER
+   02. CONSOLE BODY
 ========================================================== */
 
-#consoleHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+#consoleWindow .windowBody {
 
-    padding: 12px 18px;
+    display:
+        flex;
 
-    background: #101821;
-    border-bottom: 1px solid #22364a;
+    flex-direction:
+        column;
 
-    flex: 0 0 auto;
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    padding:
+        0;
+
+    overflow:
+        hidden;
+
+    background:
+        #03070a;
+
 }
 
-#consoleTitle {
-    color: #7fdfff;
-
-    font-size: 15px;
-    font-weight: bold;
-    letter-spacing: 1px;
-}
 
 /* ==========================================================
-   TOOLBAR
+   03. CONSOLE LOG
 ========================================================== */
 
-#consoleToolbar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+#consoleLog {
 
-.consoleButton {
-    box-sizing: border-box;
+    flex:
+        1 1 auto;
 
-    padding: 6px 12px;
+    width:
+        100%;
 
-    background: #173149;
-    border: 1px solid #29506d;
-    border-radius: 4px;
+    min-width:
+        0;
 
-    color: #dff6ff;
+    min-height:
+        0;
 
-    font-family: inherit;
-    font-size: 13px;
+    margin:
+        0;
 
-    cursor: pointer;
+    padding:
+        16px;
 
-    transition:
-        background .2s ease,
-        border-color .2s ease,
-        box-shadow .2s ease;
-}
+    box-sizing:
+        border-box;
 
-.consoleButton:hover {
-    background: #255178;
-}
+    overflow-x:
+        hidden;
 
-.consoleButton:focus-visible {
-    outline: none;
+    overflow-y:
+        auto;
 
-    border-color: #4fd8ff;
+    background:
+        linear-gradient(
+            180deg,
+            #04090d,
+            #020507
+        );
 
-    box-shadow:
-        0 0 8px rgba(79, 216, 255, .2);
-}
-
-/* ==========================================================
-   OUTPUT
-========================================================== */
-
-#consoleOutput {
-    flex: 1 1 auto;
-    min-height: 0;
-    min-width: 0;
-
-    overflow-y: auto;
-    overflow-x: hidden;
-
-    padding: 20px;
-
-    background: #030608;
-
-    color: #78ff8d;
+    color:
+        #77ff8d;
 
     font-family:
         Consolas,
         "Courier New",
         monospace;
 
-    font-size: 14px;
-    line-height: 1.7;
+    font-size:
+        12px;
 
-    box-sizing: border-box;
+    font-weight:
+        400;
+
+    line-height:
+        1.55;
+
+    white-space:
+        pre-wrap;
+
+    overflow-wrap:
+        anywhere;
+
+    word-break:
+        break-word;
+
 }
 
+
 /* ==========================================================
-   CONSOLE LINES
+   04. CONSOLE LINES
 ========================================================== */
 
 .consoleLine {
-    margin-bottom: 8px;
 
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
+    display:
+        block;
+
+    min-width:
+        0;
+
+    margin:
+        0 0 5px 0;
+
+    color:
+        #77ff8d;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.5;
+
+    white-space:
+        pre-wrap;
+
+    overflow-wrap:
+        anywhere;
+
 }
 
-.consoleSystem {
-    color: #7fdfff;
-}
-
-.consoleWarning {
-    color: #ffd54a;
-}
-
-.consoleError {
-    color: #ff6666;
-}
-
-.consoleSuccess {
-    color: #66ff99;
-}
 
 /* ==========================================================
-   INPUT AREA
+   SYSTEM OUTPUT
 ========================================================== */
 
-#consoleInputArea {
-    display: flex;
-    align-items: center;
+.console-system {
 
-    gap: 10px;
+    color:
+        #7fdfff;
 
-    padding: 14px 18px;
-
-    background: #101821;
-    border-top: 1px solid #22364a;
-
-    flex: 0 0 auto;
-    box-sizing: border-box;
 }
+
+
+/* ==========================================================
+   WARNING OUTPUT
+========================================================== */
+
+.console-warning {
+
+    color:
+        #ffd54a;
+
+}
+
+
+/* ==========================================================
+   ERROR OUTPUT
+========================================================== */
+
+.console-error {
+
+    color:
+        #ff6666;
+
+}
+
+
+/* ==========================================================
+   SUCCESS OUTPUT
+========================================================== */
+
+.console-success {
+
+    color:
+        #66ff99;
+
+}
+
 
 /* ==========================================================
    PROMPT
 ========================================================== */
 
-.consolePrompt {
-    flex: 0 0 auto;
+.console-prompt {
 
-    color: #4fd8ff;
+    color:
+        #4fd8ff;
 
-    font-family:
-        Consolas,
-        "Courier New",
-        monospace;
+    font-weight:
+        600;
 
-    font-size: 15px;
-
-    white-space: nowrap;
 }
 
+
 /* ==========================================================
-   INPUT
+   COMMAND / INPUT OUTPUT
+========================================================== */
+
+.console-command {
+
+    color:
+        #d9efff;
+
+}
+
+
+/* ==========================================================
+   05. CONSOLE FOOTER
+========================================================== */
+
+#consoleWindow .windowFooter {
+
+    flex:
+        0 0 auto;
+
+    min-width:
+        0;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    padding:
+        7px 9px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        #0a141d;
+
+    border-top:
+        1px solid
+        #203547;
+
+}
+
+
+/* ==========================================================
+   CONSOLE INPUT
 ========================================================== */
 
 #consoleInput {
-    flex: 1 1 auto;
-    min-width: 0;
 
-    box-sizing: border-box;
+    flex:
+        1 1 auto;
 
-    padding: 10px 12px;
+    min-width:
+        0;
 
-    background: #081018;
+    height:
+        30px;
 
-    border: 1px solid #294760;
+    padding:
+        0 10px;
 
-    color: #dff6ff;
+    box-sizing:
+        border-box;
+
+    background:
+        #071018;
+
+    border:
+        1px solid
+        #294760;
+
+    border-radius:
+        3px;
+
+    outline:
+        none;
+
+    color:
+        #dff6ff;
 
     font-family:
         Consolas,
         "Courier New",
         monospace;
 
-    font-size: 14px;
+    font-size:
+        12px;
 
-    outline: none;
+    line-height:
+        30px;
 
     transition:
-        border-color .2s ease,
-        box-shadow .2s ease;
+        border-color .16s ease,
+        box-shadow .16s ease;
+
 }
+
+
+#consoleInput::placeholder {
+
+    color:
+        #5e7c91;
+
+}
+
 
 #consoleInput:focus {
-    border-color: #4fd8ff;
+
+    border-color:
+        #4fd8ff;
 
     box-shadow:
-        0 0 10px rgba(79, 216, 255, .2);
+        0 0 0 1px
+        rgba(
+            79,
+            216,
+            255,
+            .08
+        );
+
 }
 
+
 /* ==========================================================
-   CURSOR
+   06. RUN BUTTON
+========================================================== */
+
+#consoleEnter {
+
+    flex:
+        0 0 auto;
+
+    min-width:
+        68px;
+
+    height:
+        30px;
+
+    padding:
+        0 12px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        #102738;
+
+    border:
+        1px solid
+        #2b526d;
+
+    border-radius:
+        3px;
+
+    color:
+        #c8e8f6;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size:
+        12px;
+
+    font-weight:
+        500;
+
+    line-height:
+        1;
+
+    cursor:
+        pointer;
+
+    transition:
+        background .16s ease,
+        border-color .16s ease,
+        color .16s ease,
+        box-shadow .16s ease;
+
+}
+
+
+#consoleEnter:hover {
+
+    background:
+        #16354b;
+
+    border-color:
+        #4fd8ff;
+
+    color:
+        #ffffff;
+
+    box-shadow:
+        0 0 10px
+        rgba(
+            79,
+            216,
+            255,
+            .08
+        );
+
+}
+
+
+#consoleEnter:active {
+
+    transform:
+        translateY(
+            1px
+        );
+
+}
+
+
+#consoleEnter:focus-visible {
+
+    outline:
+        1px solid
+        #4fd8ff;
+
+    outline-offset:
+        1px;
+
+}
+
+
+/* ==========================================================
+   07. CONSOLE CURSOR
 ========================================================== */
 
 .consoleCursor {
-    display: inline-block;
 
-    width: 8px;
-    height: 16px;
+    display:
+        inline-block;
 
-    margin-left: 2px;
+    width:
+        7px;
 
-    vertical-align: -2px;
+    height:
+        14px;
 
-    background: #66ff99;
+    margin-left:
+        2px;
 
-    animation: consoleBlink 1s infinite;
+    vertical-align:
+        -2px;
+
+    background:
+        #66ff99;
+
+    animation:
+        consoleBlink
+        1s
+        infinite;
+
 }
 
+
 @keyframes consoleBlink {
+
     0%,
     45% {
-        opacity: 1;
+
+        opacity:
+            1;
+
     }
 
     50%,
     100% {
-        opacity: 0;
+
+        opacity:
+            0;
+
     }
+
 }
+
 
 /* ==========================================================
-   SCROLLBAR
+   08. SCROLLBAR
 ========================================================== */
 
-#consoleOutput::-webkit-scrollbar {
-    width: 8px;
+#consoleLog::-webkit-scrollbar {
+
+    width:
+        7px;
+
 }
 
-#consoleOutput::-webkit-scrollbar-track {
-    background: #05090d;
+
+#consoleLog::-webkit-scrollbar-track {
+
+    background:
+        #05090d;
+
 }
 
-#consoleOutput::-webkit-scrollbar-thumb {
-    background: #315774;
-    border-radius: 20px;
+
+#consoleLog::-webkit-scrollbar-thumb {
+
+    background:
+        #315774;
+
+    border-radius:
+        20px;
+
 }
 
-#consoleOutput::-webkit-scrollbar-thumb:hover {
-    background: #4fd8ff;
+
+#consoleLog::-webkit-scrollbar-thumb:hover {
+
+    background:
+        #4fd8ff;
+
 }
+
 
 /* ==========================================================
-   RESPONSIVE
+   09. MOBILE
 ========================================================== */
 
-@media (max-width: 700px) {
+@media (
+    max-width:
+        700px
+) {
 
-    #consoleHeader {
-        padding: 10px 12px;
+    #consoleLog {
+
+        padding:
+            12px;
+
+        font-size:
+            12px;
+
+        line-height:
+            1.5;
+
     }
 
-    #consoleTitle {
-        font-size: 13px;
+
+    .consoleLine {
+
+        font-size:
+            12px;
+
     }
 
-    #consoleToolbar {
-        gap: 6px;
+
+    #consoleWindow .windowFooter {
+
+        padding:
+            6px 8px;
+
+        gap:
+            6px;
+
     }
 
-    .consoleButton {
-        padding: 5px 8px;
-        font-size: 12px;
-    }
-
-    #consoleOutput {
-        padding: 14px;
-
-        font-size: 13px;
-        line-height: 1.6;
-    }
-
-    #consoleInputArea {
-        padding: 10px 12px;
-        gap: 7px;
-    }
-
-    .consolePrompt {
-        font-size: 13px;
-    }
 
     #consoleInput {
-        padding: 8px 10px;
-        font-size: 13px;
+
+        height:
+            29px;
+
+        font-size:
+            12px;
+
     }
+
+
+    #consoleEnter {
+
+        min-width:
+            58px;
+
+        height:
+            29px;
+
+        padding:
+            0 10px;
+
+        font-size:
+            12px;
+
+    }
+
 }
-```
+
+
+/* ==========================================================
+   10. VERY SMALL
+========================================================== */
+
+@media (
+    max-width:
+        420px
+) {
+
+    #consoleWindow .windowFooter {
+
+        align-items:
+            stretch;
+
+    }
+
+
+    #consoleInput {
+
+        height:
+            30px;
+
+    }
+
+
+    #consoleEnter {
+
+        min-width:
+            54px;
+
+        height:
+            30px;
+
+    }
+
+}
+
+
+/* ==========================================================
+   11. REDUCED MOTION
+========================================================== */
+
+@media (
+    prefers-reduced-motion:
+        reduce
+) {
+
+    #consoleInput,
+    #consoleEnter {
+
+        transition:
+            none;
+
+    }
+
+
+    .consoleCursor {
+
+        animation:
+            none;
+
+    }
+
+}
