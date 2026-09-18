@@ -83,6 +83,10 @@ import {
 } from "./mrsmileContext.js";
 
 
+import {
+    initMrSmileEffects
+} from "./mrsmileEffects.js";
+
 /* ==========================================================
    MODULE STATE
 ========================================================== */
