@@ -1,5 +1,6 @@
 /* ==========================================================
    OMEGA NOTIFICATIONS
+   SYSTEM NOTIFICATION LAYER
 ========================================================== */
 
 
@@ -8,22 +9,36 @@
 ========================================================== */
 
 #notificationArea {
+
     position: fixed;
 
-    right: 22px;
-    bottom: 22px;
+    right: 18px;
+    bottom: 18px;
 
-    width: min(360px, calc(100vw - 44px));
+    width:
+        min(
+            360px,
+            calc(100vw - 36px)
+        );
 
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+    display:
+        flex;
 
-    z-index: 12000;
+    flex-direction:
+        column;
 
-    pointer-events: none;
+    gap:
+        10px;
 
-    box-sizing: border-box;
+    z-index:
+        12000;
+
+    pointer-events:
+        none;
+
+    box-sizing:
+        border-box;
+
 }
 
 
@@ -32,43 +47,107 @@
 ========================================================== */
 
 .notification {
+
     position: relative;
 
-    width: 100%;
-    min-width: 0;
+    width:
+        100%;
 
-    box-sizing: border-box;
+    min-width:
+        0;
 
-    overflow: hidden;
+    box-sizing:
+        border-box;
 
-    pointer-events: auto;
+    overflow:
+        hidden;
 
-    background: rgba(8,16,26,.96);
+    pointer-events:
+        auto;
 
-    border: 1px solid #27465d;
-    border-left: 4px solid #4fd8ff;
+    padding:
+        13px
+        14px;
 
-    border-radius: 8px;
+    background:
+        rgba(8,16,26,.97);
 
-    padding: 16px 18px;
+    border:
+        1px solid
+        #27465d;
 
-    color: #d7efff;
+    border-left:
+        3px solid
+        #4fd8ff;
 
-    backdrop-filter: blur(14px);
+    border-radius:
+        5px;
+
+    color:
+        #d7efff;
+
+    backdrop-filter:
+        blur(8px);
 
     box-shadow:
-        0 12px 35px rgba(0,0,0,.45),
-        inset 0 1px rgba(255,255,255,.04);
+        0 10px 28px
+        rgba(0,0,0,.38),
 
-    transform: translateX(0);
+        inset 0 1px 0
+        rgba(255,255,255,.025);
+
+    transform:
+        translateX(0);
 
     transition:
-        transform .2s ease,
-        border-color .2s ease,
-        box-shadow .2s ease;
+        transform .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease;
 
     animation:
-        notificationIn .35s ease both;
+        notificationIn
+        .28s
+        ease
+        both;
+
+}
+
+
+/* ==========================================================
+   TECHNICAL MARKER
+========================================================== */
+
+.notification::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    top:
+        0;
+
+    left:
+        0;
+
+    width:
+        18px;
+
+    height:
+        18px;
+
+    pointer-events:
+        none;
+
+    border-top:
+        1px solid
+        rgba(127,223,255,.28);
+
+    border-left:
+        1px solid
+        rgba(127,223,255,.28);
+
 }
 
 
@@ -77,46 +156,74 @@
 ========================================================== */
 
 .notificationHeader {
-    display: flex;
 
-    align-items: center;
+    display:
+        flex;
 
-    gap: 12px;
+    align-items:
+        center;
 
-    min-width: 0;
+    gap:
+        9px;
 
-    margin-bottom: 10px;
+    min-width:
+        0;
+
+    margin-bottom:
+        7px;
+
 }
 
 
 .notificationTitle {
-    flex: 1 1 auto;
 
-    min-width: 0;
+    flex:
+        1 1 auto;
 
-    color: #4fd8ff;
+    min-width:
+        0;
 
-    font-size: 14px;
-    font-weight: 600;
+    color:
+        #4fd8ff;
 
-    letter-spacing: 1px;
+    font-size:
+        14px;
 
-    line-height: 1.3;
+    font-weight:
+        600;
 
-    text-transform: uppercase;
+    letter-spacing:
+        .7px;
 
-    overflow-wrap: anywhere;
+    line-height:
+        1.25;
+
+    text-transform:
+        uppercase;
+
+    overflow-wrap:
+        anywhere;
+
 }
 
 
 .notificationTime {
-    flex: 0 0 auto;
 
-    color: #7ea7be;
+    flex:
+        0 0 auto;
 
-    font-size: 11px;
+    color:
+        #6e8da2;
 
-    white-space: nowrap;
+    font-size:
+        10px;
+
+    line-height:
+        1.2;
+
+    white-space:
+        nowrap;
+
 }
 
 
@@ -125,16 +232,25 @@
 ========================================================== */
 
 .notificationText {
-    min-width: 0;
 
-    color: #d9ecf8;
+    min-width:
+        0;
 
-    font-size: 14px;
+    color:
+        #d0e3ee;
 
-    line-height: 1.6;
+    font-size:
+        12px;
 
-    overflow-wrap: anywhere;
-    word-break: break-word;
+    line-height:
+        1.5;
+
+    overflow-wrap:
+        anywhere;
+
+    word-break:
+        break-word;
+
 }
 
 
@@ -143,31 +259,50 @@
 ========================================================== */
 
 .notificationIcon {
-    flex: 0 0 34px;
 
-    width: 34px;
-    height: 34px;
+    flex:
+        0 0 30px;
 
-    display: flex;
+    width:
+        30px;
 
-    align-items: center;
-    justify-content: center;
+    height:
+        30px;
 
-    box-sizing: border-box;
+    display:
+        flex;
 
-    border-radius: 50%;
+    align-items:
+        center;
 
-    background: #173247;
+    justify-content:
+        center;
 
-    color: #4fd8ff;
+    box-sizing:
+        border-box;
 
-    font-size: 17px;
-    font-weight: bold;
+    border:
+        1px solid
+        rgba(127,223,255,.18);
 
-    line-height: 1;
+    border-radius:
+        4px;
 
-    box-shadow:
-        0 0 10px rgba(79,216,255,.18);
+    background:
+        #142b3c;
+
+    color:
+        #4fd8ff;
+
+    font-size:
+        14px;
+
+    font-weight:
+        600;
+
+    line-height:
+        1;
+
 }
 
 
@@ -176,45 +311,72 @@
 ========================================================== */
 
 .notificationClose {
-    position: absolute;
 
-    top: 10px;
-    right: 10px;
+    position:
+        absolute;
 
-    width: 24px;
-    height: 24px;
+    top:
+        7px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    right:
+        7px;
 
-    padding: 0;
+    width:
+        22px;
 
-    border: none;
+    height:
+        22px;
 
-    background: transparent;
+    display:
+        flex;
 
-    color: #7fa6bc;
+    align-items:
+        center;
 
-    font-size: 15px;
+    justify-content:
+        center;
 
-    cursor: pointer;
+    padding:
+        0;
+
+    border:
+        none;
+
+    background:
+        transparent;
+
+    color:
+        #718ea1;
+
+    font-size:
+        12px;
+
+    cursor:
+        pointer;
 
     transition:
-        color .2s ease,
-        transform .2s ease;
+        color .15s ease;
+
 }
+
 
 .notificationClose:hover {
-    color: #fff;
 
-    transform:
-        rotate(90deg);
+    color:
+        #d9f3ff;
+
 }
 
+
 .notificationClose:focus-visible {
-    outline: 1px solid #4fd8ff;
-    outline-offset: 2px;
+
+    outline:
+        1px solid
+        #4fd8ff;
+
+    outline-offset:
+        2px;
+
 }
 
 
@@ -223,286 +385,271 @@
 ========================================================== */
 
 .notification:hover {
-    border-color: #4fd8ff;
+
+    border-color:
+        #3b657d;
 
     transform:
-        translateX(-6px);
+        translateX(-3px);
 
     box-shadow:
-        0 0 25px rgba(79,216,255,.2),
-        0 12px 40px rgba(0,0,0,.55);
+        0 12px 30px
+        rgba(0,0,0,.48),
+
+        inset 0 1px 0
+        rgba(255,255,255,.03);
+
 }
 
 
 /* ==========================================================
-   TYPE — INFO
+   INFO
 ========================================================== */
 
 .notification.info {
-    border-left-color: #4fd8ff;
+
+    border-left-color:
+        #4fd8ff;
+
 }
 
+
 .notification.info .notificationIcon {
-    color: #4fd8ff;
+
+    color:
+        #4fd8ff;
 
     background:
         #123247;
+
 }
 
 
 /* ==========================================================
-   TYPE — SUCCESS
+   SUCCESS
 ========================================================== */
 
 .notification.success {
-    border-left-color: #00ff99;
+
+    border-left-color:
+        #00d98a;
+
 }
+
 
 .notification.success .notificationTitle {
-    color: #00ff99;
+
+    color:
+        #45e6a3;
+
 }
 
+
 .notification.success .notificationIcon {
-    color: #00ff99;
+
+    color:
+        #45e6a3;
 
     background:
-        #103a2c;
+        #10362a;
+
 }
 
 
 /* ==========================================================
-   TYPE — WARNING
+   WARNING
 ========================================================== */
 
 .notification.warning {
-    border-left-color: #ffd54f;
+
+    border-left-color:
+        #ffd45a;
+
 }
+
 
 .notification.warning .notificationTitle {
-    color: #ffd54f;
+
+    color:
+        #ffd45a;
+
 }
 
+
 .notification.warning .notificationIcon {
-    color: #ffd54f;
+
+    color:
+        #ffd45a;
 
     background:
-        #433915;
+        #3d3416;
+
 }
 
 
 /* ==========================================================
-   TYPE — ERROR
+   ERROR
 ========================================================== */
 
 .notification.error {
-    border-left-color: #ff5252;
+
+    border-left-color:
+        #ff5c5c;
+
 }
+
 
 .notification.error .notificationTitle {
-    color: #ff7070;
+
+    color:
+        #ff7373;
+
 }
 
+
 .notification.error .notificationIcon {
-    color: #ff6666;
+
+    color:
+        #ff7373;
 
     background:
-        #471919;
+        #411919;
+
 }
 
 
 /* ==========================================================
-   TYPE — OMEGA
+   OMEGA
 ========================================================== */
 
 .notification.omega {
-    border-left-color: #8c7bff;
+
+    border-left-color:
+        #8c7bff;
+
 }
+
 
 .notification.omega .notificationTitle {
-    color: #a89dff;
+
+    color:
+        #a99fff;
+
 }
 
+
 .notification.omega .notificationIcon {
-    color: #a58dff;
+
+    color:
+        #a99fff;
 
     background:
-        #261d46;
+        #261f43;
+
 }
 
 
 /* ==========================================================
-   TYPE — MR.SMILE
+   MR.SMILE
+   ----------------------------------------------------------
+   Special state. Kept visually distinct from normal
+   system notifications.
 ========================================================== */
 
 .notification.mrsmile {
-    border-left-color: #66ff99;
+
+    border-left-color:
+        #66ff99;
 
     background:
         linear-gradient(
             135deg,
-            rgba(0,255,120,.05),
-            rgba(8,16,26,.96)
+            rgba(0,255,120,.045),
+            rgba(8,16,26,.97)
         );
 
-    animation:
-        mrSmileAppear .55s ease both;
 }
+
 
 .notification.mrsmile .notificationTitle {
-    color: #66ff99;
 
-    text-shadow:
-        0 0 10px rgba(102,255,153,.35);
+    color:
+        #66ff99;
+
 }
 
+
 .notification.mrsmile .notificationIcon {
-    color: #66ff99;
+
+    color:
+        #66ff99;
 
     background:
         #123522;
 
-    box-shadow:
-        0 0 10px rgba(102,255,153,.18);
-
     animation:
-        mrSmilePulse 2.5s ease-in-out infinite;
+        mrSmilePulse
+        2.8s
+        ease-in-out
+        infinite;
+
 }
+
 
 .notification.mrsmile:hover {
-    border-color: #66ff99;
 
-    box-shadow:
-        0 0 24px rgba(102,255,153,.16),
-        0 12px 40px rgba(0,0,0,.55);
+    border-color:
+        #4fcf7b;
+
 }
 
 
 /* ==========================================================
-   INNER BORDER / ATMOSPHERE
-========================================================== */
-
-.notification::before {
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    border-radius: inherit;
-
-    pointer-events: none;
-
-    box-shadow:
-        inset 0 0 15px rgba(79,216,255,.05);
-}
-
-
-.notification.success::before {
-    box-shadow:
-        inset 0 0 18px rgba(0,255,153,.08);
-}
-
-
-.notification.warning::before {
-    box-shadow:
-        inset 0 0 18px rgba(255,213,79,.08);
-}
-
-
-.notification.error::before {
-    box-shadow:
-        inset 0 0 18px rgba(255,70,70,.08);
-}
-
-
-.notification.omega::before {
-    box-shadow:
-        inset 0 0 18px rgba(165,141,255,.10);
-}
-
-
-.notification.mrsmile::before {
-    box-shadow:
-        inset 0 0 22px rgba(102,255,153,.10);
-
-    animation:
-        shadowPulse 3s ease-in-out infinite;
-}
-
-
-/* ==========================================================
-   SCAN LINE
-========================================================== */
-
-.notification::after {
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-    left: -50%;
-
-    width: 45%;
-    height: 100%;
-
-    pointer-events: none;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255,255,255,.07),
-            transparent
-        );
-
-    animation:
-        notificationScan
-        5s
-        linear
-        infinite;
-}
-
-@keyframes notificationScan {
-
-    from {
-        left: -50%;
-    }
-
-    to {
-        left: 150%;
-    }
-}
-
-
-/* ==========================================================
-   PROGRESS BAR
+   PROGRESS
 ========================================================== */
 
 .notificationProgress {
-    position: absolute;
 
-    left: 0;
-    bottom: 0;
+    position:
+        absolute;
 
-    width: 100%;
-    height: 3px;
+    left:
+        0;
 
-    overflow: hidden;
+    bottom:
+        0;
+
+    width:
+        100%;
+
+    height:
+        2px;
+
+    overflow:
+        hidden;
 
     background:
-        rgba(255,255,255,.08);
+        rgba(255,255,255,.06);
+
 }
 
 
 .notificationProgress::after {
-    content: "";
 
-    display: block;
+    content:
+        "";
 
-    width: 100%;
-    height: 100%;
+    display:
+        block;
 
-    background: #4fd8ff;
+    width:
+        100%;
+
+    height:
+        100%;
+
+    background:
+        #4fd8ff;
 
     transform-origin:
         left center;
@@ -512,67 +659,100 @@
         5s
         linear
         forwards;
+
 }
 
 
-.notification.success .notificationProgress::after {
-    background: #00ff99;
+.notification.success
+.notificationProgress::after {
+
+    background:
+        #00d98a;
+
 }
 
 
-.notification.warning .notificationProgress::after {
-    background: #ffd54f;
+.notification.warning
+.notificationProgress::after {
+
+    background:
+        #ffd45a;
+
 }
 
 
-.notification.error .notificationProgress::after {
-    background: #ff5252;
+.notification.error
+.notificationProgress::after {
+
+    background:
+        #ff5c5c;
+
 }
 
 
-.notification.omega .notificationProgress::after {
-    background: #8c7bff;
+.notification.omega
+.notificationProgress::after {
+
+    background:
+        #8c7bff;
+
 }
 
 
-.notification.mrsmile .notificationProgress::after {
-    background: #66ff99;
+.notification.mrsmile
+.notificationProgress::after {
+
+    background:
+        #66ff99;
+
 }
 
 
 @keyframes notificationTimer {
 
     from {
+
         transform:
             scaleX(1);
+
     }
 
     to {
+
         transform:
             scaleX(0);
+
     }
+
 }
 
 
 /* ==========================================================
-   SHOW
+   ENTER
 ========================================================== */
 
 @keyframes notificationIn {
 
     from {
-        opacity: 0;
+
+        opacity:
+            0;
 
         transform:
-            translateX(60px);
+            translateX(35px);
+
     }
 
     to {
-        opacity: 1;
+
+        opacity:
+            1;
 
         transform:
             translateX(0);
+
     }
+
 }
 
 
@@ -581,175 +761,110 @@
 ========================================================== */
 
 .notification.hide {
+
     animation:
         notificationOut
-        .3s
+        .25s
         ease
         forwards;
+
 }
 
 
 @keyframes notificationOut {
 
     from {
-        opacity: 1;
+
+        opacity:
+            1;
 
         transform:
             translateX(0);
+
     }
 
     to {
-        opacity: 0;
+
+        opacity:
+            0;
 
         transform:
-            translateX(80px);
+            translateX(45px);
+
     }
+
 }
 
 
 /* ==========================================================
-   ERROR ACTIVITY
+   MR.SMILE PULSE
 ========================================================== */
-
-.notification.error {
-    animation:
-        notificationIn
-        .35s
-        ease
-        both,
-
-        errorPulse
-        2.4s
-        ease-in-out
-        infinite;
-}
-
-@keyframes errorPulse {
-
-    0%,
-    100% {
-        box-shadow:
-            0 12px 35px rgba(0,0,0,.45);
-    }
-
-    50% {
-        box-shadow:
-            0 12px 35px rgba(0,0,0,.55),
-            0 0 14px rgba(255,82,82,.10);
-    }
-}
-
-
-/* ==========================================================
-   WARNING ACTIVITY
-========================================================== */
-
-.notification.warning {
-    animation:
-        notificationIn
-        .35s
-        ease
-        both,
-
-        warningBlink
-        3s
-        ease-in-out
-        infinite;
-}
-
-@keyframes warningBlink {
-
-    0%,
-    90%,
-    100% {
-        filter:
-            none;
-    }
-
-    95% {
-        filter:
-            brightness(1.08);
-    }
-}
-
-
-/* ==========================================================
-   MR.SMILE APPEARANCE
-========================================================== */
-
-@keyframes mrSmileAppear {
-
-    0% {
-        opacity: 0;
-
-        transform:
-            translateX(70px)
-            skewX(-4deg);
-    }
-
-    45% {
-        opacity: 1;
-
-        transform:
-            translateX(-4px)
-            skewX(1deg);
-    }
-
-    100% {
-        opacity: 1;
-
-        transform:
-            translateX(0)
-            skewX(0);
-    }
-}
-
 
 @keyframes mrSmilePulse {
 
     0%,
     100% {
+
         box-shadow:
-            0 0 7px rgba(102,255,153,.16);
+            0 0 6px
+            rgba(102,255,153,.12);
+
     }
 
     50% {
+
         box-shadow:
-            0 0 15px rgba(102,255,153,.32);
-    }
-}
+            0 0 13px
+            rgba(102,255,153,.25);
 
-
-@keyframes shadowPulse {
-
-    0%,
-    100% {
-        opacity:
-            .20;
-
-        transform:
-            scale(1);
     }
 
-    50% {
-        opacity:
-            .38;
-
-        transform:
-            scale(1.01);
-    }
 }
 
 
 /* ==========================================================
-   GLITCH MODE
+   ERROR STATE
+========================================================== */
+
+.notification.error {
+
+    animation:
+        notificationIn
+        .28s
+        ease
+        both;
+
+}
+
+
+/* ==========================================================
+   WARNING STATE
+========================================================== */
+
+.notification.warning {
+
+    animation:
+        notificationIn
+        .28s
+        ease
+        both;
+
+}
+
+
+/* ==========================================================
+   GLITCH
+   ----------------------------------------------------------
+   Only used when explicitly assigned by the system.
 ========================================================== */
 
 .notification.glitch {
+
     animation:
         notificationGlitch
-        .45s
+        .42s
         infinite;
+
 }
 
 
@@ -757,60 +872,66 @@
 
     0%,
     100% {
+
         transform:
             translateX(0);
 
         filter:
             none;
+
     }
 
-    20% {
+    25% {
+
         transform:
-            translate(-2px,1px);
+            translateX(-2px);
 
         filter:
-            hue-rotate(8deg);
+            contrast(1.08);
+
     }
 
-    40% {
+    50% {
+
         transform:
-            translate(3px,-1px);
+            translateX(2px);
+
+    }
+
+    75% {
+
+        transform:
+            translateX(-1px);
 
         filter:
-            brightness(1.1);
+            brightness(1.06);
+
     }
 
-    60% {
-        transform:
-            translate(-3px,2px);
-
-        filter:
-            contrast(1.2);
-    }
-
-    80% {
-        transform:
-            translate(2px,-2px);
-    }
 }
 
 
 /* ==========================================================
-   CORRUPTED TEXT
+   CORRUPTED
 ========================================================== */
 
 .notification.corrupted {
+
     font-family:
         Consolas,
         "Courier New",
         monospace;
 
     letter-spacing:
-        1px;
+        .4px;
 
     text-shadow:
-        1px 0 rgba(255,70,70,.65),
-        -1px 0 rgba(79,216,255,.65);
+        1px 0
+        rgba(255,70,70,.45),
+
+        -1px 0
+        rgba(79,216,255,.45);
+
 }
 
 
@@ -819,27 +940,38 @@
 ========================================================== */
 
 .notification.mrsmile.override {
+
     border-left-color:
         #66ff99;
 
     box-shadow:
-        0 0 24px rgba(0,255,136,.18),
-        inset 0 0 24px rgba(0,255,136,.06);
+        0 0 18px
+        rgba(0,255,136,.12),
+
+        inset 0 0 18px
+        rgba(0,255,136,.04);
+
 }
 
 
-.notification.mrsmile.override .notificationText {
+.notification.mrsmile.override
+.notificationText {
+
     color:
         #baffd6;
+
 }
 
 
-.notification.mrsmile.override .notificationTitle {
+.notification.mrsmile.override
+.notificationTitle {
+
     animation:
         mrSmileText
-        1.4s
+        1.8s
         ease-in-out
         infinite;
+
 }
 
 
@@ -847,14 +979,19 @@
 
     0%,
     100% {
+
         opacity:
             1;
+
     }
 
     50% {
+
         opacity:
-            .60;
+            .65;
+
     }
+
 }
 
 
@@ -863,18 +1000,22 @@
 ========================================================== */
 
 .notification.destroy {
+
     animation:
         notificationDestroy
-        .6s
+        .5s
         ease
         forwards;
+
 }
 
 
 @keyframes notificationDestroy {
 
     0% {
-        opacity: 1;
+
+        opacity:
+            1;
 
         transform:
             translateX(0)
@@ -882,41 +1023,49 @@
 
         filter:
             none;
+
     }
 
-    30% {
+    35% {
+
         transform:
-            translateX(-3px)
-            skewX(-4deg);
+            translateX(-2px);
+
     }
 
-    55% {
+    65% {
+
         transform:
-            translateX(8px);
+            translateX(6px);
 
         filter:
-            brightness(1.3);
+            brightness(1.12);
+
     }
 
     100% {
-        opacity: 0;
+
+        opacity:
+            0;
 
         transform:
-            translateX(12px)
-            translateY(-8px)
-            scale(.86);
+            translateX(16px)
+            scale(.94);
 
         filter:
-            blur(4px);
+            blur(2px);
+
     }
+
 }
 
 
 /* ==========================================================
-   SYSTEM LOCK
+   LOCKED
 ========================================================== */
 
 .notification.locked {
+
     border-left-color:
         #ff4444;
 
@@ -924,7 +1073,8 @@
         none;
 
     opacity:
-        .8;
+        .78;
+
 }
 
 
@@ -933,14 +1083,16 @@
 ========================================================== */
 
 .notification.static {
+
     background-image:
         repeating-linear-gradient(
             0deg,
             transparent 0,
             transparent 3px,
-            rgba(255,255,255,.02) 4px,
+            rgba(255,255,255,.015) 4px,
             transparent 5px
         );
+
 }
 
 
@@ -948,60 +1100,87 @@
    RESPONSIVE
 ========================================================== */
 
-@media (max-width: 700px) {
+@media (
+    max-width: 700px
+) {
 
     #notificationArea {
-        right: 14px;
-        bottom: 14px;
+
+        right:
+            12px;
+
+        bottom:
+            12px;
 
         width:
-            calc(100vw - 28px);
+            calc(100vw - 24px);
 
         gap:
-            10px;
+            8px;
+
     }
+
 
     .notification {
+
         padding:
-            14px 15px;
+            12px
+            13px;
+
     }
+
 
     .notificationHeader {
+
         gap:
-            9px;
+            8px;
 
         padding-right:
-            22px;
+            20px;
+
     }
+
 
     .notificationIcon {
+
         flex-basis:
-            30px;
+            28px;
 
         width:
-            30px;
+            28px;
 
         height:
-            30px;
+            28px;
 
-        font-size:
-            15px;
-    }
-
-    .notificationTitle {
         font-size:
             12px;
+
     }
+
+
+    .notificationTitle {
+
+        font-size:
+            12px;
+
+    }
+
 
     .notificationText {
+
         font-size:
-            13px;
+            12px;
+
     }
 
+
     .notificationTime {
+
         font-size:
             10px;
+
     }
+
 }
 
 
@@ -1009,52 +1188,65 @@
    SMALL MOBILE
 ========================================================== */
 
-@media (max-width: 450px) {
+@media (
+    max-width: 450px
+) {
 
     #notificationArea {
-        right: 10px;
-        bottom: 10px;
+
+        right:
+            8px;
+
+        bottom:
+            8px;
 
         width:
-            calc(100vw - 20px);
+            calc(100vw - 16px);
+
     }
 
+
     .notification {
+
         border-left-width:
             3px;
 
         border-radius:
-            6px;
+            4px;
 
         padding:
-            12px 13px;
-    }
-
-    .notificationHeader {
-        margin-bottom:
-            8px;
-    }
-
-    .notificationText {
-        font-size:
+            11px
             12px;
 
-        line-height:
-            1.5;
     }
+
+
+    .notificationHeader {
+
+        margin-bottom:
+            6px;
+
+    }
+
 
     .notificationTime {
+
         display:
             none;
+
     }
+
 
     .notificationClose {
+
         top:
-            7px;
+            6px;
 
         right:
-            7px;
+            6px;
+
     }
+
 }
 
 
@@ -1062,25 +1254,29 @@
    REDUCED MOTION
 ========================================================== */
 
-@media (prefers-reduced-motion: reduce) {
+@media (
+    prefers-reduced-motion: reduce
+) {
 
     .notification,
-    .notification.error,
-    .notification.warning,
-    .notification.mrsmile,
     .notification.glitch,
     .notification.destroy,
-    .notification.mrsmile.override .notificationTitle,
     .notification.mrsmile .notificationIcon,
-    .notification.mrsmile::before,
-    .notification::after {
+    .notification.mrsmile.override
+        .notificationTitle,
+    .notificationProgress::after {
 
         animation:
             none !important;
+
     }
 
+
     .notification {
+
         transition:
             none;
+
     }
+
 }
