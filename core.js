@@ -45,6 +45,9 @@ import {
 import {
     initPersonnelLife
 } from "./personnelLife.js";
+import {
+    initOmegaDesktop
+} from "./omegaDesktop.js";
 import { initResearch } from "./research.js";
 import { initChats } from "./chats.js";
 import { initSettings } from "./settings2.js";
@@ -228,6 +231,7 @@ function bootSystem() {
         initPersonnel();
         initPersonnelRuntime();
         initPersonnelLife();
+        initOmegaDesktop();
         openExplorer();
         initConsole();
         //minimizeWindow()
