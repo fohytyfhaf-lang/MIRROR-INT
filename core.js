@@ -38,6 +38,7 @@ import { forceEnableMrSmile, forceDisableMrSmile } from "./mrsmile.js";
 import { knowledgeInit } from "./knowledge.js";
 import { Storage } from "./storage.js";
 import { startClock } from "./clock.js";
+import { formatOmegaTime } from "./omegaTime.js";
 import { initPersonnel } from "./personnel.js";
 import {
     initPersonnelRuntime
@@ -190,13 +191,16 @@ function updateClock() {
     const clock = document.getElementById("clock");
     if (!clock) return;
 
-    setInterval(() => {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2, "0");
-        const m = String(now.getMinutes()).padStart(2, "0");
+    const render = () => {
+        clock.textContent = formatOmegaTime(false);
+    };
 
-        clock.textContent = `${h}:${m}`;
-    }, 1000);
+    render();
+
+    setInterval(
+        render,
+        1000
+    );
 }
 /* =========================
         LOGIN
