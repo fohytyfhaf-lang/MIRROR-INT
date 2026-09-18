@@ -1,13 +1,24 @@
 
 /* ==========================================================
    OMEGA DESKTOP
+   UNIFIED TYPOGRAPHY / DESKTOP LAYOUT
+========================================================== */
+
+
+/* ==========================================================
+   01. DESKTOP
 ========================================================== */
 
 #desktop {
-    position: fixed;
-    inset: 0;
 
-    overflow: hidden;
+    position:
+        fixed;
+
+    inset:
+        0;
+
+    overflow:
+        hidden;
 
     background:
         radial-gradient(
@@ -16,18 +27,36 @@
             #081018 70%
         );
 
-    color: #d9f3ff;
+    color:
+        #d9f3ff;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.45;
 }
 
+
 /* ==========================================================
-   DESKTOP BACKGROUND
+   02. DESKTOP BACKGROUND
 ========================================================== */
 
 #desktopBackground {
-    position: absolute;
-    inset: 0;
 
-    overflow: hidden;
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    overflow:
+        hidden;
 
     background:
         linear-gradient(
@@ -35,16 +64,24 @@
             rgba(255, 255, 255, 0)
         );
 
-    pointer-events: none;
+    pointer-events:
+        none;
 }
 
+
 #desktopBackground::before {
-    content: "";
 
-    position: absolute;
-    inset: 0;
+    content:
+        "";
 
-    opacity: .05;
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    opacity:
+        .05;
 
     background-image:
         linear-gradient(
@@ -57,82 +94,155 @@
             transparent 1px
         );
 
-    background-size: 40px 40px;
+    background-size:
+        40px 40px;
 
-    pointer-events: none;
+    pointer-events:
+        none;
 }
 
+
 /* ==========================================================
-   WORKSPACE
+   03. WORKSPACE
 ========================================================== */
 
 #workspace {
-    position: absolute;
 
-    top: 65px;
-    left: 240px;
-    right: 18px;
-    bottom: 18px;
+    position:
+        absolute;
 
-    overflow: hidden;
+    top:
+        65px;
 
-    min-width: 0;
-    min-height: 0;
+    left:
+        240px;
+
+    right:
+        18px;
+
+    bottom:
+        18px;
+
+    overflow:
+        hidden;
+
+    min-width:
+        0;
+
+    min-height:
+        0;
 }
 
+
 /* ==========================================================
-   DESKTOP ICONS
+   04. DESKTOP ICONS
 ========================================================== */
 
 #icons {
-    position: absolute;
 
-    top: 90px;
-    left: 25px;
+    position:
+        absolute;
 
-    width: 180px;
+    top:
+        90px;
 
-    display: grid;
-    grid-template-columns: repeat(2, 92px);
+    left:
+        25px;
 
-    gap: 18px;
+    width:
+        180px;
 
-    z-index: 20;
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            92px
+        );
+
+    gap:
+        18px;
+
+    z-index:
+        20;
 }
+
+
+/* ==========================================================
+   DESKTOP ICON
+========================================================== */
 
 .desktopIcon {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 
-    width: 92px;
-    min-height: 92px;
+    display:
+        flex;
 
-    box-sizing: border-box;
+    flex-direction:
+        column;
 
-    padding: 10px;
+    align-items:
+        center;
 
-    border: 1px solid transparent;
-    border-radius: 8px;
+    justify-content:
+        flex-start;
 
-    gap: 8px;
+    width:
+        92px;
 
-    cursor: pointer;
+    min-height:
+        92px;
+
+    box-sizing:
+        border-box;
+
+    padding:
+        10px;
+
+    gap:
+        8px;
+
+    border:
+        1px solid transparent;
+
+    border-radius:
+        7px;
+
+    cursor:
+        pointer;
 
     transition:
-        background .2s ease,
-        border-color .2s ease;
+        background .15s ease,
+        border-color .15s ease,
+        box-shadow .15s ease;
 }
+
+
+/* ==========================================================
+   ICON HOVER
+========================================================== */
 
 .desktopIcon:hover {
-    background: rgba(255, 255, 255, .06);
+
+    background:
+        rgba(255, 255, 255, .06);
 }
 
-.desktopIcon img {
-    width: 56px;
-    height: 56px;
 
-    object-fit: contain;
+/* ==========================================================
+   ICON IMAGE
+========================================================== */
+
+.desktopIcon img {
+
+    width:
+        56px;
+
+    height:
+        56px;
+
+    object-fit:
+        contain;
 
     filter:
         drop-shadow(
@@ -140,31 +250,59 @@
             rgba(79, 216, 255, .2)
         );
 
-    user-select: none;
-    pointer-events: none;
+    user-select:
+        none;
+
+    pointer-events:
+        none;
 }
+
+
+/* ==========================================================
+   ICON TEXT
+========================================================== */
 
 .desktopIcon span {
-    width: 100%;
 
-    text-align: center;
+    width:
+        100%;
 
-    font-size: 12px;
-    line-height: 1.3;
+    color:
+        #d8ecff;
 
-    color: #d8ecff;
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-    overflow-wrap: anywhere;
+    font-size:
+        12px;
 
-    user-select: none;
+    font-weight:
+        400;
+
+    line-height:
+        1.3;
+
+    text-align:
+        center;
+
+    overflow-wrap:
+        anywhere;
+
+    user-select:
+        none;
 }
+
 
 /* ==========================================================
    SELECTED ICON
 ========================================================== */
 
 .desktopIcon.selected {
-    background: rgba(79, 216, 255, .18);
+
+    background:
+        rgba(79, 216, 255, .18);
 
     border-color:
         rgba(79, 216, 255, .4);
@@ -174,95 +312,202 @@
         rgba(79, 216, 255, .08);
 }
 
+
 /* ==========================================================
-   DESKTOP WATERMARK
+   05. DESKTOP WATERMARK
 ========================================================== */
 
 .desktopWatermark {
-    position: absolute;
 
-    right: 25px;
-    bottom: 25px;
+    position:
+        absolute;
 
-    text-align: right;
+    right:
+        25px;
 
-    color: rgba(255, 255, 255, .15);
+    bottom:
+        25px;
 
-    font-size: 14px;
-    letter-spacing: 2px;
+    text-align:
+        right;
 
-    user-select: none;
-    pointer-events: none;
+    color:
+        rgba(255, 255, 255, .15);
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.3;
+
+    letter-spacing:
+        2px;
+
+    user-select:
+        none;
+
+    pointer-events:
+        none;
 }
+
 
 .desktopWatermark h2 {
-    margin: 0 0 4px;
 
-    font-size: 28px;
-    font-weight: 300;
-    line-height: 1.1;
+    margin:
+        0 0 4px;
+
+    font-size:
+        16px;
+
+    font-weight:
+        300;
+
+    line-height:
+        1.1;
 }
 
+
 /* ==========================================================
-   RESPONSIVE
+   06. RESPONSIVE — TABLET
 ========================================================== */
 
 @media (max-width: 1100px) {
 
     #workspace {
-        left: 90px;
+
+        left:
+            90px;
     }
 
+
     #icons {
-        width: 92px;
-        grid-template-columns: 92px;
+
+        width:
+            92px;
+
+        grid-template-columns:
+            92px;
     }
 }
+
+
+/* ==========================================================
+   07. RESPONSIVE — SMALL SCREEN
+========================================================== */
 
 @media (max-width: 700px) {
 
     #workspace {
-        top: 60px;
-        left: 12px;
-        right: 12px;
-        bottom: 12px;
+
+        top:
+            60px;
+
+        left:
+            12px;
+
+        right:
+            12px;
+
+        bottom:
+            12px;
     }
+
 
     #icons {
-        top: 75px;
-        left: 12px;
 
-        width: 92px;
+        top:
+            75px;
 
-        grid-template-columns: 92px;
-        gap: 12px;
+        left:
+            12px;
+
+        width:
+            92px;
+
+        grid-template-columns:
+            92px;
+
+        gap:
+            12px;
     }
+
 
     .desktopIcon {
-        width: 92px;
-        min-height: 82px;
 
-        padding: 7px;
+        width:
+            92px;
+
+        min-height:
+            82px;
+
+        padding:
+            7px;
+
+        gap:
+            6px;
     }
+
 
     .desktopIcon img {
-        width: 48px;
-        height: 48px;
+
+        width:
+            48px;
+
+        height:
+            48px;
     }
+
 
     .desktopIcon span {
-        font-size: 11px;
+
+        font-size:
+            11px;
+
+        line-height:
+            1.25;
     }
+
 
     .desktopWatermark {
-        right: 15px;
-        bottom: 15px;
 
-        font-size: 11px;
+        right:
+            15px;
+
+        bottom:
+            15px;
+
+        font-size:
+            10px;
     }
 
+
     .desktopWatermark h2 {
-        font-size: 20px;
+
+        font-size:
+            14px;
     }
 }
 
+
+/* ==========================================================
+   08. REDUCED MOTION
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .desktopIcon {
+
+        transition:
+            none;
+    }
+}
+
+
+/* ==========================================================
+   END OMEGA DESKTOP
+========================================================== */
