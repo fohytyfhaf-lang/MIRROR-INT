@@ -111,7 +111,10 @@ let activeFault =
 let cameraEvents = [];
 
 let workspaceMode =
-    true;
+    false;
+
+let cameraVisible =
+    false;
 
 
 /* ==========================================================
