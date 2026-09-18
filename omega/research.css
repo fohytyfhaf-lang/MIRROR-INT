@@ -1,197 +1,678 @@
 /* ==========================================================
-   RESEARCH DATABASE
+   OMEGA RESEARCH ARCHIVE
+   INTERNAL DATABASE INTERFACE
 ========================================================== */
 
+
 /* ==========================================================
-   MAIN WINDOW
+   WINDOW
 ========================================================== */
 
 #researchWindow {
-    display: flex;
-    min-width: 0;
-    min-height: 0;
-    overflow: hidden;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    overflow:
+        hidden;
+
+    background:
+        #050b11;
+
 }
 
 
 /* ==========================================================
-   CATEGORIES
+   MAIN RESEARCH SYSTEM
+========================================================== */
+
+#researchLayout {
+
+    position:
+        relative;
+
+    flex:
+        1 1 auto;
+
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        220px
+        300px
+        minmax(
+            0,
+            1fr
+        );
+
+    overflow:
+        hidden;
+
+    background:
+        #060d14;
+
+}
+
+
+/* ==========================================================
+   VERTICAL SEPARATOR
+========================================================== */
+
+#researchLayout::after {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    top:
+        0;
+
+    bottom:
+        0;
+
+    left:
+        220px;
+
+    width:
+        1px;
+
+    background:
+        rgba(
+            79,
+            216,
+            255,
+            .08
+        );
+
+    pointer-events:
+        none;
+
+}
+
+
+/* ==========================================================
+   DATABASE
+========================================================== */
+
+#researchDatabase {
+
+    position:
+        relative;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    background:
+        linear-gradient(
+            180deg,
+            #09131d 0%,
+            #071019 100%
+        );
+
+    border-right:
+        1px solid
+        #20364a;
+
+    overflow:
+        hidden;
+
+}
+
+
+/* ==========================================================
+   PANEL HEADERS
+========================================================== */
+
+.researchBlockTitle {
+
+    position:
+        relative;
+
+    flex:
+        0 0 44px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    padding:
+        0 14px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        #0c1824;
+
+    border-bottom:
+        1px solid
+        #1d3447;
+
+    color:
+        #7fdfff;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        .14em;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+/* small technical line */
+
+.researchBlockTitle::after {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    left:
+        14px;
+
+    bottom:
+        -1px;
+
+    width:
+        34px;
+
+    height:
+        2px;
+
+    background:
+        #4fd8ff;
+
+    opacity:
+        .75;
+
+}
+
+
+/* ==========================================================
+   DATABASE CONTENT
 ========================================================== */
 
 #researchCategories {
-    flex: 0 0 240px;
-    width: 240px;
-    min-width: 0;
-    min-height: 0;
 
-    box-sizing: border-box;
+    flex:
+        1 1 auto;
 
-    padding: 12px;
+    min-width:
+        0;
 
-    background: #09131d;
-    border-right: 1px solid #22364a;
+    min-height:
+        0;
 
-    overflow-x: hidden;
-    overflow-y: auto;
+    padding:
+        10px;
+
+    overflow-x:
+        hidden;
+
+    overflow-y:
+        auto;
+
 }
 
 
 /* ==========================================================
-   CATEGORY BUTTON
+   DATABASE CATEGORY
 ========================================================== */
 
 .researchCategory {
-    display: block;
 
-    width: 100%;
-    min-width: 0;
+    position:
+        relative;
 
-    margin-bottom: 8px;
-    padding: 12px 14px;
+    display:
+        flex;
 
-    box-sizing: border-box;
+    align-items:
+        center;
 
-    border: 1px solid transparent;
-    border-left: 4px solid transparent;
-    border-radius: 6px;
+    width:
+        100%;
 
-    background: #122030;
+    min-height:
+        43px;
 
-    color: #d9ecff;
+    margin:
+        0 0 5px 0;
 
-    text-align: left;
-    font-family: inherit;
-    font-size: 14px;
-    line-height: 1.35;
+    padding:
+        8px 11px 8px 13px;
 
-    cursor: pointer;
+    box-sizing:
+        border-box;
+
+    border:
+        1px solid
+        transparent;
+
+    border-left:
+        2px solid
+        transparent;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .012
+        );
+
+    color:
+        #8ca8bb;
+
+    text-align:
+        left;
+
+    font-family:
+        inherit;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.3;
+
+    cursor:
+        pointer;
 
     transition:
-        background .2s ease,
-        border-color .2s ease,
-        box-shadow .2s ease;
+        background .15s ease,
+        border-color .15s ease,
+        color .15s ease,
+        transform .15s ease;
+
 }
+
 
 .researchCategory:hover {
-    background: #1d3348;
+
+    background:
+        #0e2030;
+
+    border-color:
+        #18394f;
+
+    color:
+        #d8edfb;
+
+    transform:
+        translateX(
+            2px
+        );
+
 }
+
 
 .researchCategory.active {
-    background: #2b4d68;
-    border-left-color: #4fd8ff;
-    box-shadow: inset 0 0 12px rgba(79, 216, 255, .04);
+
+    background:
+        linear-gradient(
+            90deg,
+            #123149,
+            #0d2232
+        );
+
+    border-color:
+        #24465c;
+
+    border-left-color:
+        #4fd8ff;
+
+    color:
+        #e7f7ff;
+
+    box-shadow:
+        inset 10px 0 20px
+        rgba(
+            79,
+            216,
+            255,
+            .025
+        );
+
 }
 
-.researchCategory:focus-visible {
-    outline: 1px solid #4fd8ff;
-    outline-offset: -1px;
+
+/* active marker */
+
+.researchCategory.active::after {
+
+    content:
+        "ACTIVE";
+
+    position:
+        absolute;
+
+    right:
+        9px;
+
+    color:
+        #4fd8ff;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        .1em;
+
 }
 
 
 /* ==========================================================
-   RESEARCH FILE LIST
+   FILE PANEL
 ========================================================== */
 
 #researchFiles {
-    flex: 0 0 300px;
-    width: 300px;
-    min-width: 0;
-    min-height: 0;
 
-    box-sizing: border-box;
+    display:
+        flex;
 
-    background: #0d1722;
-    border-right: 1px solid #22364a;
+    flex-direction:
+        column;
 
-    overflow-x: hidden;
-    overflow-y: auto;
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    background:
+        #08111a;
+
+    border-right:
+        1px solid
+        #20364a;
+
 }
 
 
 /* ==========================================================
-   RESEARCH FILE
+   FILE LIST
+========================================================== */
+
+#researchFileList {
+
+    flex:
+        1 1 auto;
+
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    padding:
+        4px 0;
+
+    overflow-x:
+        hidden;
+
+    overflow-y:
+        auto;
+
+}
+
+
+/* ==========================================================
+   FILE ENTRY
 ========================================================== */
 
 .researchFile {
-    position: relative;
 
-    min-width: 0;
+    position:
+        relative;
 
-    padding: 14px 18px;
+    display:
+        block;
 
-    box-sizing: border-box;
+    min-width:
+        0;
 
-    border-left: 4px solid transparent;
-    border-bottom: 1px solid rgba(255, 255, 255, .05);
+    min-height:
+        72px;
 
-    background: transparent;
+    padding:
+        13px 16px 12px 18px;
 
-    cursor: pointer;
+    box-sizing:
+        border-box;
+
+    background:
+        transparent;
+
+    border-bottom:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .035
+        );
+
+    border-left:
+        3px solid
+        transparent;
+
+    cursor:
+        pointer;
 
     transition:
-        background .2s ease,
-        border-color .2s ease;
+        background .15s ease,
+        border-color .15s ease;
+
 }
+
 
 .researchFile:hover {
-    background: #17293b;
+
+    background:
+        #0d1e2c;
+
 }
+
 
 .researchFile.active {
-    background: #20394f;
-    border-left-color: #4fd8ff;
-}
 
-.researchFile:focus-visible {
-    outline: 1px solid #4fd8ff;
-    outline-offset: -1px;
-}
+    background:
+        linear-gradient(
+            90deg,
+            #123047,
+            #0c1e2e
+        );
 
-.researchFile b {
-    display: block;
+    border-left-color:
+        #4fd8ff;
 
-    min-width: 0;
-
-    margin-bottom: 4px;
-
-    color: #ffffff;
-
-    font-size: 14px;
-    line-height: 1.35;
-
-    overflow-wrap: anywhere;
-}
-
-.researchFile small {
-    display: block;
-
-    min-width: 0;
-
-    color: #8bb8d7;
-
-    font-size: 12px;
-    line-height: 1.4;
-
-    overflow-wrap: anywhere;
 }
 
 
 /* ==========================================================
-   RESEARCH VIEWER
+   FILE ACTIVE TOP LINE
+========================================================== */
+
+.researchFile.active::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    top:
+        0;
+
+    left:
+        10px;
+
+    right:
+        0;
+
+    height:
+        1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #4fd8ff,
+            transparent
+        );
+
+    opacity:
+        .45;
+
+}
+
+
+/* ==========================================================
+   FILE NAME
+========================================================== */
+
+.researchFile b {
+
+    display:
+        block;
+
+    min-width:
+        0;
+
+    margin:
+        0 0 7px 0;
+
+    color:
+        #e2f2ff;
+
+    font-family:
+        "Segoe UI",
+        sans-serif;
+
+    font-size:
+        12px;
+
+    font-weight:
+        600;
+
+    line-height:
+        1.35;
+
+    overflow-wrap:
+        anywhere;
+
+}
+
+
+/* ==========================================================
+   FILE ID
+========================================================== */
+
+.researchFile small {
+
+    display:
+        block;
+
+    min-width:
+        0;
+
+    color:
+        #62849b;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+    line-height:
+        1.3;
+
+    letter-spacing:
+        .05em;
+
+    overflow-wrap:
+        anywhere;
+
+}
+
+
+/* ==========================================================
+   VIEWER
 ========================================================== */
 
 #researchViewer {
-    flex: 1 1 auto;
 
-    min-width: 0;
-    min-height: 0;
+    position:
+        relative;
 
-    display: flex;
-    flex-direction: column;
+    display:
+        flex;
 
-    overflow: hidden;
+    flex-direction:
+        column;
 
-    background: #081018;
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    overflow:
+        hidden;
+
+    background:
+        #060d14;
+
 }
 
 
@@ -200,128 +681,119 @@
 ========================================================== */
 
 #viewerHeader {
-    flex: 0 0 auto;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    position:
+        relative;
 
-    gap: 18px;
+    flex:
+        0 0 74px;
 
-    min-width: 0;
+    display:
+        flex;
 
-    padding: 18px 22px;
+    align-items:
+        center;
 
-    box-sizing: border-box;
+    justify-content:
+        space-between;
 
-    background: #111d2b;
-    border-bottom: 1px solid #22364a;
+    gap:
+        18px;
+
+    min-width:
+        0;
+
+    padding:
+        12px 18px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        linear-gradient(
+            180deg,
+            #0d1a27,
+            #0a141e
+        );
+
+    border-bottom:
+        1px solid
+        #233b50;
+
 }
+
+
+/* ==========================================================
+   VIEWER HEADER DECORATION
+========================================================== */
+
+#viewerHeader::before {
+
+    content:
+        "OMEGA / RESEARCH / RECORD";
+
+    position:
+        absolute;
+
+    top:
+        7px;
+
+    left:
+        18px;
+
+    color:
+        #4e7188;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        .12em;
+
+    pointer-events:
+        none;
+
+}
+
+
+/* ==========================================================
+   VIEWER TITLE
+========================================================== */
 
 #viewerTitle {
-    flex: 1 1 auto;
 
-    min-width: 0;
+    flex:
+        1 1 auto;
 
-    margin: 0;
+    min-width:
+        0;
 
-    color: #e7f6ff;
+    margin:
+        10px 0 0 0;
 
-    font-size: 22px;
-    font-weight: 600;
-    line-height: 1.3;
+    color:
+        #edf8ff;
 
-    overflow-wrap: anywhere;
-}
+    font-size:
+        16px;
 
-#viewerLevel {
-    flex: 0 0 auto;
+    font-weight:
+        600;
 
-    padding: 6px 12px;
+    line-height:
+        1.3;
 
-    box-sizing: border-box;
+    letter-spacing:
+        .01em;
 
-    border-radius: 20px;
+    overflow-wrap:
+        anywhere;
 
-    background: #204d35;
-
-    color: #6dffb2;
-
-    font-size: 12px;
-    line-height: 1.2;
-    letter-spacing: 1px;
-
-    white-space: nowrap;
-}
-
-
-/* ==========================================================
-   VIEWER BODY
-========================================================== */
-
-#viewerBody {
-    flex: 1 1 auto;
-
-    min-width: 0;
-    min-height: 0;
-
-    padding: 25px;
-
-    box-sizing: border-box;
-
-    overflow-x: hidden;
-    overflow-y: auto;
-
-    background: #081018;
-}
-
-
-/* ==========================================================
-   VIEWER IMAGE
-========================================================== */
-
-#viewerImage {
-    min-width: 0;
-
-    margin-bottom: 25px;
-}
-
-#viewerImage img {
-    display: block;
-
-    width: 100%;
-    max-width: 450px;
-    height: auto;
-
-    box-sizing: border-box;
-
-    border: 1px solid #2b4258;
-    border-radius: 8px;
-
-    background: #05090d;
-
-    box-shadow: 0 0 25px rgba(0, 0, 0, .4);
-
-    user-select: none;
-}
-
-
-/* ==========================================================
-   VIEWER CONTENT
-========================================================== */
-
-#viewerContent {
-    min-width: 0;
-
-    color: #d2e7f8;
-
-    font-size: 15px;
-    line-height: 1.7;
-
-    white-space: pre-wrap;
-
-    overflow-wrap: anywhere;
-    word-break: break-word;
 }
 
 
@@ -329,123 +801,470 @@
    CLEARANCE
 ========================================================== */
 
-.clearanceLevel {
-    display: inline-block;
+#viewerLevel {
 
-    margin-top: 12px;
-    padding: 6px 12px;
+    flex:
+        0 0 auto;
 
-    box-sizing: border-box;
+    min-height:
+        28px;
 
-    background: #501515;
+    display:
+        flex;
 
-    border: 1px solid rgba(255, 95, 95, .1);
-    border-radius: 4px;
+    align-items:
+        center;
 
-    color: #ff9f9f;
+    margin-top:
+        10px;
 
-    font-size: 12px;
-    line-height: 1.3;
+    padding:
+        0 10px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        #163525;
+
+    border:
+        1px solid
+        #2b6748;
+
+    border-radius:
+        2px;
+
+    color:
+        #73e4a9;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        .08em;
+
+    white-space:
+        nowrap;
+
 }
 
 
 /* ==========================================================
-   RESEARCH STATUS
+   DOCUMENT AREA
+========================================================== */
+
+#viewerContent {
+
+    position:
+        relative;
+
+    flex:
+        1 1 auto;
+
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    margin:
+        16px;
+
+    padding:
+        24px;
+
+    box-sizing:
+        border-box;
+
+    overflow-x:
+        hidden;
+
+    overflow-y:
+        auto;
+
+    background:
+        linear-gradient(
+            180deg,
+            #0b151f,
+            #09131c
+        );
+
+    border:
+        1px solid
+        #1d3446;
+
+    box-shadow:
+        inset 0 0 25px
+        rgba(
+            0,
+            0,
+            0,
+            .18
+        );
+
+    color:
+        #c9dce9;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.75;
+
+    white-space:
+        pre-wrap;
+
+    overflow-wrap:
+        anywhere;
+
+    word-break:
+        break-word;
+
+}
+
+
+/* document corner markers */
+
+#viewerContent::before,
+#viewerContent::after {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    width:
+        8px;
+
+    height:
+        8px;
+
+    pointer-events:
+        none;
+
+}
+
+
+#viewerContent::before {
+
+    top:
+        -1px;
+
+    left:
+        -1px;
+
+    border-top:
+        1px solid
+        #4fd8ff;
+
+    border-left:
+        1px solid
+        #4fd8ff;
+
+}
+
+
+#viewerContent::after {
+
+    right:
+        -1px;
+
+    bottom:
+        -1px;
+
+    border-right:
+        1px solid
+        #4fd8ff;
+
+    border-bottom:
+        1px solid
+        #4fd8ff;
+
+}
+
+
+/* ==========================================================
+   IMAGE
+========================================================== */
+
+#viewerImage {
+
+    flex:
+        0 0 auto;
+
+    display:
+        flex;
+
+    min-width:
+        0;
+
+    padding:
+        16px 16px 0 16px;
+
+    box-sizing:
+        border-box;
+
+}
+
+
+#viewerImage img {
+
+    display:
+        block;
+
+    width:
+        auto;
+
+    max-width:
+        min(
+            100%,
+            520px
+        );
+
+    max-height:
+        300px;
+
+    height:
+        auto;
+
+    object-fit:
+        contain;
+
+    box-sizing:
+        border-box;
+
+    border:
+        1px solid
+        #2b4b61;
+
+    background:
+        #04080c;
+
+    box-shadow:
+        0 12px 35px
+        rgba(
+            0,
+            0,
+            0,
+            .45
+        );
+
+    user-select:
+        none;
+
+}
+
+
+/* ==========================================================
+   STATUS
 ========================================================== */
 
 .statusAlive {
-    color: #6effb6;
+
+    color:
+        #69e6a5;
+
 }
+
 
 .statusDead {
-    color: #ff5f5f;
+
+    color:
+        #ff6767;
+
 }
 
+
 .statusUnknown {
-    color: #ffd966;
+
+    color:
+        #e7c85a;
+
 }
 
 
 /* ==========================================================
-   RESEARCH SEARCH
+   CLEARANCE LABEL
+========================================================== */
+
+.clearanceLevel {
+
+    display:
+        inline-block;
+
+    margin-top:
+        10px;
+
+    padding:
+        5px 9px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        #401719;
+
+    border:
+        1px solid
+        #633032;
+
+    color:
+        #ffaaaa;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+    letter-spacing:
+        .05em;
+
+}
+
+
+/* ==========================================================
+   SEARCH
 ========================================================== */
 
 .researchSearch {
-    flex: 0 0 auto;
 
-    padding: 15px;
+    flex:
+        0 0 auto;
 
-    box-sizing: border-box;
+    padding:
+        9px;
 
-    background: #0d1722;
-    border-bottom: 1px solid #22364a;
+    background:
+        #08121b;
+
+    border-bottom:
+        1px solid
+        #20364a;
+
 }
+
 
 .researchSearch input {
-    display: block;
 
-    width: 100%;
-    min-width: 0;
+    width:
+        100%;
 
-    padding: 10px 12px;
+    box-sizing:
+        border-box;
 
-    box-sizing: border-box;
+    padding:
+        8px 10px;
 
-    background: #071018;
+    background:
+        #050c12;
 
-    border: 1px solid #22364a;
-    border-radius: 4px;
+    border:
+        1px solid
+        #264257;
 
-    color: #dff6ff;
+    color:
+        #dff6ff;
 
-    font-family: inherit;
-    font-size: 13px;
-    line-height: 1.3;
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
 
-    outline: none;
+    font-size:
+        11px;
 
-    transition:
-        border-color .2s ease,
-        box-shadow .2s ease;
+    outline:
+        none;
+
 }
 
-.researchSearch input::placeholder {
-    color: #68869d;
-}
 
 .researchSearch input:focus {
-    border-color: #4fd8ff;
-    box-shadow: 0 0 8px rgba(79, 216, 255, .12);
+
+    border-color:
+        #4fd8ff;
+
+    box-shadow:
+        0 0 0 1px
+        rgba(
+            79,
+            216,
+            255,
+            .08
+        );
+
+}
+
+
+.researchSearch input::placeholder {
+
+    color:
+        #5d7b90;
+
 }
 
 
 /* ==========================================================
-   RESEARCH SCROLLBARS
+   SCROLLBARS
 ========================================================== */
 
 #researchCategories::-webkit-scrollbar,
-#researchFiles::-webkit-scrollbar,
-#viewerBody::-webkit-scrollbar {
-    width: 8px;
+#researchFileList::-webkit-scrollbar,
+#viewerContent::-webkit-scrollbar {
+
+    width:
+        7px;
+
 }
+
 
 #researchCategories::-webkit-scrollbar-track,
-#researchFiles::-webkit-scrollbar-track,
-#viewerBody::-webkit-scrollbar-track {
-    background: #071019;
+#researchFileList::-webkit-scrollbar-track,
+#viewerContent::-webkit-scrollbar-track {
+
+    background:
+        #050b10;
+
 }
+
 
 #researchCategories::-webkit-scrollbar-thumb,
-#researchFiles::-webkit-scrollbar-thumb,
-#viewerBody::-webkit-scrollbar-thumb {
-    background: #315774;
-    border-radius: 20px;
+#researchFileList::-webkit-scrollbar-thumb,
+#viewerContent::-webkit-scrollbar-thumb {
+
+    background:
+        #27465c;
+
+    border-radius:
+        8px;
+
 }
 
+
 #researchCategories::-webkit-scrollbar-thumb:hover,
-#researchFiles::-webkit-scrollbar-thumb:hover,
-#viewerBody::-webkit-scrollbar-thumb:hover {
-    background: #4fd8ff;
+#researchFileList::-webkit-scrollbar-thumb:hover,
+#viewerContent::-webkit-scrollbar-thumb:hover {
+
+    background:
+        #4fd8ff;
+
 }
 
 
@@ -453,211 +1272,431 @@
    TABLET
 ========================================================== */
 
-@media (max-width: 900px) {
+@media (
+    max-width:
+        1000px
+) {
 
-    #researchCategories {
-        flex-basis: 200px;
-        width: 200px;
-        padding: 10px;
+    #researchLayout {
+
+        grid-template-columns:
+            185px
+            255px
+            minmax(
+                0,
+                1fr
+            );
+
     }
 
-    #researchFiles {
-        flex-basis: 240px;
-        width: 240px;
+
+    #researchLayout::after {
+
+        left:
+            185px;
+
     }
 
-    .researchCategory {
-        padding: 10px 12px;
-        font-size: 13px;
-    }
-
-    .researchFile {
-        padding: 12px 14px;
-    }
-
-    #viewerHeader {
-        padding: 15px 18px;
-    }
-
-    #viewerTitle {
-        font-size: 19px;
-    }
-
-    #viewerBody {
-        padding: 20px;
-    }
-
-    #viewerContent {
-        font-size: 14px;
-    }
 }
 
 
 /* ==========================================================
-   SMALL SCREENS
+   SMALL
 ========================================================== */
 
-@media (max-width: 700px) {
+@media (
+    max-width:
+        750px
+) {
 
-    #researchWindow {
-        flex-direction: column;
+    #researchLayout {
+
+        grid-template-columns:
+            165px
+            215px
+            minmax(
+                0,
+                1fr
+            );
+
     }
+
+
+    #researchLayout::after {
+
+        left:
+            165px;
+
+    }
+
+
+    #viewerHeader {
+
+        flex-basis:
+            64px;
+
+        padding:
+            10px 14px;
+
+    }
+
+
+    #viewerTitle {
+
+        font-size:
+            14px;
+
+    }
+
+
+    #viewerContent {
+
+        margin:
+            13px;
+
+        padding:
+            18px;
+
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (
+    max-width:
+        600px
+) {
+
+    #researchLayout {
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+    }
+
+
+    #researchLayout::after {
+
+        display:
+            none;
+
+    }
+
+
+    #researchDatabase {
+
+        flex:
+            0 0 52px;
+
+        width:
+            100%;
+
+        border-right:
+            none;
+
+        border-bottom:
+            1px solid
+            #20364a;
+
+    }
+
+
+    #researchDatabase .researchBlockTitle {
+
+        display:
+            none;
+
+    }
+
 
     #researchCategories {
-        flex: 0 0 58px;
 
-        width: 100%;
-        height: 58px;
+        display:
+            flex;
 
-        padding: 8px;
+        gap:
+            6px;
 
-        border-right: none;
-        border-bottom: 1px solid #22364a;
+        width:
+            100%;
 
-        overflow-x: auto;
-        overflow-y: hidden;
+        height:
+            52px;
 
-        display: flex;
-        gap: 8px;
+        padding:
+            7px;
+
+        overflow-x:
+            auto;
+
+        overflow-y:
+            hidden;
+
     }
+
 
     .researchCategory {
-        flex: 0 0 auto;
 
-        width: auto;
-        min-width: 120px;
+        flex:
+            0 0 auto;
 
-        margin-bottom: 0;
-        padding: 9px 12px;
+        width:
+            auto;
 
-        white-space: nowrap;
+        min-width:
+            120px;
+
+        min-height:
+            36px;
+
+        margin:
+            0;
+
     }
+
+
+    .researchCategory.active::after {
+
+        display:
+            none;
+
+    }
+
 
     #researchFiles {
-        flex: 0 0 150px;
 
-        width: 100%;
-        height: 150px;
+        flex:
+            0 0 145px;
 
-        border-right: none;
-        border-bottom: 1px solid #22364a;
+        width:
+            100%;
 
-        display: flex;
+        border-right:
+            none;
 
-        overflow-x: auto;
-        overflow-y: hidden;
+        border-bottom:
+            1px solid
+            #20364a;
+
     }
+
+
+    #researchFiles .researchBlockTitle {
+
+        flex-basis:
+            34px;
+
+    }
+
+
+    #researchFileList {
+
+        display:
+            flex;
+
+        overflow-x:
+            auto;
+
+        overflow-y:
+            hidden;
+
+    }
+
 
     .researchFile {
-        flex: 0 0 190px;
 
-        height: 100%;
+        flex:
+            0 0 190px;
 
-        border-left: none;
-        border-bottom: 3px solid transparent;
+        min-height:
+            0;
+
+        border-left:
+            none;
+
+        border-bottom:
+            2px solid
+            transparent;
+
     }
+
 
     .researchFile.active {
-        border-left-color: transparent;
-        border-bottom-color: #4fd8ff;
+
+        border-left-color:
+            transparent;
+
+        border-bottom-color:
+            #4fd8ff;
+
     }
+
 
     #researchViewer {
-        flex: 1 1 auto;
 
-        min-height: 0;
+        flex:
+            1 1 auto;
+
+        min-height:
+            0;
+
     }
+
 
     #viewerHeader {
-        gap: 12px;
-        padding: 12px 15px;
+
+        flex-basis:
+            auto;
+
+        min-height:
+            58px;
+
+        padding:
+            9px 12px;
+
     }
+
+
+    #viewerHeader::before {
+
+        font-size:
+            7px;
+
+    }
+
 
     #viewerTitle {
-        font-size: 17px;
+
+        margin-top:
+            8px;
+
     }
+
 
     #viewerLevel {
-        padding: 5px 9px;
-        font-size: 10px;
+
+        margin-top:
+            8px;
+
     }
 
-    #viewerBody {
-        padding: 16px;
-    }
-
-    #viewerImage {
-        margin-bottom: 18px;
-    }
-
-    #viewerImage img {
-        max-width: 100%;
-    }
 
     #viewerContent {
-        font-size: 13px;
-        line-height: 1.65;
+
+        margin:
+            10px;
+
+        padding:
+            14px;
+
+        font-size:
+            12px;
+
+        line-height:
+            1.65;
+
     }
 
-    .researchSearch {
-        padding: 10px;
+
+    #viewerImage {
+
+        padding:
+            10px 10px 0 10px;
+
     }
+
 }
 
 
 /* ==========================================================
-   VERY SMALL SCREENS
+   VERY SMALL
 ========================================================== */
 
-@media (max-width: 450px) {
+@media (
+    max-width:
+        430px
+) {
+
+    #researchDatabase {
+
+        flex-basis:
+            48px;
+
+    }
+
 
     #researchCategories {
-        flex-basis: 52px;
-        height: 52px;
+
+        height:
+            48px;
+
     }
+
 
     .researchCategory {
-        min-width: 105px;
 
-        padding: 8px 10px;
+        min-width:
+            105px;
 
-        font-size: 12px;
+        min-height:
+            34px;
+
+        padding:
+            7px 10px;
+
+        font-size:
+            11px;
+
     }
+
 
     #researchFiles {
-        flex-basis: 130px;
-        height: 130px;
+
+        flex-basis:
+            125px;
+
     }
+
 
     .researchFile {
-        flex-basis: 165px;
-        padding: 10px 12px;
+
+        flex-basis:
+            165px;
+
+        padding:
+            10px 12px;
+
     }
 
-    .researchFile b {
-        font-size: 13px;
-    }
-
-    .researchFile small {
-        font-size: 11px;
-    }
-
-    #viewerHeader {
-        align-items: flex-start;
-        flex-direction: column;
-    }
 
     #viewerTitle {
-        width: 100%;
+
+        font-size:
+            14px;
+
     }
 
-    #viewerLevel {
-        align-self: flex-start;
+
+    #viewerContent {
+
+        margin:
+            8px;
+
+        padding:
+            12px;
+
+        font-size:
+            11px;
+
     }
 
-    #viewerBody {
-        padding: 14px;
-    }
 }
 
 
@@ -665,11 +1704,18 @@
    REDUCED MOTION
 ========================================================== */
 
-@media (prefers-reduced-motion: reduce) {
+@media (
+    prefers-reduced-motion:
+        reduce
+) {
 
     .researchCategory,
     .researchFile,
     .researchSearch input {
-        transition: none;
+
+        transition:
+            none;
+
     }
+
 }
