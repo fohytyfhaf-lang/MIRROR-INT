@@ -2052,7 +2052,7 @@ function enterWorkspaceMode() {
 function leaveWorkspaceMode() {
 
     workspaceMode =
-        true;
+        false;
 
 
     const workspace =
