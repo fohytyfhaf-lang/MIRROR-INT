@@ -47,7 +47,7 @@ function initPersonnelData() {
         RENDER LIST
 ========================= */
 
-function renderPersonnel() {
+export function renderPersonnel() {
   const list = document.getElementById("personnelList");
   if (!list) return;
 
@@ -133,4 +133,6 @@ export function addPersonnel(person) {
 export function initPersonnel() {
   initPersonnelData();
   renderPersonnel();
+        
+  window.renderPersonnel = renderPersonnel;
 }
