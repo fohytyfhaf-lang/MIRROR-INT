@@ -381,6 +381,340 @@
     <section id="workspace">
 
         <!-- ==================================
+     OMEGA DESKTOP HOME
+     Internal system overview
+=================================== -->
+
+<section
+    id="omegaDesktopHome"
+    aria-hidden="true"
+>
+
+    <div class="omegaDesktopLayout">
+
+
+        <!-- SYSTEM OVERVIEW -->
+
+        <section class="omegaDesktopPanel">
+
+            <div class="omegaDesktopPanelHeader">
+
+                <span>
+                    SYSTEM OVERVIEW
+                </span>
+
+                <span>
+                    OMEGA INTERNAL
+                </span>
+
+            </div>
+
+
+            <div class="omegaDesktopOverview">
+
+
+                <div class="omegaDesktopMetric">
+
+                    <span>
+                        OMEGA STATUS
+                    </span>
+
+                    <strong>
+                        ONLINE
+                    </strong>
+
+                </div>
+
+
+                <div class="omegaDesktopMetric">
+
+                    <span>
+                        ACTIVE MODULES
+                    </span>
+
+                    <strong
+                        id="omegaDesktopModuleCount"
+                    >
+                        14
+                    </strong>
+
+                </div>
+
+
+                <div class="omegaDesktopMetric">
+
+                    <span>
+                        ACTIVE PERSONNEL
+                    </span>
+
+                    <strong
+                        id="omegaDesktopPersonnelCount"
+                    >
+                        00
+                    </strong>
+
+                </div>
+
+
+                <div class="omegaDesktopMetric">
+
+                    <span>
+                        TIME STATUS
+                    </span>
+
+                    <strong
+                        id="omegaDesktopTimeStatus"
+                    >
+                        SYNCED
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- FACILITY STATUS -->
+
+        <section class="omegaDesktopPanel">
+
+            <div class="omegaDesktopPanelHeader">
+
+                <span>
+                    FACILITY STATUS
+                </span>
+
+                <span
+                    id="omegaDesktopOperator"
+                >
+                    NO ACTIVE OPERATOR
+                </span>
+
+            </div>
+
+
+            <div class="omegaDesktopFacility">
+
+
+                <div class="omegaDesktopFacilityRow">
+
+                    <span>
+                        SECURITY
+                    </span>
+
+                    <span
+                        id="omegaDesktopDepartment-SECURITY"
+                        data-state="active"
+                    >
+                        ACTIVE
+                    </span>
+
+                </div>
+
+
+                <div class="omegaDesktopFacilityRow">
+
+                    <span>
+                        RESEARCH
+                    </span>
+
+                    <span
+                        id="omegaDesktopDepartment-RESEARCH"
+                        data-state="active"
+                    >
+                        ACTIVE
+                    </span>
+
+                </div>
+
+
+                <div class="omegaDesktopFacilityRow">
+
+                    <span>
+                        MEDICAL
+                    </span>
+
+                    <span
+                        id="omegaDesktopDepartment-MEDICAL"
+                        data-state="active"
+                    >
+                        ACTIVE
+                    </span>
+
+                </div>
+
+
+                <div class="omegaDesktopFacilityRow">
+
+                    <span>
+                        ADMINISTRATION
+                    </span>
+
+                    <span
+                        id="omegaDesktopDepartment-ADMINISTRATION"
+                        data-state="active"
+                    >
+                        ACTIVE
+                    </span>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- PERSONNEL -->
+
+        <section class="omegaDesktopPanel">
+
+            <div class="omegaDesktopPanelHeader">
+
+                <span>
+                    PERSONNEL ACTIVITY
+                </span>
+
+                <span>
+                    LIVE STATUS
+                </span>
+
+            </div>
+
+
+            <div
+                id="omegaDesktopPersonnel"
+                class="omegaDesktopPersonnel"
+            >
+
+                <div class="omegaDesktopEmpty">
+                    LOADING PERSONNEL...
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- SYSTEM ACTIVITY -->
+
+        <section class="omegaDesktopPanel">
+
+            <div class="omegaDesktopPanelHeader">
+
+                <span>
+                    RECENT SYSTEM ACTIVITY
+                </span>
+
+                <span>
+                    LAST EVENTS
+                </span>
+
+            </div>
+
+
+            <div
+                id="omegaDesktopActivity"
+                class="omegaDesktopActivity"
+            >
+
+                <div class="omegaDesktopEmpty">
+                    LOADING SYSTEM ACTIVITY...
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- FOOTER -->
+
+        <section
+            class="
+                omegaDesktopPanel
+                omegaDesktopPanelWide
+            "
+        >
+
+            <div class="omegaDesktopBottom">
+
+
+                <div
+                    id="omegaDesktopNotice"
+                    class="omegaDesktopNotice"
+                    data-state="normal"
+                >
+                    NO ACTIVE SYSTEM NOTICES.
+                </div>
+
+
+                <div class="omegaDesktopNetwork">
+
+
+                    <div class="omegaDesktopNetworkItem">
+
+                        <span>
+                            CAMERA NETWORK
+                        </span>
+
+                        <strong
+                            id="omegaDesktopCameraStatus"
+                        >
+                            0 CHANNELS
+                        </strong>
+
+                    </div>
+
+
+                    <div class="omegaDesktopNetworkItem">
+
+                        <span>
+                            ARCHIVE
+                        </span>
+
+                        <strong
+                            id="omegaDesktopArchiveStatus"
+                        >
+                            ONLINE
+                        </strong>
+
+                    </div>
+
+
+                    <div class="omegaDesktopNetworkItem">
+
+                        <span>
+                            LAST SYSTEM SYNC
+                        </span>
+
+                        <strong
+                            id="omegaDesktopLastSync"
+                        >
+                            00:00
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+</section>
+
+        <!-- ==================================
      OPERATOR ACTIVITY
 =================================== -->
 
