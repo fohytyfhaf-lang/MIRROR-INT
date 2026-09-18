@@ -2,28 +2,89 @@
    OMEGA SECURITY SURVEILLANCE SYSTEM
    MIRROR-INT / OMEGA
 
-   Responsibilities:
+   CCTV module
+
+   PURPOSE
+   ----------------------------------------------------------
    - camera channel management
    - live feed rendering
-   - channel selection
-   - surveillance UI state
+   - technical diagnostics
+   - event monitoring
+   - equipment faults
+   - personnel / system event integration
    - OMEGA time integration
-   - operator action reporting
-   - MR.SMILE context integration
+   - workspace surveillance mode
+   - MR.SMILE context reporting
 
-   Does NOT:
-   - create anomaly events
-   - control MR.SMILE behavior
-   - create horror effects
+   DESIGN PRINCIPLE
+   ----------------------------------------------------------
+   This is an internal surveillance system.
+
+   It does not behave like a game HUD.
+
+   Faults are operational.
+   Events are procedural.
+   Anomalies are subtle.
 ========================================================== */
 
 import {
-    trigger
+    trigger,
+    on
 } from "./eventManager.js";
 
 import {
     formatOmegaTime
 } from "./omegaTime.js";
+
+import {
+    Storage
+} from "./storage.js";
+
+
+/* ==========================================================
+   CONSTANTS
+========================================================== */
+
+const CAMERA_STATE_KEY =
+    "omega_camera_state_v1";
+
+const CAMERA_EVENTS_KEY =
+    "omega_camera_events_v1";
+
+const MAX_EVENTS =
+    40;
+
+
+/* ==========================================================
+   SIMULATION CONFIG
+========================================================== */
+
+const SIMULATION = {
+
+    /*
+     * Do not break anything immediately
+     * after system startup.
+     */
+
+    earliestFault:
+        45000,
+
+    tick:
+        15000,
+
+    faultChance:
+        0.035,
+
+    minimumFaultGap:
+        90000,
+
+    minimumRecovery:
+        18000,
+
+    maximumRecovery:
+        50000
+
+};
 
 
 /* ==========================================================
@@ -32,7 +93,25 @@ import {
 
 let currentCam = 0;
 
+let initialized = false;
+
 let clockTimer = null;
+
+let simulationTimer = null;
+
+let simulationStartedAt =
+    Date.now();
+
+let lastFaultAt =
+    0;
+
+let activeFault =
+    null;
+
+let cameraEvents = [];
+
+let workspaceMode =
+    true;
 
 
 /* ==========================================================
@@ -44,57 +123,238 @@ const cameras = [
     {
         id: "CAM 01",
         name: "BASE AREA",
-        image: "./images/cam_ba.jpg",
-        signal: 98,
-        status: "ONLINE"
+
+        zone:
+            "A-01",
+
+        image:
+            "./images/cam_ba.jpg",
+
+        signal:
+            98,
+
+        resolution:
+            "1920×1080",
+
+        fps:
+            25,
+
+        codec:
+            "H.264",
+
+        status:
+            "ONLINE",
+
+        recording:
+            true,
+
+        storage:
+            78
+
     },
+
 
     {
         id: "CAM 02",
         name: "CORRIDOR",
-        image: "./images/cam_cor.jpg",
-        signal: 97,
-        status: "ONLINE"
+
+        zone:
+            "A-02",
+
+        image:
+            "./images/cam_cor.jpg",
+
+        signal:
+            97,
+
+        resolution:
+            "1920×1080",
+
+        fps:
+            25,
+
+        codec:
+            "H.264",
+
+        status:
+            "ONLINE",
+
+        recording:
+            true,
+
+        storage:
+            74
+
     },
+
 
     {
         id: "CAM 03",
         name: "SERVER ROOM",
-        image: "./images/cam_server.jpg",
-        signal: 99,
-        status: "ONLINE"
+
+        zone:
+            "B-01",
+
+        image:
+            "./images/cam_server.jpg",
+
+        signal:
+            99,
+
+        resolution:
+            "1920×1080",
+
+        fps:
+            25,
+
+        codec:
+            "H.264",
+
+        status:
+            "ONLINE",
+
+        recording:
+            true,
+
+        storage:
+            81
+
     },
+
 
     {
         id: "CAM 04",
         name: "EXIT",
-        image: "./images/cam_exit.jpg",
-        signal: 96,
-        status: "ONLINE"
+
+        zone:
+            "A-EXIT",
+
+        image:
+            "./images/cam_exit.jpg",
+
+        signal:
+            96,
+
+        resolution:
+            "1920×1080",
+
+        fps:
+            25,
+
+        codec:
+            "H.264",
+
+        status:
+            "ONLINE",
+
+        recording:
+            true,
+
+        storage:
+            69
+
     },
+
 
     {
         id: "CAM 05",
         name: "BLACK ZONE",
-        image: "./images/cam_black.jpg",
-        signal: 72,
-        status: "DEGRADED"
+
+        zone:
+            "C-05",
+
+        image:
+            "./images/cam_black.jpg",
+
+        signal:
+            72,
+
+        resolution:
+            "1280×720",
+
+        fps:
+            20,
+
+        codec:
+            "H.264",
+
+        status:
+            "ONLINE",
+
+        recording:
+            true,
+
+        storage:
+            84
+
     },
+
 
     {
         id: "CAM 06",
         name: "UNKNOWN AREA",
-        image: "./images/ooooo.jpg",
-        signal: 84,
-        status: "ONLINE"
+
+        zone:
+            "C-06",
+
+        image:
+            "./images/ooooo.jpg",
+
+        signal:
+            84,
+
+        resolution:
+            "1920×1080",
+
+        fps:
+            24,
+
+        codec:
+            "H.264",
+
+        status:
+            "ONLINE",
+
+        recording:
+            true,
+
+        storage:
+            91
+
     },
+
 
     {
         id: "CAM 07",
         name: "RESTRICTED AREA",
-        image: "./images/cam_secret.gif",
-        signal: 91,
-        status: "RESTRICTED"
+
+        zone:
+            "R-07",
+
+        image:
+            "./images/cam_secret.gif",
+
+        signal:
+            91,
+
+        resolution:
+            "1920×1080",
+
+        fps:
+            25,
+
+        codec:
+            "H.264",
+
+        status:
+            "RESTRICTED",
+
+        recording:
+            true,
+
+        storage:
+            88
+
     }
 
 ];
@@ -104,7 +364,7 @@ const cameras = [
    HELPERS
 ========================================================== */
 
-function getCurrentCameraData() {
+function getCurrentCamera() {
 
     return (
         cameras[currentCam] ||
@@ -114,20 +374,69 @@ function getCurrentCameraData() {
 }
 
 
+function now() {
+
+    return Date.now();
+
+}
+
+
+function escapeHtml(
+    value
+) {
+
+    return String(
+        value ??
+        ""
+    )
+
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
 function getCameraNumber(
     camera
 ) {
 
-    if (!camera) {
+    const index =
+        cameras.indexOf(
+            camera
+        );
+
+    if (
+        index < 0
+    ) {
 
         return "--";
 
     }
 
     return String(
-        cameras.indexOf(
-            camera
-        ) + 1
+        index + 1
     ).padStart(
         2,
         "0"
@@ -136,21 +445,48 @@ function getCameraNumber(
 }
 
 
-function safeText(
-    value,
-    fallback = ""
+function formatEventTime(
+    timestamp
 ) {
 
-    const text =
-        String(
-            value ??
-            ""
-        ).trim();
+    const value =
+        Number(timestamp);
 
-    return (
-        text ||
-        fallback
-    );
+
+    if (
+        !Number.isFinite(
+            value
+        )
+    ) {
+
+        return "--:--:--";
+
+    }
+
+
+    try {
+
+        return new Date(
+            value
+        ).toLocaleTimeString(
+            "en-GB",
+            {
+                hour:
+                    "2-digit",
+
+                minute:
+                    "2-digit",
+
+                second:
+                    "2-digit"
+            }
+        );
+
+    } catch {
+
+        return "--:--:--";
+
+    }
 
 }
 
@@ -158,23 +494,6 @@ function safeText(
 /* ==========================================================
    MR.SMILE CONTEXT
 ========================================================== */
-
-/*
-    Camera system only reports
-    operator actions.
-
-    Flow:
-
-        Camera
-           ↓
-        operatorAction
-           ↓
-        MR.SMILE context
-           ↓
-        MR.SMILE behavior
-           ↓
-        decision
-*/
 
 function reportMrSmileCameraAction(
     data = {}
@@ -201,10 +520,12 @@ function reportMrSmileCameraAction(
             }
         );
 
-    } catch (error) {
+    } catch (
+        error
+    ) {
 
         console.warn(
-            "[OMEGA CAMERA] MR.SMILE context report failed:",
+            "[OMEGA CAMERA] MR.SMILE context error:",
             error
         );
 
@@ -214,136 +535,154 @@ function reportMrSmileCameraAction(
 
 
 /* ==========================================================
-   UI HELPERS
+   EVENT STORAGE
 ========================================================== */
 
-function updateCameraChannelUI() {
+function loadCameraEvents() {
 
-    const channels =
-        document.querySelectorAll(
-            ".cameraChannel"
+    const saved =
+        Storage.get(
+            CAMERA_EVENTS_KEY,
+            []
         );
 
 
-    channels.forEach(
-        (
-            button,
-            index
-        ) => {
+    cameraEvents =
+        Array.isArray(
+            saved
+        )
+            ? saved.slice(
+                -MAX_EVENTS
+            )
+            : [];
 
-            button.classList.toggle(
-                "active",
-                index === currentCam
-            );
+}
 
-        }
+
+function saveCameraEvents() {
+
+    Storage.set(
+        CAMERA_EVENTS_KEY,
+        cameraEvents.slice(
+            -MAX_EVENTS
+        )
     );
-
-
-    const camera =
-        getCurrentCameraData();
-
-
-    if (!camera) {
-
-        return;
-
-    }
-
-
-    const signal =
-        document.getElementById(
-            "cameraSignalValue"
-        );
-
-
-    if (signal) {
-
-        signal.textContent =
-            `${camera.signal}%`;
-
-    }
-
-
-    const connection =
-        document.getElementById(
-            "cameraConnectionStatus"
-        );
-
-
-    if (connection) {
-
-        connection.textContent =
-            camera.status;
-
-        connection.dataset.state =
-            camera.status.toLowerCase();
-
-    }
-
-
-    /*
-     * Update optional
-     * current-channel elements.
-     */
-
-    const currentId =
-        document.getElementById(
-            "cameraCurrentId"
-        );
-
-
-    if (currentId) {
-
-        currentId.textContent =
-            camera.id;
-
-    }
-
-
-    const currentName =
-        document.getElementById(
-            "cameraCurrentName"
-        );
-
-
-    if (currentName) {
-
-        currentName.textContent =
-            camera.name;
-
-    }
-
-
-    const currentChannel =
-        document.getElementById(
-            "cameraCurrentChannel"
-        );
-
-
-    if (currentChannel) {
-
-        currentChannel.textContent =
-            `CH ${getCameraNumber(camera)}`;
-
-    }
 
 }
 
 
 /* ==========================================================
-   CHANNEL LIST
+   CAMERA STATE
 ========================================================== */
 
-/*
-    The HTML already contains the
-    cameraChannel buttons.
+function saveCameraState() {
 
-    This function can also repair
-    the list if they are missing.
-*/
+    const state = {
 
-function ensureCameraChannelUI() {
+        currentCam,
+
+        updatedAt:
+            now(),
+
+        cameras:
+            cameras.map(
+                camera => ({
+
+                    id:
+                        camera.id,
+
+                    status:
+                        camera.status,
+
+                    signal:
+                        camera.signal,
+
+                    recording:
+                        camera.recording,
+
+                    lastFault:
+                        camera.lastFault ||
+                        null
+
+                })
+            )
+
+    };
+
+
+    Storage.set(
+        CAMERA_STATE_KEY,
+        state
+    );
+
+}
+
+
+/* ==========================================================
+   EVENT MONITOR
+========================================================== */
+
+function addCameraEvent(
+    event = {}
+) {
+
+    const entry = {
+
+        timestamp:
+            Number(
+                event.timestamp
+            ) ||
+            now(),
+
+        channel:
+            event.channel ||
+            null,
+
+        type:
+            event.type ||
+            "SYSTEM",
+
+        message:
+            event.message ||
+            "System event recorded.",
+
+        severity:
+            event.severity ||
+            "normal"
+
+    };
+
+
+    cameraEvents.push(
+        entry
+    );
+
+
+    if (
+        cameraEvents.length >
+        MAX_EVENTS
+    ) {
+
+        cameraEvents =
+            cameraEvents.slice(
+                -MAX_EVENTS
+            );
+
+    }
+
+
+    saveCameraEvents();
+
+    renderEventMonitor();
+
+}
+
+
+/* ==========================================================
+   RENDER CHANNEL LIST
+========================================================== */
+
+function renderChannelList() {
 
     const root =
         document.getElementById(
@@ -358,102 +697,197 @@ function ensureCameraChannelUI() {
     }
 
 
-    const existing =
-        root.querySelectorAll(
-            ".cameraChannel"
-        );
-
-
-    if (
-        existing.length ===
-        cameras.length
-    ) {
-
-        updateCameraChannelUI();
-
-        return;
-
-    }
-
-
     root.innerHTML =
         cameras
             .map(
                 (
                     camera,
                     index
-                ) => `
+                ) => {
 
-                    <button
-                        class="cameraChannel"
-                        type="button"
-                        onclick="selectCamera(${index})"
-                        data-camera-index="${index}"
-                    >
-
-                        <span
-                            class="cameraChannelDot"
-                        ></span>
+                    const active =
+                        index ===
+                        currentCam;
 
 
-                        <span
-                            class="cameraChannelInfo"
+                    const state =
+                        String(
+                            camera.status
+                        )
+                            .toLowerCase();
+
+
+                    return `
+
+                        <button
+                            type="button"
+                            class="
+                                cameraChannel
+                                ${active ? "active" : ""}
+                            "
+                            data-camera-index="${index}"
+                            onclick="
+                                selectCamera(
+                                    ${index}
+                                )
+                            "
                         >
 
-                            <strong>
+                            <span
+                                class="cameraChannelDot"
+                                data-state="${state}"
+                            ></span>
+
+
+                            <span
+                                class="cameraChannelInfo"
+                            >
+
+                                <strong>
+                                    ${escapeHtml(
+                                        camera.id
+                                    )}
+                                </strong>
+
+
+                                <small>
+                                    ${escapeHtml(
+                                        camera.name
+                                    )}
+                                </small>
+
+
+                            </span>
+
+
+                            <span
+                                class="cameraChannelState"
+                                data-state="${state}"
+                            >
                                 ${escapeHtml(
-                                    camera.id
+                                    camera.status
                                 )}
-                            </strong>
+                            </span>
 
-                            <small>
-                                ${escapeHtml(
-                                    camera.name
-                                )}
-                            </small>
+                        </button>
 
-                        </span>
+                    `;
 
-                    </button>
-
-                `
+                }
             )
             .join("");
 
 
-    updateCameraChannelUI();
+    const count =
+        document.getElementById(
+            "cameraChannelCount"
+        );
 
-}
 
+    if (count) {
 
-/* ==========================================================
-   INIT
-========================================================== */
-
-export function initCamera() {
-
-    ensureCameraChannelUI();
-
-    showCamera();
-
-    startClock();
-
-    console.log(
-        "[OMEGA CAMERA] Surveillance system initialized.",
-        {
-            cameras:
+        count.textContent =
+            String(
                 cameras.length
-        }
-    );
+            ).padStart(
+                2,
+                "0"
+            );
+
+    }
 
 }
 
 
 /* ==========================================================
-   LIVE CAMERA VIEW
+   AVAILABLE COUNT
 ========================================================== */
 
-function showCamera() {
+function updateNetworkStatus() {
+
+    const available =
+        cameras.filter(
+            camera =>
+                camera.status !==
+                    "OFFLINE"
+                &&
+                camera.status !==
+                    "MAINTENANCE"
+        ).length;
+
+
+    const availableNode =
+        document.getElementById(
+            "cameraAvailableCount"
+        );
+
+
+    if (availableNode) {
+
+        availableNode.textContent =
+            `${available} / ${cameras.length}`;
+
+    }
+
+
+    const network =
+        document.getElementById(
+            "cameraNetworkStatus"
+        );
+
+
+    if (!network) {
+
+        return;
+
+    }
+
+
+    let state =
+        "online";
+
+    let value =
+        "ONLINE";
+
+
+    if (
+        available === 0
+    ) {
+
+        state =
+            "offline";
+
+        value =
+            "OFFLINE";
+
+    } else if (
+        available <
+        cameras.length
+    ) {
+
+        state =
+            "degraded";
+
+        value =
+            "DEGRADED";
+
+    }
+
+
+    network.textContent =
+        value;
+
+    network.dataset.state =
+        state;
+
+}
+
+
+/* ==========================================================
+   FEED
+========================================================== */
+
+function renderFeed() {
 
     const view =
         document.getElementById(
@@ -463,66 +897,139 @@ function showCamera() {
 
     if (!view) {
 
-        console.warn(
-            "[OMEGA CAMERA] cameraView NOT FOUND"
-        );
-
         return;
 
     }
 
 
     const camera =
-        getCurrentCameraData();
+        getCurrentCamera();
 
 
     if (!camera) {
-
-        console.error(
-            "[OMEGA CAMERA] Camera does not exist:",
-            currentCam
-        );
 
         return;
 
     }
 
 
-    const channelNumber =
+    const channel =
         getCameraNumber(
             camera
         );
+
+
+    /*
+     * OFFLINE
+     */
+
+    if (
+        camera.status ===
+        "OFFLINE"
+    ) {
+
+        view.innerHTML = `
+
+            <div
+                class="cameraStatusScreen"
+            >
+
+                <div
+                    class="cameraStatusBox"
+                >
+
+                    <strong>
+                        SIGNAL LOST
+                    </strong>
+
+                    <span>
+                        ${escapeHtml(
+                            camera.id
+                        )}
+                    </span>
+
+                    <small>
+                        VIDEO SOURCE UNAVAILABLE
+                    </small>
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    /*
+     * MAINTENANCE
+     */
+
+    if (
+        camera.status ===
+        "MAINTENANCE"
+    ) {
+
+        view.innerHTML = `
+
+            <div
+                class="cameraStatusScreen"
+            >
+
+                <div
+                    class="cameraStatusBox"
+                >
+
+                    <strong>
+                        MAINTENANCE
+                    </strong>
+
+                    <span>
+                        ${escapeHtml(
+                            camera.id
+                        )}
+                    </span>
+
+                    <small>
+                        CHANNEL TEMPORARILY UNAVAILABLE
+                    </small>
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
 
 
     view.innerHTML = `
 
         <div
             class="cameraScreen"
-            data-camera="${escapeAttribute(
+            data-channel="${escapeHtml(
                 camera.id
             )}"
         >
 
 
-            <!-- ======================================
-                 VIDEO
-            ======================================= -->
-
             <img
                 class="cameraImage"
-                src="${escapeAttribute(
+                src="${escapeHtml(
                     camera.image
                 )}"
-                alt="${escapeAttribute(
+                alt="${escapeHtml(
                     camera.name
                 )}"
                 draggable="false"
             >
 
 
-            <!-- ======================================
-                 EFFECTS
-            ======================================= -->
+            <!-- EFFECTS -->
 
             <div
                 class="cameraScanlines"
@@ -537,32 +1044,28 @@ function showCamera() {
             ></div>
 
 
-            <!-- ======================================
-                 CAMERA UI
-            ======================================= -->
+            <!-- UI -->
 
             <div
                 class="cameraOverlay"
             >
 
 
-                <!-- TOP LEFT -->
+                <!-- TOP -->
 
                 <div
                     class="cameraTop"
                 >
 
                     <span
-                        class="cameraFeedIdentity"
+                        class="cameraIdentity"
                     >
 
                         ${escapeHtml(
                             camera.id
                         )}
 
-                        <span
-                            class="cameraFeedSeparator"
-                        >
+                        <span>
                             /
                         </span>
 
@@ -573,56 +1076,56 @@ function showCamera() {
                     </span>
 
 
-                    <!-- TOP RIGHT -->
-
                     <span
-                        class="cameraRec"
+                        class="cameraRecording"
+                        data-state="${
+                            camera.recording
+                                ? "active"
+                                : "error"
+                        }"
                     >
 
-                        <span
-                            class="recDot"
-                        >
+                        <span>
                             ●
                         </span>
 
-                        REC
+                        ${
+                            camera.recording
+                                ? "REC"
+                                : "REC ERROR"
+                        }
 
                     </span>
 
                 </div>
 
 
-                <!-- SYSTEM LABEL -->
+                <!-- SYSTEM -->
 
                 <div
-                    class="cameraStatus"
+                    class="cameraSystemLabel"
                 >
 
                     OMEGA SECURITY NETWORK
 
-                    <span
-                        class="cameraStatusDivider"
-                    >
-                        //
-                    </span>
-
-                    DIGITAL SURVEILLANCE
-
                 </div>
 
 
-                <!-- CHANNEL MARKER -->
+                <!-- ZONE -->
 
                 <div
-                    class="cameraChannelMarker"
+                    class="cameraZone"
                 >
 
-                    CH-${channelNumber}
+                    ZONE
+                    ${escapeHtml(
+                        camera.zone
+                    )}
 
                 </div>
 
 
-                <!-- FRAME CORNERS -->
+                <!-- FRAME -->
 
                 <div
                     class="cameraFrame cameraFrameTL"
@@ -641,43 +1144,36 @@ function showCamera() {
                 ></div>
 
 
-                <!-- CENTER RETICLE -->
+                <!-- CENTER -->
 
                 <div
                     class="cameraReticle"
                 ></div>
 
 
-                <!-- BOTTOM INFO -->
+                <!-- BOTTOM -->
 
                 <div
                     class="cameraBottom"
                 >
 
-
-                    <span
-                        class="cameraLocation"
-                    >
+                    <span>
                         ${escapeHtml(
                             camera.name
                         )}
                     </span>
 
 
-                    <span
-                        class="cameraFeedMeta"
-                    >
+                    <span>
 
                         SIGNAL
                         <b>
                             ${camera.signal}%
                         </b>
 
-                        <span
-                            class="cameraMetaDivider"
-                        >
+                        <i>
                             |
-                        </span>
+                        </i>
 
                         ${escapeHtml(
                             camera.status
@@ -697,23 +1193,13 @@ function showCamera() {
                 </div>
 
 
-                <!-- CAMERA NUMBER -->
+                <!-- INDEX -->
 
                 <div
                     class="cameraIndex"
                 >
-
-                    ${channelNumber}
-                    /
-                    ${String(
-                        cameras.length
-                    ).padStart(
-                        2,
-                        "0"
-                    )}
-
+                    CH ${channel}
                 </div>
-
 
             </div>
 
@@ -721,10 +1207,6 @@ function showCamera() {
 
     `;
 
-
-    /* ======================================================
-       IMAGE ERROR
-    ====================================================== */
 
     const image =
         view.querySelector(
@@ -775,23 +1257,15 @@ function showCamera() {
                             class="cameraOffline"
                         >
 
-                            <div
-                                class="cameraOfflineInner"
-                            >
+                            <div>
 
                                 <strong>
                                     SIGNAL LOST
                                 </strong>
 
                                 <span>
-                                    ${escapeHtml(
-                                        camera.id
-                                    )}
-                                </span>
-
-                                <small>
                                     VIDEO SOURCE UNAVAILABLE
-                                </small>
+                                </span>
 
                             </div>
 
@@ -801,391 +1275,42 @@ function showCamera() {
 
                 );
 
+
+                addCameraEvent({
+
+                    channel:
+                        camera.id,
+
+                    type:
+                        "VIDEO",
+
+                    message:
+                        "Video source unavailable.",
+
+                    severity:
+                        "warning"
+
+                });
+
             }
         );
 
     }
 
 
-    /* ======================================================
-       CAMERA BOOT EFFECT
-    ====================================================== */
-
-    const screen =
-        view.querySelector(
-            ".cameraScreen"
-        );
-
-
-    if (screen) {
-
-        screen.classList.remove(
-            "cameraSwitch"
-        );
-
-        void screen.offsetWidth;
-
-        screen.classList.add(
-            "cameraBoot"
-        );
-
-    }
-
-
-    /*
-     * Refresh the channel panel
-     * after the new feed exists.
-     */
-
-    updateCameraChannelUI();
+    updateTechnicalInfo();
 
 }
 
 
 /* ==========================================================
-   NEXT CAMERA
+   TECHNICAL INFORMATION
 ========================================================== */
 
-export function nextCam() {
-
-    const previousCamera =
-        getCurrentCameraData();
-
-
-    currentCam++;
-
-    if (
-        currentCam >=
-        cameras.length
-    ) {
-
-        currentCam = 0;
-
-    }
-
-
-    const newCamera =
-        getCurrentCameraData();
-
-
-    console.log(
-        "[OMEGA CAMERA] SWITCH:",
-        previousCamera?.id,
-        "→",
-        newCamera?.id
-    );
-
-
-    reportMrSmileCameraAction({
-
-        type:
-            "camera_switch",
-
-        target:
-            newCamera?.id ||
-            null,
-
-        action:
-            "switch",
-
-        reason:
-            "operator_switched_camera",
-
-        metadata: {
-
-            direction:
-                "next",
-
-            previousCamera: {
-
-                id:
-                    previousCamera?.id ||
-                    null,
-
-                name:
-                    previousCamera?.name ||
-                    null
-
-            },
-
-            currentCamera: {
-
-                id:
-                    newCamera?.id ||
-                    null,
-
-                name:
-                    newCamera?.name ||
-                    null,
-
-                signal:
-                    newCamera?.signal ??
-                    null,
-
-                status:
-                    newCamera?.status ||
-                    null
-
-            },
-
-            cameraIndex:
-                currentCam
-
-        }
-
-    });
-
-
-    showCamera();
-
-}
-
-
-/* ==========================================================
-   PREVIOUS CAMERA
-========================================================== */
-
-export function previousCam() {
-
-    const previousCamera =
-        getCurrentCameraData();
-
-
-    currentCam--;
-
-
-    if (
-        currentCam < 0
-    ) {
-
-        currentCam =
-            cameras.length - 1;
-
-    }
-
-
-    const newCamera =
-        getCurrentCameraData();
-
-
-    console.log(
-        "[OMEGA CAMERA] SWITCH:",
-        previousCamera?.id,
-        "→",
-        newCamera?.id
-    );
-
-
-    reportMrSmileCameraAction({
-
-        type:
-            "camera_switch",
-
-        target:
-            newCamera?.id ||
-            null,
-
-        action:
-            "switch",
-
-        reason:
-            "operator_switched_camera",
-
-        metadata: {
-
-            direction:
-                "previous",
-
-            previousCamera: {
-
-                id:
-                    previousCamera?.id ||
-                    null,
-
-                name:
-                    previousCamera?.name ||
-                    null
-
-            },
-
-            currentCamera: {
-
-                id:
-                    newCamera?.id ||
-                    null,
-
-                name:
-                    newCamera?.name ||
-                    null,
-
-                signal:
-                    newCamera?.signal ??
-                    null,
-
-                status:
-                    newCamera?.status ||
-                    null
-
-            },
-
-            cameraIndex:
-                currentCam
-
-        }
-
-    });
-
-
-    showCamera();
-
-}
-
-
-/* ==========================================================
-   SELECT SPECIFIC CAMERA
-========================================================== */
-
-export function selectCamera(
-    index
-) {
-
-    const parsedIndex =
-        Number(index);
-
-
-    if (
-        !Number.isInteger(
-            parsedIndex
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    if (
-        parsedIndex < 0 ||
-        parsedIndex >=
-        cameras.length
-    ) {
-
-        return;
-
-    }
-
-
-    const previousCamera =
-        getCurrentCameraData();
-
-
-    currentCam =
-        parsedIndex;
-
-
-    const newCamera =
-        getCurrentCameraData();
-
-
-    if (
-        previousCamera?.id !==
-        newCamera?.id
-    ) {
-
-        console.log(
-            "[OMEGA CAMERA] SELECT:",
-            previousCamera?.id,
-            "→",
-            newCamera?.id
-        );
-
-
-        reportMrSmileCameraAction({
-
-            type:
-                "camera_switch",
-
-            target:
-                newCamera?.id ||
-                null,
-
-            action:
-                "select",
-
-            reason:
-                "operator_selected_camera",
-
-            metadata: {
-
-                previousCamera:
-                    previousCamera?.id ||
-                    null,
-
-                currentCamera:
-                    newCamera?.id ||
-                    null,
-
-                cameraIndex:
-                    currentCam
-
-            }
-
-        });
-
-    }
-
-
-    showCamera();
-
-}
-
-
-/* ==========================================================
-   CURRENT CAMERA
-========================================================== */
-
-export function getCurrentCamera() {
-
-    return (
-        cameras[currentCam] ||
-        null
-    );
-
-}
-
-
-/* ==========================================================
-   CURRENT CAMERA INDEX
-========================================================== */
-
-export function getCurrentCameraIndex() {
-
-    return currentCam;
-
-}
-
-
-/* ==========================================================
-   ALL CAMERAS
-========================================================== */
-
-export function getCameras() {
-
-    return [
-        ...cameras
-    ];
-
-}
-
-
-/* ==========================================================
-   CAMERA OPEN
-========================================================== */
-
-export function reportCameraOpened() {
+function updateTechnicalInfo() {
 
     const camera =
-        getCurrentCameraData();
+        getCurrentCamera();
 
 
     if (!camera) {
@@ -1195,100 +1320,282 @@ export function reportCameraOpened() {
     }
 
 
-    reportMrSmileCameraAction({
+    const signal =
+        document.getElementById(
+            "cameraSignalValue"
+        );
 
-        type:
-            "camera_open",
 
-        target:
-            camera.id,
+    if (signal) {
 
-        action:
-            "open",
+        signal.textContent =
+            `${camera.signal}%`;
 
-        reason:
-            "operator_opened_camera",
+        signal.dataset.state =
+            camera.signal < 80
+                ? "warning"
+                : "normal";
 
-        metadata: {
+    }
 
-            camera: {
 
-                id:
-                    camera.id,
+    const resolution =
+        document.getElementById(
+            "cameraResolution"
+        );
 
-                name:
-                    camera.name,
 
-                signal:
-                    camera.signal,
+    if (resolution) {
 
-                status:
-                    camera.status
+        resolution.textContent =
+            camera.resolution;
 
-            },
+    }
 
-            cameraIndex:
-                currentCam
 
-        }
+    const fps =
+        document.getElementById(
+            "cameraFrameRate"
+        );
 
-    });
+
+    if (fps) {
+
+        fps.textContent =
+            `${camera.fps} FPS`;
+
+    }
+
+
+    const codec =
+        document.getElementById(
+            "cameraCodec"
+        );
+
+
+    if (codec) {
+
+        codec.textContent =
+            camera.codec;
+
+    }
+
+
+    const recording =
+        document.getElementById(
+            "cameraRecordingStatus"
+        );
+
+
+    if (recording) {
+
+        recording.textContent =
+            camera.recording
+                ? "ACTIVE"
+                : "ERROR";
+
+        recording.dataset.state =
+            camera.recording
+                ? "active"
+                : "error";
+
+    }
+
+
+    const connection =
+        document.getElementById(
+            "cameraConnectionStatus"
+        );
+
+
+    if (connection) {
+
+        connection.textContent =
+            camera.status;
+
+        connection.dataset.state =
+            camera.status.toLowerCase();
+
+    }
+
+
+    const currentChannel =
+        document.getElementById(
+            "cameraCurrentChannel"
+        );
+
+
+    if (currentChannel) {
+
+        currentChannel.textContent =
+            `CH ${getCameraNumber(
+                camera
+            )}`;
+
+    }
+
+
+    const eventChannel =
+        document.getElementById(
+            "cameraEventChannel"
+        );
+
+
+    if (eventChannel) {
+
+        eventChannel.textContent =
+            camera.id;
+
+    }
+
+
+    updateNetworkStatus();
 
 }
 
 
 /* ==========================================================
-   CAMERA CLOSE
+   EVENT MONITOR RENDER
 ========================================================== */
 
-export function reportCameraClosed() {
+function renderEventMonitor() {
 
-    const camera =
-        getCurrentCameraData();
+    const root =
+        document.getElementById(
+            "cameraEventList"
+        );
 
 
-    if (!camera) {
+    if (!root) {
 
         return;
 
     }
 
 
-    reportMrSmileCameraAction({
+    const events =
+        cameraEvents
+            .slice()
+            .reverse()
+            .slice(
+                0,
+                8
+            );
 
-        type:
-            "camera_close",
 
-        target:
-            camera.id,
+    if (
+        events.length === 0
+    ) {
 
-        action:
-            "close",
+        root.innerHTML = `
 
-        reason:
-            "operator_closed_camera",
+            <div
+                class="cameraEventEmpty"
+            >
+                NO RECENT EVENTS.
+            </div>
 
-        metadata: {
+        `;
 
-            cameraId:
-                camera.id,
+        return;
 
-            cameraName:
-                camera.name,
+    }
 
-            cameraIndex:
-                currentCam
 
-        }
+    root.innerHTML =
+        events
+            .map(
+                event => `
 
-    });
+                    <div
+                        class="cameraEventRow"
+                        data-severity="${
+                            escapeHtml(
+                                event.severity
+                            )
+                        }"
+                    >
+
+                        <span
+                            class="cameraEventTime"
+                        >
+                            ${escapeHtml(
+                                formatEventTime(
+                                    event.timestamp
+                                )
+                            )}
+                        </span>
+
+
+                        <span
+                            class="cameraEventChannel"
+                        >
+                            ${escapeHtml(
+                                event.channel ||
+                                "SYSTEM"
+                            )}
+                        </span>
+
+
+                        <span
+                            class="cameraEventType"
+                        >
+                            ${escapeHtml(
+                                event.type
+                            )}
+                        </span>
+
+
+                        <span
+                            class="cameraEventMessage"
+                        >
+                            ${escapeHtml(
+                                event.message
+                            )}
+                        </span>
+
+                    </div>
+
+                `
+            )
+            .join("");
 
 }
 
 
 /* ==========================================================
-   CAMERA CLOCK
+   TIME
 ========================================================== */
+
+function getCameraTime() {
+
+    try {
+
+        return formatOmegaTime(
+            true
+        );
+
+    } catch {
+
+        return new Date()
+            .toLocaleTimeString(
+                "en-GB",
+                {
+                    hour:
+                        "2-digit",
+
+                    minute:
+                        "2-digit",
+
+                    second:
+                        "2-digit"
+                }
+            );
+
+    }
+
+}
+
 
 function startClock() {
 
@@ -1305,20 +1612,20 @@ function startClock() {
         setInterval(
             () => {
 
-                const time =
+                const node =
                     document.querySelector(
-                        ".cameraTime"
+                        "#cameraWindow .cameraTime"
                     );
 
 
-                if (!time) {
+                if (!node) {
 
                     return;
 
                 }
 
 
-                time.textContent =
+                node.textContent =
                     getCameraTime();
 
             },
@@ -1329,36 +1636,736 @@ function startClock() {
 
 
 /* ==========================================================
-   CAMERA TIME
+   CAMERA SELECTION
 ========================================================== */
 
-function getCameraTime() {
+export function selectCamera(
+    index
+) {
 
-    try {
-
-        return formatOmegaTime(
-            true
-        );
-
-    } catch {
-
-        const now =
-            new Date();
+    const parsed =
+        Number(index);
 
 
-        return now.toLocaleTimeString(
-            "en-GB",
-            {
-                hour:
-                    "2-digit",
+    if (
+        !Number.isInteger(
+            parsed
+        )
+    ) {
 
-                minute:
-                    "2-digit",
+        return;
 
-                second:
-                    "2-digit"
+    }
+
+
+    if (
+        parsed < 0 ||
+        parsed >=
+        cameras.length
+    ) {
+
+        return;
+
+    }
+
+
+    const previous =
+        getCurrentCamera();
+
+
+    currentCam =
+        parsed;
+
+
+    const camera =
+        getCurrentCamera();
+
+
+    renderChannelList();
+
+    renderFeed();
+
+    updateTechnicalInfo();
+
+
+    addCameraEvent({
+
+        channel:
+            camera?.id,
+
+        type:
+            "CHANNEL",
+
+        message:
+            `Channel selected: ${camera?.name || "UNKNOWN"}.`
+
+    });
+
+
+    if (
+        previous?.id !==
+        camera?.id
+    ) {
+
+        reportMrSmileCameraAction({
+
+            type:
+                "camera_switch",
+
+            target:
+                camera?.id ||
+                null,
+
+            action:
+                "select",
+
+            reason:
+                "operator_selected_camera",
+
+            metadata: {
+
+                previousCamera:
+                    previous?.id ||
+                    null,
+
+                currentCamera:
+                    camera?.id ||
+                    null,
+
+                cameraIndex:
+                    currentCam
+
             }
+
+        });
+
+    }
+
+
+    saveCameraState();
+
+}
+
+
+/* ==========================================================
+   NEXT
+========================================================== */
+
+export function nextCam() {
+
+    const next =
+        (
+            currentCam + 1
+        ) %
+        cameras.length;
+
+
+    selectCamera(
+        next
+    );
+
+
+    reportMrSmileCameraAction({
+
+        type:
+            "camera_switch",
+
+        target:
+            getCurrentCamera()?.id ||
+            null,
+
+        action:
+            "next",
+
+        reason:
+            "operator_switched_camera"
+
+    });
+
+}
+
+
+/* ==========================================================
+   PREVIOUS
+========================================================== */
+
+export function previousCam() {
+
+    const previous =
+        (
+            currentCam -
+            1 +
+            cameras.length
+        ) %
+        cameras.length;
+
+
+    selectCamera(
+        previous
+    );
+
+
+    reportMrSmileCameraAction({
+
+        type:
+            "camera_switch",
+
+        target:
+            getCurrentCamera()?.id ||
+            null,
+
+        action:
+            "previous",
+
+        reason:
+            "operator_switched_camera"
+
+    });
+
+}
+
+
+/* ==========================================================
+   OPERATOR OPEN
+========================================================== */
+
+function cameraOpened() {
+
+    const camera =
+        getCurrentCamera();
+
+
+    addCameraEvent({
+
+        channel:
+            camera?.id,
+
+        type:
+            "SYSTEM",
+
+        message:
+            "Surveillance channel access established."
+
+    });
+
+
+    reportMrSmileCameraAction({
+
+        type:
+            "camera_open",
+
+        target:
+            camera?.id ||
+            null,
+
+        action:
+            "open",
+
+        reason:
+            "operator_opened_camera",
+
+        metadata: {
+
+            cameraIndex:
+                currentCam
+
+        }
+
+    });
+
+
+    enterWorkspaceMode();
+
+}
+
+
+/* ==========================================================
+   OPERATOR CLOSE
+========================================================== */
+
+function cameraClosed() {
+
+    const camera =
+        getCurrentCamera();
+
+
+    addCameraEvent({
+
+        channel:
+            camera?.id,
+
+        type:
+            "SYSTEM",
+
+        message:
+            "Surveillance interface closed."
+
+    });
+
+
+    reportMrSmileCameraAction({
+
+        type:
+            "camera_close",
+
+        target:
+            camera?.id ||
+            null,
+
+        action:
+            "close",
+
+        reason:
+            "operator_closed_camera"
+
+    });
+
+
+    leaveWorkspaceMode();
+
+}
+
+
+/* ==========================================================
+   WORKSPACE MODE
+========================================================== */
+
+export function toggleCameraWorkspace() {
+
+    workspaceMode =
+        !workspaceMode;
+
+
+    const workspace =
+        document.getElementById(
+            "workspace"
         );
+
+
+    const home =
+        document.getElementById(
+            "omegaDesktopHome"
+        );
+
+
+    const cameraWindow =
+        document.getElementById(
+            "cameraWindow"
+        );
+
+
+    if (!workspace ||
+        !cameraWindow
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        workspaceMode
+    ) {
+
+        workspace.classList.add(
+            "cameraWorkspaceActive"
+        );
+
+        cameraWindow.classList.add(
+            "cameraWorkspaceMode"
+        );
+
+
+        if (home) {
+
+            home.classList.add(
+                "hidden"
+            );
+
+        }
+
+    } else {
+
+        workspace.classList.remove(
+            "cameraWorkspaceActive"
+        );
+
+        cameraWindow.classList.remove(
+            "cameraWorkspaceMode"
+        );
+
+
+        if (home) {
+
+            home.classList.remove(
+                "hidden"
+            );
+
+        }
+
+    }
+
+}
+
+
+function enterWorkspaceMode() {
+
+    workspaceMode =
+        true;
+
+    const workspace =
+        document.getElementById(
+            "workspace"
+        );
+
+
+    const cameraWindow =
+        document.getElementById(
+            "cameraWindow"
+        );
+
+
+    const home =
+        document.getElementById(
+            "omegaDesktopHome"
+        );
+
+
+    workspace?.classList.add(
+        "cameraWorkspaceActive"
+    );
+
+    cameraWindow?.classList.add(
+        "cameraWorkspaceMode"
+    );
+
+    home?.classList.add(
+        "hidden"
+    );
+
+}
+
+
+function leaveWorkspaceMode() {
+
+    workspaceMode =
+        true;
+
+
+    const workspace =
+        document.getElementById(
+            "workspace"
+        );
+
+
+    const cameraWindow =
+        document.getElementById(
+            "cameraWindow"
+        );
+
+
+    const home =
+        document.getElementById(
+            "omegaDesktopHome"
+        );
+
+
+    workspace?.classList.remove(
+        "cameraWorkspaceActive"
+    );
+
+    cameraWindow?.classList.remove(
+        "cameraWorkspaceMode"
+    );
+
+
+    home?.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+/* ==========================================================
+   FAULT SIMULATION
+========================================================== */
+
+function chooseFaultCamera() {
+
+    const candidates =
+        cameras.filter(
+            camera =>
+                camera.status ===
+                "ONLINE"
+                &&
+                camera.id !==
+                "CAM 07"
+        );
+
+
+    if (
+        candidates.length === 0
+    ) {
+
+        return null;
+
+    }
+
+
+    /*
+     * Slightly higher chance for
+     * weaker / less stable channels.
+     */
+
+    const weighted = [];
+
+    candidates.forEach(
+        camera => {
+
+            const weight =
+                camera.signal <
+                85
+                    ? 4
+                    : 1;
+
+            for (
+                let i = 0;
+                i < weight;
+                i++
+            ) {
+
+                weighted.push(
+                    camera
+                );
+
+            }
+
+        }
+    );
+
+
+    return (
+        weighted[
+            Math.floor(
+                Math.random() *
+                weighted.length
+            )
+        ] ||
+        null
+    );
+
+}
+
+
+function chooseFaultType(
+    camera
+) {
+
+    if (
+        camera.signal < 80
+    ) {
+
+        return (
+            Math.random() <
+            .55
+        )
+            ? "signal_degraded"
+            : "offline";
+
+    }
+
+
+    const value =
+        Math.random();
+
+
+    if (
+        value < .45
+    ) {
+
+        return "signal_degraded";
+
+    }
+
+
+    if (
+        value < .75
+    ) {
+
+        return "recording_error";
+
+    }
+
+
+    return "offline";
+
+}
+
+
+function startFault(
+    camera,
+    type
+) {
+
+    if (
+        !camera ||
+        activeFault
+    ) {
+
+        return;
+
+    }
+
+
+    lastFaultAt =
+        now();
+
+
+    activeFault = {
+
+        cameraId:
+            camera.id,
+
+        type,
+
+        startedAt:
+            now(),
+
+        duration:
+            SIMULATION.minimumRecovery +
+            Math.floor(
+                Math.random() *
+                (
+                    SIMULATION.maximumRecovery -
+                    SIMULATION.minimumRecovery
+                )
+            )
+
+    };
+
+
+    camera.lastFault = {
+
+        type,
+
+        startedAt:
+            activeFault.startedAt
+
+    };
+
+
+    switch (
+        type
+    ) {
+
+        case "signal_degraded":
+
+            camera.status =
+                "DEGRADED";
+
+            camera.signal =
+                Math.max(
+                    35,
+                    camera.signal -
+                    (
+                        12 +
+                        Math.floor(
+                            Math.random() *
+                            21
+                        )
+                    )
+                );
+
+            addCameraEvent({
+
+                channel:
+                    camera.id,
+
+                type:
+                    "NETWORK",
+
+                message:
+                    "Signal quality degraded.",
+
+                severity:
+                    "warning"
+
+            });
+
+            break;
+
+
+        case "recording_error":
+
+            camera.recording =
+                false;
+
+            addCameraEvent({
+
+                channel:
+                    camera.id,
+
+                type:
+                    "RECORDING",
+
+                message:
+                    "Local recording write error.",
+
+                severity:
+                    "warning"
+
+            });
+
+            break;
+
+
+        case "offline":
+
+            camera.status =
+                "OFFLINE";
+
+            camera.signal =
+                0;
+
+            camera.recording =
+                false;
+
+            addCameraEvent({
+
+                channel:
+                    camera.id,
+
+                type:
+                    "NETWORK",
+
+                message:
+                    "Camera connection lost.",
+
+                severity:
+                    "warning"
+
+            });
+
+            break;
+
+    }
+
+
+    saveCameraState();
+
+    renderChannelList();
+
+    updateNetworkStatus();
+
+
+    if (
+        getCurrentCamera() ===
+        camera
+    ) {
+
+        renderFeed();
+
+        updateTechnicalInfo();
 
     }
 
@@ -1366,84 +2373,629 @@ function getCameraTime() {
 
 
 /* ==========================================================
-   HTML ESCAPE
+   RECOVERY
 ========================================================== */
 
-function escapeHtml(
-    text
-) {
+function recoverFault() {
 
-    return String(
-        text ??
-        ""
-    )
+    if (
+        !activeFault
+    ) {
 
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
+        return;
 
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
+    }
 
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
 
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-
-        .replaceAll(
-            "'",
-            "&#039;"
+    const camera =
+        cameras.find(
+            item =>
+                item.id ===
+                activeFault.cameraId
         );
+
+
+    if (!camera) {
+
+        activeFault =
+            null;
+
+        return;
+
+    }
+
+
+    const faultType =
+        activeFault.type;
+
+
+    /*
+     * Restore baseline values.
+     */
+
+    const baseline =
+        cameras[
+            cameras.indexOf(
+                camera
+            )
+        ];
+
+
+    if (
+        faultType ===
+        "signal_degraded"
+    ) {
+
+        if (
+            camera.id ===
+            "CAM 05"
+        ) {
+
+            camera.signal =
+                72;
+
+        } else if (
+            camera.id ===
+            "CAM 06"
+        ) {
+
+            camera.signal =
+                84;
+
+        } else {
+
+            camera.signal =
+                96;
+
+        }
+
+
+        camera.status =
+            "ONLINE";
+
+
+        addCameraEvent({
+
+            channel:
+                camera.id,
+
+            type:
+                "NETWORK",
+
+            message:
+                "Signal restored.",
+
+            severity:
+                "normal"
+
+        });
+
+    }
+
+
+    if (
+        faultType ===
+        "recording_error"
+    ) {
+
+        camera.recording =
+            true;
+
+
+        addCameraEvent({
+
+            channel:
+                camera.id,
+
+            type:
+                "RECORDING",
+
+            message:
+                "Recording service restored.",
+
+            severity:
+                "normal"
+
+        });
+
+    }
+
+
+    if (
+        faultType ===
+        "offline"
+    ) {
+
+        camera.status =
+            "ONLINE";
+
+
+        camera.recording =
+            true;
+
+
+        if (
+            camera.id ===
+            "CAM 05"
+        ) {
+
+            camera.signal =
+                72;
+
+        } else if (
+            camera.id ===
+            "CAM 06"
+        ) {
+
+            camera.signal =
+                84;
+
+        } else {
+
+            camera.signal =
+                96;
+
+        }
+
+
+        addCameraEvent({
+
+            channel:
+                camera.id,
+
+            type:
+                "NETWORK",
+
+            message:
+                "Camera connection restored.",
+
+            severity:
+                "normal"
+
+        });
+
+    }
+
+
+    camera.lastFault =
+        null;
+
+
+    activeFault =
+        null;
+
+
+    saveCameraState();
+
+    renderChannelList();
+
+    updateNetworkStatus();
+
+
+    if (
+        getCurrentCamera() ===
+        camera
+    ) {
+
+        renderFeed();
+
+        updateTechnicalInfo();
+
+    }
 
 }
 
 
 /* ==========================================================
-   ATTRIBUTE ESCAPE
+   SIMULATION TICK
 ========================================================== */
 
-function escapeAttribute(
-    text
-) {
+function simulationTick() {
 
-    return String(
-        text ??
-        ""
-    )
+    const elapsed =
+        now() -
+        simulationStartedAt;
 
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
 
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
+    /*
+     * Recover an active fault first.
+     */
 
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
+    if (
+        activeFault
+    ) {
 
-        .replaceAll(
-            ">",
-            "&gt;"
+        if (
+            now() -
+            activeFault.startedAt >=
+            activeFault.duration
+        ) {
+
+            recoverFault();
+
+        }
+
+        return;
+
+    }
+
+
+    /*
+     * No immediate faults.
+     */
+
+    if (
+        elapsed <
+        SIMULATION.earliestFault
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        now() -
+        lastFaultAt <
+        SIMULATION.minimumFaultGap
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        Math.random() >
+        SIMULATION.faultChance
+    ) {
+
+        return;
+
+    }
+
+
+    const camera =
+        chooseFaultCamera();
+
+
+    if (!camera) {
+
+        return;
+
+    }
+
+
+    const type =
+        chooseFaultType(
+            camera
         );
+
+
+    startFault(
+        camera,
+        type
+    );
 
 }
 
 
 /* ==========================================================
-   GLOBAL API
+   PERSONNEL EVENTS
+========================================================== */
+
+function handlePersonnelMovement(
+    data = {}
+) {
+
+    addCameraEvent({
+
+        channel:
+            data.camera ||
+            getCurrentCamera()?.id ||
+            "SYSTEM",
+
+        type:
+            "PERSONNEL",
+
+        message:
+            `${data.name || "Personnel"} movement recorded.`,
+
+        severity:
+            "normal",
+
+        timestamp:
+            data.timestamp
+
+    });
+
+}
+
+
+function handlePersonnelIncident(
+    data = {}
+) {
+
+    addCameraEvent({
+
+        channel:
+            "SYSTEM",
+
+        type:
+            "INCIDENT",
+
+        message:
+            data.message ||
+            "Personnel incident recorded.",
+
+        severity:
+            "warning",
+
+        timestamp:
+            data.timestamp
+
+    });
+
+}
+
+
+/* ==========================================================
+   OMEGA TIME EVENTS
+========================================================== */
+
+function handleOmegaTimeConflict(
+    data = {}
+) {
+
+    let message =
+        "System time requires review.";
+
+
+    switch (
+        data.reason
+    ) {
+
+        case "time_backward":
+
+            message =
+                "System clock moved backwards.";
+
+            break;
+
+        case "time_future_event":
+
+            message =
+                "Future-dated event detected.";
+
+            break;
+
+        case "time_old_event":
+
+            message =
+                "Archive event predates operator session.";
+
+            break;
+
+    }
+
+
+    addCameraEvent({
+
+        channel:
+            "SYSTEM",
+
+        type:
+            "TIME",
+
+        message,
+
+        severity:
+            "warning",
+
+        timestamp:
+            data.timestamp
+
+    });
+
+}
+
+
+/* ==========================================================
+   VISIBILITY OBSERVER
+========================================================== */
+
+function startVisibilityObserver() {
+
+    const cameraWindow =
+        document.getElementById(
+            "cameraWindow"
+        );
+
+
+    if (!cameraWindow) {
+
+        return;
+
+    }
+
+
+    const observer =
+        new MutationObserver(
+            () => {
+
+                const hidden =
+                    cameraWindow.classList.contains(
+                        "hidden"
+                    );
+
+
+                if (
+                    hidden
+                ) {
+
+                    leaveWorkspaceMode();
+
+                } else {
+
+                    cameraOpened();
+
+                }
+
+            }
+        );
+
+
+    observer.observe(
+        cameraWindow,
+        {
+
+            attributes:
+                true,
+
+            attributeFilter: [
+                "class"
+            ]
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   INIT
+========================================================== */
+
+export function initCamera() {
+
+    if (
+        initialized
+    ) {
+
+        return;
+
+    }
+
+
+    initialized =
+        true;
+
+
+    loadCameraEvents();
+
+
+    renderChannelList();
+
+    renderFeed();
+
+    updateTechnicalInfo();
+
+    renderEventMonitor();
+
+    updateNetworkStatus();
+
+
+    startClock();
+
+    startVisibilityObserver();
+
+
+    if (
+        typeof window !==
+        "undefined"
+    ) {
+
+        simulationTimer =
+            setInterval(
+                simulationTick,
+                SIMULATION.tick
+            );
+
+    }
+
+
+    on(
+        "personnel:movement",
+        handlePersonnelMovement
+    );
+
+
+    on(
+        "personnel:incident",
+        handlePersonnelIncident
+    );
+
+
+    on(
+        "omega:timeConflict",
+        handleOmegaTimeConflict
+    );
+
+
+    addCameraEvent({
+
+        channel:
+            "SYSTEM",
+
+        type:
+            "SYSTEM",
+
+        message:
+            "Surveillance network initialized.",
+
+        severity:
+            "normal"
+
+    });
+
+
+    console.log(
+        "[OMEGA CAMERA] Surveillance system initialized.",
+        {
+            channels:
+                cameras.length
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   PUBLIC API
+========================================================== */
+
+export function getCurrentCameraIndex() {
+
+    return currentCam;
+
+}
+
+
+export function getCameras() {
+
+    return [
+        ...cameras
+    ];
+
+}
+
+
+export function reportCameraOpened() {
+
+    cameraOpened();
+
+}
+
+
+export function reportCameraClosed() {
+
+    cameraClosed();
+
+}
+
+
+/* ==========================================================
+   DEBUG API
 ========================================================== */
 
 if (
@@ -1463,6 +3015,10 @@ if (
         selectCamera;
 
 
+    window.toggleCameraWorkspace =
+        toggleCameraWorkspace;
+
+
     window.getCurrentCamera =
         getCurrentCamera;
 
@@ -1470,38 +3026,26 @@ if (
     window.getCurrentCameraIndex =
         getCurrentCameraIndex;
 
-}
-
-
-/* ==========================================================
-   DEBUG CAMERA API
-========================================================== */
-
-if (
-    typeof window !==
-    "undefined"
-) {
 
     window.OMEGA_CAMERA = {
 
         status() {
-
-            const camera =
-                getCurrentCameraData();
-
 
             return {
 
                 index:
                     currentCam,
 
-                camera,
+                camera:
+                    getCurrentCamera(),
 
                 total:
                     cameras.length,
 
-                time:
-                    getCameraTime()
+                events:
+                    cameraEvents.length,
+
+                workspaceMode
 
             };
 
@@ -1533,16 +3077,51 @@ if (
         },
 
 
-        open() {
+        events() {
 
-            return reportCameraOpened();
+            return [
+                ...cameraEvents
+            ];
 
         },
 
 
-        close() {
+        fault(
+            cameraId,
+            type = "offline"
+        ) {
 
-            return reportCameraClosed();
+            const camera =
+                cameras.find(
+                    item =>
+                        item.id ===
+                        cameraId
+                );
+
+
+            if (!camera) {
+
+                return false;
+
+            }
+
+
+            startFault(
+                camera,
+                type
+            );
+
+
+            return true;
+
+        },
+
+
+        recover() {
+
+            recoverFault();
+
+            return true;
 
         }
 
