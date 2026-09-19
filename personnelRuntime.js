@@ -207,6 +207,7 @@ const PERSONNEL = [
             "review_security_logs",
             "report_incident",
             "send_security_message"
+            "repair_camera"
         ],
 
         schedule: [
@@ -257,6 +258,7 @@ const PERSONNEL = [
             "review_archive",
             "report_incident",
             "send_security_message"
+            "repair_camera"
         ],
 
         schedule: [
