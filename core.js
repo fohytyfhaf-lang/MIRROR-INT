@@ -50,6 +50,9 @@ import {
     initPersonnelActions
 } from "./personnelActions.js";
 import {
+    initPersonnelInteractions
+} from "./personnelInteractions.js";
+import {
     initOmegaDesktop
 } from "./omegaDesktop.js";
 import { initResearch } from "./research.js";
@@ -251,6 +254,7 @@ function bootSystem() {
      initChats();
 
      initPersonnelActions();
+     initPersonnelInteractions();
     
     initMemory();
     
