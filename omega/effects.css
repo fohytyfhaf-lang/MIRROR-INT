@@ -1,15 +1,14 @@
+```css
 /* ==========================================================
    OMEGA EFFECTS
    AMBIENT SYSTEM DISPLAY
    MIRROR-INT / OMEGA
 
-   IMPORTANT:
-   This file controls only the normal OMEGA interface.
+   This file contains visual effects only.
+   It does NOT control OMEGA window layout or positioning.
 
    MR.SMILE event effects are handled by:
        omega/mrsmileEvents.css
-
-   Do NOT use body::before / body::after here.
 ========================================================== */
 
 
@@ -27,18 +26,18 @@ body {
 
     text-rendering:
         optimizeLegibility;
-
 }
 
 
 /* ==========================================================
-   02. VERY SOFT SCREEN DEPTH
+   02. VERY SOFT WORKSPACE DEPTH
+
+   IMPORTANT:
+   No position / size / child-position rules here.
+   Window layout belongs to desktop.css / windows.css.
 ========================================================== */
 
 #workspace {
-
-    position:
-        relative;
 
     background:
         radial-gradient(
@@ -62,15 +61,11 @@ body {
                 .22
             ) 100%
         );
-
 }
 
 
 /* ==========================================================
    03. SUBTLE SCANLINES
-   ----------------------------------------------------------
-   Static.
-   Very low intensity.
 ========================================================== */
 
 #workspace::before {
@@ -105,7 +100,6 @@ body {
 
     opacity:
         .65;
-
 }
 
 
@@ -141,31 +135,11 @@ body {
                 .18
             ) 100%
         );
-
 }
 
 
 /* ==========================================================
-   05. CONTENT LAYER SAFETY
-   ----------------------------------------------------------
-   Keeps interface above ambient effects.
-========================================================== */
-
-#workspace > * {
-
-    position:
-        relative;
-
-    z-index:
-        1;
-
-}
-
-
-/* ==========================================================
-   06. OPTIONAL DIGITAL NOISE
-   ----------------------------------------------------------
-   Only used when #noiseLayer actually exists.
+   05. OPTIONAL DIGITAL NOISE
 ========================================================== */
 
 #noiseLayer {
@@ -196,15 +170,11 @@ body {
     background-size:
         320px
         320px;
-
 }
 
 
 /* ==========================================================
-   07. PIXEL FLASH
-   ----------------------------------------------------------
-   Short local feedback effect.
-   Not a permanent screen effect.
+   06. PIXEL FLASH
 ========================================================== */
 
 .pixelFlash {
@@ -213,7 +183,6 @@ body {
         omegaPixelFlash
         .18s
         ease-out;
-
 }
 
 
@@ -223,30 +192,24 @@ body {
 
         filter:
             brightness(1);
-
     }
 
     35% {
 
         filter:
             brightness(1.12);
-
     }
 
     100% {
 
         filter:
             brightness(1);
-
     }
-
 }
 
 
 /* ==========================================================
-   08. LOCAL SYSTEM FLICKER
-   ----------------------------------------------------------
-   For specific UI elements only.
+   07. LOCAL SYSTEM FLICKER
 ========================================================== */
 
 .omegaFlicker {
@@ -256,7 +219,6 @@ body {
         2.8s
         steps(2,end)
         infinite;
-
 }
 
 
@@ -268,42 +230,36 @@ body {
 
         opacity:
             1;
-
     }
 
     93% {
 
         opacity:
             .86;
-
     }
 
     94% {
 
         opacity:
             .98;
-
     }
 
     95% {
 
         opacity:
             .76;
-
     }
 
     96% {
 
         opacity:
             1;
-
     }
-
 }
 
 
 /* ==========================================================
-   09. SYSTEM PULSE
+   08. SYSTEM PULSE
 ========================================================== */
 
 .omegaSystemPulse {
@@ -313,7 +269,6 @@ body {
         2.4s
         ease-in-out
         infinite;
-
 }
 
 
@@ -324,21 +279,18 @@ body {
 
         opacity:
             1;
-
     }
 
     50% {
 
         opacity:
             .72;
-
     }
-
 }
 
 
 /* ==========================================================
-   10. ONLINE INDICATOR
+   09. ONLINE INDICATOR
 ========================================================== */
 
 .omegaOnlinePulse {
@@ -348,7 +300,6 @@ body {
         2.2s
         ease-in-out
         infinite;
-
 }
 
 
@@ -365,7 +316,6 @@ body {
                 153,
                 .16
             );
-
     }
 
     50% {
@@ -378,14 +328,12 @@ body {
                 153,
                 .34
             );
-
     }
-
 }
 
 
 /* ==========================================================
-   11. CYAN SYSTEM GLOW
+   10. CYAN SYSTEM GLOW
 ========================================================== */
 
 .omegaCyanGlow {
@@ -398,12 +346,13 @@ body {
             255,
             .20
         );
-
 }
 
 
 /* ==========================================================
-   12. WINDOW OPEN
+   11. WINDOW OPEN ANIMATION
+   Visual only.
+   No layout properties.
 ========================================================== */
 
 @keyframes omegaWindowOpen {
@@ -416,7 +365,6 @@ body {
         transform:
             translateY(5px)
             scale(.985);
-
     }
 
     to {
@@ -427,9 +375,7 @@ body {
         transform:
             translateY(0)
             scale(1);
-
     }
-
 }
 
 
@@ -440,12 +386,11 @@ body {
         .18s
         ease-out
         forwards;
-
 }
 
 
 /* ==========================================================
-   13. WINDOW CLOSE
+   12. WINDOW CLOSE ANIMATION
 ========================================================== */
 
 @keyframes omegaWindowClose {
@@ -457,7 +402,6 @@ body {
 
         transform:
             scale(1);
-
     }
 
     to {
@@ -467,9 +411,7 @@ body {
 
         transform:
             scale(.985);
-
     }
-
 }
 
 
@@ -480,12 +422,11 @@ body {
         .14s
         ease-in
         forwards;
-
 }
 
 
 /* ==========================================================
-   14. SYSTEM MESSAGE IN
+   13. SYSTEM MESSAGE IN
 ========================================================== */
 
 @keyframes omegaMessageIn {
@@ -497,7 +438,6 @@ body {
 
         transform:
             translateX(-4px);
-
     }
 
     to {
@@ -507,9 +447,7 @@ body {
 
         transform:
             translateX(0);
-
     }
-
 }
 
 
@@ -520,12 +458,11 @@ body {
         .2s
         ease-out
         forwards;
-
 }
 
 
 /* ==========================================================
-   15. TECHNICAL STATUS BLINK
+   14. TECHNICAL STATUS BLINK
 ========================================================== */
 
 .omegaStatusBlink {
@@ -535,7 +472,6 @@ body {
         1.8s
         steps(2,end)
         infinite;
-
 }
 
 
@@ -547,36 +483,31 @@ body {
 
         opacity:
             1;
-
     }
 
     84% {
 
         opacity:
             .55;
-
     }
 
     88% {
 
         opacity:
             1;
-
     }
-
 }
 
 
 /* ==========================================================
-   16. NO GLOBAL GLITCH
-   ----------------------------------------------------------
-   Generic .glitch remains intentionally unused here.
-   MR.SMILE controls its own glitch states.
+   15. NO GLOBAL GLITCH
+
+   Generic glitch behavior belongs to MR.SMILE.
 ========================================================== */
 
 
 /* ==========================================================
-   17. REDUCED MOTION
+   16. REDUCED MOTION
 ========================================================== */
 
 @media (
@@ -594,7 +525,6 @@ body {
 
         animation:
             none !important;
-
     }
-
 }
+```
