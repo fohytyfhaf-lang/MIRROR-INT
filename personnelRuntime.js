@@ -206,7 +206,7 @@ const PERSONNEL = [
             "check_cameras",
             "review_security_logs",
             "report_incident",
-            "send_security_message"
+            "send_security_message",
             "repair_camera"
         ],
 
@@ -257,7 +257,7 @@ const PERSONNEL = [
             "review_security_logs",
             "review_archive",
             "report_incident",
-            "send_security_message"
+            "send_security_message",
             "repair_camera"
         ],
 
