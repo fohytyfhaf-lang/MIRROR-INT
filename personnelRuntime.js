@@ -651,6 +651,463 @@ const PERSONNEL = [
 
     }
 
+{
+    id: "P-011",
+    name: "L. HARPER",
+    role: "RESEARCH ASSISTANT",
+    department: "RESEARCH",
+    clearance: 2,
+    mood: "ATTENTIVE",
+    shift: "A",
+    duties: [
+        "research data preparation",
+        "sample documentation",
+        "experiment support"
+    ],
+    systemAccess: [
+        "research",
+        "files",
+        "communications"
+    ],
+    capabilities: [
+        "read_research_files",
+        "submit_research_notes",
+        "read_internal_messages"
+    ]
+},
+
+
+{
+    id: "P-012",
+    name: "M. REED",
+    role: "REGISTERED NURSE",
+    department: "MEDICAL",
+    clearance: 2,
+    mood: "CALM",
+    shift: "A",
+    duties: [
+        "patient monitoring",
+        "medical assistance",
+        "record updates"
+    ],
+    systemAccess: [
+        "medical",
+        "files",
+        "communications"
+    ],
+    capabilities: [
+        "read_medical_records",
+        "update_medical_notes",
+        "check_inventory",
+        "send_medical_message"
+    ]
+},
+
+
+{
+    id: "P-013",
+    name: "J. MORGAN",
+    role: "ARCHIVE TECHNICIAN",
+    department: "ARCHIVE",
+    clearance: 3,
+    mood: "METHODICAL",
+    shift: "A",
+    duties: [
+        "archive indexing",
+        "document verification",
+        "records preparation"
+    ],
+    systemAccess: [
+        "files",
+        "archive",
+        "communications"
+    ],
+    capabilities: [
+        "read_archive",
+        "verify_documents",
+        "update_archive_index",
+        "send_archive_message"
+    ]
+},
+
+
+{
+    id: "P-014",
+    name: "R. HAYES",
+    role: "SECURITY OFFICER",
+    department: "SECURITY",
+    clearance: 2,
+    mood: "ALERT",
+    shift: "B",
+    duties: [
+        "checkpoint security",
+        "camera monitoring",
+        "response support"
+    ],
+    systemAccess: [
+        "camera",
+        "security",
+        "communications"
+    ],
+    capabilities: [
+        "check_cameras",
+        "review_security_logs",
+        "repair_camera",
+        "send_security_message"
+    ]
+},
+
+
+{
+    id: "P-015",
+    name: "A. FOSTER",
+    role: "RESEARCH TECHNICIAN",
+    department: "RESEARCH",
+    clearance: 3,
+    mood: "FOCUSED",
+    shift: "B",
+    duties: [
+        "laboratory support",
+        "experiment documentation",
+        "sample processing"
+    ],
+    systemAccess: [
+        "research",
+        "files",
+        "archive"
+    ],
+    capabilities: [
+        "read_research_files",
+        "review_experiments",
+        "submit_research_notes"
+    ]
+},
+
+
+{
+    id: "P-016",
+    name: "K. EVANS",
+    role: "MEDICAL TECHNICIAN",
+    department: "MEDICAL",
+    clearance: 2,
+    mood: "STEADY",
+    shift: "B",
+    duties: [
+        "clinical assistance",
+        "medical inventory",
+        "patient records"
+    ],
+    systemAccess: [
+        "medical",
+        "files",
+        "communications"
+    ],
+    capabilities: [
+        "read_medical_records",
+        "check_inventory",
+        "send_medical_message"
+    ]
+},
+
+
+{
+    id: "P-017",
+    name: "T. ROSS",
+    role: "SYSTEMS ENGINEER",
+    department: "SYSTEMS",
+    clearance: 4,
+    mood: "CALM",
+    shift: "B",
+    duties: [
+        "network diagnostics",
+        "server maintenance",
+        "system monitoring"
+    ],
+    systemAccess: [
+        "console",
+        "systems",
+        "camera",
+        "files"
+    ],
+    capabilities: [
+        "run_system_diagnostics",
+        "check_network",
+        "review_system_logs",
+        "send_system_message"
+    ]
+},
+
+
+{
+    id: "P-018",
+    name: "C. PARKER",
+    role: "ADMINISTRATIVE CLERK",
+    department: "ADMINISTRATION",
+    clearance: 2,
+    mood: "NEUTRAL",
+    shift: "B",
+    duties: [
+        "request processing",
+        "document handling",
+        "internal records"
+    ],
+    systemAccess: [
+        "administration",
+        "files",
+        "communications"
+    ],
+    capabilities: [
+        "review_requests",
+        "update_internal_records",
+        "send_internal_message"
+    ]
+},
+
+
+{
+    id: "P-019",
+    name: "W. GRANT",
+    role: "ELECTRICAL TECHNICIAN",
+    department: "MAINTENANCE",
+    clearance: 2,
+    mood: "QUIET",
+    shift: "B",
+    duties: [
+        "electrical inspection",
+        "equipment maintenance",
+        "facility checks"
+    ],
+    systemAccess: [
+        "systems",
+        "files",
+        "communications"
+    ],
+    capabilities: [
+        "check_facility",
+        "submit_maintenance_report",
+        "read_internal_messages"
+    ]
+},
+
+
+{
+    id: "P-020",
+    name: "D. COOPER",
+    role: "SECURITY OFFICER",
+    department: "SECURITY",
+    clearance: 2,
+    mood: "WATCHFUL",
+    shift: "C",
+    duties: [
+        "night checkpoint monitoring",
+        "camera surveillance",
+        "restricted sector patrol"
+    ],
+    systemAccess: [
+        "camera",
+        "security",
+        "communications"
+    ],
+    capabilities: [
+        "check_cameras",
+        "review_security_logs",
+        "repair_camera",
+        "send_security_message"
+    ]
+},
+
+
+{
+    id: "P-021",
+    name: "V. HOLT",
+    role: "SECURITY ANALYST",
+    department: "SECURITY",
+    clearance: 3,
+    mood: "SUSPICIOUS",
+    shift: "C",
+    duties: [
+        "night access review",
+        "surveillance analysis",
+        "incident monitoring"
+    ],
+    systemAccess: [
+        "camera",
+        "security",
+        "archive",
+        "files"
+    ],
+    capabilities: [
+        "check_cameras",
+        "review_security_logs",
+        "review_archive",
+        "report_incident"
+    ]
+},
+
+
+{
+    id: "P-022",
+    name: "E. WILSON",
+    role: "MEDICAL TECHNICIAN",
+    department: "MEDICAL",
+    clearance: 2,
+    mood: "TIRED",
+    shift: "C",
+    duties: [
+        "night patient monitoring",
+        "medical inventory",
+        "clinical assistance"
+    ],
+    systemAccess: [
+        "medical",
+        "files",
+        "communications"
+    ],
+    capabilities: [
+        "read_medical_records",
+        "check_inventory",
+        "send_medical_message"
+    ]
+},
+
+
+{
+    id: "P-023",
+    name: "N. GRAY",
+    role: "RESEARCH TECHNICIAN",
+    department: "RESEARCH",
+    clearance: 3,
+    mood: "RESTLESS",
+    shift: "C",
+    duties: [
+        "night laboratory monitoring",
+        "experiment support",
+        "research notes"
+    ],
+    systemAccess: [
+        "research",
+        "files",
+        "archive"
+    ],
+    capabilities: [
+        "read_research_files",
+        "review_experiments",
+        "submit_research_notes"
+    ]
+},
+
+
+{
+    id: "P-024",
+    name: "H. VAUGHN",
+    role: "SYSTEM OPERATOR",
+    department: "SYSTEMS",
+    clearance: 4,
+    mood: "QUIET",
+    shift: "C",
+    duties: [
+        "night system monitoring",
+        "network diagnostics",
+        "server supervision"
+    ],
+    systemAccess: [
+        "console",
+        "systems",
+        "camera",
+        "files"
+    ],
+    capabilities: [
+        "run_system_diagnostics",
+        "check_network",
+        "review_system_logs",
+        "send_system_message"
+    ]
+},
+
+
+{
+    id: "P-025",
+    name: "I. WEBB",
+    role: "MAINTENANCE TECHNICIAN",
+    department: "MAINTENANCE",
+    clearance: 2,
+    mood: "QUIET",
+    shift: "C",
+    duties: [
+        "night equipment checks",
+        "utility monitoring",
+        "emergency maintenance"
+    ],
+    systemAccess: [
+        "systems",
+        "files",
+        "communications"
+    ],
+    capabilities: [
+        "check_facility",
+        "submit_maintenance_report",
+        "read_internal_messages"
+    ]
+},
+
+
+{
+    id: "P-026",
+    name: "F. BISHOP",
+    role: "COMMUNICATIONS OFFICER",
+    department: "COMMUNICATIONS",
+    clearance: 3,
+    mood: "ATTENTIVE",
+    shift: "C",
+    duties: [
+        "night message monitoring",
+        "communications routing",
+        "priority message handling"
+    ],
+    systemAccess: [
+        "communications",
+        "files",
+        "personnel"
+    ],
+    capabilities: [
+        "read_internal_messages",
+        "send_internal_message",
+        "route_messages",
+        "review_communication_logs"
+    ]
+},
+
+
+{
+    id: "P-027",
+    name: "G. MARSH",
+    role: "NIGHT SHIFT SUPERVISOR",
+    department: "SECURITY",
+    clearance: 4,
+    mood: "DISCIPLINED",
+    shift: "C",
+    duties: [
+        "night shift supervision",
+        "incident escalation",
+        "personnel coordination"
+    ],
+    systemAccess: [
+        "security",
+        "camera",
+        "personnel",
+        "files",
+        "communications"
+    ],
+    capabilities: [
+        "review_personnel",
+        "review_security_logs",
+        "report_incident",
+        "send_security_message"
+    ]
+}
+
+   
+
 ];
 
 /* ==========================================================
@@ -1307,7 +1764,36 @@ function preparePersonnel() {
             [
                 ...definition.capabilities
             ];
+       
+           const shiftCode =
+    definition.shift ||
+    SHIFT_ASSIGNMENTS[
+        definition.id
+    ] ||
+    "A";
 
+
+existing.shift =
+    shiftCode;
+
+
+existing.shiftName =
+    SHIFTS[
+        shiftCode
+    ].name;
+
+
+existing.shiftHours =
+    SHIFTS[
+        shiftCode
+    ].hours;
+
+
+existing.schedule =
+    buildShiftSchedule(
+        definition,
+        shiftCode
+    );
 
         /*
          * Keep dynamic state.
