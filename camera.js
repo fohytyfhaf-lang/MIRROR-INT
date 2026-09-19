@@ -2999,6 +2999,66 @@ export function initCamera() {
 }
 
 
+
+/* ==========================================================
+   PERSONNEL CAMERA REPAIR
+========================================================== */
+
+export function repairCamera(
+    cameraId,
+    personnelId = null
+) {
+
+    const camera =
+        cameras.find(
+            item =>
+                item.id === cameraId
+        );
+
+    if (
+        !camera ||
+        !activeFault ||
+        activeFault.cameraId !== cameraId
+    ) {
+        return false;
+    }
+
+    recoverFault();
+
+    addCameraEvent({
+
+        channel:
+            camera.id,
+
+        type:
+            "MAINTENANCE",
+
+        message:
+            personnelId
+                ? "Camera repaired by " +
+                    personnelId +
+                    "."
+                : "Camera repaired by maintenance personnel.",
+
+        severity:
+            "normal"
+
+    });
+
+    trigger(
+        "personnel:cameraRepairCompleted",
+        {
+            cameraId,
+            personnelId,
+            timestamp:
+                now()
+        }
+    );
+
+    return true;
+
+}
+
 /* ==========================================================
    PUBLIC API
 ========================================================== */
@@ -3065,105 +3125,119 @@ if (
     window.getCurrentCameraIndex =
         getCurrentCameraIndex;
 
+   window.repairCamera =
+    repairCamera;
 
-    window.OMEGA_CAMERA = {
+window.OMEGA_CAMERA = {
 
-        status() {
+    status() {
 
-            return {
+        return {
 
-                index:
-                    currentCam,
+            index:
+                currentCam,
 
-                camera:
-                    getCurrentCamera(),
+            camera:
+                getCurrentCamera(),
 
-                total:
-                    cameras.length,
+            total:
+                cameras.length,
 
-                events:
-                    cameraEvents.length,
+            events:
+                cameraEvents.length,
 
-                workspaceMode
+            workspaceMode
 
-            };
+        };
 
-        },
-
-
-        next() {
-
-            return nextCam();
-
-        },
+    },
 
 
-        previous() {
+    next() {
 
-            return previousCam();
+        return nextCam();
 
-        },
+    },
 
 
-        select(
+    previous() {
+
+        return previousCam();
+
+    },
+
+
+    select(
+        index
+    ) {
+
+        return selectCamera(
             index
-        ) {
+        );
 
-            return selectCamera(
-                index
-            );
-
-        },
+    },
 
 
-        events() {
+    events() {
 
-            return [
-                ...cameraEvents
-            ];
+        return [
+            ...cameraEvents
+        ];
 
-        },
-
-
-        fault(
-            cameraId,
-            type = "offline"
-        ) {
-
-            const camera =
-                cameras.find(
-                    item =>
-                        item.id ===
-                        cameraId
-                );
+    },
 
 
-            if (!camera) {
+    fault(
+        cameraId,
+        type = "offline"
+    ) {
 
-                return false;
-
-            }
-
-
-            startFault(
-                camera,
-                type
+        const camera =
+            cameras.find(
+                item =>
+                    item.id ===
+                    cameraId
             );
 
 
-            return true;
+        if (!camera) {
 
-        },
-
-
-        recover() {
-
-            recoverFault();
-
-            return true;
+            return false;
 
         }
 
-    };
 
-}
+        startFault(
+            camera,
+            type
+        );
+
+
+        return true;
+
+    },
+
+
+    recover() {
+
+        recoverFault();
+
+        return true;
+
+    },
+
+
+    repair(
+        cameraId,
+        personnelId = null
+    ) {
+
+        return repairCamera(
+            cameraId,
+            personnelId
+        );
+
+    }
+
+};
+   
