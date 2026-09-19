@@ -1,3 +1,4 @@
+
 import {
     trigger
 } from "./eventManager.js";
@@ -22,7 +23,9 @@ function reportMrSmileWindowAction(data = {}) {
             {
                 source: "windowManager",
                 page: "system",
-                operator: data.operator || "operator",
+                operator:
+                    data.operator ||
+                    "operator",
                 ...data
             }
         );
@@ -35,6 +38,7 @@ function reportMrSmileWindowAction(data = {}) {
         );
 
     }
+
 }
 
 
@@ -58,6 +62,7 @@ function getWindowName(win) {
     }
 
     return "unknown";
+
 }
 
 
@@ -73,37 +78,63 @@ function getWindowState(win) {
     return {
 
         id:
-            win.id || null,
+            win.id ||
+            null,
 
         name:
             getWindowName(win),
 
         display:
-            win.style.display || "",
+            win.style.display ||
+            "",
 
         hidden:
-            win.classList.contains("hidden"),
+            win.classList.contains(
+                "hidden"
+            ),
 
         left:
             win.style.left ||
-            `${Math.round(rect.left)}px`,
+            `${Math.round(
+                rect.left
+            )}px`,
 
         top:
             win.style.top ||
-            `${Math.round(rect.top)}px`,
+            `${Math.round(
+                rect.top
+            )}px`,
 
         width:
-            Math.round(rect.width),
+            Math.round(
+                rect.width
+            ),
 
         height:
-            Math.round(rect.height),
+            Math.round(
+                rect.height
+            ),
 
         zIndex:
-            win.style.zIndex || null
+            win.style.zIndex ||
+            null
 
     };
 
 }
+
+
+/* =========================
+        INITIAL POSITION
+========================= */
+
+/*
+ * Каждому окну назначается собственная
+ * начальная позиция внутри workspace.
+ *
+ * Окна больше не появляются строго
+ * друг на друге.
+ */
 
 function placeWindow(win) {
 
@@ -111,25 +142,36 @@ function placeWindow(win) {
         return;
     }
 
+
     /*
-     * Позиция назначается только
-     * при первом открытии окна.
+     * Если пользователь уже двигал окно,
+     * его позицию не трогаем.
      */
+
     if (
-        win.dataset.positionInitialized === "true"
+        win.dataset.positionInitialized ===
+        "true"
     ) {
+
         return;
+
     }
 
+
     const workspace =
-        document.getElementById("workspace");
+        document.getElementById(
+            "workspace"
+        );
+
 
     if (!workspace) {
         return;
     }
 
+
     const rect =
         win.getBoundingClientRect();
+
 
     const width =
         rect.width;
@@ -137,36 +179,127 @@ function placeWindow(win) {
     const height =
         rect.height;
 
-    const left =
+
+    /*
+     * Считаем уже открытые окна,
+     * у которых есть начальная позиция.
+     */
+
+    const existingPositionedWindows =
+        Array.from(
+            workspace.querySelectorAll(
+                ".window"
+            )
+        ).filter(
+            other =>
+                other !== win &&
+                other.dataset.positionInitialized ===
+                    "true" &&
+                getComputedStyle(
+                    other
+                ).display !==
+                    "none"
+        ).length;
+
+
+    /*
+     * Небольшое смещение каждого
+     * следующего окна.
+     */
+
+    const stagger =
+        (
+            existingPositionedWindows %
+            5
+        ) * 28;
+
+
+    /*
+     * Центр workspace.
+     */
+
+    const centeredLeft =
+        (
+            workspace.clientWidth -
+            width
+        ) / 2;
+
+
+    const centeredTop =
+        (
+            workspace.clientHeight -
+            height
+        ) / 2;
+
+
+    /*
+     * Не позволяем окну уйти
+     * за границы workspace.
+     */
+
+    const maxLeft =
         Math.max(
             12,
-            Math.round(
-                (
-                    workspace.clientWidth -
-                    width
-                ) / 2
-            )
+            workspace.clientWidth -
+            width -
+            12
         );
+
+
+    const maxTop =
+        Math.max(
+            12,
+            workspace.clientHeight -
+            height -
+            12
+        );
+
+
+    const left =
+        Math.min(
+
+            Math.max(
+                12,
+                Math.round(
+                    centeredLeft +
+                    stagger
+                )
+            ),
+
+            maxLeft
+
+        );
+
 
     const top =
-        Math.max(
-            12,
-            Math.round(
-                (
-                    workspace.clientHeight -
-                    height
-                ) / 2
-            )
+        Math.min(
+
+            Math.max(
+                12,
+                Math.round(
+                    centeredTop +
+                    stagger
+                )
+            ),
+
+            maxTop
+
         );
 
+
     win.style.left =
-        left + "px";
+        left +
+        "px";
+
 
     win.style.top =
-        top + "px";
+        top +
+        "px";
+
 
     win.dataset.positionInitialized =
         "true";
+
 }
 
 
@@ -174,13 +307,17 @@ function placeWindow(win) {
         Z-INDEX + FOCUS
 ========================= */
 
-export function bringToFront(win) {
+export function bringToFront(
+    win
+) {
 
     if (!win) {
         return;
     }
 
+
     topZ++;
+
 
     win.style.zIndex =
         topZ;
@@ -192,28 +329,45 @@ export function bringToFront(win) {
         DRAG SYSTEM
 ========================= */
 
-export function makeWindowDraggable(win) {
+export function makeWindowDraggable(
+    win
+) {
 
     const title =
         win.querySelector(
             ".windowHeader"
         );
 
+
+    const workspace =
+        document.getElementById(
+            "workspace"
+        );
+
+
     if (!title) {
         return;
     }
 
 
-    let offsetX = 0;
-    let offsetY = 0;
+    let offsetX =
+        0;
 
-    let dragging = false;
+    let offsetY =
+        0;
 
-    let startLeft = 0;
-    let startTop = 0;
+    let dragging =
+        false;
+
+    let startLeft =
+        0;
+
+    let startTop =
+        0;
 
 
-    title.style.cursor = "move";
+    title.style.cursor =
+        "move";
 
 
     title.addEventListener(
@@ -221,55 +375,100 @@ export function makeWindowDraggable(win) {
         (e) => {
 
             /*
-             * Левая кнопка мыши.
+             * Только левая кнопка.
              */
 
-            if (e.button !== 0) {
+            if (
+                e.button !==
+                0
+            ) {
+
                 return;
+
             }
 
 
-            dragging = true;
+            dragging =
+                true;
 
 
             const rect =
                 win.getBoundingClientRect();
 
 
+            const workspaceRect =
+                workspace
+                    ? workspace.getBoundingClientRect()
+                    : {
+                        left:
+                            0,
+
+                        top:
+                            0
+                    };
+
+
+            /*
+             * Точка клика внутри окна.
+             */
+
             offsetX =
                 e.clientX -
                 rect.left;
+
 
             offsetY =
                 e.clientY -
                 rect.top;
 
 
+            /*
+             * Координаты теперь
+             * считаются относительно
+             * workspace, а не экрана.
+             */
+
             startLeft =
                 parseInt(
                     win.style.left ||
-                    `${Math.round(rect.left)}`,
+                    "0",
                     10
                 );
+
+
+            if (!win.style.left) {
+
+                startLeft =
+                    Math.round(
+                        rect.left -
+                        workspaceRect.left
+                    );
+
+            }
+
 
             startTop =
                 parseInt(
                     win.style.top ||
-                    `${Math.round(rect.top)}`,
+                    "0",
                     10
                 );
 
 
-            bringToFront(win);
+            if (!win.style.top) {
+
+                startTop =
+                    Math.round(
+                        rect.top -
+                        workspaceRect.top
+                    );
+
+            }
 
 
-            /*
-             * Не отправляем window_focus
-             * здесь отдельно.
-             *
-             * Само перемещение уже является
-             * отдельным действием.
-             */
+            bringToFront(
+                win
+            );
 
         }
     );
@@ -282,12 +481,89 @@ export function makeWindowDraggable(win) {
         }
 
 
+        const workspaceRect =
+            workspace
+                ? workspace.getBoundingClientRect()
+                : {
+                    left:
+                        0,
+
+                    top:
+                        0
+                };
+
+
+        /*
+         * Максимальная позиция
+         * внутри workspace.
+         */
+
+        const maxLeft =
+            workspace
+                ? Math.max(
+                    12,
+                    workspace.clientWidth -
+                    win.offsetWidth -
+                    12
+                )
+                : Number.POSITIVE_INFINITY;
+
+
+        const maxTop =
+            workspace
+                ? Math.max(
+                    12,
+                    workspace.clientHeight -
+                    win.offsetHeight -
+                    12
+                )
+                : Number.POSITIVE_INFINITY;
+
+
+        /*
+         * Новые координаты
+         * относительно workspace.
+         */
+
+        const nextLeft =
+            Math.min(
+
+                Math.max(
+                    12,
+
+                    e.clientX -
+                    workspaceRect.left -
+                    offsetX
+                ),
+
+                maxLeft
+
+            );
+
+
+        const nextTop =
+            Math.min(
+
+                Math.max(
+                    12,
+
+                    e.clientY -
+                    workspaceRect.top -
+                    offsetY
+                ),
+
+                maxTop
+
+            );
+
+
         win.style.left =
-            (e.clientX - offsetX) +
+            nextLeft +
             "px";
 
+
         win.style.top =
-            (e.clientY - offsetY) +
+            nextTop +
             "px";
 
     }
@@ -300,28 +576,34 @@ export function makeWindowDraggable(win) {
         }
 
 
-        dragging = false;
+        dragging =
+            false;
 
 
         const finalLeft =
             parseInt(
-                win.style.left || "0",
+                win.style.left ||
+                "0",
                 10
             );
 
+
         const finalTop =
             parseInt(
-                win.style.top || "0",
+                win.style.top ||
+                "0",
                 10
             );
 
 
         /*
-         * Отправляем событие только если
-         * окно действительно переместилось.
+         * Событие движения отправляется
+         * только если окно реально
+         * изменило позицию.
          */
 
         if (
+
             Math.abs(
                 finalLeft -
                 startLeft
@@ -331,6 +613,7 @@ export function makeWindowDraggable(win) {
                 finalTop -
                 startTop
             ) > 2
+
         ) {
 
             reportMrSmileWindowAction({
@@ -339,7 +622,9 @@ export function makeWindowDraggable(win) {
                     "window_move",
 
                 target:
-                    getWindowName(win),
+                    getWindowName(
+                        win
+                    ),
 
                 action:
                     "move",
@@ -353,7 +638,9 @@ export function makeWindowDraggable(win) {
                         win.id,
 
                     windowName:
-                        getWindowName(win),
+                        getWindowName(
+                            win
+                        ),
 
                     previousPosition: {
 
@@ -401,10 +688,8 @@ export function makeWindowDraggable(win) {
 
 
     /*
-     * Любой клик по окну поднимает его.
-     *
-     * Но MR.SMILE получает focus только
-     * если окно реально сменило верхний слой.
+     * Клик по окну
+     * поднимает его наверх.
      */
 
     win.addEventListener(
@@ -419,9 +704,14 @@ export function makeWindowDraggable(win) {
                 );
 
 
-            if (oldZ < topZ) {
+            if (
+                oldZ <
+                topZ
+            ) {
 
-                bringToFront(win);
+                bringToFront(
+                    win
+                );
 
 
                 reportMrSmileWindowAction({
@@ -430,7 +720,9 @@ export function makeWindowDraggable(win) {
                         "window_focus",
 
                     target:
-                        getWindowName(win),
+                        getWindowName(
+                            win
+                        ),
 
                     action:
                         "focus",
@@ -444,7 +736,9 @@ export function makeWindowDraggable(win) {
                             win.id,
 
                         windowName:
-                            getWindowName(win),
+                            getWindowName(
+                                win
+                            ),
 
                         zIndex:
                             topZ
@@ -465,7 +759,9 @@ export function makeWindowDraggable(win) {
         OPEN WINDOW
 ========================= */
 
-export function openWindow(name) {
+export function openWindow(
+    name
+) {
 
     const win =
         document.getElementById(
@@ -492,7 +788,9 @@ export function openWindow(name) {
 
 
     const previousState =
-        state.get(name) ||
+        state.get(
+            name
+        ) ||
         "closed";
 
 
@@ -500,61 +798,20 @@ export function openWindow(name) {
         "hidden"
     );
 
+
     win.style.display =
         "flex";
 
-    
-   function placeWindow(win) {
 
-    if (!win) {
-        return;
-    }
+    /*
+     * Назначаем стартовую позицию
+     * только один раз.
+     */
 
-    if (
-        win.dataset.positionInitialized === "true"
-    ) {
-        return;
-    }
+    placeWindow(
+        win
+    );
 
-    const workspace =
-        document.getElementById("workspace");
-
-    if (!workspace) {
-        return;
-    }
-
-    const width =
-        win.getBoundingClientRect().width;
-
-    const height =
-        win.getBoundingClientRect().height;
-
-    const left =
-        Math.max(
-            12,
-            Math.round(
-                (workspace.clientWidth - width) / 2
-            )
-        );
-
-    const top =
-        Math.max(
-            12,
-            Math.round(
-                (workspace.clientHeight - height) / 2
-            )
-        );
-
-    win.style.left =
-        left + "px";
-
-    win.style.top =
-        top + "px";
-
-    win.dataset.positionInitialized =
-        "true";
-
-}
 
     state.set(
         name,
@@ -562,45 +819,54 @@ export function openWindow(name) {
     );
 
 
-    bringToFront(win);
+    bringToFront(
+        win
+    );
 
-        /* ======================================================
+
+    /* ======================================================
        OPERATOR PROFILE
     ====================================================== */
 
     if (
-        name === "operatorProfile" &&
-        typeof window !== "undefined" &&
-        typeof window.loadOperatorProfile === "function"
+
+        name ===
+        "operatorProfile" &&
+
+        typeof window !==
+            "undefined" &&
+
+        typeof window.loadOperatorProfile ===
+            "function"
+
     ) {
 
         window.loadOperatorProfile();
 
     }
 
-    
+
     /*
-     * Инициализируем drag только один раз.
+     * Инициализируем drag
+     * только один раз.
      */
 
     if (
-        !win.dataset
-            .draggableInitialized
+        !win.dataset.draggableInitialized
     ) {
 
         makeWindowDraggable(
             win
         );
 
-        win.dataset
-            .draggableInitialized =
+        win.dataset.draggableInitialized =
             "true";
 
     }
 
 
     /*
-     * MR.SMILE Context
+     * MR.SMILE CONTEXT
      */
 
     reportMrSmileWindowAction({
@@ -632,7 +898,9 @@ export function openWindow(name) {
                 wasHidden,
 
             state:
-                getWindowState(win)
+                getWindowState(
+                    win
+                )
 
         }
 
@@ -645,7 +913,9 @@ export function openWindow(name) {
         CLOSE WINDOW
 ========================= */
 
-export function closeWindow(name) {
+export function closeWindow(
+    name
+) {
 
     const win =
         document.getElementById(
@@ -666,13 +936,16 @@ export function closeWindow(name) {
 
 
     const previousState =
-        state.get(name) ||
+        state.get(
+            name
+        ) ||
         "open";
 
 
     win.classList.add(
         "hidden"
     );
+
 
     win.style.display =
         "none";
@@ -683,10 +956,6 @@ export function closeWindow(name) {
         "closed"
     );
 
-
-    /*
-     * MR.SMILE Context
-     */
 
     reportMrSmileWindowAction({
 
@@ -714,7 +983,9 @@ export function closeWindow(name) {
                 previousState,
 
             state:
-                getWindowState(win)
+                getWindowState(
+                    win
+                )
 
         }
 
@@ -727,7 +998,9 @@ export function closeWindow(name) {
         MINIMIZE
 ========================= */
 
-export function minimizeWindow(name) {
+export function minimizeWindow(
+    name
+) {
 
     const win =
         document.getElementById(
@@ -748,7 +1021,9 @@ export function minimizeWindow(name) {
 
 
     const previousState =
-        state.get(name) ||
+        state.get(
+            name
+        ) ||
         "open";
 
 
@@ -761,10 +1036,6 @@ export function minimizeWindow(name) {
         "minimized"
     );
 
-
-    /*
-     * MR.SMILE Context
-     */
 
     reportMrSmileWindowAction({
 
@@ -802,7 +1073,9 @@ export function minimizeWindow(name) {
         RESTORE
 ========================= */
 
-export function restoreWindow(name) {
+export function restoreWindow(
+    name
+) {
 
     const win =
         document.getElementById(
@@ -823,7 +1096,9 @@ export function restoreWindow(name) {
 
 
     const previousState =
-        state.get(name) ||
+        state.get(
+            name
+        ) ||
         "minimized";
 
 
@@ -831,8 +1106,22 @@ export function restoreWindow(name) {
         "hidden"
     );
 
+
     win.style.display =
         "flex";
+
+
+    /*
+     * Если окно никогда не
+     * получало позицию — выдаём её.
+     *
+     * Если уже двигалось —
+     * сохраняем её.
+     */
+
+    placeWindow(
+        win
+    );
 
 
     state.set(
@@ -841,12 +1130,10 @@ export function restoreWindow(name) {
     );
 
 
-    bringToFront(win);
+    bringToFront(
+        win
+    );
 
-
-    /*
-     * MR.SMILE Context
-     */
 
     reportMrSmileWindowAction({
 
@@ -874,7 +1161,9 @@ export function restoreWindow(name) {
                 previousState,
 
             state:
-                getWindowState(win)
+                getWindowState(
+                    win
+                )
 
         }
 
@@ -887,7 +1176,9 @@ export function restoreWindow(name) {
         MAXIMIZE / RESTORE
 ========================= */
 
-export function maximizeWindow(name) {
+export function maximizeWindow(
+    name
+) {
 
     const win =
         document.getElementById(
@@ -911,7 +1202,22 @@ export function maximizeWindow(name) {
      * MAXIMIZE
      */
 
-    if (!savedStyles.has(name)) {
+    if (
+        !savedStyles.has(
+            name
+        )
+    ) {
+
+        /*
+         * На всякий случай гарантируем,
+         * что у окна есть нормальная
+         * начальная позиция.
+         */
+
+        placeWindow(
+            win
+        );
+
 
         savedStyles.set(
             name,
@@ -933,17 +1239,27 @@ export function maximizeWindow(name) {
         );
 
 
+        /*
+         * Максимизируем именно
+         * относительно workspace.
+         *
+         * Не 100vw / 100vh.
+         */
+
         win.style.left =
-            "0";
+            "0px";
+
 
         win.style.top =
-            "60px";
+            "0px";
+
 
         win.style.width =
-            "100vw";
+            "100%";
+
 
         win.style.height =
-            "calc(100vh - 60px)";
+            "100%";
 
 
         state.set(
@@ -952,7 +1268,9 @@ export function maximizeWindow(name) {
         );
 
 
-        bringToFront(win);
+        bringToFront(
+            win
+        );
 
 
         reportMrSmileWindowAction({
@@ -981,13 +1299,16 @@ export function maximizeWindow(name) {
                     "open",
 
                 state:
-                    getWindowState(win)
+                    getWindowState(
+                        win
+                    )
 
             }
 
         });
 
     }
+
 
     /*
      * RESTORE FROM MAXIMIZED
@@ -1004,11 +1325,14 @@ export function maximizeWindow(name) {
         win.style.left =
             old.left;
 
+
         win.style.top =
             old.top;
 
+
         win.style.width =
             old.width;
+
 
         win.style.height =
             old.height;
@@ -1025,7 +1349,9 @@ export function maximizeWindow(name) {
         );
 
 
-        bringToFront(win);
+        bringToFront(
+            win
+        );
 
 
         reportMrSmileWindowAction({
@@ -1054,7 +1380,9 @@ export function maximizeWindow(name) {
                     "maximized",
 
                 state:
-                    getWindowState(win)
+                    getWindowState(
+                        win
+                    )
 
             }
 
@@ -1084,6 +1412,7 @@ export function initializeWindows() {
                 "hidden"
             );
 
+
             win.style.display =
                 "none";
 
@@ -1094,7 +1423,9 @@ export function initializeWindows() {
              */
 
             const name =
-                getWindowName(win);
+                getWindowName(
+                    win
+                );
 
 
             state.set(
@@ -1118,19 +1449,31 @@ export function initializeWindows() {
         PUBLIC STATE API
 ========================= */
 
-export function getWindowStateByName(name) {
+export function getWindowStateByName(
+    name
+) {
 
-    return state.get(name) || null;
+    return (
+        state.get(
+            name
+        ) ||
+        null
+    );
 
 }
 
 
 export function getAllWindowStates() {
 
-    const result = {};
+    const result =
+        {};
+
 
     state.forEach(
-        (value, key) => {
+        (
+            value,
+            key
+        ) => {
 
             result[key] =
                 value;
@@ -1138,12 +1481,15 @@ export function getAllWindowStates() {
         }
     );
 
+
     return result;
 
 }
 
 
-export function getWindowInfo(name) {
+export function getWindowInfo(
+    name
+) {
 
     const win =
         document.getElementById(
@@ -1159,11 +1505,15 @@ export function getWindowInfo(name) {
     return {
 
         state:
-            state.get(name) ||
+            state.get(
+                name
+            ) ||
             null,
 
         window:
-            getWindowState(win)
+            getWindowState(
+                win
+            )
 
     };
 
@@ -1183,42 +1533,64 @@ export function getTopZ() {
 
 window.OMEGA_WINDOWS = {
 
-    open(name) {
+    open(
+        name
+    ) {
 
-        return openWindow(name);
-
-    },
-
-
-    close(name) {
-
-        return closeWindow(name);
+        return openWindow(
+            name
+        );
 
     },
 
 
-    minimize(name) {
+    close(
+        name
+    ) {
 
-        return minimizeWindow(name);
-
-    },
-
-
-    restore(name) {
-
-        return restoreWindow(name);
+        return closeWindow(
+            name
+        );
 
     },
 
 
-    maximize(name) {
+    minimize(
+        name
+    ) {
 
-        return maximizeWindow(name);
+        return minimizeWindow(
+            name
+        );
 
     },
 
 
-    focus(name) {
+    restore(
+        name
+    ) {
+
+        return restoreWindow(
+            name
+        );
+
+    },
+
+
+    maximize(
+        name
+    ) {
+
+        return maximizeWindow(
+            name
+        );
+
+    },
+
+
+    focus(
+        name
+    ) {
 
         const win =
             document.getElementById(
@@ -1238,7 +1610,9 @@ window.OMEGA_WINDOWS = {
         }
 
 
-        bringToFront(win);
+        bringToFront(
+            win
+        );
 
 
         reportMrSmileWindowAction({
@@ -1273,14 +1647,20 @@ window.OMEGA_WINDOWS = {
     },
 
 
-    info(name) {
+    info(
+        name
+    ) {
 
-        return getWindowInfo(name);
+        return getWindowInfo(
+            name
+        );
 
     },
 
 
-    state(name) {
+    state(
+        name
+    ) {
 
         return getWindowStateByName(
             name
