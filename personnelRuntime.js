@@ -1063,6 +1063,16 @@ shiftHours:
                 ...definition.capabilities
             ],
 
+       schedule:
+    buildShiftSchedule(
+        definition,
+        definition.shift ||
+        SHIFT_ASSIGNMENTS[
+            definition.id
+        ] ||
+        "A"
+    ),
+
         status:
             "OFF DUTY",
 
