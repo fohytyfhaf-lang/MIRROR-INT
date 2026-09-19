@@ -3226,7 +3226,6 @@ window.OMEGA_CAMERA = {
 
     },
 
-
     repair(
         cameraId,
         personnelId = null
@@ -3240,4 +3239,6 @@ window.OMEGA_CAMERA = {
     }
 
 };
-   
+
+}
+  
