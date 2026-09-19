@@ -105,6 +105,70 @@ function getWindowState(win) {
 
 }
 
+function placeWindow(win) {
+
+    if (!win) {
+        return;
+    }
+
+    /*
+     * Позиция назначается только
+     * при первом открытии окна.
+     */
+    if (
+        win.dataset.positionInitialized === "true"
+    ) {
+        return;
+    }
+
+    const workspace =
+        document.getElementById("workspace");
+
+    if (!workspace) {
+        return;
+    }
+
+    const rect =
+        win.getBoundingClientRect();
+
+    const width =
+        rect.width;
+
+    const height =
+        rect.height;
+
+    const left =
+        Math.max(
+            12,
+            Math.round(
+                (
+                    workspace.clientWidth -
+                    width
+                ) / 2
+            )
+        );
+
+    const top =
+        Math.max(
+            12,
+            Math.round(
+                (
+                    workspace.clientHeight -
+                    height
+                ) / 2
+            )
+        );
+
+    win.style.left =
+        left + "px";
+
+    win.style.top =
+        top + "px";
+
+    win.dataset.positionInitialized =
+        "true";
+}
+
 
 /* =========================
         Z-INDEX + FOCUS
