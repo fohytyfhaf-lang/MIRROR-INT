@@ -7,6 +7,10 @@ import {
     getClearance
 } from "./security.js";
 
+import {
+    Storage
+} from "./storage.js";
+
 
 /* =========================================================
    PERSONNEL DATABASE
@@ -484,6 +488,403 @@ const personnel = {
 
 };
 
+/* =========================================================
+   DYNAMIC PERSONNEL PROFILE
+   ---------------------------------------------------------
+   New employees from personnelRuntime.js do not need
+   a separate hardcoded AI profile.
+
+   Their identity comes from Personnel.
+========================================================= */
+
+function buildDynamicPersonnelProfile(
+    name
+) {
+
+    const data =
+        Storage.get(
+            "personnel",
+            []
+        );
+
+
+    if (
+        !Array.isArray(data)
+    ) {
+
+        return null;
+
+    }
+
+
+    const runtimePerson =
+        data.find(
+            person =>
+                person?.name ===
+                name
+        );
+
+
+    if (
+        !runtimePerson
+    ) {
+
+        return null;
+
+    }
+
+
+    const department =
+        String(
+            runtimePerson.department ||
+            "GENERAL"
+        );
+
+
+    const mood =
+        String(
+            runtimePerson.mood ||
+            "NEUTRAL"
+        )
+            .toLowerCase();
+
+
+    const activity =
+        runtimePerson.activity ||
+        "working";
+
+
+    const location =
+        runtimePerson.location ||
+        department;
+
+
+    let personality = [
+        "professional",
+        "reserved"
+    ];
+
+
+    if (
+        mood.includes("tired")
+    ) {
+
+        personality = [
+            "tired",
+            "quiet",
+            "professional"
+        ];
+
+    }
+
+    else if (
+        mood.includes("calm")
+    ) {
+
+        personality = [
+            "calm",
+            "patient",
+            "professional"
+        ];
+
+    }
+
+    else if (
+        mood.includes("alert") ||
+        mood.includes("watch")
+    ) {
+
+        personality = [
+            "alert",
+            "direct",
+            "observant"
+        ];
+
+    }
+
+    else if (
+        mood.includes("suspicious") ||
+        mood.includes("uneasy")
+    ) {
+
+        personality = [
+            "cautious",
+            "observant",
+            "reserved"
+        ];
+
+    }
+
+    else if (
+        mood.includes("restless")
+    ) {
+
+        personality = [
+            "restless",
+            "curious",
+            "professional"
+        ];
+
+    }
+
+
+    let greeting = [
+
+        "Hello.",
+
+        "Hi.",
+
+        "Hello. What do you need?",
+
+        "Hi. I'm working right now."
+
+    ];
+
+
+    let howAreYou = [
+
+        "I'm alright.",
+
+        "Busy, but fine.",
+
+        "Doing okay.",
+
+        "Just working through the shift."
+
+    ];
+
+
+    let work = [
+
+        "I'm currently " +
+            activity +
+            ".",
+
+        "I'm working in " +
+            location +
+            ".",
+
+        "Just handling my usual duties.",
+
+        "I'm in the middle of my shift."
+
+    ];
+
+
+    let unknown = [
+
+        "I don't know.",
+
+        "That's outside my area.",
+
+        "You should ask another department.",
+
+        "I haven't been informed about that."
+
+    ];
+
+
+    if (
+        department ===
+        "SECURITY"
+    ) {
+
+        greeting = [
+
+            "Security here.",
+
+            "Hello.",
+
+            "What do you need?",
+
+            "I'm on duty."
+
+        ];
+
+
+        work = [
+
+            "I'm monitoring the current sector.",
+
+            "I'm checking the security systems.",
+
+            "I'm on routine security duty.",
+
+            "I'm reviewing the current situation."
+
+        ];
+
+    }
+
+
+    if (
+        department ===
+        "RESEARCH"
+    ) {
+
+        work = [
+
+            "I'm reviewing research data.",
+
+            "I'm working through the current documentation.",
+
+            "I'm assisting with the laboratory work.",
+
+            "I'm processing research records."
+
+        ];
+
+    }
+
+
+    if (
+        department ===
+        "MEDICAL"
+    ) {
+
+        work = [
+
+            "I'm reviewing medical records.",
+
+            "I'm assisting the medical team.",
+
+            "I'm checking the current medical workload.",
+
+            "I'm handling routine clinical work."
+
+        ];
+
+    }
+
+
+    if (
+        department ===
+        "SYSTEMS"
+    ) {
+
+        work = [
+
+            "I'm checking system services.",
+
+            "I'm monitoring the network.",
+
+            "I'm reviewing system logs.",
+
+            "I'm handling routine diagnostics."
+
+        ];
+
+    }
+
+
+    if (
+        department ===
+        "ARCHIVE"
+    ) {
+
+        work = [
+
+            "I'm checking archive indexes.",
+
+            "I'm verifying archived documents.",
+
+            "I'm processing records.",
+
+            "I'm reviewing document control."
+
+        ];
+
+    }
+
+
+    if (
+        department ===
+        "MAINTENANCE"
+    ) {
+
+        work = [
+
+            "I'm checking facility equipment.",
+
+            "I'm handling maintenance work.",
+
+            "I'm inspecting the current sector.",
+
+            "I'm working through the maintenance queue."
+
+        ];
+
+    }
+
+
+    return {
+
+        department,
+
+        clearance:
+            Number(
+                runtimePerson.clearance ||
+                0
+            ),
+
+        personality,
+
+        mood:
+
+            mood,
+
+        activity,
+
+        location,
+
+        knowledge:
+            [
+                department
+            ],
+
+        trust:
+            0,
+
+        responses: {
+
+            greeting,
+
+            howAreYou,
+
+            day: [
+
+                "The shift has been fairly normal so far.",
+
+                "Mostly routine work.",
+
+                "It's been a normal shift.",
+
+                "Nothing unusual from my side."
+
+            ],
+
+            work,
+
+            suspicious: [
+
+                "I don't think I should discuss that.",
+
+                "That's not really something I can talk about.",
+
+                "You should ask someone with the appropriate clearance.",
+
+                "I'd rather keep that within the department."
+
+            ],
+
+            unknown
+
+        }
+
+    };
+
+}
+
 
 /* =========================================================
    MEMORY
@@ -676,15 +1077,31 @@ export function generatePersonnelResponse(
     name,
     text
 ) {
+   
+     let person =
+    personnel[name];
 
-    const person =
-        personnel[name];
 
-    if (!person) {
+if (
+    !person
+) {
 
-        return null;
+    person =
+        buildDynamicPersonnelProfile(
+            name
+        );
 
-    }
+}
+
+
+if (
+    !person
+) {
+
+    return null;
+
+}
+   
 
 
     const mem =
