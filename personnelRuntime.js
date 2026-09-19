@@ -19,10 +19,88 @@ import {
 ========================================================== */
 
 const VERSION =
-    2;
+    3;
 
 const UPDATE_INTERVAL =
     30000;
+
+
+/* ==========================================================
+   REAL SHIFTS
+========================================================== */
+
+const SHIFTS = {
+
+    A: {
+        code:
+            "A",
+
+        name:
+            "MORNING SHIFT",
+
+        hours:
+            "06:00–14:00",
+
+        start:
+            6,
+
+        end:
+            14,
+
+        breakStart:
+            10,
+
+        breakEnd:
+            11
+    },
+
+    B: {
+        code:
+            "B",
+
+        name:
+            "DAY SHIFT",
+
+        hours:
+            "14:00–22:00",
+
+        start:
+            14,
+
+        end:
+            22,
+
+        breakStart:
+            18,
+
+        breakEnd:
+            19
+    },
+
+    C: {
+        code:
+            "C",
+
+        name:
+            "NIGHT SHIFT",
+
+        hours:
+            "22:00–06:00",
+
+        start:
+            22,
+
+        end:
+            6,
+
+        breakStart:
+            2,
+
+        breakEnd:
+            3
+    }
+
+};
 
 
 /* ==========================================================
@@ -575,6 +653,348 @@ const PERSONNEL = [
 
 ];
 
+/* ==========================================================
+   SHIFT ASSIGNMENTS
+========================================================== */
+
+const SHIFT_ASSIGNMENTS = {
+
+    "P-001": "A",
+    "P-002": "A",
+    "P-003": "B",
+    "P-004": "C",
+    "P-005": "A",
+    "P-006": "A",
+    "P-007": "A",
+    "P-008": "B",
+    "P-009": "B",
+    "P-010": "A"
+
+};
+
+
+/* ==========================================================
+   DEPARTMENT WORK PROFILES
+========================================================== */
+
+const DEPARTMENT_WORK_PROFILE = {
+
+    RESEARCH: {
+
+        locations: [
+            "RESEARCH SECTOR",
+            "RESEARCH LAB"
+        ],
+
+        activities: [
+            "reviewing research data",
+            "processing experimental documentation"
+        ]
+
+    },
+
+    SECURITY: {
+
+        locations: [
+            "SECURITY CHECKPOINT",
+            "CAMERA CONTROL"
+        ],
+
+        activities: [
+            "monitoring security systems",
+            "reviewing surveillance records"
+        ]
+
+    },
+
+    MEDICAL: {
+
+        locations: [
+            "MEDICAL SECTOR",
+            "CLINICAL UNIT"
+        ],
+
+        activities: [
+            "reviewing medical records",
+            "assisting medical staff"
+        ]
+
+    },
+
+    ADMINISTRATION: {
+
+        locations: [
+            "ADMINISTRATION",
+            "ADMIN OFFICE"
+        ],
+
+        activities: [
+            "processing internal requests",
+            "reviewing administrative records"
+        ]
+
+    },
+
+    ARCHIVE: {
+
+        locations: [
+            "ARCHIVE SECTOR",
+            "DOCUMENT CONTROL"
+        ],
+
+        activities: [
+            "checking archive indexes",
+            "verifying archived documents"
+        ]
+
+    },
+
+    SYSTEMS: {
+
+        locations: [
+            "SYSTEMS CONTROL",
+            "SERVER ROOM"
+        ],
+
+        activities: [
+            "checking system services",
+            "performing network diagnostics"
+        ]
+
+    },
+
+    COMMUNICATIONS: {
+
+        locations: [
+            "COMMUNICATIONS",
+            "COMMUNICATIONS CONTROL"
+        ],
+
+        activities: [
+            "monitoring internal messages",
+            "routing internal communications"
+        ]
+
+    },
+
+    MAINTENANCE: {
+
+        locations: [
+            "MAINTENANCE",
+            "UTILITY SECTOR"
+        ],
+
+        activities: [
+            "checking facility equipment",
+            "performing maintenance work"
+        ]
+
+    }
+
+};
+
+
+function buildShiftSchedule(
+    definition,
+    shiftCode
+) {
+
+    const shift =
+        SHIFTS[
+            shiftCode
+        ] ||
+        SHIFTS.A;
+
+
+    const sourceRows =
+        Array.isArray(
+            definition.schedule
+        )
+            ? definition.schedule.filter(
+                row =>
+                    row[2] ===
+                    "ON DUTY"
+            )
+            : [];
+
+
+    const profile =
+        DEPARTMENT_WORK_PROFILE[
+            definition.department
+        ] ||
+        null;
+
+
+    const location1 =
+        sourceRows[0]?.[3] ||
+        profile?.locations?.[0] ||
+        definition.department ||
+        "FACILITY";
+
+
+    const location2 =
+        sourceRows[
+            sourceRows.length - 1
+        ]?.[3] ||
+        profile?.locations?.[1] ||
+        location1;
+
+
+    const activity1 =
+        sourceRows[0]?.[4] ||
+        profile?.activities?.[0] ||
+        "working";
+
+
+    const activity2 =
+        sourceRows[
+            sourceRows.length - 1
+        ]?.[4] ||
+        profile?.activities?.[1] ||
+        activity1;
+
+
+    if (
+        shiftCode ===
+        "C"
+    ) {
+
+        return [
+
+            [
+                6,
+                22,
+                "OFF DUTY",
+                "OFFSITE",
+                "off duty"
+            ],
+
+            [
+                22,
+                2,
+                "ON DUTY",
+                location1,
+                activity1
+            ],
+
+            [
+                2,
+                3,
+                "BREAK",
+                "STAFF CAFETERIA",
+                "staff break"
+            ],
+
+            [
+                3,
+                6,
+                "ON DUTY",
+                location2,
+                activity2
+            ]
+
+        ];
+
+    }
+
+
+    if (
+        shiftCode ===
+        "B"
+    ) {
+
+        return [
+
+            [
+                0,
+                14,
+                "OFF DUTY",
+                "OFFSITE",
+                "off duty"
+            ],
+
+            [
+                14,
+                18,
+                "ON DUTY",
+                location1,
+                activity1
+            ],
+
+            [
+                18,
+                19,
+                "BREAK",
+                "STAFF CAFETERIA",
+                "staff break"
+            ],
+
+            [
+                19,
+                22,
+                "ON DUTY",
+                location2,
+                activity2
+            ],
+
+            [
+                22,
+                24,
+                "OFF DUTY",
+                "OFFSITE",
+                "off duty"
+            ]
+
+        ];
+
+    }
+
+
+    return [
+
+        [
+            0,
+            6,
+            "OFF DUTY",
+            "OFFSITE",
+            "off duty"
+        ],
+
+        [
+            6,
+            10,
+            "ON DUTY",
+            location1,
+            activity1
+        ],
+
+        [
+            10,
+            11,
+            "BREAK",
+            "STAFF CAFETERIA",
+            "staff break"
+        ],
+
+        [
+            11,
+            14,
+            "ON DUTY",
+            location2,
+            activity2
+        ],
+
+        [
+            14,
+            24,
+            "OFF DUTY",
+            "OFFSITE",
+            "off duty"
+        ]
+
+    ];
+
+}
 
 /* ==========================================================
    DEFAULT DYNAMIC STATE
@@ -585,6 +1005,30 @@ function createInitialState(
 ) {
 
     return {
+       shift:
+    definition.shift ||
+    SHIFT_ASSIGNMENTS[
+        definition.id
+    ] ||
+    "A",
+
+shiftName:
+    SHIFTS[
+        definition.shift ||
+        SHIFT_ASSIGNMENTS[
+            definition.id
+        ] ||
+        "A"
+    ].name,
+
+shiftHours:
+    SHIFTS[
+        definition.shift ||
+        SHIFT_ASSIGNMENTS[
+            definition.id
+        ] ||
+        "A"
+    ].hours,
 
         id:
             definition.id,
@@ -929,35 +1373,71 @@ function preparePersonnel() {
 /* ==========================================================
    SCHEDULE
 ========================================================== */
+function isHourInRange(
+    hour,
+    start,
+    end
+) {
+
+    if (
+        start <
+        end
+    ) {
+
+        return (
+            hour >= start &&
+            hour < end
+        );
+
+    }
+
+
+    /*
+     * Overnight range.
+     *
+     * Example:
+     * 22 → 06
+     */
+
+    return (
+        hour >= start ||
+        hour < end
+    );
+
+}
+
 
 function getSchedule(
-    name,
+    person,
     hour
 ) {
 
-    const person =
-        PERSONNEL.find(
-            entry =>
-                entry.name ===
-                name
-        );
+    if (
+        !person ||
+        !Array.isArray(
+            person.schedule
+        )
+    ) {
 
-
-    if (!person) {
         return null;
+
     }
 
 
     return (
         person.schedule.find(
             row =>
-                hour >= row[0] &&
-                hour < row[1]
+                isHourInRange(
+                    hour,
+                    row[0],
+                    row[1]
+                )
         ) ||
         null
     );
 
 }
+
 
 
 /* ==========================================================
@@ -987,12 +1467,12 @@ function updatePersonnel() {
          * Custom personnel will be
          * handled by later systems.
          */
-
         const schedule =
             getSchedule(
-                person.name,
+                person,
                 hour
             );
+      
 
 
         if (!schedule) {
