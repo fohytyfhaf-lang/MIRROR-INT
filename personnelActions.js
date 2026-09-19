@@ -4,9 +4,9 @@
 ========================================================== */
 
 import {
+    on,
     trigger
 } from "./eventManager.js";
-
 import {
     Storage
 } from "./storage.js";
