@@ -439,6 +439,58 @@ export function openWindow(name) {
     win.style.display =
         "flex";
 
+    
+   function placeWindow(win) {
+
+    if (!win) {
+        return;
+    }
+
+    if (
+        win.dataset.positionInitialized === "true"
+    ) {
+        return;
+    }
+
+    const workspace =
+        document.getElementById("workspace");
+
+    if (!workspace) {
+        return;
+    }
+
+    const width =
+        win.getBoundingClientRect().width;
+
+    const height =
+        win.getBoundingClientRect().height;
+
+    const left =
+        Math.max(
+            12,
+            Math.round(
+                (workspace.clientWidth - width) / 2
+            )
+        );
+
+    const top =
+        Math.max(
+            12,
+            Math.round(
+                (workspace.clientHeight - height) / 2
+            )
+        );
+
+    win.style.left =
+        left + "px";
+
+    win.style.top =
+        top + "px";
+
+    win.dataset.positionInitialized =
+        "true";
+
+}
 
     state.set(
         name,
