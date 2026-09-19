@@ -4218,12 +4218,13 @@ export function initChats(
     }
 
 
-    renderChatList();
+   seedCurrentShiftPersonnel();
 
-    renderActiveChat();
+   renderChatList();
 
+   renderActiveChat();
 
-    bindInputEvents();
+   bindInputEvents();
 
 
     console.log(
