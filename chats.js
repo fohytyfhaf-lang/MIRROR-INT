@@ -102,6 +102,10 @@ import {
     trigger
 } from "./eventManager.js";
 
+import {
+    Storage
+} from "./storage.js";
+
 
 /* ==========================================================
    SAFE HELPERS
@@ -3757,6 +3761,364 @@ function restorePersistedMrSmileHistory() {
 
 
     return true;
+
+}
+
+
+
+/* ==========================================================
+   CURRENT SHIFT CHAT PRESENCE
+   ----------------------------------------------------------
+   Adds personnel from the active shift to their
+   department channel once per shift.
+
+   This is a presence record, not an automatic dialogue.
+========================================================== */
+
+function getCurrentShiftCode() {
+
+    const hour =
+        new Date()
+            .getHours();
+
+
+    if (
+        hour >= 6 &&
+        hour < 14
+    ) {
+
+        return "A";
+
+    }
+
+
+    if (
+        hour >= 14 &&
+        hour < 22
+    ) {
+
+        return "B";
+
+    }
+
+
+    return "C";
+
+}
+
+
+function getChatForDepartment(
+    department
+) {
+
+    const channels = {
+
+        SECURITY:
+            "security",
+
+        RESEARCH:
+            "research",
+
+        MEDICAL:
+            "medical",
+
+        ADMINISTRATION:
+            "admin",
+
+        ARCHIVE:
+            "general",
+
+        SYSTEMS:
+            "general",
+
+        COMMUNICATIONS:
+            "general",
+
+        MAINTENANCE:
+            "general"
+
+    };
+
+
+    return (
+        channels[
+            department
+        ] ||
+        "general"
+    );
+
+}
+
+
+function getShiftPresenceMessage(
+    person
+) {
+
+    const messages = {
+
+        SECURITY: [
+
+            "Starting shift. Checking the current security status.",
+
+            "On duty. Beginning routine security checks.",
+
+            "Taking over the current security post."
+
+        ],
+
+        RESEARCH: [
+
+            "Starting my shift. Going through the current research queue.",
+
+            "I'm on duty. Beginning the scheduled research work.",
+
+            "Taking over the research workload."
+
+        ],
+
+        MEDICAL: [
+
+            "Starting shift. Checking the current medical workload.",
+
+            "On duty. Beginning the scheduled medical checks.",
+
+            "Taking over the medical sector."
+
+        ],
+
+        ADMINISTRATION: [
+
+            "Starting shift. Reviewing the current requests.",
+
+            "On duty. Beginning administrative work.",
+
+            "Taking over the current administration queue."
+
+        ],
+
+        ARCHIVE: [
+
+            "Starting shift. Checking the archive queue.",
+
+            "On duty. Beginning document control work.",
+
+            "Taking over archive operations."
+
+        ],
+
+        SYSTEMS: [
+
+            "Starting shift. Checking system status.",
+
+            "On duty. Beginning routine diagnostics.",
+
+            "Taking over systems monitoring."
+
+        ],
+
+        COMMUNICATIONS: [
+
+            "Starting shift. Monitoring internal communications.",
+
+            "On duty. Beginning message routing.",
+
+            "Taking over communications monitoring."
+
+        ],
+
+        MAINTENANCE: [
+
+            "Starting shift. Checking the maintenance queue.",
+
+            "On duty. Beginning facility inspections.",
+
+            "Taking over maintenance operations."
+
+        ]
+
+    };
+
+
+    const pool =
+        messages[
+            person.department
+        ] ||
+        [
+
+            "Starting shift.",
+
+            "On duty.",
+
+            "Beginning scheduled work."
+
+        ];
+
+
+    return randomPick(
+        pool
+    );
+
+}
+
+
+function seedCurrentShiftPersonnel() {
+
+    const personnel =
+        Storage.get(
+            "personnel",
+            []
+        );
+
+
+    if (
+        !Array.isArray(personnel)
+    ) {
+
+        return;
+
+    }
+
+
+    const shift =
+        getCurrentShiftCode();
+
+
+    const date =
+        new Date()
+            .toISOString()
+            .slice(
+                0,
+                10
+            );
+
+
+    const presenceKey =
+        "omega_chat_presence_" +
+        date +
+        "_" +
+        shift;
+
+
+    try {
+
+        if (
+            localStorage.getItem(
+                presenceKey
+            ) ===
+            "1"
+        ) {
+
+            return;
+
+        }
+
+    } catch {
+
+        return;
+
+    }
+
+
+    const active =
+        personnel.filter(
+            person =>
+                person &&
+                String(
+                    person.shift ||
+                    ""
+                ).toUpperCase() ===
+                    shift &&
+                person.status ===
+                    "ON DUTY"
+        );
+
+
+    active.forEach(
+        person => {
+
+            const chatId =
+                getChatForDepartment(
+                    person.department
+                );
+
+
+            const chat =
+                chats[
+                    chatId
+                ];
+
+
+            if (
+                !chat
+            ) {
+
+                return;
+
+            }
+
+
+            /*
+             * Prevent duplicate presence messages.
+             */
+
+            const alreadyPresent =
+                chat.messages.some(
+                    message =>
+                        message.user ===
+                        person.name
+                );
+
+
+            if (
+                alreadyPresent
+            ) {
+
+                return;
+
+            }
+
+
+            chat.messages.push({
+
+                user:
+                    person.name,
+
+                time:
+                    getCurrentTime(),
+
+                text:
+                    getShiftPresenceMessage(
+                        person
+                    )
+
+            });
+
+        }
+    );
+
+
+    try {
+
+        localStorage.setItem(
+            presenceKey,
+            "1"
+        );
+
+    } catch {
+
+        /* ignore storage failure */
+
+    }
+
+
+    console.log(
+        "[OMEGA CHAT] Current shift personnel presence seeded.",
+        {
+            shift,
+            personnel:
+                active.length
+        }
+    );
 
 }
 
