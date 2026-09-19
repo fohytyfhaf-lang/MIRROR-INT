@@ -55,6 +55,11 @@ import {
 import {
     initPersonnelEventSystem
 } from "./personnelEventSystem.js";
+
+import {
+    initPersonnelOperatorMonitor
+} from "./personnelOperatorMonitor.js";
+
 import {
     initOmegaDesktop
 } from "./omegaDesktop.js";
@@ -259,6 +264,7 @@ function bootSystem() {
      initPersonnelActions();
      initPersonnelInteractions();
      initPersonnelEventSystem();
+     initPersonnelOperatorMonitor();
     
     initMemory();
     
