@@ -1046,4 +1046,746 @@
 
     }
 
+/* ==========================================================
+   17. LIVE TASK MONITOR
+========================================================== */
+
+.personnelTaskMonitor {
+
+    grid-column:
+        1 / -1;
+
+    padding:
+        13px 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #0d1b28,
+            #09141d
+        );
+
+    border:
+        1px solid
+        #25445a;
+
+    box-sizing:
+        border-box;
+
+}
+
+
+/* ==========================================================
+   TASK HEADER
+========================================================== */
+
+.personnelTaskHeader {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    padding:
+        0 0 10px 0;
+
+    border-bottom:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .06
+        );
+
+}
+
+
+.personnelTaskHeader > div {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        3px;
+
+}
+
+
+.personnelTaskTitle {
+
+    color:
+        #dceffd;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        11px;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        .08em;
+
+}
+
+
+.personnelTaskSubtitle {
+
+    color:
+        #607e92;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        .08em;
+
+}
+
+
+.personnelTaskCount {
+
+    color:
+        #4fd8ff;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        14px;
+
+}
+
+
+/* ==========================================================
+   TASK LIST
+========================================================== */
+
+.personnelTaskList {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        5px;
+
+    padding-top:
+        9px;
+
+}
+
+
+.personnelTaskRow {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(
+            180px,
+            1.4fr
+        )
+        minmax(
+            130px,
+            1fr
+        )
+        minmax(
+            150px,
+            1fr
+        )
+        auto;
+
+    gap:
+        10px;
+
+    align-items:
+        center;
+
+    min-width:
+        0;
+
+    padding:
+        8px 9px;
+
+    background:
+        #0a1620;
+
+    border:
+        1px solid
+        #1c3446;
+
+}
+
+
+.personnelTaskRow[data-state="assigned"] {
+
+    border-left:
+        3px solid
+        #658da8;
+
+}
+
+
+.personnelTaskRow[data-state="progress"] {
+
+    border-left:
+        3px solid
+        #4fd8ff;
+
+}
+
+
+.personnelTaskRow[data-state="waiting"] {
+
+    border-left:
+        3px solid
+        #ffd45a;
+
+}
+
+
+.personnelTaskRow[data-state="completed"] {
+
+    border-left:
+        3px solid
+        #00ff99;
+
+}
+
+
+.personnelTaskIdentity,
+.personnelTaskTarget,
+.personnelTaskPeople {
+
+    min-width:
+        0;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        3px;
+
+}
+
+
+.personnelTaskIdentity strong,
+.personnelTaskTarget strong {
+
+    color:
+        #cfe7f4;
+
+    font-size:
+        11px;
+
+    overflow-wrap:
+        anywhere;
+
+}
+
+
+.personnelTaskIdentity small,
+.personnelTaskTarget span,
+.personnelTaskPeople small {
+
+    color:
+        #5f7d90;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        .05em;
+
+}
+
+
+.personnelTaskPeople span {
+
+    color:
+        #9fc8dd;
+
+    font-size:
+        11px;
+
+    overflow-wrap:
+        anywhere;
+
+}
+
+
+.personnelTaskState {
+
+    padding:
+        5px 7px;
+
+    border:
+        1px solid
+        #29485d;
+
+    background:
+        #10202d;
+
+    color:
+        #8fb4c8;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        .05em;
+
+    white-space:
+        nowrap;
+
+}
+
+
+.personnelTaskRow[data-state="progress"]
+.personnelTaskState {
+
+    color:
+        #4fd8ff;
+
+    border-color:
+        #2b6981;
+
+}
+
+
+.personnelTaskRow[data-state="waiting"]
+.personnelTaskState {
+
+    color:
+        #ffd45a;
+
+    border-color:
+        #695a2c;
+
+}
+
+
+/* ==========================================================
+   EMPTY TASK STATE
+========================================================== */
+
+.personnelTaskEmpty {
+
+    padding:
+        12px 4px 2px;
+
+    color:
+        #5f7889;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+    letter-spacing:
+        .08em;
+
+}
+
+
+/* ==========================================================
+   CURRENT TASK ON CARD
+========================================================== */
+
+.personCurrentTask {
+
+    margin-top:
+        10px;
+
+    padding-top:
+        9px;
+
+    border-top:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .06
+        );
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        4px;
+
+}
+
+
+.personCurrentTask span {
+
+    color:
+        #58778c;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        .08em;
+
+}
+
+
+.personCurrentTask strong {
+
+    color:
+        #9ed3ea;
+
+    font-size:
+        11px;
+
+    font-weight:
+        500;
+
+    line-height:
+        1.35;
+
+    overflow-wrap:
+        anywhere;
+
+}
+
+
+/* ==========================================================
+   PROFILE TASK
+========================================================== */
+
+.personnelProfileTask,
+.personnelProfileSection {
+
+    margin:
+        0 0 12px 0;
+
+    padding:
+        13px;
+
+    box-sizing:
+        border-box;
+
+    background:
+        #0a161f;
+
+    border:
+        1px solid
+        #1f394c;
+
+}
+
+
+.personnelProfileSectionTitle {
+
+    margin:
+        0 0 9px 0;
+
+    color:
+        #68889b;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        .1em;
+
+}
+
+
+.personnelProfileTaskBox {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        6px;
+
+    padding:
+        11px;
+
+    background:
+        #0d1b27;
+
+    border:
+        1px solid
+        #25455a;
+
+}
+
+
+.personnelProfileTaskBox strong {
+
+    color:
+        #d4ecf7;
+
+    font-size:
+        12px;
+
+}
+
+
+.personnelProfileTaskBox span {
+
+    color:
+        #86aabd;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+}
+
+
+.personnelProfileTaskBox.empty {
+
+    color:
+        #5f788a;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+}
+
+
+/* ==========================================================
+   PROFILE LISTS
+========================================================== */
+
+.personnelProfileList {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        5px;
+
+}
+
+
+.personnelProfileList div {
+
+    padding:
+        7px 8px;
+
+    background:
+        #0d1a25;
+
+    border:
+        1px solid
+        #1b3243;
+
+    color:
+        #adc8d6;
+
+    font-size:
+        11px;
+
+    line-height:
+        1.4;
+
+    overflow-wrap:
+        anywhere;
+
+}
+
+
+/* ==========================================================
+   RELATIONSHIPS
+========================================================== */
+
+.personnelRelationshipList {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        5px;
+
+}
+
+
+.personnelRelationshipRow {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        4px;
+
+    padding:
+        8px;
+
+    background:
+        #0d1a25;
+
+    border:
+        1px solid
+        #1b3243;
+
+}
+
+
+.personnelRelationshipRow strong {
+
+    color:
+        #c4dfeb;
+
+    font-size:
+        11px;
+
+}
+
+
+.personnelRelationshipRow span {
+
+    color:
+        #718fa1;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        .04em;
+
+}
+
+
+.personnelRelationshipEmpty {
+
+    padding:
+        9px;
+
+    color:
+        #5f788a;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        9px;
+
+}
+
+
+@media (
+    max-width:
+        800px
+) {
+
+    .personnelTaskRow {
+
+        grid-template-columns:
+            1fr 1fr;
+
+    }
+
+}
+
+
+@media (
+    max-width:
+        520px
+) {
+
+    .personnelTaskRow {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            7px;
+
+    }
+
+}
+   
+
 }
