@@ -649,7 +649,7 @@ const PERSONNEL = [
             [16, 24, "OFF DUTY", "OFFSITE", "off duty"]
         ]
 
-    }
+    },
 
 {
     id: "P-011",
