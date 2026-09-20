@@ -292,11 +292,7 @@ function openArchiveRecord(recordId) {
         will not increase the archive counter.
     */
 
-    recordArchiveOpen(
-        record.id,
-        restricted
-    );
-
+   
 
     viewer.classList.remove(
         "hidden"
