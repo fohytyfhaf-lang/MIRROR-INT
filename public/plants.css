@@ -2,21 +2,88 @@
    ABIC — PLANT DATABASE
 ========================================================= */
 
+.plantsPage {
 
-/* =========================================================
-   PLANT DATABASE
-========================================================= */
-
-.plantDatabase {
     width: 100%;
+
+    padding: 30px;
+}
+
+
+.plantsPage h1 {
+
+    margin: 0 0 7px;
+
+    color: #294a31;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 27px;
+
+    font-weight: normal;
+}
+
+
+.plantCount {
+
+    margin: 0 0 24px;
+
+    color: #788178;
+
+    font-size: 11px;
 }
 
 
 /* =========================================================
-   PLANT GRID
+   SEARCH
+========================================================= */
+
+.searchBox {
+
+    margin-bottom: 25px;
+}
+
+
+.searchBox input {
+
+    width: 100%;
+
+    max-width: 650px;
+
+    height: 39px;
+
+    padding: 0 12px;
+
+    border: 1px solid #c9d0c8;
+
+    background: #ffffff;
+
+    color: #344036;
+
+    outline: none;
+
+    font-size: 13px;
+}
+
+
+.searchBox input:focus {
+
+    border-color: #6e9274;
+
+    box-shadow:
+        0 0 0 2px rgba(90, 125, 96, .10);
+}
+
+
+/* =========================================================
+   GRID
 ========================================================= */
 
 .plantGrid {
+
     display: grid;
 
     grid-template-columns:
@@ -30,110 +97,65 @@
 
 
 /* =========================================================
-   PLANT CARD
+   CARD
 ========================================================= */
 
 .plantCard {
-    position: relative;
 
     display: flex;
 
     flex-direction: column;
 
-    min-height: 280px;
-
-    overflow: hidden;
+    min-width: 0;
 
     background: #ffffff;
 
-    border:
-        1px solid #d1d9d1;
-
-    box-shadow:
-        0 3px 12px rgba(30, 50, 35, .05);
-
-    cursor: pointer;
+    border: 1px solid #d2d8d1;
 
     transition:
-        transform .2s ease,
-        border-color .2s ease,
-        box-shadow .2s ease;
+        border-color .15s ease,
+        box-shadow .15s ease,
+        transform .15s ease;
 }
 
-.plantCard:hover {
-    transform: translateY(-3px);
 
-    border-color: #9caf9c;
+.plantCard:hover {
+
+    transform: translateY(-2px);
+
+    border-color: #9caf9d;
 
     box-shadow:
-        0 8px 22px rgba(30, 50, 35, .1);
+        0 5px 16px rgba(30, 45, 32, .08);
 }
 
 
 /* =========================================================
-   PLANT IMAGE
+   IMAGE
 ========================================================= */
 
 .plantImage {
+
+    display: block;
+
     width: 100%;
 
-    height: 170px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    overflow: hidden;
-
-    background:
-        linear-gradient(
-            135deg,
-            #eef3ec,
-            #e4ebe3
-        );
-
-    border-bottom:
-        1px solid #d5ddd5;
-}
-
-.plantImage img {
-    width: 100%;
-
-    height: 100%;
+    height: 175px;
 
     object-fit: cover;
 
-    transition:
-        transform .3s ease;
-}
+    background: #e8ede6;
 
-.plantCard:hover .plantImage img {
-    transform: scale(1.04);
+    border-bottom: 1px solid #d5dad4;
 }
 
 
 /* =========================================================
-   PLACEHOLDER
+   BODY
 ========================================================= */
 
-.plantImage.placeholder {
-    color: #879589;
+.plantBody {
 
-    font-size: 12px;
-
-    letter-spacing: 1px;
-
-    text-transform: uppercase;
-}
-
-
-/* =========================================================
-   PLANT INFORMATION
-========================================================= */
-
-.plantInfo {
     display: flex;
 
     flex-direction: column;
@@ -143,20 +165,29 @@
     padding: 16px;
 }
 
-.plantInfo h3 {
-    margin: 0 0 5px;
 
-    color: #304636;
+.plantBody h3 {
 
-    font-size: 16px;
+    margin: 0 0 4px;
 
-    font-weight: 600;
+    color: #304e36;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 18px;
+
+    font-weight: normal;
 }
 
-.plantInfo .scientificName {
-    margin-bottom: 10px;
 
-    color: #77847a;
+.plantBody .latin {
+
+    margin: 0 0 11px;
+
+    color: #7c867e;
 
     font-family:
         Georgia,
@@ -168,183 +199,90 @@
     font-style: italic;
 }
 
-.plantInfo p {
-    margin: 0;
 
-    color: #68756b;
+/* =========================================================
+   META
+========================================================= */
 
-    font-size: 12px;
+.plantMeta {
 
-    line-height: 1.55;
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 5px;
+
+    margin-bottom: 12px;
 }
 
 
-/* =========================================================
-   PLANT CATEGORY
-========================================================= */
-
-.plantCategory {
-    display: inline-flex;
-
-    align-self: flex-start;
-
-    margin-top: auto;
-
-    padding: 4px 8px;
-
-    background: #edf3ec;
-
-    border:
-        1px solid #d0dbd0;
-
-    color: #527057;
-
-    font-size: 10px;
-
-    letter-spacing: .6px;
-
-    text-transform: uppercase;
-}
-
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-.plantStatus {
-    position: absolute;
-
-    top: 10px;
-
-    right: 10px;
+.plantMeta span {
 
     padding: 4px 7px;
 
-    background:
-        rgba(255,255,255,.9);
+    background: #f0f4ef;
 
-    border:
-        1px solid #cbd6cb;
+    border: 1px solid #d7ded5;
 
     color: #617064;
 
     font-size: 9px;
 
-    letter-spacing: .7px;
-
     text-transform: uppercase;
-}
 
-.plantStatus.native {
-    color: #416b49;
-
-    border-color: #a9bea9;
-
-    background: #edf5ed;
-}
-
-.plantStatus.protected {
-    color: #866f38;
-
-    border-color: #d4c79f;
-
-    background: #faf7e9;
-}
-
-.plantStatus.endangered {
-    color: #874b4b;
-
-    border-color: #d4aaaa;
-
-    background: #fbefef;
+    letter-spacing: .45px;
 }
 
 
 /* =========================================================
-   PLANT SEARCH
+   DESCRIPTION
 ========================================================= */
 
-#plantSearch {
-    width: 100%;
+.plantDescription {
 
-    max-width: 620px;
+    margin: 0 0 16px;
 
-    margin-bottom: 22px;
+    color: #69736b;
 
-    padding: 11px 14px;
+    font-size: 12px;
 
-    background: #ffffff;
-
-    border:
-        1px solid #cbd5cb;
-
-    outline: none;
-
-    color: #304036;
-
-    font-size: 13px;
-
-    transition:
-        border-color .2s ease,
-        box-shadow .2s ease;
-}
-
-#plantSearch:focus {
-    border-color: #789778;
-
-    box-shadow:
-        0 0 0 2px rgba(120,151,120,.12);
+    line-height: 1.6;
 }
 
 
 /* =========================================================
-   FILTERS
+   BUTTON
 ========================================================= */
 
-.plantFilters {
-    display: flex;
+.plantButton {
 
-    flex-wrap: wrap;
+    align-self: flex-start;
 
-    gap: 7px;
+    margin-top: auto;
 
-    margin-bottom: 25px;
-}
+    padding: 8px 13px;
 
-.plantFilter {
-    padding: 7px 12px;
+    border: 1px solid #8ca18e;
 
-    background: #f4f6f2;
+    background: #f3f6f2;
 
-    border:
-        1px solid #d1d9d1;
+    color: #38553e;
 
-    color: #627064;
-
-    font-size: 11px;
+    font-size: 10px;
 
     cursor: pointer;
 
     transition:
-        background .2s ease,
-        border-color .2s ease,
-        color .2s ease;
+        background .15s ease,
+        border-color .15s ease;
 }
 
-.plantFilter:hover {
-    background: #e8eee7;
 
-    border-color: #aabbaa;
+.plantButton:hover {
 
-    color: #3d5943;
-}
+    background: #e3ebe2;
 
-.plantFilter.active {
-    background: #dfeade;
-
-    border-color: #91a991;
-
-    color: #31523a;
+    border-color: #708a74;
 }
 
 
@@ -353,211 +291,270 @@
 ========================================================= */
 
 .plantDetails {
-    display: grid;
 
-    grid-template-columns:
-        minmax(250px, 360px)
-        1fr;
+    position: relative;
 
-    gap: 28px;
-
-    padding: 24px;
+    padding: 30px;
 
     background: #ffffff;
+}
 
-    border:
-        1px solid #d1d9d1;
 
-    box-shadow:
-        0 4px 15px rgba(30,50,35,.06);
+.backButton {
+
+    margin-bottom: 24px;
+
+    padding: 7px 11px;
+
+    border: 1px solid #c5cdc4;
+
+    background: #f7f9f6;
+
+    color: #526158;
+
+    font-size: 11px;
+
+    cursor: pointer;
+}
+
+
+.backButton:hover {
+
+    background: #edf2eb;
+
+    border-color: #94a695;
 }
 
 
 /* =========================================================
-   DETAILS IMAGE
+   DETAILS HEADER
 ========================================================= */
 
+.plantDetailsHeader {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(260px, 390px)
+        1fr;
+
+    gap: 30px;
+
+    padding-bottom: 28px;
+
+    border-bottom: 1px solid #d8ddd7;
+}
+
+
 .plantDetailsImage {
+
     width: 100%;
 
-    min-height: 280px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
+    min-height: 300px;
 
     overflow: hidden;
 
-    background: #edf2eb;
+    background: #e8ede6;
 
-    border:
-        1px solid #d1dad0;
+    border: 1px solid #cfd6ce;
 }
 
+
 .plantDetailsImage img {
+
+    display: block;
+
     width: 100%;
 
     height: 100%;
+
+    min-height: 300px;
 
     object-fit: cover;
 }
 
 
-/* =========================================================
-   DETAILS TEXT
-========================================================= */
+.plantDetailsTitle {
 
-.plantDetailsContent h2 {
-    margin: 0 0 6px;
+    display: flex;
 
-    color: #304636;
+    flex-direction: column;
 
-    font-size: 25px;
-
-    font-weight: 500;
+    justify-content: center;
 }
 
-.plantDetailsContent .scientificName {
-    margin-bottom: 20px;
 
-    color: #78867a;
+.recordLabel {
+
+    margin: 0 0 10px;
+
+    color: #718074;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.5px;
+}
+
+
+.plantDetailsTitle h1 {
+
+    margin: 0 0 7px;
+
+    color: #294a31;
 
     font-family:
         Georgia,
         "Times New Roman",
         serif;
 
-    font-size: 14px;
+    font-size: 32px;
+
+    font-weight: normal;
+}
+
+
+.plantDetailsTitle .latin {
+
+    margin: 0;
+
+    color: #78837b;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 15px;
 
     font-style: italic;
 }
 
-.plantDetailsContent p {
-    margin: 0 0 15px;
-
-    color: #5f6d62;
-
-    font-size: 13px;
-
-    line-height: 1.7;
-}
-
 
 /* =========================================================
-   PLANT DATA TABLE
+   INFORMATION
 ========================================================= */
 
-.plantData {
-    width: 100%;
+.plantDetailsInfo {
 
-    margin-top: 20px;
+    display: grid;
 
-    border-collapse: collapse;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
 
-    font-size: 12px;
-}
+    margin-top: 25px;
 
-.plantData tr {
-    border-bottom:
-        1px solid #e1e6e1;
-}
+    border-top: 1px solid #d7ddd6;
 
-.plantData tr:last-child {
-    border-bottom: none;
-}
-
-.plantData th {
-    width: 35%;
-
-    padding: 10px;
-
-    background: #f4f6f2;
-
-    color: #58675b;
-
-    font-weight: 500;
-
-    text-align: left;
-}
-
-.plantData td {
-    padding: 10px;
-
-    color: #647267;
+    border-left: 1px solid #d7ddd6;
 }
 
 
-/* =========================================================
-   EMPTY DATABASE
-========================================================= */
+.plantInfoBlock {
 
-.plantEmpty {
-    padding: 50px 20px;
+    min-height: 76px;
 
-    text-align: center;
+    padding: 13px 15px;
 
-    background: #f7f8f5;
+    background: #fafbf9;
 
-    border:
-        1px dashed #c8d2c8;
+    border-right: 1px solid #d7ddd6;
 
-    color: #7a887c;
-
-    font-size: 12px;
-
-    letter-spacing: .5px;
+    border-bottom: 1px solid #d7ddd6;
 }
 
 
-/* =========================================================
-   DATABASE HEADER
-========================================================= */
+.infoLabel {
 
-.plantDatabaseHeader {
-    display: flex;
+    display: block;
 
-    align-items: flex-end;
+    margin-bottom: 6px;
 
-    justify-content: space-between;
+    color: #7a847c;
 
-    gap: 20px;
+    font-size: 9px;
 
-    margin-bottom: 25px;
-}
-
-.plantDatabaseHeader h2 {
-    margin: 0 0 6px;
-
-    color: #304636;
-
-    font-size: 24px;
-
-    font-weight: 500;
+    font-weight: 600;
 
     letter-spacing: 1px;
 }
 
-.plantDatabaseHeader p {
-    margin: 0;
 
-    color: #748076;
+.plantInfoBlock strong {
 
-    font-size: 12px;
+    color: #3c4c40;
+
+    font-size: 13px;
+
+    font-weight: 500;
 }
 
 
 /* =========================================================
-   RESULT COUNT
+   DESCRIPTION
 ========================================================= */
 
-.plantResultCount {
-    color: #879389;
+.plantDescriptionFull {
 
-    font-size: 11px;
+    max-width: 900px;
 
-    white-space: nowrap;
+    margin-top: 30px;
+
+    padding-top: 25px;
+
+    border-top: 1px solid #d8ddd7;
+}
+
+
+.plantDescriptionFull h2 {
+
+    margin: 0 0 12px;
+
+    color: #304c36;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 20px;
+
+    font-weight: normal;
+}
+
+
+.plantDescriptionFull p {
+
+    margin: 0;
+
+    color: #5f6b62;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.plantEmpty {
+
+    grid-column: 1 / -1;
+
+    padding: 50px;
+
+    border: 1px dashed #c7d0c6;
+
+    background: #fafbf9;
+
+    color: #7b857d;
+
+    text-align: center;
+
+    font-size: 12px;
 }
 
 
@@ -567,30 +564,40 @@
 
 @media (max-width: 800px) {
 
-    .plantDetails {
+    .plantDetailsHeader {
+
         grid-template-columns: 1fr;
+
     }
 
-    .plantDatabaseHeader {
-        align-items: flex-start;
+    .plantDetailsInfo {
 
-        flex-direction: column;
+        grid-template-columns: 1fr;
+
     }
 
 }
 
+
 @media (max-width: 500px) {
 
+    .plantsPage,
+    .plantDetails {
+
+        padding: 20px;
+
+    }
+
     .plantGrid {
+
         grid-template-columns: 1fr;
+
     }
 
-    .plantCard {
-        min-height: 250px;
-    }
+    .plantDetailsTitle h1 {
 
-    .plantImage {
-        height: 150px;
+        font-size: 25px;
+
     }
 
 }
