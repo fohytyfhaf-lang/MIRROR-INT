@@ -892,6 +892,168 @@ function buildDynamicPersonnelProfile(
 
 const memory = {};
 
+/* =========================================================
+   PERSISTENT DIALOGUE MEMORY
+========================================================= */
+
+const DIALOGUE_MEMORY_KEY =
+    "omega_personnel_dialogue_v1";
+
+
+function saveMemory(
+    name
+) {
+
+    try {
+
+        const stored =
+            Storage.get(
+                DIALOGUE_MEMORY_KEY,
+                {}
+            );
+
+
+        stored[name] =
+            memory[name];
+
+
+        Storage.set(
+            DIALOGUE_MEMORY_KEY,
+            stored
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "[PERSONNEL AI] Memory save failed:",
+            error
+        );
+
+    }
+
+}
+
+
+function normalizeQuestion(
+    text
+) {
+
+    return String(
+        text || ""
+    )
+        .toLowerCase()
+        .replace(
+            /[?!.,;:"'()[\]{}]/g,
+            " "
+        )
+        .replace(
+            /\s+/g,
+            " "
+        )
+        .trim();
+
+}
+
+
+function questionsAreSimilar(
+    a,
+    b
+) {
+
+    const first =
+        normalizeQuestion(a);
+
+
+    const second =
+        normalizeQuestion(b);
+
+
+    if (
+        !first ||
+        !second
+    ) {
+
+        return false;
+
+    }
+
+
+    /*
+     * Exact repeat.
+     */
+
+    if (
+        first ===
+        second
+    ) {
+
+        return true;
+
+    }
+
+
+    const firstWords =
+        new Set(
+            first
+                .split(" ")
+                .filter(Boolean)
+        );
+
+
+    const secondWords =
+        new Set(
+            second
+                .split(" ")
+                .filter(Boolean)
+        );
+
+
+    if (
+        firstWords.size === 0 ||
+        secondWords.size === 0
+    ) {
+
+        return false;
+
+    }
+
+
+    let common =
+        0;
+
+
+    firstWords.forEach(
+        word => {
+
+            if (
+                secondWords.has(
+                    word
+                )
+            ) {
+
+                common += 1;
+
+            }
+
+        }
+    );
+
+
+    const similarity =
+        common /
+        Math.max(
+            firstWords.size,
+            secondWords.size
+        );
+
+
+    return (
+        similarity >=
+        0.75
+    );
+
+}
+
 
 /* =========================================================
    RANDOM
@@ -920,24 +1082,71 @@ function random(array) {
 /* =========================================================
    INITIALIZE MEMORY
 ========================================================= */
+function initMemory(
+    name
+) {
 
-function initMemory(name) {
+    if (
+        memory[name]
+    ) {
 
-    if (!memory[name]) {
-
-        memory[name] = {
-
-            messages: [],
-
-            topics: [],
-
-            lastQuestion: null,
-
-            lastResponse: null
-
-        };
+        return memory[name];
 
     }
+
+
+    let stored = null;
+
+
+    try {
+
+        const all =
+            Storage.get(
+                DIALOGUE_MEMORY_KEY,
+                {}
+            );
+
+
+        stored =
+            all &&
+            typeof all === "object"
+                ? all[name]
+                : null;
+
+    } catch {
+
+        stored =
+            null;
+
+    }
+
+
+    memory[name] = {
+
+        messages:
+            Array.isArray(
+                stored?.messages
+            )
+                ? stored.messages.slice(-30)
+                : [],
+
+        topics:
+            Array.isArray(
+                stored?.topics
+            )
+                ? stored.topics.slice(-20)
+                : [],
+
+        lastQuestion:
+            stored?.lastQuestion ||
+            null,
+
+        lastResponse:
+            stored?.lastResponse ||
+            null
+
+    };
+
 
     return memory[name];
 
@@ -987,6 +1196,9 @@ export function rememberMessage(
         mem.messages.shift();
 
     }
+   saveMemory(
+    name
+  );
 
 }
 
@@ -1073,7 +1285,7 @@ function roleName(role) {
    RESPONSE
 ========================================================= */
 
-export function generatePersonnelResponse(
+function generatePersonnelResponseCore(
     name,
     text
 ) {
@@ -1677,6 +1889,249 @@ if (
 
 }
 
+
+/* =========================================================
+   PUBLIC DIALOGUE WRAPPER
+   ---------------------------------------------------------
+   Handles:
+   - persistent memory
+   - repeated questions
+   - response memory
+   - conversational continuity
+========================================================= */
+
+export function generatePersonnelResponse(
+    name,
+    text
+) {
+
+    const mem =
+        initMemory(
+            name
+        );
+
+
+    const person =
+        personnel[name] ||
+        buildDynamicPersonnelProfile(
+            name
+        );
+
+
+    if (
+        !person
+    ) {
+
+        return null;
+
+    }
+
+
+    const question =
+        normalizeQuestion(
+            text
+        );
+
+
+    /*
+     * Detect repeated questions.
+     */
+
+    if (
+        mem.lastQuestion &&
+        questionsAreSimilar(
+            question,
+            mem.lastQuestion
+        )
+    ) {
+
+        let repeatResponse;
+
+
+        if (
+            person.personality?.includes(
+                "strict"
+            )
+        ) {
+
+            repeatResponse =
+                random([
+                    "I already answered that.",
+                    "I've already given you an answer.",
+                    "That question has already been addressed."
+                ]);
+
+        }
+
+        else if (
+            person.personality?.includes(
+                "nervous"
+            )
+        ) {
+
+            repeatResponse =
+                random([
+                    "I already told you that.",
+                    "We've already been over that.",
+                    "I answered that a moment ago."
+                ]);
+
+        }
+
+        else if (
+            person.personality?.includes(
+                "formal"
+            )
+        ) {
+
+            repeatResponse =
+                random([
+                    "That question has already been answered.",
+                    "I've already provided that information.",
+                    "Please refer to my previous answer."
+                ]);
+
+        }
+
+        else {
+
+            repeatResponse =
+                random([
+                    "I already answered that.",
+                    "I've already told you.",
+                    "We just went over that.",
+                    "I answered that a moment ago."
+                ]);
+
+        }
+
+
+        mem.messages.push({
+
+            from:
+                "YOU",
+
+            text,
+
+            time:
+                Date.now()
+
+        });
+
+
+        mem.lastQuestion =
+            question;
+
+
+        mem.lastResponse =
+            repeatResponse;
+
+
+        mem.messages.push({
+
+            from:
+                name,
+
+            text:
+                repeatResponse,
+
+            time:
+                Date.now()
+
+        });
+
+
+        if (
+            mem.messages.length >
+            30
+        ) {
+
+            mem.messages =
+                mem.messages.slice(
+                    -30
+                );
+
+        }
+
+
+        saveMemory(
+            name
+        );
+
+
+        return repeatResponse;
+
+    }
+
+
+    /*
+     * Normal response generation.
+     */
+
+    const response =
+        generatePersonnelResponseCore(
+            name,
+            text
+        );
+
+
+    if (
+        !response
+    ) {
+
+        return response;
+
+    }
+
+
+    mem.lastQuestion =
+        question;
+
+
+    mem.lastResponse =
+        response;
+
+
+    /*
+     * Keep the employee's own
+     * answer in conversation memory.
+     */
+
+    mem.messages.push({
+
+        from:
+            name,
+
+        text:
+            response,
+
+        time:
+            Date.now()
+
+    });
+
+
+    if (
+        mem.messages.length >
+        30
+    ) {
+
+        mem.messages =
+            mem.messages.slice(
+                -30
+            );
+
+    }
+
+
+    saveMemory(
+        name
+    );
+
+
+    return response;
+
+}
 
 /* =========================================================
    PERSONNEL STATUS
