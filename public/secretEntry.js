@@ -1,6 +1,5 @@
 /* =========================================================
    ABIC → OMEGA SECRET ENTRY
-   Hidden access through the ABIC header logo
 ========================================================= */
 
 let holdTimer = null;
@@ -15,7 +14,6 @@ const HOLD_TIME = 3000;
 
 export function initSecretEntry() {
 
-    // Prevent duplicate listeners.
     if (initialized) return;
 
     const logo =
@@ -23,8 +21,8 @@ export function initSecretEntry() {
 
     if (!logo) {
 
-        console.warn(
-            "[ABIC SECRET] #headerLogo not found."
+        console.error(
+            "[ABIC SECRET] ERROR: #headerLogo not found."
         );
 
         return;
@@ -36,64 +34,43 @@ export function initSecretEntry() {
 
     logo.setAttribute(
         "title",
-        "American Botanical Information Center"
+        "Hold for 3 seconds"
     );
-
-
-    /* -----------------------------------------------------
-       Mouse
-    ----------------------------------------------------- */
-
-    logo.addEventListener(
-        "mouseenter",
-        startHold
-    );
-
-    logo.addEventListener(
-        "mouseleave",
-        cancelHold
-    );
-
-    logo.addEventListener(
-        "mousedown",
-        startHold
-    );
-
-    logo.addEventListener(
-        "mouseup",
-        cancelHold
-    );
-
-
-    /* -----------------------------------------------------
-       Touch
-    ----------------------------------------------------- */
-
-    logo.addEventListener(
-        "touchstart",
-        startHold,
-        { passive: true }
-    );
-
-    logo.addEventListener(
-        "touchend",
-        cancelHold
-    );
-
-    logo.addEventListener(
-        "touchcancel",
-        cancelHold
-    );
-
-
-    /* -----------------------------------------------------
-       Keyboard
-    ----------------------------------------------------- */
 
     logo.setAttribute(
         "tabindex",
         "0"
     );
+
+
+    /* =====================================================
+       POINTER
+    ===================================================== */
+
+    logo.addEventListener(
+        "pointerdown",
+        startHold
+    );
+
+    logo.addEventListener(
+        "pointerup",
+        cancelHold
+    );
+
+    logo.addEventListener(
+        "pointercancel",
+        cancelHold
+    );
+
+    logo.addEventListener(
+        "pointerleave",
+        cancelHold
+    );
+
+
+    /* =====================================================
+       KEYBOARD
+    ===================================================== */
 
     logo.addEventListener(
         "keydown",
@@ -131,7 +108,7 @@ export function initSecretEntry() {
 
 
     console.log(
-        "[ABIC SECRET] Secret OMEGA entry initialized."
+        "[ABIC SECRET] OMEGA entry initialized."
     );
 
 }
@@ -141,14 +118,30 @@ export function initSecretEntry() {
    START HOLD
 ========================================================= */
 
-function startHold() {
+function startHold(event) {
 
-    // Do not create multiple timers.
     if (holdTimer !== null) {
-
         clearTimeout(holdTimer);
+    }
+
+    /*
+       Prevent browser gestures on touch.
+    */
+
+    if (
+        event &&
+        event.pointerType === "touch"
+    ) {
+
+        event.preventDefault();
 
     }
+
+
+    console.log(
+        "[ABIC SECRET] Hold started."
+    );
+
 
     holdTimer = setTimeout(() => {
 
@@ -167,13 +160,15 @@ function startHold() {
 
 function cancelHold() {
 
-    if (holdTimer !== null) {
+    if (holdTimer === null) return;
 
-        clearTimeout(holdTimer);
+    clearTimeout(holdTimer);
 
-        holdTimer = null;
+    holdTimer = null;
 
-    }
+    console.log(
+        "[ABIC SECRET] Hold cancelled."
+    );
 
 }
 
@@ -193,10 +188,14 @@ function enterOmega() {
     const login =
         document.getElementById("loginScreen");
 
+    const desktop =
+        document.getElementById("desktop");
 
-    /* -----------------------------------------------------
-       Safety checks
-    ----------------------------------------------------- */
+
+    console.log(
+        "[ABIC SECRET] Attempting OMEGA entry..."
+    );
+
 
     if (!publicSite) {
 
@@ -205,8 +204,8 @@ function enterOmega() {
         );
 
         return;
-
     }
+
 
     if (!login) {
 
@@ -215,35 +214,43 @@ function enterOmega() {
         );
 
         return;
+    }
+
+
+    /*
+       Hide ABIC.
+    */
+
+    publicSite.classList.add("hidden");
+
+
+    /*
+       Show OMEGA login.
+    */
+
+    login.classList.remove("hidden");
+
+
+    /*
+       Desktop must remain hidden.
+    */
+
+    if (desktop) {
+
+        desktop.classList.add("hidden");
 
     }
 
 
-    /* -----------------------------------------------------
-       Switch ABIC → OMEGA
-    ----------------------------------------------------- */
+    /*
+       Scroll to top.
+    */
 
-    publicSite.classList.add(
-        "hidden"
-    );
-
-    login.classList.remove(
-        "hidden"
-    );
-
-
-    /* -----------------------------------------------------
-       Reset scroll position
-    ----------------------------------------------------- */
-
-    window.scrollTo({
-        top: 0,
-        behavior: "instant"
-    });
+    window.scrollTo(0, 0);
 
 
     console.log(
-        "[ABIC SECRET] OMEGA login opened."
+        "[ABIC SECRET] OMEGA LOGIN OPENED."
     );
 
 }
