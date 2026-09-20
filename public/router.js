@@ -1,6 +1,7 @@
 import { showPlants } from "./fakePlants.js";
 import { news } from "./newsData.js";
 import { initSecretEntry } from "./secretEntry.js";
+import { openMemberAccess } from "./memberAccess.js";
 
 
 export function initRouter() {
@@ -43,6 +44,16 @@ export function initRouter() {
                     showArticles();
 
                     break;
+
+
+                
+                
+                case "member":
+                    setActivePage("member");
+                    openMemberAccess();
+                    
+                    break;
+
 
 
                 case "downloads":
