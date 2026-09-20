@@ -2092,7 +2092,6 @@ function socialPair(
 
 }
 
-
 function processSocial() {
 
     if (
@@ -2111,6 +2110,31 @@ function processSocial() {
             SOCIAL_MAX
         );
 
+
+    /*
+     * New personnel get a chance first.
+     */
+
+    const dynamicPair =
+        getDynamicSocialPair();
+
+
+    if (
+        dynamicPair &&
+        socialPair(
+            dynamicPair
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * Original authored relationships
+     * continue to work as before.
+     */
 
     const pairs =
         SOCIAL
@@ -2138,6 +2162,374 @@ function processSocial() {
         }
 
     }
+
+}
+
+
+
+/* ==========================================================
+   DYNAMIC COWORKER SOCIAL LIFE
+   ----------------------------------------------------------
+   New personnel are not limited to the static SOCIAL table.
+   They can form temporary conversations with coworkers.
+========================================================== */
+
+function getDynamicConversationLines(
+    a,
+    b
+) {
+
+    const department =
+        String(
+            a?.department ||
+            b?.department ||
+            ""
+        );
+
+
+    const activityB =
+        b?.activity ||
+        "your current work";
+
+
+    switch (
+        department
+    ) {
+
+        case "SECURITY":
+
+            return [
+
+                [
+                    "How's your sector looking?",
+                    "Quiet so far. I'm keeping an eye on " +
+                        (
+                            b?.location ||
+                            "the area"
+                        )
+                ],
+
+                [
+                    "Any issues on the cameras?",
+                    "Nothing serious right now."
+                ],
+
+                [
+                    "You taking the next check?",
+                    "Yeah. I'll handle it."
+                ]
+
+            ];
+
+
+        case "RESEARCH":
+
+            return [
+
+                [
+                    "Anything unusual in the current queue?",
+                    "Nothing I can't handle so far."
+                ],
+
+                [
+                    "Did you finish your review?",
+                    "Almost. I'm still checking the last section."
+                ],
+
+                [
+                    "What are you working on?",
+                    activityB + "."
+                ]
+
+            ];
+
+
+        case "MEDICAL":
+
+            return [
+
+                [
+                    "How's the medical queue?",
+                    "Busy, but nothing critical."
+                ],
+
+                [
+                    "Any new transfers?",
+                    "Not since the last update."
+                ],
+
+                [
+                    "You need help with the records?",
+                    "I might. Give me a minute."
+                ]
+
+            ];
+
+
+        case "ADMINISTRATION":
+
+            return [
+
+                [
+                    "How's the request queue?",
+                    "A few pending items. Nothing urgent."
+                ],
+
+                [
+                    "Did that personnel request come through?",
+                    "Yes. I'm reviewing it now."
+                ],
+
+                [
+                    "Still working on those reports?",
+                    "Unfortunately, yes."
+                ]
+
+            ];
+
+
+        case "ARCHIVE":
+
+            return [
+
+                [
+                    "Archive index behaving today?",
+                    "Mostly. I'm checking a few old entries."
+                ],
+
+                [
+                    "You found the missing record?",
+                    "Not yet. I'm still searching."
+                ],
+
+                [
+                    "Need another pair of eyes?",
+                    "Actually, yes."
+                ]
+
+            ];
+
+
+        case "SYSTEMS":
+
+            return [
+
+                [
+                    "How's the network looking?",
+                    "Stable for the moment."
+                ],
+
+                [
+                    "Any warnings in the logs?",
+                    "One minor warning. I'm checking it."
+                ],
+
+                [
+                    "Server room still quiet?",
+                    "For now."
+                ]
+
+            ];
+
+
+        case "COMMUNICATIONS":
+
+            return [
+
+                [
+                    "How's message traffic?",
+                    "Steady. Nothing unusual."
+                ],
+
+                [
+                    "Any routing problems?",
+                    "A small queue, but it's under control."
+                ],
+
+                [
+                    "Need help with the incoming requests?",
+                    "I can handle most of them."
+                ]
+
+            ];
+
+
+        case "MAINTENANCE":
+
+            return [
+
+                [
+                    "Anything broken today?",
+                    "A couple of minor issues."
+                ],
+
+                [
+                    "How's the maintenance queue?",
+                    "Moving along."
+                ],
+
+                [
+                    "Need another person on that job?",
+                    "Not yet. I'll call if I do."
+                ]
+
+            ];
+
+
+        default:
+
+            return [
+
+                [
+                    "How's your shift going?",
+                    "Pretty normal so far."
+                ],
+
+                [
+                    "Everything alright on your side?",
+                    "Yeah. Just keeping busy."
+                ],
+
+                [
+                    "You need anything?",
+                    "Not right now, thanks."
+                ]
+
+            ];
+
+    }
+
+}
+
+
+/* ==========================================================
+   FIND DYNAMIC COWORKER PAIR
+========================================================== */
+
+function getDynamicSocialPair() {
+
+    const active =
+        personnel().filter(
+            p =>
+                onDuty(p) &&
+                p.id
+        );
+
+
+    if (
+        active.length <
+        2
+    ) {
+
+        return null;
+
+    }
+
+
+    const shuffled =
+        active
+            .slice()
+            .sort(
+                () =>
+                    Math.random() -
+                    0.5
+            );
+
+
+    for (
+        const a
+        of shuffled
+    ) {
+
+        /*
+         * Prefer someone from the same department.
+         */
+
+        const sameDepartment =
+            shuffled.filter(
+                b =>
+                    b.id !==
+                        a.id &&
+                    b.department ===
+                        a.department
+            );
+
+
+        const pool =
+            sameDepartment.length &&
+            Math.random() < 0.75
+
+                ? sameDepartment
+
+                : shuffled.filter(
+                    b =>
+                        b.id !==
+                            a.id
+                );
+
+
+        const b =
+            pick(pool);
+
+
+        if (
+            !b
+        ) {
+
+            continue;
+
+        }
+
+
+        const key =
+            pairKey(
+                a.id,
+                b.id
+            );
+
+
+        /*
+         * Do not make the same two people
+         * talk again immediately.
+         */
+
+        if (
+            (
+                pairCooldowns.get(
+                    key
+                ) ||
+                0
+            ) > now()
+        ) {
+
+            continue;
+
+        }
+
+
+        return {
+
+            a:
+                a.id,
+
+            b:
+                b.id,
+
+            chance:
+                0.60,
+
+            lines:
+                getDynamicConversationLines(
+                    a,
+                    b
+                )
+
+        };
+
+    }
+
+
+    return null;
 
 }
 
