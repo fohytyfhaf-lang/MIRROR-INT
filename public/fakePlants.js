@@ -1,17 +1,58 @@
 import { plants } from "./plantsData.js";
 
-export function showPlants(filteredPlants = plants) {
 
-    const content = document.getElementById("publicContent");
+export function showPlants(filteredPlants = plants){
+
+    /*
+     * If #plantGrid already exists,
+     * we are on the HOME page.
+     *
+     * Do not replace the whole publicContent.
+     */
+
+    const existingGrid =
+        document.getElementById("plantGrid");
+
+
+    if(existingGrid){
+
+        renderPlantGrid(
+            existingGrid,
+            filteredPlants.slice(0, 6)
+        );
+
+        initSearch();
+
+        return;
+
+    }
+
+
+    /*
+     * Otherwise open the full Plant Database page.
+     */
+
+    const content =
+        document.getElementById("publicContent");
+
+
+    if(!content) return;
+
 
     content.innerHTML = `
+
         <section class="plantsPage">
 
             <h1>Plant Database</h1>
 
             <p class="plantCount">
-                Showing <b>${filteredPlants.length}</b> documented species.
+
+                Showing
+                <b>${filteredPlants.length}</b>
+                documented species.
+
             </p>
+
 
             <div class="searchBox">
 
@@ -24,86 +65,189 @@ export function showPlants(filteredPlants = plants) {
 
             </div>
 
-            <div id="plantGrid" class="plantGrid">
 
-                ${filteredPlants.map(plant => `
+            <div
+                id="plantGrid"
+                class="plantGrid"
+            ></div>
 
-                    <div class="plantCard">
+        </section>
 
-                        <img
-                            class="plantImage"
-                            src="${plant.image}"
-                            alt="${plant.name}"
-                            onerror="this.src='images/plants/placeholder.png'"
-                        >
+    `;
 
-                        <div class="plantBody">
 
-                            <h3>${plant.name}</h3>
+    const grid =
+        document.getElementById("plantGrid");
 
-                            <p class="latin">${plant.latin}</p>
 
-                            <div class="plantMeta">
+    renderPlantGrid(
+        grid,
+        filteredPlants
+    );
 
-                                <span>${plant.category}</span>
 
-                                <span>${plant.region}</span>
+    initSearch();
 
-                            </div>
+}
 
-                            <p class="plantDescription">
 
-                                ${plant.description}
+function renderPlantGrid(grid, list){
 
-                            </p>
+    if(!grid) return;
 
-                            <button class="plantButton">
 
-                                View Details
+    grid.innerHTML = list
+        .map(plant => `
 
-                            </button>
+            <div class="plantCard">
 
-                        </div>
+                <img
+                    class="plantImage"
+                    src="${plant.image}"
+                    alt="${plant.name}"
+                    onerror="this.src='images/plants/placeholder.png'"
+                >
+
+
+                <div class="plantBody">
+
+                    <h3>
+                        ${plant.name}
+                    </h3>
+
+
+                    <p class="latin">
+                        ${plant.latin}
+                    </p>
+
+
+                    <div class="plantMeta">
+
+                        <span>
+                            ${plant.category}
+                        </span>
+
+                        <span>
+                            ${plant.region}
+                        </span>
 
                     </div>
 
-                `).join("")}
+
+                    <p class="plantDescription">
+
+                        ${plant.description}
+
+                    </p>
+
+
+                    <button class="plantButton">
+
+                        View Details
+
+                    </button>
+
+                </div>
 
             </div>
 
-        </section>
-    `;
+        `)
+        .join("");
 
-    initSearch();
 }
 
-function initSearch() {
 
-    const input = document.getElementById("publicSearch");
+function initSearch(){
 
-    if (!input) return;
+    const input =
+        document.getElementById("publicSearch");
 
-    input.oninput = () => {
 
-        const text = input.value.toLowerCase().trim();
+    if(!input) return;
 
-        const filtered = plants.filter(plant =>
 
-            plant.name.toLowerCase().includes(text) ||
-            plant.latin.toLowerCase().includes(text) ||
-            plant.category.toLowerCase().includes(text) ||
-            plant.region.toLowerCase().includes(text)
+    /*
+     * Prevent duplicate search listeners.
+     */
 
-        );
+    if(input.dataset.searchInitialized === "true"){
+        return;
+    }
 
-        showPlants(filtered);
 
-        const newInput = document.getElementById("publicSearch");
+    input.dataset.searchInitialized = "true";
 
-        newInput.value = text;
 
-        newInput.focus();
+    input.addEventListener("input", () => {
 
-    };
+        const text =
+            input.value
+                .toLowerCase()
+                .trim();
+
+
+        const filtered =
+            plants.filter(plant =>
+
+                plant.name
+                    .toLowerCase()
+                    .includes(text)
+
+                ||
+
+                plant.latin
+                    .toLowerCase()
+                    .includes(text)
+
+                ||
+
+                plant.category
+                    .toLowerCase()
+                    .includes(text)
+
+                ||
+
+                plant.region
+                    .toLowerCase()
+                    .includes(text)
+
+            );
+
+
+        const grid =
+            document.getElementById("plantGrid");
+
+
+        if(grid){
+
+            const isHome =
+                document.getElementById("featuredPlants") !== null;
+
+
+            renderPlantGrid(
+                grid,
+                isHome
+                    ? filtered.slice(0, 6)
+                    : filtered
+            );
+
+        }
+
+
+        const count =
+            document.querySelector(".plantCount");
+
+
+        if(count){
+
+            count.innerHTML = `
+                Showing
+                <b>${filtered.length}</b>
+                documented species.
+            `;
+
+        }
+
+    });
 
 }
