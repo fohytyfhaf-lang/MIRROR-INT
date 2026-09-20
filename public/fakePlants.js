@@ -91,13 +91,17 @@ export function showPlants(filteredPlants = plants){
 }
 
 
+/*
+ * Render plant cards
+ */
+
 function renderPlantGrid(grid, list){
 
     if(!grid) return;
 
 
     grid.innerHTML = list
-        .map(plant => `
+        .map((plant, index) => `
 
             <div class="plantCard">
 
@@ -141,7 +145,10 @@ function renderPlantGrid(grid, list){
                     </p>
 
 
-                    <button class="plantButton">
+                    <button
+                        class="plantButton"
+                        data-plant-index="${plants.indexOf(plant)}"
+                    >
 
                         View Details
 
@@ -154,100 +161,217 @@ function renderPlantGrid(grid, list){
         `)
         .join("");
 
+
+    /*
+     * Activate View Details buttons
+     */
+
+    grid.querySelectorAll(".plantButton")
+        .forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                const index =
+                    Number(
+                        button.dataset.plantIndex
+                    );
+
+
+                const plant =
+                    plants[index];
+
+
+                if(!plant) return;
+
+
+                showPlantDetails(plant);
+
+            });
+
+        });
+
 }
 
 
-function initSearch(){
+/*
+ * Plant Details page
+ */
 
-    const input =
-        document.getElementById("publicSearch");
+function showPlantDetails(plant){
+
+    const content =
+        document.getElementById("publicContent");
 
 
-    if(!input) return;
+    if(!content) return;
+
+
+    content.innerHTML = `
+
+        <section class="plantDetails">
+
+            <button
+                id="backToPlants"
+                class="backButton"
+            >
+
+                ← Back to Plant Database
+
+            </button>
+
+
+            <div class="plantDetailsHeader">
+
+                <div class="plantDetailsImage">
+
+                    <img
+                        src="${plant.image}"
+                        alt="${plant.name}"
+                        onerror="this.src='images/plants/placeholder.png'"
+                    >
+
+                </div>
+
+
+                <div class="plantDetailsTitle">
+
+                    <p class="recordLabel">
+                        ABIC PLANT RECORD
+                    </p>
+
+                    <h1>
+                        ${plant.name}
+                    </h1>
+
+                    <p class="latin">
+                        ${plant.latin}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="plantDetailsInfo">
+
+
+                <div class="plantInfoBlock">
+
+                    <span class="infoLabel">
+                        COMMON NAME
+                    </span>
+
+                    <strong>
+                        ${plant.name}
+                    </strong>
+
+                </div>
+
+
+                <div class="plantInfoBlock">
+
+                    <span class="infoLabel">
+                        SCIENTIFIC NAME
+                    </span>
+
+                    <strong>
+                        ${plant.latin}
+                    </strong>
+
+                </div>
+
+
+                <div class="plantInfoBlock">
+
+                    <span class="infoLabel">
+                        CATEGORY
+                    </span>
+
+                    <strong>
+                        ${plant.category}
+                    </strong>
+
+                </div>
+
+
+                <div class="plantInfoBlock">
+
+                    <span class="infoLabel">
+                        DISTRIBUTION
+                    </span>
+
+                    <strong>
+                        ${plant.region}
+                    </strong>
+
+                </div>
+
+
+                <div class="plantInfoBlock">
+
+                    <span class="infoLabel">
+                        ABIC STATUS
+                    </span>
+
+                    <strong>
+                        Verified
+                    </strong>
+
+                </div>
+
+
+                <div class="plantInfoBlock">
+
+                    <span class="infoLabel">
+                        REFERENCE
+                    </span>
+
+                    <strong>
+                        ABIC-BOT-${String(
+                            plants.indexOf(plant) + 1
+                        ).padStart(5, "0")}
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="plantDescriptionFull">
+
+                <h2>
+                    Description
+                </h2>
+
+                <p>
+                    ${plant.description}
+                </p>
+
+            </div>
+
+
+        </section>
+
+    `;
 
 
     /*
-     * Prevent duplicate search listeners.
+     * Back button
      */
 
-    if(input.dataset.searchInitialized === "true"){
-        return;
+    const backButton =
+        document.getElementById("backToPlants");
+
+
+    if(backButton){
+
+        backButton.addEventListener("click", () => {
+
+            showPlants();
+
+        });
+
     }
-
-
-    input.dataset.searchInitialized = "true";
-
-
-    input.addEventListener("input", () => {
-
-        const text =
-            input.value
-                .toLowerCase()
-                .trim();
-
-
-        const filtered =
-            plants.filter(plant =>
-
-                plant.name
-                    .toLowerCase()
-                    .includes(text)
-
-                ||
-
-                plant.latin
-                    .toLowerCase()
-                    .includes(text)
-
-                ||
-
-                plant.category
-                    .toLowerCase()
-                    .includes(text)
-
-                ||
-
-                plant.region
-                    .toLowerCase()
-                    .includes(text)
-
-            );
-
-
-        const grid =
-            document.getElementById("plantGrid");
-
-
-        if(grid){
-
-            const isHome =
-                document.getElementById("featuredPlants") !== null;
-
-
-            renderPlantGrid(
-                grid,
-                isHome
-                    ? filtered.slice(0, 6)
-                    : filtered
-            );
-
-        }
-
-
-        const count =
-            document.querySelector(".plantCount");
-
-
-        if(count){
-
-            count.innerHTML = `
-                Showing
-                <b>${filtered.length}</b>
-                documented species.
-            `;
-
-        }
-
-    });
 
 }
