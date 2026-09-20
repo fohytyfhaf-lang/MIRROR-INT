@@ -1,8 +1,6 @@
 import { showPlants } from "./fakePlants.js";
 import { showArticles } from "./fakeArticles.js";
-import { showDocuments } from "./fakeDocuments.js";
-import { initSearch } from "./search.js";
-import { showNews } from "./fakeNews.js";
+import { news } from "./newsData.js";
 import { initSecretEntry } from "./secretEntry.js";
 
 export function initRouter() {
@@ -50,11 +48,17 @@ export function initRouter() {
 
     showHome();
     initSecretEntry();
+
 }
+
 
 function showHome(){
 
-    const content = document.getElementById("publicContent");
+    const content =
+        document.getElementById("publicContent");
+
+    if(!content) return;
+
 
     content.innerHTML = `
 
@@ -78,81 +82,160 @@ function showHome(){
 
 </section>
 
+
 <section id="searchBox">
 
-<h3>Search Plant Database</h3>
+    <h3>Search Plant Database</h3>
 
-<input id="publicSearch" placeholder="Enter plant name...">
+    <input
+        id="publicSearch"
+        type="text"
+        placeholder="Enter plant name..."
+        autocomplete="off"
+    >
 
-<button id="publicSearchButton">
-
-Search
-
-</button>
+    <button id="publicSearchButton">
+        Search
+    </button>
 
 </section>
+
 
 <section id="featuredPlants">
 
-<h2>Featured Plants</h2>
+    <h2>Featured Plants</h2>
 
-<div id="plantGrid"></div>
+    <div id="plantGrid"></div>
 
 </section>
 
+
 <section id="latestNews">
 
-<h2>Latest News</h2>
+    <h2>Latest News</h2>
 
-<ul id="newsList"></ul>
+    <div id="newsList"></div>
 
 </section>
 
 `;
 
-    showNews();
+
     showPlants();
-    initSearch();
+
+    renderNews();
+
+
+    const searchButton =
+        document.getElementById("publicSearchButton");
+
+    const searchInput =
+        document.getElementById("publicSearch");
+
+
+    if(searchButton && searchInput){
+
+        searchButton.addEventListener("click", () => {
+
+            const text =
+                searchInput.value.trim();
+
+            if(!text) return;
+
+
+            setActivePage("plants");
+
+            showPlants();
+
+
+            const plantSearch =
+                document.getElementById("publicSearch");
+
+
+            if(plantSearch){
+
+                plantSearch.value = text;
+
+                plantSearch.dispatchEvent(
+                    new Event("input")
+                );
+
+            }
+
+        });
+
+    }
 
 }
+
+
+function renderNews(){
+
+    const list =
+        document.getElementById("newsList");
+
+    if(!list) return;
+
+
+    list.innerHTML = news
+        .slice(0, 4)
+        .map(item => `
+
+            <article class="newsCard">
+
+                <h3>${item.title}</h3>
+
+                <small>${item.date}</small>
+
+                <p>${item.text}</p>
+
+            </article>
+
+        `)
+        .join("");
+
+}
+
 
 function showDownloads(){
 
     document.getElementById("publicContent").innerHTML = `
 
-<h2>Downloads</h2>
+        <h2>Downloads</h2>
 
-<p>No public downloads available.</p>
+        <p>No public downloads available.</p>
 
-`;
+    `;
 
 }
+
 
 function showContact(){
 
     document.getElementById("publicContent").innerHTML = `
 
-<h2>Contact</h2>
+        <h2>Contact</h2>
 
-<p>American Botanical Information Center</p>
+        <p>American Botanical Information Center</p>
 
-<p>Portland, Oregon</p>
+        <p>Portland, Oregon</p>
 
-<p>contact@abic.org</p>
+        <p>contact@abic.org</p>
 
-`;
+    `;
 
 }
+
 
 function setActivePage(page){
 
     document
         .querySelectorAll("#publicMenu a")
-        .forEach(link=>{
+        .forEach(link => {
 
             link.classList.remove("active");
 
-            if(link.dataset.page===page){
+            if(link.dataset.page === page){
 
                 link.classList.add("active");
 
