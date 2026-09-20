@@ -1,75 +1,104 @@
 import { plants } from "./plantsData.js";
 
 
-export function showPlants(filteredPlants = plants){
-
-    /*
-     * If #plantGrid already exists,
-     * we are on the HOME page.
-     *
-     * Do not replace the whole publicContent.
-     */
-
-    const existingGrid =
-        document.getElementById("plantGrid");
+let searchInitialized = false;
 
 
-    if(existingGrid){
 
-        renderPlantGrid(
-            existingGrid,
-            filteredPlants.slice(0, 6)
-        );
+/* =========================================================
+   PLANT DATABASE
+========================================================= */
 
-        initSearch();
-
-        return;
-
-    }
-
-
-    /*
-     * Otherwise open the full Plant Database page.
-     */
+export function showPlants(
+    filteredPlants = plants
+) {
 
     const content =
-        document.getElementById("publicContent");
+        document.getElementById(
+            "publicContent"
+        );
 
 
-    if(!content) return;
+    if (!content) return;
 
+
+    /*
+        Always render the complete database page.
+        Home has its own completely separate DOM.
+    */
 
     content.innerHTML = `
 
-        <section class="plantsPage">
-
-            <h1>Plant Database</h1>
-
-            <p class="plantCount">
-
-                Showing
-                <b>${filteredPlants.length}</b>
-                documented species.
-
-            </p>
+        <section
+            class="plantsPage"
+            id="plantDatabasePage"
+        >
 
 
-            <div class="searchBox">
+            <div class="plantDatabaseHeader">
 
-                <input
-                    id="publicSearch"
-                    type="text"
-                    placeholder="Search by name, latin name, region or category..."
-                    autocomplete="off"
-                >
+                <div>
+
+                    <div class="plantDatabaseLabel">
+                        AMERICAN BOTANICAL INFORMATION CENTER
+                    </div>
+
+                    <h1>
+                        Plant Database
+                    </h1>
+
+                    <p>
+                        Search documented botanical
+                        records maintained by ABIC.
+                    </p>
+
+                </div>
 
             </div>
 
 
+
+            <!-- DATABASE SEARCH -->
+
+            <div class="plantDatabaseSearchBox">
+
+                <label
+                    for="plantDatabaseSearch"
+                >
+                    SEARCH DATABASE
+                </label>
+
+
+                <input
+                    id="plantDatabaseSearch"
+                    type="text"
+                    placeholder="Search by name, scientific name, region or category..."
+                    autocomplete="off"
+                >
+
+
+                <div
+                    id="plantDatabaseCount"
+                    class="plantDatabaseCount"
+                >
+                    Showing
+                    <b>
+                        ${filteredPlants.length}
+                    </b>
+                    documented species.
+                </div>
+
+            </div>
+
+
+
+            <!-- DATABASE GRID -->
+
             <div
-                id="plantGrid"
-                class="plantGrid"
+                id="plantDatabaseGrid"
+                class="plantDatabaseGrid"
             ></div>
+
 
         </section>
 
@@ -77,7 +106,9 @@ export function showPlants(filteredPlants = plants){
 
 
     const grid =
-        document.getElementById("plantGrid");
+        document.getElementById(
+            "plantDatabaseGrid"
+        );
 
 
     renderPlantGrid(
@@ -86,230 +117,570 @@ export function showPlants(filteredPlants = plants){
     );
 
 
+    /*
+        Initialize only this database input.
+    */
+
+    searchInitialized = false;
+
     initSearch();
 
 }
 
 
-/*
- * Render plant cards
- */
 
-function renderPlantGrid(grid, list){
+/* =========================================================
+   SEARCH
+========================================================= */
 
-    if(!grid) return;
+function initSearch() {
 
-
-    grid.innerHTML = list
-        .map((plant, index) => `
-
-            <div class="plantCard">
-
-                <img
-                    class="plantImage"
-                    src="${plant.image}"
-                    alt="${plant.name}"
-                    onerror="this.src='images/plants/placeholder.png'"
-                >
+    const input =
+        document.getElementById(
+            "plantDatabaseSearch"
+        );
 
 
-                <div class="plantBody">
-
-                    <h3>
-                        ${plant.name}
-                    </h3>
+    if (!input) return;
 
 
-                    <p class="latin">
-                        ${plant.latin}
-                    </p>
+    if (searchInitialized) {
+        return;
+    }
 
 
-                    <div class="plantMeta">
-
-                        <span>
-                            ${plant.category}
-                        </span>
-
-                        <span>
-                            ${plant.region}
-                        </span>
-
-                    </div>
+    searchInitialized = true;
 
 
-                    <p class="plantDescription">
+    input.addEventListener(
+        "input",
+        () => {
 
-                        ${plant.description}
+            const query =
+                input.value
+                    .trim()
+                    .toLowerCase();
 
-                    </p>
+
+            /*
+                Empty search
+            */
+
+            if (!query) {
+
+                updateDatabase(
+                    plants
+                );
+
+                return;
+
+            }
 
 
-                    <button
-                        class="plantButton"
-                        data-plant-index="${plants.indexOf(plant)}"
-                    >
+            const filtered =
+                plants.filter(
+                    plant => {
 
-                        View Details
+                        const name =
+                            String(
+                                plant.name || ""
+                            )
+                                .toLowerCase();
 
-                    </button>
 
-                </div>
+                        const latin =
+                            String(
+                                plant.latin || ""
+                            )
+                                .toLowerCase();
+
+
+                        const region =
+                            String(
+                                plant.region || ""
+                            )
+                                .toLowerCase();
+
+
+                        const category =
+                            String(
+                                plant.category || ""
+                            )
+                                .toLowerCase();
+
+
+                        const description =
+                            String(
+                                plant.description || ""
+                            )
+                                .toLowerCase();
+
+
+                        return (
+
+                            name.includes(query) ||
+
+                            latin.includes(query) ||
+
+                            region.includes(query) ||
+
+                            category.includes(query) ||
+
+                            description.includes(query)
+
+                        );
+
+                    }
+                );
+
+
+            updateDatabase(
+                filtered,
+                query
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   UPDATE DATABASE
+========================================================= */
+
+function updateDatabase(
+    filteredPlants,
+    query = ""
+) {
+
+    const grid =
+        document.getElementById(
+            "plantDatabaseGrid"
+        );
+
+
+    const count =
+        document.getElementById(
+            "plantDatabaseCount"
+        );
+
+
+    if (!grid) return;
+
+
+    if (count) {
+
+        count.innerHTML = `
+
+            Showing
+
+            <b>
+                ${filteredPlants.length}
+            </b>
+
+            documented species.
+
+        `;
+
+    }
+
+
+    if (
+        filteredPlants.length === 0
+    ) {
+
+        grid.innerHTML = `
+
+            <div class="plantDatabaseEmpty">
+
+                <strong>
+                    No records found.
+                </strong>
+
+                ${
+                    query
+                        ? `
+                            <span>
+                                No plants match
+                                "${escapeHTML(query)}".
+                            </span>
+                        `
+                        : ""
+                }
 
             </div>
 
-        `)
-        .join("");
+        `;
+
+        return;
+
+    }
 
 
-    /*
-     * Activate View Details buttons
-     */
+    renderPlantGrid(
+        grid,
+        filteredPlants
+    );
 
-    grid.querySelectorAll(".plantButton")
-        .forEach(button => {
+}
 
-            button.addEventListener("click", () => {
 
-                const index =
-                    Number(
-                        button.dataset.plantIndex
+
+/* =========================================================
+   PLANT GRID
+========================================================= */
+
+function renderPlantGrid(
+    grid,
+    list
+) {
+
+    if (!grid) return;
+
+
+    grid.innerHTML =
+        list
+            .map(plant => {
+
+                const originalIndex =
+                    plants.indexOf(
+                        plant
                     );
 
 
-                const plant =
-                    plants[index];
+                return `
+
+                    <article
+                        class="plantDatabaseCard"
+                    >
 
 
-                if(!plant) return;
+                        <div class="plantDatabaseImage">
+
+                            <img
+                                src="${plant.image}"
+                                alt="${escapeHTML(
+                                    plant.name
+                                )}"
+                                onerror="
+                                    this.src='images/plants/placeholder.png'
+                                "
+                            >
+
+                        </div>
 
 
-                showPlantDetails(plant);
 
-            });
+                        <div class="plantDatabaseBody">
+
+
+                            <div
+                                class="plantDatabaseCategory"
+                            >
+                                ${escapeHTML(
+                                    plant.category ||
+                                    "BOTANY"
+                                )}
+                            </div>
+
+
+
+                            <h3>
+                                ${escapeHTML(
+                                    plant.name
+                                )}
+                            </h3>
+
+
+
+                            <p
+                                class="plantDatabaseLatin"
+                            >
+                                ${escapeHTML(
+                                    plant.latin
+                                )}
+                            </p>
+
+
+
+                            <div
+                                class="plantDatabaseMeta"
+                            >
+
+                                <span>
+                                    ${escapeHTML(
+                                        plant.region
+                                    )}
+                                </span>
+
+                            </div>
+
+
+
+                            <p
+                                class="plantDatabaseDescription"
+                            >
+                                ${escapeHTML(
+                                    plant.description
+                                )}
+                            </p>
+
+
+
+                            <button
+                                class="plantDatabaseButton"
+                                data-plant-index="${originalIndex}"
+                            >
+                                View Details
+                            </button>
+
+
+                        </div>
+
+
+                    </article>
+
+                `;
+
+            })
+            .join("");
+
+
+    /*
+        Details buttons
+    */
+
+    grid
+        .querySelectorAll(
+            ".plantDatabaseButton"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const index =
+                        Number(
+                            button.dataset
+                                .plantIndex
+                        );
+
+
+                    const plant =
+                        plants[index];
+
+
+                    if (!plant) return;
+
+
+                    showPlantDetails(
+                        plant
+                    );
+
+                }
+            );
 
         });
 
 }
 
 
-/*
- * Plant Details page
- */
 
-function showPlantDetails(plant){
+/* =========================================================
+   PLANT DETAILS
+========================================================= */
+
+function showPlantDetails(
+    plant
+) {
 
     const content =
-        document.getElementById("publicContent");
+        document.getElementById(
+            "publicContent"
+        );
 
 
-    if(!content) return;
+    if (!content) return;
+
+
+    const index =
+        plants.indexOf(
+            plant
+        );
+
+
+    const reference =
+        `ABIC-BOT-${String(
+            index + 1
+        ).padStart(5, "0")}`;
 
 
     content.innerHTML = `
 
-        <section class="plantDetails">
+        <section
+            class="plantDetails"
+            id="plantDatabaseDetails"
+        >
+
 
             <button
-                id="backToPlants"
-                class="backButton"
+                id="backToPlantDatabase"
+                class="plantDatabaseBackButton"
             >
-
                 ← Back to Plant Database
-
             </button>
 
 
-            <div class="plantDetailsHeader">
 
-                <div class="plantDetailsImage">
+            <div
+                class="plantDetailsHeader"
+            >
+
+
+                <div
+                    class="plantDetailsImage"
+                >
 
                     <img
                         src="${plant.image}"
-                        alt="${plant.name}"
-                        onerror="this.src='images/plants/placeholder.png'"
+                        alt="${escapeHTML(
+                            plant.name
+                        )}"
+                        onerror="
+                            this.src='images/plants/placeholder.png'
+                        "
                     >
 
                 </div>
 
 
-                <div class="plantDetailsTitle">
 
-                    <p class="recordLabel">
+                <div
+                    class="plantDetailsTitle"
+                >
+
+                    <div
+                        class="plantDatabaseLabel"
+                    >
                         ABIC PLANT RECORD
-                    </p>
+                    </div>
+
 
                     <h1>
-                        ${plant.name}
+                        ${escapeHTML(
+                            plant.name
+                        )}
                     </h1>
 
+
                     <p class="latin">
-                        ${plant.latin}
+                        ${escapeHTML(
+                            plant.latin
+                        )}
                     </p>
 
                 </div>
+
 
             </div>
 
 
-            <div class="plantDetailsInfo">
+
+            <div
+                class="plantDetailsInfo"
+            >
 
 
-                <div class="plantInfoBlock">
+                <div
+                    class="plantInfoBlock"
+                >
 
-                    <span class="infoLabel">
+                    <span
+                        class="infoLabel"
+                    >
                         COMMON NAME
                     </span>
 
                     <strong>
-                        ${plant.name}
+                        ${escapeHTML(
+                            plant.name
+                        )}
                     </strong>
 
                 </div>
 
 
-                <div class="plantInfoBlock">
 
-                    <span class="infoLabel">
+                <div
+                    class="plantInfoBlock"
+                >
+
+                    <span
+                        class="infoLabel"
+                    >
                         SCIENTIFIC NAME
                     </span>
 
                     <strong>
-                        ${plant.latin}
+                        ${escapeHTML(
+                            plant.latin
+                        )}
                     </strong>
 
                 </div>
 
 
-                <div class="plantInfoBlock">
 
-                    <span class="infoLabel">
+                <div
+                    class="plantInfoBlock"
+                >
+
+                    <span
+                        class="infoLabel"
+                    >
                         CATEGORY
                     </span>
 
                     <strong>
-                        ${plant.category}
+                        ${escapeHTML(
+                            plant.category
+                        )}
                     </strong>
 
                 </div>
 
 
-                <div class="plantInfoBlock">
 
-                    <span class="infoLabel">
+                <div
+                    class="plantInfoBlock"
+                >
+
+                    <span
+                        class="infoLabel"
+                    >
                         DISTRIBUTION
                     </span>
 
                     <strong>
-                        ${plant.region}
+                        ${escapeHTML(
+                            plant.region
+                        )}
                     </strong>
 
                 </div>
 
 
-                <div class="plantInfoBlock">
 
-                    <span class="infoLabel">
+                <div
+                    class="plantInfoBlock"
+                >
+
+                    <span
+                        class="infoLabel"
+                    >
                         ABIC STATUS
                     </span>
 
@@ -320,16 +691,19 @@ function showPlantDetails(plant){
                 </div>
 
 
-                <div class="plantInfoBlock">
 
-                    <span class="infoLabel">
+                <div
+                    class="plantInfoBlock"
+                >
+
+                    <span
+                        class="infoLabel"
+                    >
                         REFERENCE
                     </span>
 
                     <strong>
-                        ABIC-BOT-${String(
-                            plants.indexOf(plant) + 1
-                        ).padStart(5, "0")}
+                        ${reference}
                     </strong>
 
                 </div>
@@ -338,14 +712,20 @@ function showPlantDetails(plant){
             </div>
 
 
-            <div class="plantDescriptionFull">
+
+            <div
+                class="plantDescriptionFull"
+            >
 
                 <h2>
                     Description
                 </h2>
 
+
                 <p>
-                    ${plant.description}
+                    ${escapeHTML(
+                        plant.description
+                    )}
                 </p>
 
             </div>
@@ -356,142 +736,70 @@ function showPlantDetails(plant){
     `;
 
 
-    /*
-     * Back button
-     */
-
-    const backButton =
-        document.getElementById("backToPlants");
+    const back =
+        document.getElementById(
+            "backToPlantDatabase"
+        );
 
 
-    if(backButton){
+    if (back) {
 
-        backButton.addEventListener("click", () => {
+        back.addEventListener(
+            "click",
+            () => {
 
-            showPlants();
+                showPlants();
 
-        });
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+
+            }
+        );
 
     }
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 
 }
 
-function initSearch() {
-
-    const input =
-        document.getElementById("publicSearch");
-
-    if (!input) return;
-
-    /*
-        Prevent duplicate listeners.
-    */
-
-    if (input.dataset.searchInitialized === "true") {
-        return;
-    }
-
-    input.dataset.searchInitialized = "true";
 
 
-    input.addEventListener("input", () => {
+/* =========================================================
+   HTML SAFETY
+========================================================= */
 
-        const query =
-            input.value
-                .trim()
-                .toLowerCase();
+function escapeHTML(
+    value
+) {
 
-
-        if (!query) {
-
-            showPlants(plants);
-
-            return;
-
-        }
-
-
-        const filtered =
-            plants.filter(plant => {
-
-                const name =
-                    String(plant.name || "")
-                        .toLowerCase();
-
-                const latin =
-                    String(plant.latin || "")
-                        .toLowerCase();
-
-                const region =
-                    String(plant.region || "")
-                        .toLowerCase();
-
-                const category =
-                    String(plant.category || "")
-                        .toLowerCase();
-
-                const description =
-                    String(plant.description || "")
-                        .toLowerCase();
-
-
-                return (
-                    name.includes(query) ||
-                    latin.includes(query) ||
-                    region.includes(query) ||
-                    category.includes(query) ||
-                    description.includes(query)
-                );
-
-            });
-
-
-        const count =
-            document.querySelector(".plantCount");
-
-        if (count) {
-
-            count.innerHTML = `
-                Showing
-                <b>${filtered.length}</b>
-                documented species.
-            `;
-
-        }
-
-
-        const grid =
-            document.getElementById("plantGrid");
-
-        if (!grid) return;
-
-
-        if (filtered.length === 0) {
-
-            grid.innerHTML = `
-
-                <div class="plantEmpty">
-
-                    No plants found matching:
-
-                    <strong>
-                        ${query}
-                    </strong>
-
-                </div>
-
-            `;
-
-            return;
-
-        }
-
-
-        renderPlantGrid(
-            grid,
-            filtered
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
         );
-
-    });
 
 }
