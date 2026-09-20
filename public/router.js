@@ -2,6 +2,7 @@ import { showPlants } from "./fakePlants.js";
 import { news } from "./newsData.js";
 import { initSecretEntry } from "./secretEntry.js";
 import { openMemberAccess } from "./memberAccess.js";
+import { showArchive } from "./archive.js";
 
 
 export function initRouter() {
@@ -44,6 +45,13 @@ export function initRouter() {
                     showArticles();
 
                     break;
+
+                case "archive":
+                    
+                  setActivePage("archive");
+                  showArchive();
+                    
+                  break;
 
 
                 
