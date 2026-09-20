@@ -2773,11 +2773,11 @@ function handlePersonnelMessage(
                         !response
                     ) {
 
-                        response =
-                            generateEmployeeResponse(
-                                chatId,
-                                text
-                            );
+                       response =
+                           generateEmployeeResponse(
+                               personnel.user,
+                               text
+                           );
 
                     }
 
