@@ -1,136 +1,211 @@
-/* ==========================================
-   DOWNLOADS
-========================================== */
+/* =========================================================
+   ABIC — DOWNLOADS
+========================================================= */
 
 .downloads-section {
+
     width: 100%;
-    padding: 40px 0;
+
+    padding: 30px;
 }
+
 
 .downloads-header {
-    margin-bottom: 30px;
+
+    margin-bottom: 25px;
+
+    padding-bottom: 17px;
+
+    border-bottom: 1px solid #d7ddd6;
 }
+
 
 .downloads-header h1 {
-    margin: 0 0 8px;
-    font-size: 32px;
-    letter-spacing: 2px;
+
+    margin: 0 0 7px;
+
+    color: #294a31;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 27px;
+
+    font-weight: normal;
 }
+
 
 .downloads-header p {
+
     margin: 0;
-    opacity: 0.65;
-    font-size: 14px;
+
+    color: #707970;
+
+    font-size: 12px;
 }
 
-/* Контейнер файлов */
+
+/* =========================================================
+   LIST
+========================================================= */
 
 .downloads-list {
+
     display: flex;
+
     flex-direction: column;
-    gap: 14px;
+
+    border-top: 1px solid #d6dcd5;
 }
 
-/* Карточка */
 
 .download-item {
+
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
-    padding: 18px 20px;
+    gap: 20px;
 
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.025);
+    padding: 17px 18px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #d6dcd5;
 
     transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
+        background .15s ease;
 }
+
 
 .download-item:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.3);
-    transform: translateX(4px);
+
+    background: #f7faf6;
 }
 
-/* Информация о файле */
 
 .download-info {
+
     display: flex;
+
     flex-direction: column;
+
     gap: 5px;
 }
 
+
 .download-name {
-    font-size: 16px;
-    font-weight: bold;
-    letter-spacing: 1px;
+
+    color: #35583c;
+
+    font-size: 14px;
+
+    font-weight: 600;
 }
+
 
 .download-description {
-    font-size: 12px;
-    opacity: 0.55;
+
+    color: #737d75;
+
+    font-size: 11px;
+
+    line-height: 1.5;
 }
+
 
 .download-meta {
+
     display: flex;
-    gap: 15px;
-    font-size: 11px;
-    opacity: 0.45;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    color: #909890;
+
+    font-size: 9px;
 }
 
-/* Кнопка */
+
+/* =========================================================
+   BUTTON
+========================================================= */
 
 .download-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
 
-    padding: 9px 16px;
+    flex-shrink: 0;
 
-    border: 1px solid currentColor;
-    background: transparent;
+    padding: 8px 14px;
 
-    color: inherit;
+    border: 1px solid #8da28f;
+
+    background: #f0f4ef;
+
+    color: #3b5b42;
+
     text-decoration: none;
 
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 1px;
+    font-size: 10px;
 
-    transition:
-        background 0.2s ease,
-        color 0.2s ease;
+    cursor: pointer;
 }
+
 
 .download-button:hover {
-    background: currentColor;
-    color: #000;
+
+    background: #e0e9df;
+
+    border-color: #718a74;
 }
 
-/* Недоступный файл */
+
+/* =========================================================
+   DISABLED
+========================================================= */
 
 .download-item.disabled {
-    opacity: 0.4;
-    pointer-events: none;
+
+    opacity: .55;
 }
+
 
 .download-item.disabled .download-button {
-    cursor: not-allowed;
+
+    cursor: default;
 }
 
-/* Мобильная версия */
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
 @media (max-width: 600px) {
+
+    .downloads-section {
+
+        padding: 20px;
+
+    }
+
     .download-item {
-        flex-direction: column;
+
         align-items: flex-start;
-        gap: 15px;
+
+        flex-direction: column;
+
     }
 
     .download-button {
+
         width: 100%;
+
+        text-align: center;
+
     }
+
 }
