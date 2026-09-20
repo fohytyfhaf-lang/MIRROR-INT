@@ -4,28 +4,17 @@ import { plants } from "./plantsData.js";
 let searchInitialized = false;
 
 
-
 /* =========================================================
    PLANT DATABASE
 ========================================================= */
 
-export function showPlants(
-    filteredPlants = plants
-) {
+export function showPlants(filteredPlants = plants) {
 
     const content =
-        document.getElementById(
-            "publicContent"
-        );
-
+        document.getElementById("publicContent");
 
     if (!content) return;
 
-
-    /*
-        Always render the complete database page.
-        Home has its own completely separate DOM.
-    */
 
     content.innerHTML = `
 
@@ -33,7 +22,6 @@ export function showPlants(
             class="plantsPage"
             id="plantDatabasePage"
         >
-
 
             <div class="plantDatabaseHeader">
 
@@ -48,8 +36,8 @@ export function showPlants(
                     </h1>
 
                     <p>
-                        Search documented botanical
-                        records maintained by ABIC.
+                        Search and browse documented
+                        botanical records maintained by ABIC.
                     </p>
 
                 </div>
@@ -57,190 +45,485 @@ export function showPlants(
             </div>
 
 
+            <!-- =================================================
+                 CONTROLS
+            ================================================= -->
 
-            <!-- DATABASE SEARCH -->
+            <div class="plantDatabaseControls">
 
-            <div class="plantDatabaseSearchBox">
+                <div class="plantDatabaseSearchField">
 
-                <label
-                    for="plantDatabaseSearch"
-                >
-                    SEARCH DATABASE
-                </label>
+                    <label for="plantDatabaseSearch">
+                        SEARCH DATABASE
+                    </label>
+
+                    <input
+                        id="plantDatabaseSearch"
+                        type="text"
+                        placeholder="Search by name, scientific name, region or category..."
+                        autocomplete="off"
+                    >
+
+                </div>
 
 
-                <input
-                    id="plantDatabaseSearch"
-                    type="text"
-                    placeholder="Search by name, scientific name, region or category..."
-                    autocomplete="off"
-                >
+                <div class="plantDatabaseFilterField">
+
+                    <label for="plantCategoryFilter">
+                        CATEGORY
+                    </label>
+
+                    <select id="plantCategoryFilter">
+
+                        <option value="all">
+                            All categories
+                        </option>
+
+                    </select>
+
+                </div>
 
 
-                <div
-                    id="plantDatabaseCount"
-                    class="plantDatabaseCount"
-                >
-                    Showing
-                    <b>
-                        ${filteredPlants.length}
-                    </b>
-                    documented species.
+                <div class="plantDatabaseFilterField">
+
+                    <label for="plantRegionFilter">
+                        REGION
+                    </label>
+
+                    <select id="plantRegionFilter">
+
+                        <option value="all">
+                            All regions
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="plantDatabaseFilterField">
+
+                    <label for="plantSort">
+                        SORT
+                    </label>
+
+                    <select id="plantSort">
+
+                        <option value="default">
+                            Default
+                        </option>
+
+                        <option value="name-asc">
+                            Name A–Z
+                        </option>
+
+                        <option value="name-desc">
+                            Name Z–A
+                        </option>
+
+                        <option value="latin-asc">
+                            Scientific Name A–Z
+                        </option>
+
+                    </select>
+
                 </div>
 
             </div>
 
 
+            <div class="plantDatabaseStatus">
 
-            <!-- DATABASE GRID -->
+                <span id="plantDatabaseCount">
+                    Showing
+                    <b>${filteredPlants.length}</b>
+                    documented species.
+                </span>
+
+                <button
+                    id="plantDatabaseReset"
+                    class="plantDatabaseReset"
+                >
+                    Reset filters
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 GRID
+            ================================================= -->
 
             <div
                 id="plantDatabaseGrid"
                 class="plantDatabaseGrid"
             ></div>
 
-
         </section>
 
     `;
 
 
-    const grid =
-        document.getElementById(
-            "plantDatabaseGrid"
-        );
+    initializeFilters();
 
-
-    renderPlantGrid(
-        grid,
+    updateDatabase(
         filteredPlants
     );
-
-
-    /*
-        Initialize only this database input.
-    */
-
-    searchInitialized = false;
-
-    initSearch();
 
 }
 
 
 
 /* =========================================================
-   SEARCH
+   INITIALIZE FILTERS
 ========================================================= */
 
-function initSearch() {
+function initializeFilters() {
 
-    const input =
+    const search =
         document.getElementById(
             "plantDatabaseSearch"
         );
 
+    const category =
+        document.getElementById(
+            "plantCategoryFilter"
+        );
 
-    if (!input) return;
+    const region =
+        document.getElementById(
+            "plantRegionFilter"
+        );
+
+    const sort =
+        document.getElementById(
+            "plantSort"
+        );
+
+    const reset =
+        document.getElementById(
+            "plantDatabaseReset"
+        );
 
 
-    if (searchInitialized) {
+    if (
+        !search ||
+        !category ||
+        !region ||
+        !sort ||
+        !reset
+    ) {
         return;
     }
 
 
-    searchInitialized = true;
+    populateFilters(
+        category,
+        region
+    );
 
 
-    input.addEventListener(
-        "input",
+    const update =
         () => {
 
             const query =
-                input.value
+                search.value
                     .trim()
                     .toLowerCase();
 
 
-            /*
-                Empty search
-            */
-
-            if (!query) {
-
-                updateDatabase(
-                    plants
-                );
-
-                return;
-
-            }
+            const categoryValue =
+                category.value;
 
 
-            const filtered =
+            const regionValue =
+                region.value;
+
+
+            const sortValue =
+                sort.value;
+
+
+            let result =
                 plants.filter(
                     plant => {
 
                         const name =
                             String(
                                 plant.name || ""
-                            )
-                                .toLowerCase();
+                            ).toLowerCase();
 
 
                         const latin =
                             String(
                                 plant.latin || ""
-                            )
-                                .toLowerCase();
+                            ).toLowerCase();
 
 
-                        const region =
+                        const plantRegion =
                             String(
                                 plant.region || ""
-                            )
-                                .toLowerCase();
+                            );
 
 
-                        const category =
+                        const plantCategory =
                             String(
                                 plant.category || ""
-                            )
-                                .toLowerCase();
+                            );
 
 
                         const description =
                             String(
                                 plant.description || ""
-                            )
-                                .toLowerCase();
+                            ).toLowerCase();
+
+
+                        const matchesSearch =
+                            !query ||
+                            name.includes(query) ||
+                            latin.includes(query) ||
+                            plantRegion
+                                .toLowerCase()
+                                .includes(query) ||
+                            plantCategory
+                                .toLowerCase()
+                                .includes(query) ||
+                            description.includes(query);
+
+
+                        const matchesCategory =
+                            categoryValue === "all" ||
+                            plantCategory === categoryValue;
+
+
+                        const matchesRegion =
+                            regionValue === "all" ||
+                            plantRegion === regionValue;
 
 
                         return (
-
-                            name.includes(query) ||
-
-                            latin.includes(query) ||
-
-                            region.includes(query) ||
-
-                            category.includes(query) ||
-
-                            description.includes(query)
-
+                            matchesSearch &&
+                            matchesCategory &&
+                            matchesRegion
                         );
 
                     }
                 );
 
 
+            result =
+                sortPlants(
+                    result,
+                    sortValue
+                );
+
+
             updateDatabase(
-                filtered,
+                result,
                 query
+            );
+
+        };
+
+
+    search.addEventListener(
+        "input",
+        update
+    );
+
+
+    category.addEventListener(
+        "change",
+        update
+    );
+
+
+    region.addEventListener(
+        "change",
+        update
+    );
+
+
+    sort.addEventListener(
+        "change",
+        update
+    );
+
+
+    reset.addEventListener(
+        "click",
+        () => {
+
+            search.value = "";
+
+            category.value = "all";
+
+            region.value = "all";
+
+            sort.value = "default";
+
+            update();
+
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   FILTER OPTIONS
+========================================================= */
+
+function populateFilters(
+    categorySelect,
+    regionSelect
+) {
+
+    const categories =
+        [
+            ...new Set(
+                plants
+                    .map(
+                        plant =>
+                            plant.category
+                    )
+                    .filter(Boolean)
+            )
+        ]
+        .sort(
+            (a, b) =>
+                String(a)
+                    .localeCompare(
+                        String(b)
+                    )
+        );
+
+
+    const regions =
+        [
+            ...new Set(
+                plants
+                    .map(
+                        plant =>
+                            plant.region
+                    )
+                    .filter(Boolean)
+            )
+        ]
+        .sort(
+            (a, b) =>
+                String(a)
+                    .localeCompare(
+                        String(b)
+                    )
+        );
+
+
+    categories.forEach(
+        category => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                category;
+
+            option.textContent =
+                category;
+
+            categorySelect.appendChild(
+                option
             );
 
         }
     );
+
+
+    regions.forEach(
+        region => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                region;
+
+            option.textContent =
+                region;
+
+            regionSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   SORT
+========================================================= */
+
+function sortPlants(
+    list,
+    mode
+) {
+
+    const result =
+        [...list];
+
+
+    switch (mode) {
+
+        case "name-asc":
+
+            result.sort(
+                (a, b) =>
+                    String(a.name || "")
+                        .localeCompare(
+                            String(b.name || "")
+                        )
+            );
+
+            break;
+
+
+        case "name-desc":
+
+            result.sort(
+                (a, b) =>
+                    String(b.name || "")
+                        .localeCompare(
+                            String(a.name || "")
+                        )
+            );
+
+            break;
+
+
+        case "latin-asc":
+
+            result.sort(
+                (a, b) =>
+                    String(a.latin || "")
+                        .localeCompare(
+                            String(b.latin || "")
+                        )
+            );
+
+            break;
+
+    }
+
+
+    return result;
 
 }
 
@@ -259,7 +542,6 @@ function updateDatabase(
         document.getElementById(
             "plantDatabaseGrid"
         );
-
 
     const count =
         document.getElementById(
@@ -307,7 +589,11 @@ function updateDatabase(
                                 "${escapeHTML(query)}".
                             </span>
                         `
-                        : ""
+                        : `
+                            <span>
+                                Try changing the selected filters.
+                            </span>
+                        `
                 }
 
             </div>
@@ -356,8 +642,9 @@ function renderPlantGrid(
                         class="plantDatabaseCard"
                     >
 
-
-                        <div class="plantDatabaseImage">
+                        <div
+                            class="plantDatabaseImage"
+                        >
 
                             <img
                                 src="${plant.image}"
@@ -372,9 +659,9 @@ function renderPlantGrid(
                         </div>
 
 
-
-                        <div class="plantDatabaseBody">
-
+                        <div
+                            class="plantDatabaseBody"
+                        >
 
                             <div
                                 class="plantDatabaseCategory"
@@ -386,13 +673,11 @@ function renderPlantGrid(
                             </div>
 
 
-
                             <h3>
                                 ${escapeHTML(
                                     plant.name
                                 )}
                             </h3>
-
 
 
                             <p
@@ -402,7 +687,6 @@ function renderPlantGrid(
                                     plant.latin
                                 )}
                             </p>
-
 
 
                             <div
@@ -418,7 +702,6 @@ function renderPlantGrid(
                             </div>
 
 
-
                             <p
                                 class="plantDatabaseDescription"
                             >
@@ -428,7 +711,6 @@ function renderPlantGrid(
                             </p>
 
 
-
                             <button
                                 class="plantDatabaseButton"
                                 data-plant-index="${originalIndex}"
@@ -436,9 +718,7 @@ function renderPlantGrid(
                                 View Details
                             </button>
 
-
                         </div>
-
 
                     </article>
 
@@ -447,10 +727,6 @@ function renderPlantGrid(
             })
             .join("");
 
-
-    /*
-        Details buttons
-    */
 
     grid
         .querySelectorAll(
@@ -525,7 +801,6 @@ function showPlantDetails(
             id="plantDatabaseDetails"
         >
 
-
             <button
                 id="backToPlantDatabase"
                 class="plantDatabaseBackButton"
@@ -534,11 +809,9 @@ function showPlantDetails(
             </button>
 
 
-
             <div
                 class="plantDetailsHeader"
             >
-
 
                 <div
                     class="plantDetailsImage"
@@ -555,7 +828,6 @@ function showPlantDetails(
                     >
 
                 </div>
-
 
 
                 <div
@@ -584,23 +856,16 @@ function showPlantDetails(
 
                 </div>
 
-
             </div>
-
 
 
             <div
                 class="plantDetailsInfo"
             >
 
+                <div class="plantInfoBlock">
 
-                <div
-                    class="plantInfoBlock"
-                >
-
-                    <span
-                        class="infoLabel"
-                    >
+                    <span class="infoLabel">
                         COMMON NAME
                     </span>
 
@@ -613,14 +878,9 @@ function showPlantDetails(
                 </div>
 
 
+                <div class="plantInfoBlock">
 
-                <div
-                    class="plantInfoBlock"
-                >
-
-                    <span
-                        class="infoLabel"
-                    >
+                    <span class="infoLabel">
                         SCIENTIFIC NAME
                     </span>
 
@@ -633,14 +893,9 @@ function showPlantDetails(
                 </div>
 
 
+                <div class="plantInfoBlock">
 
-                <div
-                    class="plantInfoBlock"
-                >
-
-                    <span
-                        class="infoLabel"
-                    >
+                    <span class="infoLabel">
                         CATEGORY
                     </span>
 
@@ -653,14 +908,9 @@ function showPlantDetails(
                 </div>
 
 
+                <div class="plantInfoBlock">
 
-                <div
-                    class="plantInfoBlock"
-                >
-
-                    <span
-                        class="infoLabel"
-                    >
+                    <span class="infoLabel">
                         DISTRIBUTION
                     </span>
 
@@ -673,14 +923,9 @@ function showPlantDetails(
                 </div>
 
 
+                <div class="plantInfoBlock">
 
-                <div
-                    class="plantInfoBlock"
-                >
-
-                    <span
-                        class="infoLabel"
-                    >
+                    <span class="infoLabel">
                         ABIC STATUS
                     </span>
 
@@ -691,14 +936,9 @@ function showPlantDetails(
                 </div>
 
 
+                <div class="plantInfoBlock">
 
-                <div
-                    class="plantInfoBlock"
-                >
-
-                    <span
-                        class="infoLabel"
-                    >
+                    <span class="infoLabel">
                         REFERENCE
                     </span>
 
@@ -708,9 +948,7 @@ function showPlantDetails(
 
                 </div>
 
-
             </div>
-
 
 
             <div
@@ -721,7 +959,6 @@ function showPlantDetails(
                     Description
                 </h2>
 
-
                 <p>
                     ${escapeHTML(
                         plant.description
@@ -729,7 +966,6 @@ function showPlantDetails(
                 </p>
 
             </div>
-
 
         </section>
 
@@ -774,32 +1010,13 @@ function showPlantDetails(
    HTML SAFETY
 ========================================================= */
 
-function escapeHTML(
-    value
-) {
+function escapeHTML(value) {
 
-    return String(
-        value ?? ""
-    )
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 
 }
