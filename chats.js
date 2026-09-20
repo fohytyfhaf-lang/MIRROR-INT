@@ -99,7 +99,8 @@ import {
 } from "./mrsmileMemory.js";
 
 import {
-    trigger
+    trigger,
+    on
 } from "./eventManager.js";
 
 import {
@@ -4124,6 +4125,319 @@ function seedCurrentShiftPersonnel() {
 
 
 /* ==========================================================
+   SHIFT HANDOVER CHAT EVENTS
+========================================================== */
+
+function addShiftChatMessage(
+    chatId,
+    user,
+    text
+) {
+
+    const chat =
+        chats[chatId];
+
+
+    if (
+        !chat
+    ) {
+
+        return;
+
+    }
+
+
+    chat.messages.push({
+
+        user,
+        time:
+            getCurrentTime(),
+
+        text
+
+    });
+
+
+    /*
+     * Refresh active chat if necessary.
+     */
+
+    renderChatList();
+
+    renderActiveChat();
+
+
+    trigger(
+        "chat:messageAdded",
+        {
+
+            chatId,
+
+            message:
+                chat.messages[
+                    chat.messages.length - 1
+                ]
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   HANDOVER START
+========================================================== */
+
+function handleShiftHandoverStarted(
+    data = {}
+) {
+
+    const previous =
+        data.previousShiftName ||
+        data.previousShift ||
+        "PREVIOUS SHIFT";
+
+
+    const next =
+        data.nextShiftName ||
+        data.nextShift ||
+        "NEXT SHIFT";
+
+
+    addShiftChatMessage(
+        "general",
+        "SYSTEM",
+        `SHIFT HANDOVER: ${previous} → ${next}. Facility operations transfer in progress.`
+    );
+
+
+    const departments =
+        new Set();
+
+
+    if (
+        Array.isArray(
+            data.outgoing
+        )
+    ) {
+
+        data.outgoing.forEach(
+            person => {
+
+                if (
+                    person?.department
+                ) {
+
+                    departments.add(
+                        person.department
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    if (
+        Array.isArray(
+            data.incoming
+        )
+    ) {
+
+        data.incoming.forEach(
+            person => {
+
+                if (
+                    person?.department
+                ) {
+
+                    departments.add(
+                        person.department
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    departments.forEach(
+        department => {
+
+            const chatId =
+                getChatForDepartment(
+                    department
+                );
+
+
+            addShiftChatMessage(
+                chatId,
+                "SYSTEM",
+                `SHIFT HANDOVER IN PROGRESS. ${previous} → ${next}.`
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   HANDOVER COMPLETE
+========================================================== */
+
+function handleShiftHandoverCompleted(
+    data = {}
+) {
+
+    const next =
+        data.nextShiftName ||
+        data.nextShift ||
+        "CURRENT SHIFT";
+
+
+    addShiftChatMessage(
+        "general",
+        "SYSTEM",
+        `${next} ASSUMED FACILITY OPERATIONS.`
+    );
+
+
+    /*
+     * Incoming personnel announce themselves.
+     */
+
+    const incoming =
+        Array.isArray(
+            data.incoming
+        )
+            ? data.incoming
+            : [];
+
+
+    incoming.forEach(
+        person => {
+
+            if (
+                !person?.name
+            ) {
+
+                return;
+
+            }
+
+
+            const chatId =
+                getChatForDepartment(
+                    person.department
+                );
+
+
+            const runtimePersonnel =
+                Storage.get(
+                    "personnel",
+                    []
+                );
+
+
+            const runtimePerson =
+                Array.isArray(
+                    runtimePersonnel
+                )
+                    ? runtimePersonnel.find(
+                        item =>
+                            item?.name ===
+                            person.name
+                    )
+                    : null;
+
+
+            if (
+                !runtimePerson ||
+                runtimePerson.status !==
+                    "ON DUTY"
+            ) {
+
+                return;
+
+            }
+
+
+            const message =
+                getShiftPresenceMessage(
+                    runtimePerson
+                );
+
+
+            /*
+             * Do not duplicate an immediate
+             * handover announcement.
+             */
+
+            const chat =
+                chats[
+                    chatId
+                ];
+
+
+            if (
+                chat &&
+                chat.messages.some(
+                    item =>
+                        item.user ===
+                            person.name &&
+                        item.text ===
+                            message
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            addShiftChatMessage(
+                chatId,
+                person.name,
+                message
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BIND SHIFT EVENTS
+========================================================== */
+
+function initShiftChatEvents() {
+
+    on(
+        "personnel:handoverStarted",
+        handleShiftHandoverStarted
+    );
+
+
+    on(
+        "personnel:handoverCompleted",
+        handleShiftHandoverCompleted
+    );
+
+
+    console.log(
+        "[OMEGA CHAT] Personnel shift events connected."
+    );
+
+}
+
+
+/* ==========================================================
    INITIALIZE CHAT SYSTEM
 ========================================================== */
 
@@ -4218,13 +4532,15 @@ export function initChats(
     }
 
 
-   seedCurrentShiftPersonnel();
+  seedCurrentShiftPersonnel();
 
-   renderChatList();
+  initShiftChatEvents();
 
-   renderActiveChat();
+  renderChatList();
 
-   bindInputEvents();
+  renderActiveChat();
+
+  bindInputEvents();
 
 
     console.log(
