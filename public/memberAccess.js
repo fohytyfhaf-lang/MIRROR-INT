@@ -6,16 +6,26 @@
 
 import { createLocalAccount } from "../login.js";
 
+
+/* =========================================================
+   CONFIG
+========================================================= */
+
 const STORAGE_KEY = "abic_member_access_v1";
+
+const STATE_VERSION = 2;
+
 const REQUIRED_ARCHIVES = 3;
 
 
 /* =========================================================
-   STATE
+   DEFAULT STATE
 ========================================================= */
 
 function getDefaultState() {
     return {
+        version: STATE_VERSION,
+
         accountCreated: false,
 
         username: "",
@@ -40,10 +50,16 @@ function getDefaultState() {
 }
 
 
+/* =========================================================
+   STORAGE
+========================================================= */
+
 function getState() {
+
     const defaults = getDefaultState();
 
     try {
+
         const saved =
             localStorage.getItem(
                 STORAGE_KEY
@@ -53,15 +69,67 @@ function getState() {
             return defaults;
         }
 
-        return {
+        const parsed =
+            JSON.parse(saved);
+
+        if (
+            !parsed ||
+            typeof parsed !== "object"
+        ) {
+            return defaults;
+        }
+
+        const state = {
             ...defaults,
-            ...JSON.parse(saved)
+            ...parsed
         };
+
+
+        /*
+         * Make sure archive data is always valid.
+         */
+
+        if (
+            !Array.isArray(
+                state.openedArchives
+            )
+        ) {
+            state.openedArchives = [];
+        }
+
+
+        /*
+         * Remove duplicate archive IDs.
+         */
+
+        state.openedArchives =
+            [...new Set(
+                state.openedArchives
+                    .filter(Boolean)
+                    .map(String)
+            )];
+
+
+        /*
+         * State migration.
+         */
+
+        if (
+            !Number.isFinite(
+                state.version
+            ) ||
+            state.version < STATE_VERSION
+        ) {
+            state.version = STATE_VERSION;
+        }
+
+
+        return state;
 
     } catch (error) {
 
         console.warn(
-            "[ABIC MEMBER] Failed to read state:",
+            "[ABIC MEMBER] Failed to read saved state:",
             error
         );
 
@@ -79,12 +147,16 @@ function saveState(state) {
             JSON.stringify(state)
         );
 
+        return true;
+
     } catch (error) {
 
-        console.warn(
+        console.error(
             "[ABIC MEMBER] Failed to save state:",
             error
         );
+
+        return false;
     }
 }
 
@@ -95,7 +167,32 @@ export function getAbicMemberState() {
 
 
 /* =========================================================
-   PROGRESSION
+   ACCOUNT ACCESS STATUS
+========================================================= */
+
+/*
+ * This function is intentionally exported so core.js
+ * can later determine whether the hidden service has
+ * already been unlocked.
+ */
+
+export function isAbicOmegaUnlocked() {
+
+    const state = getState();
+
+    return (
+        state.accountCreated === true &&
+        state.profileComplete === true &&
+        getArchiveCount(state) >= REQUIRED_ARCHIVES &&
+        state.restrictedOpened === true &&
+        state.returnToAccount === true &&
+        state.transitionStarted === true
+    );
+}
+
+
+/* =========================================================
+   ARCHIVE PROGRESSION
 ========================================================= */
 
 export function recordArchiveOpen(
@@ -103,24 +200,62 @@ export function recordArchiveOpen(
     restricted = false
 ) {
 
-    if (!recordId) return;
+    if (!recordId) {
+        return;
+    }
+
 
     const state = getState();
 
-    if (!Array.isArray(state.openedArchives)) {
+
+    /*
+     * Do not allow archive progression before
+     * an ABIC account has been created.
+     */
+
+    if (!state.accountCreated) {
+        return;
+    }
+
+
+    if (
+        !Array.isArray(
+            state.openedArchives
+        )
+    ) {
         state.openedArchives = [];
     }
 
-    if (!state.openedArchives.includes(recordId)) {
+
+    const normalizedId =
+        String(recordId);
+
+
+    /*
+     * Only count an archive once.
+     */
+
+    if (
+        !state.openedArchives.includes(
+            normalizedId
+        )
+    ) {
 
         state.openedArchives.push(
-            recordId
+            normalizedId
         );
     }
 
-    if (restricted) {
+
+    /*
+     * Restricted documents are tracked
+     * independently from the archive count.
+     */
+
+    if (restricted === true) {
         state.restrictedOpened = true;
     }
+
 
     saveState(state);
 
@@ -130,21 +265,38 @@ export function recordArchiveOpen(
 
 function getArchiveCount(state) {
 
-    return Array.isArray(
-        state.openedArchives
-    )
-        ? state.openedArchives.length
-        : 0;
+    if (
+        !state ||
+        !Array.isArray(
+            state.openedArchives
+        )
+    ) {
+        return 0;
+    }
+
+    return state.openedArchives.length;
 }
 
 
+/* =========================================================
+   REQUIREMENT CHECKS
+========================================================= */
+
 function isReadyForReturn(state) {
 
+    if (!state) {
+        return false;
+    }
+
     return (
-        state.accountCreated &&
-        getArchiveCount(state) >= REQUIRED_ARCHIVES &&
-        state.restrictedOpened &&
-        state.profileComplete
+        state.accountCreated === true &&
+
+        getArchiveCount(state) >=
+            REQUIRED_ARCHIVES &&
+
+        state.restrictedOpened === true &&
+
+        state.profileComplete === true
     );
 }
 
@@ -160,11 +312,16 @@ export function openMemberAccess() {
             "publicContent"
         );
 
-    if (!content) return;
+    if (!content) {
+        return;
+    }
+
 
     const state = getState();
 
+
     content.innerHTML = `
+
         <section class="abicMemberPage">
 
             <header class="abicMemberHeader">
@@ -184,6 +341,7 @@ export function openMemberAccess() {
 
             </header>
 
+
             <div
                 id="abicMemberBody"
                 class="abicMemberBody"
@@ -192,12 +350,13 @@ export function openMemberAccess() {
         </section>
     `;
 
+
     renderAccountBody(state);
 }
 
 
 /* =========================================================
-   ACCOUNT CONTENT
+   ACCOUNT BODY
 ========================================================= */
 
 function renderAccountBody(state) {
@@ -207,101 +366,133 @@ function renderAccountBody(state) {
             "abicMemberBody"
         );
 
-    if (!body) return;
+    if (!body) {
+        return;
+    }
+
+
+    /*
+     * No account yet.
+     */
 
     if (!state.accountCreated) {
 
-        body.innerHTML = `
-
-            <div class="abicMemberCard">
-
-                <div class="abicMemberCardLabel">
-                    PUBLIC ACCOUNT
-                </div>
-
-                <h2>
-                    Create an ABIC account
-                </h2>
-
-                <p>
-                    Registration is currently available
-                    for archive and research services.
-                </p>
-
-                <form id="abicRegistrationForm">
-
-                    <label>
-                        Username
-
-                        <input
-                            id="abicRegisterUsername"
-                            type="text"
-                            maxlength="32"
-                            autocomplete="username"
-                            required
-                        >
-                    </label>
-
-                    <label>
-                        Email
-
-                        <input
-                            id="abicRegisterEmail"
-                            type="email"
-                            maxlength="120"
-                            autocomplete="email"
-                            required
-                        >
-                    </label>
-
-                    <label>
-                        Password
-
-                        <input
-                            id="abicRegisterPassword"
-                            type="password"
-                            minlength="6"
-                            autocomplete="new-password"
-                            required
-                        >
-                    </label>
-
-                    <label>
-                        Confirm password
-
-                        <input
-                            id="abicRegisterPasswordConfirm"
-                            type="password"
-                            minlength="6"
-                            autocomplete="new-password"
-                            required
-                        >
-                    </label>
-
-                    <div
-                        id="abicRegistrationError"
-                        class="abicMemberError hidden"
-                    ></div>
-
-                    <button
-                        type="submit"
-                        class="abicMemberButton"
-                    >
-                        Create account
-                    </button>
-
-                </form>
-
-            </div>
-        `;
-
-        initRegistrationForm();
+        renderRegistrationForm(
+            body
+        );
 
         return;
     }
 
 
-    renderRegisteredAccount(state);
+    /*
+     * Existing ABIC account.
+     */
+
+    renderRegisteredAccount(
+        state
+    );
+}
+
+
+/* =========================================================
+   REGISTRATION FORM
+========================================================= */
+
+function renderRegistrationForm(body) {
+
+    body.innerHTML = `
+
+        <div class="abicMemberCard">
+
+            <div class="abicMemberCardLabel">
+                PUBLIC ACCOUNT
+            </div>
+
+            <h2>
+                Create an ABIC account
+            </h2>
+
+            <p>
+                Registration is currently available
+                for archive and research services.
+            </p>
+
+
+            <form id="abicRegistrationForm">
+
+                <label>
+                    Username
+
+                    <input
+                        id="abicRegisterUsername"
+                        type="text"
+                        maxlength="32"
+                        autocomplete="username"
+                        required
+                    >
+                </label>
+
+
+                <label>
+                    Email
+
+                    <input
+                        id="abicRegisterEmail"
+                        type="email"
+                        maxlength="120"
+                        autocomplete="email"
+                        required
+                    >
+                </label>
+
+
+                <label>
+                    Password
+
+                    <input
+                        id="abicRegisterPassword"
+                        type="password"
+                        minlength="6"
+                        autocomplete="new-password"
+                        required
+                    >
+                </label>
+
+
+                <label>
+                    Confirm password
+
+                    <input
+                        id="abicRegisterPasswordConfirm"
+                        type="password"
+                        minlength="6"
+                        autocomplete="new-password"
+                        required
+                    >
+                </label>
+
+
+                <div
+                    id="abicRegistrationError"
+                    class="abicMemberError hidden"
+                ></div>
+
+
+                <button
+                    type="submit"
+                    class="abicMemberButton"
+                >
+                    Create account
+                </button>
+
+            </form>
+
+        </div>
+    `;
+
+
+    initRegistrationForm();
 }
 
 
@@ -316,22 +507,31 @@ function renderRegisteredAccount(state) {
             "abicMemberBody"
         );
 
-    if (!body) return;
+    if (!body) {
+        return;
+    }
+
 
     const archiveCount =
         getArchiveCount(state);
 
+
     const archiveDone =
-        archiveCount >= REQUIRED_ARCHIVES;
+        archiveCount >=
+        REQUIRED_ARCHIVES;
+
 
     const restrictedDone =
-        state.restrictedOpened;
+        state.restrictedOpened === true;
+
 
     const profileDone =
-        state.profileComplete;
+        state.profileComplete === true;
+
 
     const returnDone =
-        state.returnToAccount;
+        state.returnToAccount === true;
+
 
     body.innerHTML = `
 
@@ -355,10 +555,14 @@ function renderRegisteredAccount(state) {
                     is currently unavailable.
                 </p>
 
+
                 <div class="abicMemberAccountInfo">
 
                     <div>
-                        <span>Username</span>
+                        <span>
+                            Username
+                        </span>
+
                         <strong>
                             ${escapeHTML(
                                 state.username
@@ -366,8 +570,12 @@ function renderRegisteredAccount(state) {
                         </strong>
                     </div>
 
+
                     <div>
-                        <span>Email</span>
+                        <span>
+                            Email
+                        </span>
+
                         <strong>
                             ${escapeHTML(
                                 state.email
@@ -391,6 +599,7 @@ function renderRegisteredAccount(state) {
                     has been retained.
                 </p>
 
+
                 <div
                     id="abicRequirementList"
                     class="abicRequirementList"
@@ -401,20 +610,24 @@ function renderRegisteredAccount(state) {
                         "Account registration"
                     )}
 
+
                     ${requirementHTML(
                         archiveDone,
                         `Open ${REQUIRED_ARCHIVES} archive records`
                     )}
+
 
                     ${requirementHTML(
                         restrictedDone,
                         "Read 1 restricted document"
                     )}
 
+
                     ${requirementHTML(
                         profileDone,
                         "Complete your profile"
                     )}
+
 
                     ${requirementHTML(
                         returnDone,
@@ -443,6 +656,7 @@ function renderRegisteredAccount(state) {
                 with your account.
             </p>
 
+
             <form id="abicProfileForm">
 
                 <label>
@@ -459,6 +673,7 @@ function renderRegisteredAccount(state) {
                     >
                 </label>
 
+
                 <label>
                     Preferred region
 
@@ -474,6 +689,7 @@ function renderRegisteredAccount(state) {
                     >
                 </label>
 
+
                 <label>
                     Research interests
 
@@ -485,6 +701,7 @@ function renderRegisteredAccount(state) {
                         state.interests
                     )}</textarea>
                 </label>
+
 
                 <button
                     type="submit"
@@ -499,15 +716,25 @@ function renderRegisteredAccount(state) {
 
     `;
 
+
     initProfileForm();
 
+
     /*
-     * The fifth condition is intentionally checked
-     * only when this page is opened again.
+     * IMPORTANT:
+     *
+     * Registration itself NEVER reaches this block
+     * with completed progression.
+     *
+     * The fifth requirement is completed only when
+     * the player opens Member Access again after
+     * completing the previous four requirements.
      */
+
     if (
         isReadyForReturn(state) &&
-        !state.returnToAccount
+        !state.returnToAccount &&
+        !state.transitionStarted
     ) {
 
         state.returnToAccount = true;
@@ -516,9 +743,39 @@ function renderRegisteredAccount(state) {
 
         refreshAccountRequirements();
 
+
+        /*
+         * Small delay so the player can actually see
+         * the fifth requirement become completed.
+         */
+
         setTimeout(
-            startTransition,
-            450
+            () => {
+
+                const latestState =
+                    getState();
+
+
+                if (
+                    latestState.transitionStarted
+                ) {
+                    return;
+                }
+
+
+                if (
+                    !isReadyForReturn(
+                        latestState
+                    )
+                ) {
+                    return;
+                }
+
+
+                startTransition();
+
+            },
+            650
         );
     }
 }
@@ -535,7 +792,10 @@ function initRegistrationForm() {
             "abicRegistrationForm"
         );
 
-    if (!form) return;
+    if (!form) {
+        return;
+    }
+
 
     form.addEventListener(
         "submit",
@@ -549,6 +809,10 @@ function initRegistrationForm() {
 }
 
 
+/* =========================================================
+   CREATE ACCOUNT
+========================================================= */
+
 function createAccount() {
 
     const usernameInput =
@@ -556,25 +820,30 @@ function createAccount() {
             "abicRegisterUsername"
         );
 
+
     const emailInput =
         document.getElementById(
             "abicRegisterEmail"
         );
+
 
     const passwordInput =
         document.getElementById(
             "abicRegisterPassword"
         );
 
+
     const confirmInput =
         document.getElementById(
             "abicRegisterPasswordConfirm"
         );
 
+
     const error =
         document.getElementById(
             "abicRegistrationError"
         );
+
 
     if (
         !usernameInput ||
@@ -585,20 +854,33 @@ function createAccount() {
         return;
     }
 
+
     const username =
         usernameInput.value.trim();
+
 
     const email =
         emailInput.value.trim();
 
+
     const password =
         passwordInput.value;
+
 
     const confirm =
         confirmInput.value;
 
 
-    if (!username || !email || !password) {
+    /* ---------------------------------------------
+       BASIC VALIDATION
+    --------------------------------------------- */
+
+    if (
+        !username ||
+        !email ||
+        !password ||
+        !confirm
+    ) {
 
         showRegistrationError(
             error,
@@ -609,7 +891,24 @@ function createAccount() {
     }
 
 
-    if (password !== confirm) {
+    if (
+        !username.match(
+            /^[A-Za-z0-9_.-]+$/
+        )
+    ) {
+
+        showRegistrationError(
+            error,
+            "Username may contain only letters, numbers, dots, underscores and hyphens."
+        );
+
+        return;
+    }
+
+
+    if (
+        password !== confirm
+    ) {
 
         showRegistrationError(
             error,
@@ -620,7 +919,9 @@ function createAccount() {
     }
 
 
-    if (password.length < 6) {
+    if (
+        password.length < 6
+    ) {
 
         showRegistrationError(
             error,
@@ -631,7 +932,33 @@ function createAccount() {
     }
 
 
+    /*
+     * Do not allow a second ABIC account to be
+     * created through this page.
+     */
+
+    const existingState =
+        getState();
+
+
+    if (
+        existingState.accountCreated
+    ) {
+
+        renderAccountBody(
+            existingState
+        );
+
+        return;
+    }
+
+
+    /* ---------------------------------------------
+       CREATE REAL LOCAL OMEGA ACCOUNT
+    --------------------------------------------- */
+
     let result;
+
 
     try {
 
@@ -648,41 +975,147 @@ function createAccount() {
             accountError
         );
 
+
         showRegistrationError(
             error,
-            accountError.message ||
+            accountError?.message ||
             "The account could not be created."
         );
 
         return;
     }
 
+
+    /*
+     * login.js returns:
+     *
+     * {
+     *     ok: true,
+     *     username,
+     *     operatorId,
+     *     ...
+     * }
+     *
+     * Therefore result.ok must be checked.
+     */
 
     if (
         !result ||
-        result.success === false
+        result.ok !== true
     ) {
+
+        let message =
+            "The account could not be created.";
+
+
+        switch (
+            result?.reason
+        ) {
+
+            case "invalid_username":
+
+                message =
+                    "Please enter a username.";
+
+                break;
+
+
+            case "invalid_username_format":
+
+                message =
+                    "Username may contain only letters, numbers, dots, underscores and hyphens.";
+
+                break;
+
+
+            case "account_exists":
+
+                message =
+                    "This username is already registered.";
+
+                break;
+
+
+            case "storage_failed":
+
+                message =
+                    "The account could not be saved.";
+
+                break;
+
+
+            case "invalid_password":
+
+                message =
+                    "Please enter a valid password.";
+
+                break;
+        }
+
 
         showRegistrationError(
             error,
-            result?.message ||
-            "The account could not be created."
+            message
         );
 
         return;
     }
 
 
-    const state = getState();
+    /* ---------------------------------------------
+       NEW PROGRESSION STATE
+    --------------------------------------------- */
+
+    /*
+     * IMPORTANT:
+     *
+     * Start with a completely fresh progression.
+     *
+     * We do NOT merge an old progression here.
+     */
+
+    const state =
+        getDefaultState();
+
 
     state.accountCreated = true;
-    state.username = username;
-    state.email = email;
-    state.createdAt = Date.now();
 
-    saveState(state);
+    state.username =
+        username;
 
-    renderAccountBody(state);
+    state.email =
+        email;
+
+    state.createdAt =
+        Date.now();
+
+
+    const saved =
+        saveState(state);
+
+
+    if (!saved) {
+
+        showRegistrationError(
+            error,
+            "The account was created, but the registration state could not be saved. Please do not continue yet."
+        );
+
+        return;
+    }
+
+
+    /*
+     * Registration ends here.
+     *
+     * NO transition.
+     * NO OMEGA login.
+     * NO hidden redirect.
+     */
+
+    renderAccountBody(
+        state
+    );
 }
 
 
@@ -697,7 +1130,10 @@ function initProfileForm() {
             "abicProfileForm"
         );
 
-    if (!form) return;
+    if (!form) {
+        return;
+    }
+
 
     form.addEventListener(
         "submit",
@@ -705,7 +1141,17 @@ function initProfileForm() {
 
             event.preventDefault();
 
-            const state = getState();
+
+            const state =
+                getState();
+
+
+            if (
+                !state.accountCreated
+            ) {
+                return;
+            }
+
 
             const name =
                 document
@@ -715,6 +1161,7 @@ function initProfileForm() {
                     ?.value
                     .trim();
 
+
             const region =
                 document
                     .getElementById(
@@ -722,6 +1169,7 @@ function initProfileForm() {
                     )
                     ?.value
                     .trim();
+
 
             const interests =
                 document
@@ -741,36 +1189,66 @@ function initProfileForm() {
             }
 
 
-            state.displayName = name;
-            state.region = region;
-            state.interests = interests;
-            state.profileComplete = true;
+            state.displayName =
+                name;
+
+
+            state.region =
+                region;
+
+
+            state.interests =
+                interests;
+
+
+            state.profileComplete =
+                true;
+
+
+            /*
+             * Completing the profile does NOT
+             * trigger the transition.
+             */
+
+            state.returnToAccount =
+                false;
+
 
             saveState(state);
 
-            renderAccountBody(state);
+
+            renderAccountBody(
+                state
+            );
         }
     );
 }
 
 
 /* =========================================================
-   REQUIREMENTS
+   REQUIREMENTS UI
 ========================================================= */
 
 function refreshAccountRequirements() {
 
-    const state = getState();
+    const state =
+        getState();
+
 
     const list =
         document.getElementById(
             "abicRequirementList"
         );
 
-    if (!list) return;
+
+    if (!list) {
+        return;
+    }
+
 
     const archiveCount =
         getArchiveCount(state);
+
 
     list.innerHTML = `
 
@@ -779,20 +1257,24 @@ function refreshAccountRequirements() {
             "Account registration"
         )}
 
+
         ${requirementHTML(
             archiveCount >= REQUIRED_ARCHIVES,
             `Open ${REQUIRED_ARCHIVES} archive records`
         )}
+
 
         ${requirementHTML(
             state.restrictedOpened,
             "Read 1 restricted document"
         )}
 
+
         ${requirementHTML(
             state.profileComplete,
             "Complete your profile"
         )}
+
 
         ${requirementHTML(
             state.returnToAccount,
@@ -816,7 +1298,11 @@ function requirementHTML(
         }">
 
             <span class="abicRequirementMark">
-                ${completed ? "✓" : "○"}
+                ${
+                    completed
+                        ? "✓"
+                        : "○"
+                }
             </span>
 
             <span>
@@ -834,7 +1320,13 @@ function requirementHTML(
 
 function startTransition() {
 
-    const state = getState();
+    const state =
+        getState();
+
+
+    /*
+     * Never start twice.
+     */
 
     if (
         state.transitionStarted
@@ -842,13 +1334,26 @@ function startTransition() {
         return;
     }
 
+
+    /*
+     * Never start without every requirement.
+     */
+
     if (
         !isReadyForReturn(state)
     ) {
         return;
     }
 
-    state.transitionStarted = true;
+
+    /*
+     * Mark the service as unlocked only
+     * immediately before the transition.
+     */
+
+    state.transitionStarted =
+        true;
+
 
     saveState(state);
 
@@ -857,6 +1362,7 @@ function startTransition() {
         document.getElementById(
             "abicServiceTransition"
         );
+
 
     if (existing) {
         existing.remove();
@@ -868,8 +1374,10 @@ function startTransition() {
             "div"
         );
 
+
     overlay.id =
         "abicServiceTransition";
+
 
     overlay.innerHTML = `
 
@@ -902,6 +1410,7 @@ function startTransition() {
 
     requestAnimationFrame(
         () => {
+
             overlay.classList.add(
                 "isActive"
             );
@@ -941,10 +1450,12 @@ function startTransition() {
                     "publicSite"
                 );
 
+
             const login =
                 document.getElementById(
                     "loginScreen"
                 );
+
 
             const desktop =
                 document.getElementById(
@@ -953,18 +1464,23 @@ function startTransition() {
 
 
             if (publicSite) {
+
                 publicSite.classList.add(
                     "hidden"
                 );
             }
 
+
             if (desktop) {
+
                 desktop.classList.add(
                     "hidden"
                 );
             }
 
+
             if (login) {
+
                 login.classList.remove(
                     "hidden"
                 );
@@ -985,14 +1501,18 @@ function startTransition() {
 
 export function resetAbicMemberTransitionForTesting() {
 
-    const state = getDefaultState();
+    const state =
+        getDefaultState();
+
 
     saveState(state);
+
 
     const overlay =
         document.getElementById(
             "abicServiceTransition"
         );
+
 
     if (overlay) {
         overlay.remove();
@@ -1001,7 +1521,7 @@ export function resetAbicMemberTransitionForTesting() {
 
 
 /* =========================================================
-   ARCHIVE EVENT
+   ARCHIVE EVENT BRIDGE
 ========================================================= */
 
 window.addEventListener(
@@ -1011,8 +1531,10 @@ window.addEventListener(
         const recordId =
             event.detail?.recordId;
 
+
         const restricted =
             event.detail?.restricted === true;
+
 
         recordArchiveOpen(
             recordId,
@@ -1023,7 +1545,7 @@ window.addEventListener(
 
 
 /* =========================================================
-   HELPERS
+   ERROR DISPLAY
 ========================================================= */
 
 function showRegistrationError(
@@ -1031,16 +1553,24 @@ function showRegistrationError(
     message
 ) {
 
-    if (!element) return;
+    if (!element) {
+        return;
+    }
+
 
     element.textContent =
         message;
+
 
     element.classList.remove(
         "hidden"
     );
 }
 
+
+/* =========================================================
+   HTML ESCAPING
+========================================================= */
 
 function escapeHTML(value) {
 
@@ -1073,4 +1603,3 @@ function escapeHTML(value) {
 function escapeAttribute(value) {
     return escapeHTML(value);
 }
-
