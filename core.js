@@ -61,6 +61,10 @@ import {
 } from "./personnelOperatorMonitor.js";
 
 import {
+    initPersonnelShifts
+} from "./personnelShifts.js";
+
+import {
     initOmegaDesktop
 } from "./omegaDesktop.js";
 import { initResearch } from "./research.js";
@@ -265,6 +269,7 @@ function bootSystem() {
      initPersonnelInteractions();
      initPersonnelEventSystem();
      initPersonnelOperatorMonitor();
+     initPersonnelShifts();
     
     initMemory();
     
