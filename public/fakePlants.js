@@ -375,3 +375,123 @@ function showPlantDetails(plant){
     }
 
 }
+
+function initSearch() {
+
+    const input =
+        document.getElementById("publicSearch");
+
+    if (!input) return;
+
+    /*
+        Prevent duplicate listeners.
+    */
+
+    if (input.dataset.searchInitialized === "true") {
+        return;
+    }
+
+    input.dataset.searchInitialized = "true";
+
+
+    input.addEventListener("input", () => {
+
+        const query =
+            input.value
+                .trim()
+                .toLowerCase();
+
+
+        if (!query) {
+
+            showPlants(plants);
+
+            return;
+
+        }
+
+
+        const filtered =
+            plants.filter(plant => {
+
+                const name =
+                    String(plant.name || "")
+                        .toLowerCase();
+
+                const latin =
+                    String(plant.latin || "")
+                        .toLowerCase();
+
+                const region =
+                    String(plant.region || "")
+                        .toLowerCase();
+
+                const category =
+                    String(plant.category || "")
+                        .toLowerCase();
+
+                const description =
+                    String(plant.description || "")
+                        .toLowerCase();
+
+
+                return (
+                    name.includes(query) ||
+                    latin.includes(query) ||
+                    region.includes(query) ||
+                    category.includes(query) ||
+                    description.includes(query)
+                );
+
+            });
+
+
+        const count =
+            document.querySelector(".plantCount");
+
+        if (count) {
+
+            count.innerHTML = `
+                Showing
+                <b>${filtered.length}</b>
+                documented species.
+            `;
+
+        }
+
+
+        const grid =
+            document.getElementById("plantGrid");
+
+        if (!grid) return;
+
+
+        if (filtered.length === 0) {
+
+            grid.innerHTML = `
+
+                <div class="plantEmpty">
+
+                    No plants found matching:
+
+                    <strong>
+                        ${query}
+                    </strong>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        renderPlantGrid(
+            grid,
+            filtered
+        );
+
+    });
+
+}
