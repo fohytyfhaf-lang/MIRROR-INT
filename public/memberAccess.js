@@ -13,7 +13,7 @@ import { createLocalAccount } from "../login.js";
 
 const STORAGE_KEY = "abic_member_access_v1";
 
-const STATE_VERSION = 2;
+const STATE_VERSION = 3;
 
 const REQUIRED_ARCHIVES = 3;
 
@@ -43,9 +43,12 @@ function getDefaultState() {
 
         returnToAccount: false,
 
-        transitionStarted: false,
+       transitionStarted: false,
 
-        createdAt: null
+       omegaUnlocked: false,
+       interfaceMode: "abic",
+
+       createdAt: null
     };
 }
 
