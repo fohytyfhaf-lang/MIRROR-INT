@@ -126,6 +126,24 @@ function getState() {
             state.version = STATE_VERSION;
         }
 
+       if (state.transitionStarted === true) {
+           state.omegaUnlocked = true;
+       }
+
+      if (
+           state.interfaceMode !== "abic" &&
+          state.interfaceMode !== "omega"
+       ) {
+          state.interfaceMode =
+             state.omegaUnlocked
+                 ? "omega"
+                 : "abic";
+         }
+
+if (state.omegaUnlocked !== true) {
+    state.interfaceMode = "abic";
+}
+
 
         return state;
 
@@ -178,19 +196,107 @@ export function getAbicMemberState() {
  * can later determine whether the hidden service has
  * already been unlocked.
  */
-
 export function isAbicOmegaUnlocked() {
-
     const state = getState();
 
     return (
-        state.accountCreated === true &&
-        state.profileComplete === true &&
-        getArchiveCount(state) >= REQUIRED_ARCHIVES &&
-        state.restrictedOpened === true &&
-        state.returnToAccount === true &&
+        state.omegaUnlocked === true ||
         state.transitionStarted === true
     );
+}
+
+export function getInterfaceMode() {
+    const state = getState();
+
+    if (!isAbicOmegaUnlocked()) {
+        return "abic";
+    }
+
+    return state.interfaceMode === "omega"
+        ? "omega"
+        : "abic";
+}
+
+
+export function setInterfaceMode(mode) {
+    const state = getState();
+
+    if (!isAbicOmegaUnlocked()) {
+        return false;
+    }
+
+    if (
+        mode !== "abic" &&
+        mode !== "omega"
+    ) {
+        return false;
+    }
+
+    state.interfaceMode = mode;
+
+    saveState(state);
+
+    return true;
+}
+
+
+export function returnToAbic() {
+    if (!isAbicOmegaUnlocked()) {
+        return false;
+    }
+
+    const state = getState();
+
+    state.interfaceMode = "abic";
+
+    saveState(state);
+
+    const publicSite =
+        document.getElementById("publicSite");
+
+    const login =
+        document.getElementById("loginScreen");
+
+    const desktop =
+        document.getElementById("desktop");
+
+    publicSite?.classList.remove("hidden");
+    login?.classList.add("hidden");
+    desktop?.classList.add("hidden");
+
+    window.dispatchEvent(
+        new CustomEvent("abic:returnToPublic")
+    );
+
+    return true;
+}
+
+
+export function returnToOmega() {
+    if (!isAbicOmegaUnlocked()) {
+        return false;
+    }
+
+    const state = getState();
+
+    state.interfaceMode = "omega";
+
+    saveState(state);
+
+    const publicSite =
+        document.getElementById("publicSite");
+
+    const login =
+        document.getElementById("loginScreen");
+
+    const desktop =
+        document.getElementById("desktop");
+
+    publicSite?.classList.add("hidden");
+    desktop?.classList.add("hidden");
+    login?.classList.remove("hidden");
+
+    return true;
 }
 
 
