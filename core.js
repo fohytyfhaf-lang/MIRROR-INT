@@ -89,6 +89,12 @@ import "./mrsmileSecretEndingSequence.js";
 
 
 import { initFakeSite } from "./public/fakeSite.js";
+import {
+    isAbicOmegaUnlocked,
+    getInterfaceMode,
+    returnToAbic
+} from "./public/memberAccess.js";
+
 import {initLanguage,changeLanguage} from "./languageManager4.js";
 import {
     openWindow,
@@ -149,6 +155,35 @@ console.log("GLITCH LOADED", window.glitch);
         BOOT
 ========================= */
 
+function showAbicInterface() {
+    document
+        .getElementById("publicSite")
+        ?.classList.remove("hidden");
+
+    document
+        .getElementById("loginScreen")
+        ?.classList.add("hidden");
+
+    document
+        .getElementById("desktop")
+        ?.classList.add("hidden");
+}
+
+
+function showOmegaInterface() {
+    document
+        .getElementById("publicSite")
+        ?.classList.add("hidden");
+
+    document
+        .getElementById("loginScreen")
+        ?.classList.remove("hidden");
+
+    document
+        .getElementById("desktop")
+        ?.classList.add("hidden");
+}
+
 function startBoot() {
 
     const boot = document.getElementById("bootScreen");
@@ -183,22 +218,22 @@ function startBoot() {
             clearInterval(t);
             clearInterval(b);
 
-           setTimeout(() => {
-                boot.style.display = "none";
+          setTimeout(() => {
+    boot.style.display = "none";
 
-                // Показываем фальшивый сайт
-                document.getElementById("publicSite").classList.remove("hidden");
+    const unlocked = isAbicOmegaUnlocked();
+    const mode = getInterfaceMode();
 
-                // Прячем логин
-                login.classList.add("hidden");
+    if (unlocked && mode === "omega") {
+        showOmegaInterface();
+    } else {
+        showAbicInterface();
+    }
 
-                // Прячем рабочий стол
-                document.getElementById("desktop").classList.add("hidden");
+    initFakeSite();
 
-                // Запускаем фальшивый сайт
-                initFakeSite();
-
-          }, 500);
+    }, 500);
+            
         }
     }, 120);
 }
@@ -319,13 +354,19 @@ window.addEventListener("DOMContentLoaded", () => {
     /* =========================
        INITIAL UI
     ========================= */
+const unlocked = isAbicOmegaUnlocked();
+const mode = getInterfaceMode();
 
-    publicSite?.classList.remove("hidden");
-
-    login?.classList.add("hidden");
-
+if (unlocked && mode === "omega") {
+    publicSite?.classList.add("hidden");
+    login?.classList.remove("hidden");
     desktop?.classList.add("hidden");
-
+} else {
+    publicSite?.classList.remove("hidden");
+    login?.classList.add("hidden");
+    desktop?.classList.add("hidden");
+}
+    
 
     /* =========================
        HIDE BOOT SCREEN
@@ -349,10 +390,16 @@ window.addEventListener("DOMContentLoaded", () => {
     /* =========================
        SYSTEM INIT
     ========================= */
+initLogin();
 
-    initLogin();
+window.addEventListener(
+    "abic:returnToPublic",
+    () => {
+        showAbicInterface();
+    }
+);
 
-    bootSystem();
+bootSystem();
 
 
     /* =========================
