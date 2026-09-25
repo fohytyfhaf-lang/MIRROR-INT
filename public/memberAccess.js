@@ -493,6 +493,12 @@ function renderAccountBody(state) {
         return;
     }
 
+   if (isAbicOmegaUnlocked()) {
+    renderUnlockedAccount(state);
+    return;
+}
+   
+
 
     /*
      * Existing ABIC account.
@@ -608,6 +614,61 @@ function renderRegistrationForm(body) {
 /* =========================================================
    REGISTERED ACCOUNT
 ========================================================= */
+function renderUnlockedAccount(state) {
+
+    const body =
+        document.getElementById("abicMemberBody");
+
+    if (!body) return;
+
+    body.innerHTML = `
+        <section class="abicMemberCard">
+
+            <div class="abicMemberCardLabel">
+                MEMBER ACCOUNT
+            </div>
+
+            <h2>
+                ${escapeHTML(
+                    state.displayName ||
+                    state.username
+                )}
+            </h2>
+
+            <p>
+                Your ABIC account remains active.
+            </p>
+
+            <div
+                class="abicMemberCardLabel"
+                style="margin-top:24px;"
+            >
+                INTERNAL ACCESS
+            </div>
+
+            <p>
+                Additional network access is enabled.
+            </p>
+
+            <button
+                id="abicReturnToOmega"
+                type="button"
+                class="abicMemberButton"
+            >
+                Return to OMEGA
+            </button>
+
+        </section>
+    `;
+
+    document
+        .getElementById("abicReturnToOmega")
+        ?.addEventListener(
+            "click",
+            returnToOmega
+        );
+}
+
 
 function renderRegisteredAccount(state) {
 
