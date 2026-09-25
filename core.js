@@ -393,6 +393,23 @@ if (unlocked && mode === "omega") {
     ========================= */
 initLogin();
 
+const publicNetworkButton =
+    document.getElementById("publicNetworkButton");
+
+if (publicNetworkButton) {
+
+    if (isAbicOmegaUnlocked()) {
+        publicNetworkButton.classList.remove("hidden");
+    }
+
+    publicNetworkButton.addEventListener(
+        "click",
+        () => {
+            returnToAbic();
+        }
+    );
+}
+
 window.addEventListener(
     "abic:returnToPublic",
     () => {
