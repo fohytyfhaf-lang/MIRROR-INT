@@ -127,6 +127,7 @@ window.restoreWindow = restoreWindow;
 window.openOmegaLogin = openOmegaLogin;
 window.closeOmegaLogin = closeOmegaLogin;
 window.logoutOmega = logoutOmega;
+window.returnToAbic = returnToAbic;
 window.mrSmileSay = mrSmileSay;
 window.nextCam = nextCam;
 window.previousCam = previousCam;
