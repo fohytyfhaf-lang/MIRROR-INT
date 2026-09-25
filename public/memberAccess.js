@@ -1521,8 +1521,9 @@ function startTransition() {
      * immediately before the transition.
      */
 
-    state.transitionStarted =
-        true;
+    state.transitionStarted = true;
+   state.omegaUnlocked = true;
+  state.interfaceMode = "omega";
 
 
     saveState(state);
