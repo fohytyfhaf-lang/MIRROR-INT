@@ -442,6 +442,13 @@ window.addEventListener(
     }
 );
 
+window.addEventListener(
+    "abic:returnToOmega",
+    () => {
+        showOmegaInterface();
+    }
+);
+
 bootSystem();
 
 
