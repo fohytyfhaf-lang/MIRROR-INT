@@ -155,6 +155,63 @@ console.log("GLITCH LOADED", window.glitch);
 /* =========================
         BOOT
 ========================= */
+function playInterfaceTransition(mode, callback) {
+    const overlay =
+        document.getElementById("interfaceTransition");
+
+    const label =
+        document.getElementById("interfaceTransitionLabel");
+
+    const text =
+        document.getElementById("interfaceTransitionText");
+
+    if (!overlay) {
+        callback?.();
+        return;
+    }
+
+    overlay.classList.remove(
+        "hidden",
+        "isLoading",
+        "isAbic",
+        "isOmega"
+    );
+
+    overlay.classList.add(
+        mode === "omega"
+            ? "isOmega"
+            : "isAbic"
+    );
+
+    if (mode === "omega") {
+        label.textContent = "OMEGA SYSTEM";
+        text.textContent =
+            "Initializing secure interface...";
+    } else {
+        label.textContent = "ABIC PUBLIC NETWORK";
+        text.textContent =
+            "Connecting to public network...";
+    }
+
+    requestAnimationFrame(() => {
+        overlay.classList.add("isLoading");
+    });
+
+    setTimeout(() => {
+        callback?.();
+    }, 1400);
+
+    setTimeout(() => {
+        overlay.classList.add("hidden");
+
+        overlay.classList.remove(
+            "isLoading",
+            "isAbic",
+            "isOmega"
+        );
+    }, 1700);
+}
+
 
 function showAbicInterface() {
     setSiteIcon("abic");
