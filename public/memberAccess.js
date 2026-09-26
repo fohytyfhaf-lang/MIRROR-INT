@@ -296,6 +296,10 @@ export function returnToOmega() {
     desktop?.classList.add("hidden");
     login?.classList.remove("hidden");
 
+   window.dispatchEvent(
+    new CustomEvent("abic:returnToOmega")
+);
+
     return true;
 }
 
