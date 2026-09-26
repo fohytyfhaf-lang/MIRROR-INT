@@ -360,6 +360,28 @@ function initLogin() {
     });
 }
 
+
+function initFirstOmegaSession() {
+    const unlocked = isAbicOmegaUnlocked();
+
+    if (!unlocked) {
+        return;
+    }
+
+    const key = "omega_first_session_v1";
+
+    if (Storage.get(key)) {
+        return;
+    }
+
+    Storage.set(key, {
+        completed: true,
+        timestamp: Date.now()
+    });
+
+    console.log("[OMEGA] First operator session initialized.");
+}
+
 /* =========================
         SYSTEM INIT
 ========================= */
@@ -525,7 +547,8 @@ window.addEventListener(
 );
     
 bootSystem();
-
+    
+ initFirstOmegaSession();
 
     /* =========================
        LOAD USER SETTINGS
