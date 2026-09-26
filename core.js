@@ -377,10 +377,17 @@ const unlocked = isAbicOmegaUnlocked();
 const mode = getInterfaceMode();
 
 if (unlocked && mode === "omega") {
+
+    setSiteIcon("omega");
+
     publicSite?.classList.add("hidden");
     login?.classList.remove("hidden");
     desktop?.classList.add("hidden");
+
 } else {
+
+    setSiteIcon("abic");
+
     publicSite?.classList.remove("hidden");
     login?.classList.add("hidden");
     desktop?.classList.add("hidden");
