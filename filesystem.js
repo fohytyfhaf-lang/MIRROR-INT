@@ -224,6 +224,46 @@ Further investigation required.`,
 
                     },
 
+                     "incident_T03.txt": {
+
+    type:
+        "file",
+
+    data:
+`OMEGA INCIDENT ARCHIVE
+
+INCIDENT: T-03
+STATUS: UNRESOLVED
+
+Date:
+[DATA CORRUPTED]
+
+Location:
+[DATA CORRUPTED]
+
+Summary:
+
+An internal observation record was created
+without an associated operator.
+
+The original entry indicates that
+the observation was initiated before
+the corresponding session existed.
+
+No responsible personnel could be identified.
+
+The record was archived automatically.
+
+Additional note:
+
+The archive timestamp predates
+the creation of the OMEGA record.`,
+
+    level:
+        1
+
+},
+
 
                     /* ======================================
                        MR.SMILE
