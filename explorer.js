@@ -382,6 +382,32 @@ on(
 
 
 /* =========================================================
+   FIRST OMEGA SESSION
+========================================================= */
+
+on(
+    "omega:firstSessionInitialized",
+    () => {
+
+        console.log(
+            "[OMEGA EXPLORER] First session initialized. Refreshing filesystem..."
+        );
+
+        if (
+            document.getElementById("filesList")
+        ) {
+
+            renderExplorer(
+                currentExplorerPath
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
    OPEN FILE / DIRECTORY
 ========================================================= */
 
