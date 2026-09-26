@@ -157,6 +157,8 @@ console.log("GLITCH LOADED", window.glitch);
 ========================= */
 
 function showAbicInterface() {
+    setSiteIcon("abic");
+
     document
         .getElementById("publicSite")
         ?.classList.remove("hidden");
@@ -171,7 +173,23 @@ function showAbicInterface() {
 }
 
 
+function setSiteIcon(mode) {
+    const icon = document.getElementById("siteIcon");
+
+    if (!icon) {
+        return;
+    }
+
+    icon.href =
+        mode === "omega"
+            ? "favicon-omega.png"
+            : "favicon-abic.png";
+}
+
+
 function showOmegaInterface() {
+    setSiteIcon("omega");
+
     document
         .getElementById("publicSite")
         ?.classList.add("hidden");
