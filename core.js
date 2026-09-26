@@ -378,6 +378,13 @@ function initFirstOmegaSession() {
         completed: true,
         timestamp: Date.now()
     });
+    trigger(
+    "omega:firstSessionInitialized",
+    {
+        timestamp: Date.now()
+    }
+);
+    
 
     console.log("[OMEGA] First operator session initialized.");
 }
@@ -460,6 +467,7 @@ window.addEventListener("DOMContentLoaded", () => {
     /* =========================
        INITIAL UI
     ========================= */
+    
 const unlocked = isAbicOmegaUnlocked();
 const mode = getInterfaceMode();
 
