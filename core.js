@@ -503,17 +503,27 @@ if (publicNetworkButton) {
 window.addEventListener(
     "abic:returnToPublic",
     () => {
-        showAbicInterface();
+        playInterfaceTransition(
+            "abic",
+            () => {
+                showAbicInterface();
+            }
+        );
     }
 );
 
 window.addEventListener(
     "abic:returnToOmega",
     () => {
-        showOmegaInterface();
+        playInterfaceTransition(
+            "omega",
+            () => {
+                showOmegaInterface();
+            }
+        );
     }
 );
-
+    
 bootSystem();
 
 
