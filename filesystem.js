@@ -90,10 +90,109 @@ const filesystem = {
                             "file",
 
                         data:
-`OMEGA SYSTEM
-PUBLIC INFORMATION
+"readme.txt": {
 
-Welcome.`,
+    type:
+        "file",
+
+    data:
+`OMEGA SYSTEM
+INTERNAL ORGANIZATION RECORD
+
+========================================
+ORGANIZATION OVERVIEW
+========================================
+
+OMEGA is an independent research and
+containment organization.
+
+Primary objectives:
+
+- Identify anomalous phenomena.
+- Document unexplained events.
+- Investigate entities and locations
+  that fall outside established
+  scientific models.
+- Contain hazardous phenomena when
+  containment is possible.
+- Protect civilian populations from
+  confirmed anomalous threats.
+- Preserve all relevant observations,
+  records, and physical evidence.
+
+OMEGA does not disclose active
+investigations to the public unless
+authorized by Administration.
+
+
+========================================
+OPERATOR RULES
+========================================
+
+1. Do not access files above your
+   assigned clearance level.
+
+2. Do not remove, copy, or alter
+   organizational records.
+
+3. Do not enter restricted areas
+   without authorization.
+
+4. Do not interfere with active
+   containment procedures.
+
+5. Report unusual system behavior
+   to Security immediately.
+
+6. Do not establish unauthorized
+   communication with contained
+   entities.
+
+7. All observations must be recorded.
+
+8. If an instruction conflicts with
+   a containment protocol, follow
+   the highest active security order.
+
+9. Do not attempt to bypass OMEGA
+   security systems.
+
+10. If you encounter information
+    that appears to contradict
+    an existing record, do not
+    correct the record yourself.
+
+
+========================================
+IMPORTANT
+========================================
+
+OMEGA records are considered
+operational evidence.
+
+An incomplete record is preferable
+to an altered record.
+
+If information cannot be verified,
+mark it as UNKNOWN.
+
+Do not assume.
+
+
+========================================
+SYSTEM NOTICE
+========================================
+
+This document describes standard
+OMEGA procedures.
+
+Additional protocols may apply to
+specific facilities, personnel,
+entities, or incidents.
+
+CLEARANCE LEVEL: 0
+DOCUMENT STATUS: ACTIVE
+========================================`
 
                         level:
                             0
