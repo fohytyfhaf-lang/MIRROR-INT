@@ -453,6 +453,19 @@ function isHiddenUnlocked(node) {
     }
 
 
+   if (
+    node.unlockFlag ===
+    "omega_first_session"
+) {
+
+    return Boolean(
+        Storage.get(
+            "omega_first_session_v1"
+        )
+    );
+
+}
+
     return isProgressUnlocked(
         node.unlockFlag
     );
