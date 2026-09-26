@@ -176,14 +176,22 @@ function showAbicInterface() {
 function setSiteIcon(mode) {
     const icon = document.getElementById("siteIcon");
 
-    if (!icon) {
-        return;
+    if (icon) {
+        icon.href =
+            mode === "omega"
+                ? "favicon-omega.png"
+                : "favicon-abic.png";
     }
 
-    icon.href =
+    setSiteTitle(mode);
+}
+
+function setSiteTitle(mode) {
+
+    document.title =
         mode === "omega"
-            ? "favicon-omega.png"
-            : "favicon-abic.png";
+            ? "OMEGA SYSTEM"
+            : "American Botanical Information Center";
 }
 
 
