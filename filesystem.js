@@ -125,6 +125,12 @@ Further investigation required.`,
     type:
         "file",
 
+     hidden:
+        true,
+
+    unlockFlag:
+        "omega_first_session",
+
     data:
 `OMEGA INCIDENT ARCHIVE
 
