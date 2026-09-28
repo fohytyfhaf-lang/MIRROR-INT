@@ -21,6 +21,8 @@ import {
 
 
 let activityInitialized = false;
+let activityFilter = "ALL";
+let activitySearch = "";
 /* ==========================================================
    OMEGA EVENT CODES
 ========================================================== */
@@ -522,6 +524,20 @@ export function loadOperatorActivity() {
     const name =
         get("activityOperator");
 
+   const filter =
+    get("activityFilter");
+
+const search =
+    get("activitySearch");
+
+if (filter) {
+    filter.value = activityFilter;
+}
+
+if (search) {
+    search.value = activitySearch;
+}
+
     const count =
         get("activityCount");
 
@@ -574,15 +590,82 @@ export function loadOperatorActivity() {
     /*
      * Newest first.
      */
-    const entries =
-        [...history]
-            .reverse()
-            .filter(
-                entry =>
-                    entry?.type !==
-                    "mrsmile.interaction"
-            );
-  
+  const entries =
+    [...history]
+        .reverse()
+        .filter(
+            entry =>
+                entry?.type !==
+                "mrsmile.interaction"
+        )
+        .filter(entry => {
+
+            if (activityFilter === "ALL") {
+                return true;
+            }
+
+            const type =
+                entry?.type || "";
+
+            if (activityFilter === "FILES") {
+
+                return [
+                    "file.open",
+                    "file.read",
+                    "restricted.file.open",
+                    "folder.open",
+                    "file.open.failed"
+                ].includes(type);
+
+            }
+
+            if (activityFilter === "CAMERAS") {
+
+                return [
+                    "camera.open",
+                    "camera.visit",
+                    "camera.close"
+                ].includes(type);
+
+            }
+
+            if (activityFilter === "SYSTEM") {
+
+                return [
+                    "settings.change",
+                    "system.session.started",
+                    "error",
+                    "access.denied"
+                ].includes(type);
+
+            }
+
+            if (activityFilter === "COMMUNICATIONS") {
+
+                return [
+                    "chat.message",
+                    "mrsmile.message",
+                    "mrsmile.firstContact"
+                ].includes(type);
+
+            }
+
+            return true;
+
+        })
+        .filter(entry => {
+
+            if (!activitySearch) {
+                return true;
+            }
+
+            return JSON.stringify(entry)
+                .toLowerCase()
+                .includes(
+                    activitySearch.toLowerCase()
+                );
+
+        });
 
 
    container.innerHTML =
@@ -724,6 +807,43 @@ function escapeHtml(value) {
 }
 
 
+function initActivityFilters() {
+
+    const filter =
+        get("activityFilter");
+
+    const search =
+        get("activitySearch");
+
+
+    filter?.addEventListener(
+        "change",
+        () => {
+
+            activityFilter =
+                filter.value ||
+                "ALL";
+
+            loadOperatorActivity();
+
+        }
+    );
+
+
+    search?.addEventListener(
+        "input",
+        () => {
+
+            activitySearch =
+                search.value.trim();
+
+            loadOperatorActivity();
+
+        }
+    );
+
+}
+
 /* ==========================================================
    ACTIVITY EVENT
 ========================================================== */
@@ -753,6 +873,7 @@ function initActivity() {
 
        initOperatorActivityBridge();
        initOmegaCodex();
+       initActivityFilters();
 
 
     on(
