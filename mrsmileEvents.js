@@ -774,29 +774,31 @@ export function grantMrSmileAccess(
     STATE.pendingFirstContact =
         null;
 
-    if (
-        pending
-    ) {
+    if (pending) {
 
-        setTimeout(
-            () => {
+    STATE.firstContactQueued = false;
+    STATE.pendingFirstContact = null;
 
-                triggerMrSmileFirstContact({
+    setTimeout(
+        () => {
+
+            trigger(
+                "mrsmile:firstContact",
+                {
                     ...pending,
 
                     source:
                         "reflective_channel"
+                }
+            );
 
-                });
+        },
 
-            },
+        900
 
-            900
+    );
 
-        );
-
-    }
-
+}
     return true;
 
 }
