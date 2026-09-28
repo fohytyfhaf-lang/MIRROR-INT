@@ -2833,6 +2833,11 @@ function registerActivityListeners() {
         "window.close"
     );
 
+   registerActivityEvent(
+    "omega:firstSessionInitialized",
+    "system.session.started"
+);
+
 
     registerActivityEvent(
         "windowFocused",
