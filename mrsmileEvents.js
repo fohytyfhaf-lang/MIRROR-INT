@@ -166,7 +166,7 @@ const STORAGE = {
         "mrsmile_first_contact_started",
 
     handshake:
-        "mrsmile_handshake"
+        "mrsmile_handshake",
 
    accessGranted:
     "mrsmile_access_granted"
