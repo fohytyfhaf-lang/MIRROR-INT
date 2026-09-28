@@ -1098,16 +1098,19 @@ window.grantMrSmileAccess =
 
     window.MRSMILE_EVENTS = {
 
-        triggerFirstContact:
-            triggerMrSmileFirstContact,
+    triggerFirstContact:
+        triggerMrSmileFirstContact,
 
-        resetFirstContact:
-            resetMrSmileFirstContact,
+    resetFirstContact:
+        resetMrSmileFirstContact,
 
-        status:
-            getMrSmileEventsStatus
+    grantAccess:
+        grantMrSmileAccess,
 
-    };
+    status:
+        getMrSmileEventsStatus
+
+};
 
 }
 
