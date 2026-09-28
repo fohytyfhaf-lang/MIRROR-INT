@@ -32,6 +32,11 @@ const EVENT_CODES = {
         label: "AUTHORIZATION"
     },
 
+   "system.session.started": {
+    code: "SYS-START",
+    label: "SESSION INITIALIZED"
+},
+
     "logout": {
         code: "AUTH-END",
         label: "SESSION CLOSED"
