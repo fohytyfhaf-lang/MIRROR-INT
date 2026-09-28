@@ -85,7 +85,105 @@
         );
 }
 
+#activityControls {
 
+    flex:
+        0 0 auto;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    padding:
+        8px 12px;
+
+    box-sizing:
+        border-box;
+
+    border-bottom:
+        1px solid #20384c;
+
+    background:
+        #0a141e;
+}
+
+
+#activityFilter,
+#activitySearch {
+
+    height:
+        30px;
+
+    box-sizing:
+        border-box;
+
+    border:
+        1px solid #29485d;
+
+    background:
+        #07111a;
+
+    color:
+        #cce8f5;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size:
+        10px;
+
+    outline:
+        none;
+}
+
+
+#activityFilter {
+
+    min-width:
+        145px;
+
+    padding:
+        0 8px;
+}
+
+
+#activitySearch {
+
+    flex:
+        1 1 auto;
+
+    min-width:
+        120px;
+
+    padding:
+        0 10px;
+}
+
+
+#activityFilter:focus,
+#activitySearch:focus {
+
+    border-color:
+        #4fd8ff;
+
+    box-shadow:
+        0 0 8px
+        rgba(79, 216, 255, .08);
+}
+
+
+#activitySearch::placeholder {
+
+    color:
+        #4f6d80;
+}
 /* ==========================================================
    HEADER COLUMNS
 ========================================================== */
