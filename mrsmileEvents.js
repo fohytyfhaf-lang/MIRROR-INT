@@ -111,6 +111,12 @@ const STATE = {
     firstContactQueued:
         false,
 
+   accessGranted:
+    false,
+
+pendingFirstContact:
+    null,
+
     handshakeRunning:
         false,
 
@@ -162,7 +168,12 @@ const STORAGE = {
     handshake:
         "mrsmile_handshake"
 
+   accessGranted:
+    "mrsmile_access_granted"
+
 };
+
+
 
 
 /* ==========================================================
@@ -698,6 +709,98 @@ function isHandshakeCompleted() {
 
 }
 
+/* ==========================================================
+   MR.SMILE ACCESS GATE
+   ----------------------------------------------------------
+   First Contact requires explicit operator CONNECT.
+========================================================== */
+
+function isMrSmileAccessGranted() {
+
+    return (
+        STATE.accessGranted === true ||
+        storageGet(
+            STORAGE.accessGranted
+        ) === "1"
+    );
+
+}
+
+
+export function grantMrSmileAccess(
+    data = {}
+) {
+
+    if (
+        isMrSmileAccessGranted()
+    ) {
+        return false;
+    }
+
+    STATE.accessGranted =
+        true;
+
+    storageSet(
+        STORAGE.accessGranted,
+        "1"
+    );
+
+    const payload = {
+
+        source:
+            data.source ||
+            "reflective_channel",
+
+        timestamp:
+            Date.now(),
+
+        eventId:
+            nextEventId()
+
+    };
+
+    trigger(
+        "mrsmile:accessGranted",
+        payload
+    );
+
+    console.log(
+        "[MR.SMILE EVENTS] Reflective channel connected. Access granted."
+    );
+
+    const pending =
+        STATE.pendingFirstContact;
+
+    STATE.pendingFirstContact =
+        null;
+
+    if (
+        pending
+    ) {
+
+        setTimeout(
+            () => {
+
+                triggerMrSmileFirstContact({
+                    ...pending,
+
+                    source:
+                        "reflective_channel"
+
+                });
+
+            },
+
+            900
+
+        );
+
+    }
+
+    return true;
+
+}
+
 
 function markHandshakeCompleted() {
 
@@ -730,6 +833,10 @@ export function resetMrSmileFirstContact() {
         STORAGE.handshake
     );
 
+   storageRemove(
+    STORAGE.accessGranted
+);
+
 
     STATE.firstContactRunning =
         false;
@@ -737,11 +844,19 @@ export function resetMrSmileFirstContact() {
     STATE.firstContactCompleted =
         false;
 
-    STATE.firstContactQueued =
-        false;
 
-    STATE.handshakeRunning =
-        false;
+STATE.firstContactQueued =
+    false;
+
+STATE.accessGranted =
+    false;
+
+STATE.pendingFirstContact =
+    null;
+
+STATE.handshakeRunning =
+    false;
+   
 
     STATE.handshakeCompleted =
         false;
@@ -838,6 +953,54 @@ export function triggerMrSmileFirstContact(
 
     };
 
+       /* ------------------------------------------------------
+       ACCESS GATE
+       ------------------------------------------------------
+       Discovery can request First Contact, but MR.SMILE
+       cannot enter until the operator explicitly connects.
+    ------------------------------------------------------ */
+
+    if (
+        !isMrSmileAccessGranted() &&
+        data.bypassAccess !== true
+    ) {
+
+        if (
+            !STATE.pendingFirstContact
+        ) {
+
+            STATE.pendingFirstContact =
+                payload;
+
+        }
+
+        STATE.firstContactQueued =
+            true;
+
+        trigger(
+            "mrsmile:firstContactWaitingForAccess",
+            {
+
+                source:
+                    payload.source,
+
+                timestamp:
+                    Date.now(),
+
+                eventId:
+                    payload.eventId
+
+            }
+        );
+
+        console.log(
+            "[MR.SMILE EVENTS] First Contact waiting for operator CONNECT."
+        );
+
+        return false;
+
+    }
+
 
     /* ------------------------------------------------------
        Persistent guard
@@ -920,8 +1083,13 @@ function exposeGlobalAPI() {
         triggerMrSmileFirstContact;
 
 
-    window.resetMrSmileFirstContact =
-        resetMrSmileFirstContact;
+  window.resetMrSmileFirstContact =
+    resetMrSmileFirstContact;
+
+
+window.grantMrSmileAccess =
+    grantMrSmileAccess;
+
 
 
     window.getMrSmileEventsStatus =
