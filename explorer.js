@@ -376,7 +376,7 @@ function renderExplorer(path, preservePage = false) {
 
     if (!items.length) {
 
-        view.innerHTML = `
+      list.innerHTML = `
             <div class="emptyFolder">
                 EMPTY FOLDER
             </div>
