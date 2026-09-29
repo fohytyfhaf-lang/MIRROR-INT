@@ -40,6 +40,10 @@ import {
     Storage
 } from "./storage.js";
 
+import {
+    playEffect
+} from "./audio.js";
+
 
 /* ==========================================================
    CONSTANTS
