@@ -361,24 +361,30 @@ function formatDetails(
     }
 
 
-    if (
-        type === "file.open" ||
-        type === "file.read" ||
-        type === "restricted.file.open" ||
-        type === "folder.open" ||
-        type === "file.open.failed"
-    ) {
+  if (
+    type === "file.open" ||
+    type === "file.read" ||
+    type === "restricted.file.open" ||
+    type === "folder.open" ||
+    type === "file.open.failed"
+) {
 
-        return (
-            `RESOURCE: ${
-                data.name ||
-                data.target ||
-                data.path ||
-                "UNKNOWN"
-            }`
-        );
+    const resource =
+        data.name ||
+        data.target ||
+        data.path ||
+        "UNKNOWN";
 
-    }
+    const action =
+        data.action
+            ? ` | ACTION: ${data.action.toUpperCase()}`
+            : "";
+
+    return (
+        `RESOURCE: ${resource}${action}`
+    );
+
+}
 
 
     if (
