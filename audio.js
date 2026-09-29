@@ -1,3 +1,6 @@
+import {
+    getSettings
+} from "./systemConfig.js";
 
 const bgm = document.getElementById("bgm");
 
@@ -51,6 +54,42 @@ function getAudioVolume(
         baseVolume *
         master *
         music
+    );
+}
+
+export function playEffect(
+    file,
+    volume = 0.5,
+    settings = null
+) {
+
+    const audio =
+        new Audio(`./audio/${file}`);
+
+    const master =
+        Number(
+            settings?.masterVolume ?? 70
+        ) / 100;
+
+    const effects =
+        Number(
+            settings?.effectsVolume ?? 70
+        ) / 100;
+
+    audio.volume =
+        clampVolume(
+            volume *
+            master *
+            effects
+        );
+
+    audio.play().catch(
+        error => {
+            console.warn(
+                "[AUDIO] Effect playback blocked:",
+                error
+            );
+        }
     );
 }
 
