@@ -1019,3 +1019,329 @@
 /* ==========================================================
    END OMEGA FILE EXPLORER
 ========================================================== */
+/* =========================================================
+   OMEGA EXPLORER — ARCHIVE CONTROLS
+   ========================================================= */
+
+#explorerMetaBar {
+    flex: 0 0 auto;
+    min-height: 46px;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 6px 10px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(10, 22, 34, 0.96),
+            rgba(6, 14, 23, 0.96)
+        );
+
+    border-top: 1px solid rgba(80, 150, 190, 0.18);
+    border-bottom: 1px solid rgba(80, 150, 190, 0.18);
+
+    font-family: monospace;
+}
+
+.explorerSelectionInfo {
+    min-width: 0;
+}
+
+.explorerSelectionTitle {
+    color: #8ca9bb;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#explorerSelectedName {
+    color: #c7d7df;
+    margin-left: 5px;
+}
+
+.explorerSelectionMeta {
+    margin-top: 3px;
+
+    color: #657d8b;
+
+    font-size: 9px;
+    letter-spacing: 0.5px;
+}
+
+.explorerInfoButton {
+    flex: 0 0 auto;
+
+    padding: 4px 9px;
+
+    background: rgba(20, 45, 62, 0.7);
+
+    border: 1px solid rgba(80, 150, 190, 0.35);
+
+    color: #8daebf;
+
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    transition:
+        background 120ms ease,
+        color 120ms ease,
+        border-color 120ms ease;
+}
+
+.explorerInfoButton:hover {
+    background: rgba(35, 70, 90, 0.75);
+    color: #c6dce5;
+    border-color: rgba(100, 175, 215, 0.45);
+}
+
+
+/* =========================================================
+   PAGINATION
+   ========================================================= */
+
+#explorerPagination {
+    flex: 0 0 auto;
+
+    height: 28px;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 10px;
+
+    background: rgba(4, 11, 18, 0.95);
+
+    border-bottom: 1px solid rgba(80, 150, 190, 0.16);
+
+    color: #607886;
+
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: 0.8px;
+}
+
+#explorerPageControls {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+#explorerPageControls button {
+    width: 20px;
+    height: 18px;
+
+    padding: 0;
+
+    background: rgba(20, 38, 50, 0.8);
+
+    border: 1px solid rgba(80, 150, 190, 0.25);
+
+    color: #7895a5;
+
+    font-family: monospace;
+
+    cursor: pointer;
+
+    transition:
+        background 120ms ease,
+        color 120ms ease;
+}
+
+#explorerPageControls button:hover:not(:disabled) {
+    background: rgba(35, 65, 82, 0.8);
+    color: #b8d0dc;
+}
+
+#explorerPageControls button:disabled {
+    opacity: 0.25;
+    cursor: default;
+}
+
+#explorerPageNumber {
+    min-width: 72px;
+    text-align: center;
+}
+
+
+/* =========================================================
+   SELECTED FILE
+   ========================================================= */
+
+.explorerItem.selected {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(38, 72, 91, 0.55),
+            rgba(16, 31, 42, 0.8)
+        );
+
+    border-color: rgba(95, 160, 195, 0.5);
+
+    box-shadow:
+        inset 2px 0 0 rgba(105, 170, 205, 0.55);
+}
+
+.explorerItem.selected .explorerName {
+    color: #d0e1e8;
+}
+
+
+/* =========================================================
+   FILE INFORMATION WINDOW
+   ========================================================= */
+
+.explorerInfoOverlay {
+    position: fixed;
+    inset: 0;
+
+    z-index: 10000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.58);
+}
+
+.explorerInfoPanel {
+    width: min(560px, calc(100vw - 32px));
+    max-height: calc(100vh - 48px);
+
+    overflow: auto;
+
+    background:
+        linear-gradient(
+            180deg,
+            #0a141d,
+            #071018
+        );
+
+    border: 1px solid rgba(80, 150, 190, 0.38);
+
+    box-shadow:
+        0 0 30px rgba(0, 0, 0, 0.55);
+
+    font-family: monospace;
+}
+
+.explorerInfoHeader {
+    height: 34px;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 10px;
+
+    color: #8ea9b8;
+
+    font-size: 10px;
+    letter-spacing: 1.5px;
+
+    background: rgba(12, 29, 42, 0.95);
+
+    border-bottom: 1px solid rgba(80, 150, 190, 0.22);
+}
+
+.explorerInfoClose {
+    width: 24px;
+    height: 22px;
+
+    padding: 0;
+
+    background: transparent;
+
+    border: 1px solid rgba(80, 150, 190, 0.25);
+
+    color: #76909e;
+
+    font-family: monospace;
+
+    cursor: pointer;
+}
+
+.explorerInfoClose:hover {
+    color: #c3d4dc;
+    border-color: rgba(100, 175, 215, 0.4);
+}
+
+.explorerInfoFileName {
+    padding: 12px 12px 9px;
+
+    color: #c8d9e1;
+
+    font-size: 12px;
+    letter-spacing: 0.5px;
+
+    border-bottom: 1px solid rgba(80, 150, 190, 0.12);
+
+    word-break: break-all;
+}
+
+.explorerInfoGrid {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+}
+
+.explorerInfoLabel,
+.explorerInfoValue {
+    min-height: 27px;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+
+    padding: 5px 10px;
+
+    border-bottom: 1px solid rgba(80, 150, 190, 0.08);
+
+    font-size: 9px;
+}
+
+.explorerInfoLabel {
+    color: #617986;
+    letter-spacing: 0.7px;
+}
+
+.explorerInfoValue {
+    color: #9bb0bb;
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    #explorerMetaBar {
+        min-height: 48px;
+    }
+
+    .explorerSelectionTitle {
+        max-width: 220px;
+    }
+
+    #explorerPagination {
+        font-size: 8px;
+    }
+
+    .explorerInfoGrid {
+        grid-template-columns: 105px 1fr;
+    }
+}
