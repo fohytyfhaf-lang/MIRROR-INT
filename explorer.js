@@ -20,6 +20,10 @@ import {
 ========================================================= */
 
 let currentExplorerPath = "/files";
+const EXPLORER_PAGE_SIZE = 10;
+
+let currentExplorerPage = 1;
+let selectedExplorerPath = null;
 
 
 /* =========================================================
@@ -76,52 +80,283 @@ function reportMrSmileAction(data = {}) {
 
 }
 
+function getExplorerFileSize(node) {
+    if (!node) return "UNKNOWN";
+
+    if (node.size) {
+        return typeof node.size === "number"
+            ? `${(node.size / 1024).toFixed(1)} KB`
+            : String(node.size);
+    }
+
+    if (node.type === "dir") {
+        return "DIRECTORY";
+    }
+
+    const name = node.name || "";
+    const extension = getExtension(name);
+
+    const defaultSizes = {
+        txt: "4.2 KB",
+        pdf: "18.4 KB",
+        mp4: "24.8 MB",
+        webm: "18.2 MB",
+        ogg: "3.1 MB",
+        png: "1.8 MB",
+        jpg: "1.6 MB",
+        jpeg: "1.6 MB",
+        webp: "1.2 MB"
+    };
+
+    return defaultSizes[extension] || "UNKNOWN";
+}
+
+function getExplorerFileType(node, name = "") {
+    if (!node) return "UNKNOWN";
+
+    if (node.type === "dir") {
+        return "DIRECTORY";
+    }
+
+    const extension = getExtension(name || node.name || "");
+
+    const types = {
+        txt: "TEXT DOCUMENT",
+        pdf: "PDF DOCUMENT",
+        mp4: "VIDEO",
+        webm: "VIDEO",
+        ogg: "AUDIO",
+        png: "IMAGE",
+        jpg: "IMAGE",
+        jpeg: "IMAGE",
+        webp: "IMAGE"
+    };
+
+    return types[extension] || "FILE";
+}
+
+function ensureExplorerTools() {
+    const filesList = document.getElementById("filesList");
+    if (!filesList) return;
+
+    if (!document.getElementById("explorerMetaBar")) {
+        const metaBar = document.createElement("div");
+        metaBar.id = "explorerMetaBar";
+
+        metaBar.innerHTML = `
+            <div class="explorerSelectionInfo">
+                <div class="explorerSelectionTitle">
+                    SELECTED <span id="explorerSelectedName">NONE</span>
+                </div>
+
+                <div id="explorerSelectedMeta" class="explorerSelectionMeta">
+                    SELECT A FILE
+                </div>
+            </div>
+
+            <button id="explorerInfoButton" class="explorerInfoButton" type="button">
+                INFO
+            </button>
+        `;
+
+        filesList.parentElement.insertBefore(metaBar, filesList);
+
+        document
+            .getElementById("explorerInfoButton")
+            .addEventListener("click", () => {
+                if (selectedExplorerPath) {
+                    openFileInfo(selectedExplorerPath);
+                }
+            });
+    }
+
+    if (!document.getElementById("explorerPagination")) {
+        const pagination = document.createElement("div");
+        pagination.id = "explorerPagination";
+
+        pagination.innerHTML = `
+            <div id="explorerPageStatus">
+                ENTRIES 00–00 / 00
+            </div>
+
+            <div id="explorerPageControls">
+                <button id="explorerPrevButton" type="button">&lt;</button>
+                <span id="explorerPageNumber">PAGE 01 / 01</span>
+                <button id="explorerNextButton" type="button">&gt;</button>
+            </div>
+        `;
+
+        filesList.parentElement.insertBefore(pagination, filesList);
+
+        document
+            .getElementById("explorerPrevButton")
+            .addEventListener("click", () => {
+                if (currentExplorerPage > 1) {
+                    currentExplorerPage--;
+                    renderExplorer(currentExplorerPath, true);
+                }
+            });
+
+        document
+            .getElementById("explorerNextButton")
+            .addEventListener("click", () => {
+                const items = listFiles(currentExplorerPath);
+                const totalPages = Math.max(
+                    1,
+                    Math.ceil(items.length / EXPLORER_PAGE_SIZE)
+                );
+
+                if (currentExplorerPage < totalPages) {
+                    currentExplorerPage++;
+                    renderExplorer(currentExplorerPath, true);
+                }
+            });
+    }
+}
+
+function updateExplorerSelection(path) {
+    selectedExplorerPath = path;
+
+    document.querySelectorAll(".explorerItem").forEach(item => {
+        item.classList.toggle(
+            "selected",
+            item.dataset.path === path
+        );
+    });
+
+    const nameElement = document.getElementById("explorerSelectedName");
+    const metaElement = document.getElementById("explorerSelectedMeta");
+
+    if (!nameElement || !metaElement) return;
+
+    const node = getFile(path);
+
+    if (!node) {
+        nameElement.textContent = "NONE";
+        metaElement.textContent = "SELECT A FILE";
+        return;
+    }
+
+    const name = node.name || path.split("/").pop();
+
+    nameElement.textContent = name;
+
+    metaElement.textContent =
+        `${getExplorerFileType(node, name)} · ` +
+        `${getExplorerFileSize(node)} · ` +
+        `LEVEL ${node.level ?? 0}`;
+}
+
+function openFileInfo(path) {
+    const node = getFile(path);
+
+    if (!node) return;
+
+    const name = node.name || path.split("/").pop();
+    const type = getExplorerFileType(node, name);
+    const size = getExplorerFileSize(node);
+
+    const overlay = document.createElement("div");
+    overlay.className = "explorerInfoOverlay";
+
+    const metadata = [
+        ["PATH", path],
+        ["TYPE", type],
+        ["SIZE", size],
+        ["VERSION", node.version || "1.0"],
+        ["CHECKSUM", node.checksum || "UNAVAILABLE"],
+        ["ACCESS LEVEL", node.level ?? 0],
+        ["CREATED", node.created || "UNKNOWN"],
+        ["MODIFIED", node.modified || "UNKNOWN"],
+        ["MODIFIED BY", node.modifiedBy || "SYSTEM"],
+        ["LAST ACCESS", node.lastAccess || "UNKNOWN"]
+    ];
+
+    overlay.innerHTML = `
+        <div class="explorerInfoPanel">
+
+            <div class="explorerInfoHeader">
+                <span>FILE INFORMATION</span>
+                <button type="button" class="explorerInfoClose">✕</button>
+            </div>
+
+            <div class="explorerInfoFileName">
+                ${escapeHtml(name)}
+            </div>
+
+            <div class="explorerInfoGrid">
+                ${metadata.map(([label, value]) => `
+                    <div class="explorerInfoLabel">
+                        ${escapeHtml(label)}
+                    </div>
+
+                    <div class="explorerInfoValue">
+                        ${escapeHtml(String(value))}
+                    </div>
+                `).join("")}
+            </div>
+
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const close = () => {
+        overlay.remove();
+    };
+
+    overlay
+        .querySelector(".explorerInfoClose")
+        .addEventListener("click", close);
+
+    overlay.addEventListener("click", event => {
+        if (event.target === overlay) {
+            close();
+        }
+    });
+}
+
 
 /* =========================================================
    RENDER EXPLORER
 ========================================================= */
+function renderExplorer(path, preservePage = false) {
+    const list = document.getElementById("filesList");
+    const pathBar = document.getElementById("pathBar");
 
-function renderExplorer(path) {
+    if (!list || !pathBar) return;
 
-    const view =
-        document.getElementById("filesList");
-
-    const pathBar =
-        document.getElementById("pathBar");
-
-
-    if (!view) {
-
-        console.warn(
-            "[OMEGA EXPLORER] filesList NOT FOUND"
-        );
-
-        return;
-
+    if (path !== currentExplorerPath) {
+        currentExplorerPage = 1;
+        selectedExplorerPath = null;
+    } else if (!preservePage) {
+        currentExplorerPage = 1;
     }
-
 
     currentExplorerPath = path;
 
+    pathBar.textContent = path;
 
-    /* -----------------------------------------------------
-       PATH BAR
-    ----------------------------------------------------- */
+    ensureExplorerTools();
 
-    if (pathBar) {
+    const items = listFiles(path);
 
-        pathBar.textContent =
-            path;
+    const totalPages = Math.max(
+        1,
+        Math.ceil(items.length / EXPLORER_PAGE_SIZE)
+    );
 
+    if (currentExplorerPage > totalPages) {
+        currentExplorerPage = totalPages;
     }
 
+    const startIndex =
+        (currentExplorerPage - 1) * EXPLORER_PAGE_SIZE;
 
-    /* -----------------------------------------------------
-       GET FILES
-    ----------------------------------------------------- */
-
-    const items =
-        listFiles(path);
+    const visibleItems = items.slice(
+        startIndex,
+        startIndex + EXPLORER_PAGE_SIZE
+    );
 
 
     console.log(
