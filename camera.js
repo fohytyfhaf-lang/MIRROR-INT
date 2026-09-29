@@ -1687,6 +1687,18 @@ export function selectCamera(
     const camera =
         getCurrentCamera();
 
+   if (
+    previous?.id !==
+    camera?.id
+) {
+
+    playEffect(
+        "camera_switch.mp3",
+        0.45
+    );
+
+}
+
 
     renderChannelList();
 
