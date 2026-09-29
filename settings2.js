@@ -2,7 +2,8 @@ import { SettingsPages } from "./settingsPages.js";
 import { translatePage } from "./languageManager4.js";
 import {
     getSettings,
-    updateSetting
+    updateSetting,
+    resetSettings
 } from "./systemConfig.js";
 
 export function initSettings() {
@@ -57,6 +58,8 @@ export function initSettings() {
             case "audio": {
 
                 const master = document.getElementById("masterVolume");
+                const music = document.getElementById("musicVolume");
+                const effects = document.getElementById("effectsVolume");
 
                 if (master) {
 
@@ -67,6 +70,26 @@ export function initSettings() {
                     };
 
                 }
+
+               if (music) {
+
+    music.value = settings.musicVolume;
+
+    music.oninput = () => {
+        updateSetting("musicVolume", Number(music.value));
+    };
+
+}
+
+if (effects) {
+
+    effects.value = settings.effectsVolume;
+
+    effects.oninput = () => {
+        updateSetting("effectsVolume", Number(effects.value));
+    };
+
+}
 
                 break;
             }
@@ -133,6 +156,7 @@ export function initSettings() {
 
                 const remember = document.getElementById("rememberUser");
                 const auto = document.getElementById("autoLogin");
+                const clearData = document.getElementById("clearData");
 
                 if (remember) {
                     remember.checked = settings.rememberUser;
@@ -145,6 +169,18 @@ export function initSettings() {
                     auto.onchange = () =>
                         updateSetting("autoLogin", auto.checked);
                 }
+
+                     if (clearData) {
+                         clearData.onclick = () => {
+
+                            if (!confirm("Reset OMEGA settings to default values?")) {
+                                return;
+                            }
+
+                            resetSettings();
+                            loadPage("security");
+                        };
+                     }     
 
                 break;
             }
