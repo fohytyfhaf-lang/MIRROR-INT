@@ -535,9 +535,51 @@ list
 
         });
 
+const rangeStart = items.length 
+    ? startIndex + 1 
+    : 0; 
+ 
+const rangeEnd = Math.min( 
+    startIndex + EXPLORER_PAGE_SIZE, 
+    items.length 
+); 
+ 
+const pageStatus = 
+    document.getElementById("explorerPageStatus"); 
+ 
+const pageNumber = 
+    document.getElementById("explorerPageNumber"); 
+ 
+const prevButton = 
+    document.getElementById("explorerPrevButton"); 
+ 
+const nextButton = 
+    document.getElementById("explorerNextButton"); 
+ 
+if (pageStatus) { 
+    pageStatus.textContent = 
+        `ENTRIES ${String(rangeStart).padStart(2, "0")}–` + 
+        `${String(rangeEnd).padStart(2, "0")} / ` +
+        `${String(items.length).padStart(2, "0")}`; 
+} 
+ 
+if (pageNumber) { 
+    pageNumber.textContent = 
+        `PAGE ${String(currentExplorerPage).padStart(2, "0")} / ` +
+        `${String(totalPages).padStart(2, "0")}`; 
+} 
+ 
+if (prevButton) { 
+    prevButton.disabled = 
+        currentExplorerPage <= 1; 
+} 
+ 
+if (nextButton) { 
+    nextButton.disabled = 
+        currentExplorerPage >= totalPages; 
 }
 
-
+}
 /* =========================================================
    MR.SMILE ARCHIVE UNLOCK
 ========================================================= */
