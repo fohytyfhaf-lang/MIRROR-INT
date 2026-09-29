@@ -391,9 +391,9 @@ function renderExplorer(path, preservePage = false) {
        RENDER ITEMS
     ----------------------------------------------------- */
 
-    view.innerHTML =
-        items.map(item => {
-
+    list.innerHTML =
+    visibleItems.map(item => {
+       
             const fullPath =
                 path === "/"
                     ? "/" + item
@@ -510,8 +510,8 @@ function renderExplorer(path, preservePage = false) {
        CLICK EVENTS
     ===================================================== */
 
-    view
-        .querySelectorAll(".explorerItem")
+list
+    .querySelectorAll(".explorerItem")
         .forEach(item => {
 
             item.addEventListener(
@@ -520,6 +520,10 @@ function renderExplorer(path, preservePage = false) {
 
                     const path =
                         item.dataset.path;
+
+                   updateExplorerSelection(
+                        path
+                   );
 
 
                     openExplorerItem(
