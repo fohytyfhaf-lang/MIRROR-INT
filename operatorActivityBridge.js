@@ -341,41 +341,48 @@ function handleOperatorAction(
         const metadata =
             data.metadata || {};
 
+recordUserAction(
+    activityType,
+    {
 
-        recordUserAction(
-            activityType,
-            {
+        target:
+            data.target ||
+            metadata.name ||
+            metadata.path ||
+            "",
 
-                target:
-                    data.target ||
-                    metadata.name ||
-                    metadata.path ||
-                    "",
+        path:
+            metadata.path ||
+            data.target ||
+            null,
 
-                path:
-                    metadata.path ||
-                    data.target ||
-                    null,
+        name:
+            metadata.name ||
+            null,
 
-                name:
-                    metadata.name ||
-                    null,
+        extension:
+            metadata.extension ||
+            null,
 
-                extension:
-                    metadata.extension ||
-                    null,
+        action:
+            data.action ||
+            null,
 
-                restricted:
-                    metadata.restricted ??
-                    false,
+        reason:
+            data.reason ||
+            null,
 
-                requiredClearance:
-                    metadata.clearanceRequired ??
-                    null
+        restricted:
+            metadata.restricted ??
+            false,
 
-            }
-        );
+        requiredClearance:
+            metadata.clearanceRequired ??
+            null
 
+    }
+);
+       
 
         return;
 
