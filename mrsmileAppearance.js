@@ -235,32 +235,28 @@ export async function showMrSmileFirstContactFace(
 /* ==========================================================
    FIRST CONTACT INTRUSION
 ========================================================== */
-
 async function runFirstContactIntrusion() {
 
     /*
-     * 1.
-     * OMEGA сначала сама замечает
-     * неизвестную активность.
+     * The operator has explicitly connected.
+     *
+     * First Contact therefore appears
+     * as a legitimate OMEGA communication
+     * handshake that the system cannot fully classify.
      */
 
     await showSystemStatus(
-        "SECURITY EVENT",
-        "UNAUTHORIZED PROCESS DETECTED",
-        "warning"
+        "COMMUNICATION MONITOR",
+        "PRIVATE CHANNEL CONNECTION ACCEPTED",
+        "system"
     );
 
 
     await sleep(700);
 
 
-    /*
-     * 2.
-     * Система пытается определить источник.
-     */
-
     await showIntrusionNotice(
-        "IDENTIFYING PROCESS...",
+        "ESTABLISHING REFLECTIVE CHANNEL...",
         "system"
     );
 
@@ -269,8 +265,7 @@ async function runFirstContactIntrusion() {
 
 
     /*
-     * 3.
-     * Открываем Console.
+     * Use the real OMEGA Console.
      */
 
     openConsoleWindow();
@@ -279,52 +274,26 @@ async function runFirstContactIntrusion() {
     await sleep(650);
 
 
-    /*
-     * 4.
-     * Самопроизвольный ввод.
-     */
-
     await typeConsoleCommand(
-        "process.scan --unknown"
+        "channel.open --reflective"
     );
 
 
-    await sleep(500);
+    await sleep(450);
 
 
     await typeConsoleOutput(
-        "UNKNOWN PROCESS FOUND"
-    );
-
-
-    await typeConsoleOutput(
-        "SOURCE: INTERNAL"
+        "HANDSHAKE: ACCEPTED"
     );
 
 
     await typeConsoleOutput(
-        "PRIVILEGE: UNKNOWN"
+        "SOURCE: REFLECTIVE INTERNAL"
     );
-
-
-    await sleep(800);
-
-
-    /*
-     * 5.
-     * OMEGA пытается удалить процесс.
-     */
-
-    await typeConsoleCommand(
-        "security.terminate --unknown"
-    );
-
-
-    await sleep(650);
 
 
     await typeConsoleOutput(
-        "TERMINATION IN PROGRESS..."
+        "IDENTITY: UNRESOLVED"
     );
 
 
@@ -332,76 +301,39 @@ async function runFirstContactIntrusion() {
 
 
     /*
-     * 6.
-     * Неудача.
-     */
-
-    await showSystemStatus(
-        "SECURITY FAILURE",
-        "PROCESS REFUSED TERMINATION",
-        "error"
-    );
-
-
-    await sleep(700);
-
-
-    /*
-     * 7.
-     * MR.SMILE впервые обращается
-     * непосредственно к оператору.
-     */
-
-    await showMrSmileDialogue(
-        "You noticed.",
-        "MR.SMILE"
-    );
-
-
-    await sleep(1000);
-
-
-    /*
-     * 8.
-     * Небольшое вмешательство.
+     * Very small distortion.
+     *
+     * Nothing jumps at the player.
+     * The interface simply behaves strangely
+     * for a moment.
      */
 
     await runMrSmileSubtleDistortion();
 
 
-    /*
-     * 9.
-     * Последнее сообщение.
-     */
+    await sleep(400);
 
-    await showMrSmileDialogue(
-        "I'm still here.",
-        "MR.SMILE"
-    );
-
-
-    await sleep(1100);
-
-
-    /*
-     * 10.
-     * OMEGA восстанавливает интерфейс.
-     *
-     * Сам процесс остаётся.
-     */
 
     await showSystemStatus(
         "OMEGA",
-        "SYSTEM RECOVERY COMPLETE",
+        "REMOTE PARTICIPANT PRESENT",
         "system"
     );
 
 
-    await sleep(
-        DEFAULT_TIMING.recoveryDuration
-    );
-}
+    await sleep(800);
 
+
+    await showIntrusionNotice(
+        "COMMUNICATION CHANNEL STABLE",
+        "system",
+        1400
+    );
+
+
+    await sleep(500);
+
+}
 
 /* ==========================================================
    ECHO INTRUSION
