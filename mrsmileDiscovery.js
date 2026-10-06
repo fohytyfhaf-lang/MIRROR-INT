@@ -943,7 +943,6 @@ function showDiscoveryTrace(
 /* ==========================================================
    SPECIAL PRIVATE CHANNEL
 ========================================================== */
-
 function createPrivateChannelNotice() {
 
     if (
@@ -970,8 +969,7 @@ function createPrivateChannelNotice() {
 
 
     element.className =
-        "omegaDiscoveryNotice " +
-        "private-channel";
+        "omegaDiscoveryNotice private-channel";
 
 
     element.dataset.type =
@@ -1033,10 +1031,25 @@ function createPrivateChannelNotice() {
         </div>
 
 
-        <div class="omegaDiscoveryStatus">
+        <div
+            class="omegaDiscoveryStatus"
+            id="mrSmileConnectionStatus"
+        >
 
             STATUS:
-            PENDING IDENTIFICATION
+            AWAITING OPERATOR
+
+        </div>
+
+
+        <div class="mrSmileConnectionAction">
+
+            <button
+                id="mrSmileConnectButton"
+                type="button"
+            >
+                CONNECT
+            </button>
 
         </div>
 
@@ -1064,6 +1077,98 @@ function createPrivateChannelNotice() {
     );
 
 
+    const button =
+        element.querySelector(
+            "#mrSmileConnectButton"
+        );
+
+
+    button?.addEventListener(
+        "click",
+        () => {
+
+            if (
+                STATE.accessRequested
+            ) {
+
+                return;
+
+            }
+
+
+            STATE.accessRequested =
+                true;
+
+
+            button.disabled =
+                true;
+
+
+            button.textContent =
+                "CONNECTING...";
+
+
+            const api =
+                window.grantMrSmileAccess;
+
+
+            if (
+                typeof api !==
+                "function"
+            ) {
+
+                STATE.accessRequested =
+                    false;
+
+                button.disabled =
+                    false;
+
+                button.textContent =
+                    "CONNECT";
+
+                const status =
+                    element.querySelector(
+                        "#mrSmileConnectionStatus"
+                    );
+
+                if (status) {
+
+                    status.textContent =
+                        "STATUS: CONNECTION SERVICE UNAVAILABLE";
+
+                }
+
+                return;
+
+            }
+
+
+            const granted =
+                api({
+                    source:
+                        "operator_connect"
+                });
+
+
+            if (
+                granted ===
+                false
+            ) {
+
+                /*
+                 * This may simply mean
+                 * that access was already granted.
+                 */
+
+                button.textContent =
+                    "CONNECTED";
+
+            }
+
+        }
+    );
+
+
     trigger(
         "mrsmile:unregisteredChannelDetected",
         {
@@ -1082,9 +1187,29 @@ function createPrivateChannelNotice() {
 
 
     /*
-     * The message remains visible
-     * while First Contact is prepared.
+     * Ask the official First Contact
+     * system to wait for operator access.
+     *
+     * It will NOT start yet.
      */
+
+    if (
+        typeof window.triggerMrSmileFirstContact ===
+        "function"
+    ) {
+
+        window.triggerMrSmileFirstContact({
+
+            source:
+                "discovery_system",
+
+            type:
+                "first_contact_discovered"
+
+        });
+
+    }
+
 
     return element;
 
