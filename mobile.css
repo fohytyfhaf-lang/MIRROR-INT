@@ -1,0 +1,609 @@
+/* ==========================================================
+   MIRROR-INT / OMEGA
+   MOBILE + TOUCH LAYOUT
+
+   Add to style.css:
+   @import url("mobile.css");
+
+   Or rename this file to your preferred location and adjust
+   the import path accordingly.
+========================================================== */
+
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+body {
+    overscroll-behavior-x: none;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+    -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 600px) {
+
+    /* ======================================================
+       PUBLIC ABIC
+    ====================================================== */
+
+    #publicSite {
+        min-height: 100dvh;
+        overflow-x: hidden;
+        overflow-y: visible;
+    }
+
+    #headerLogo {
+        width: calc(100% - 24px);
+        min-height: 72px;
+        padding: 12px 0;
+        gap: 10px;
+    }
+
+    #headerLogo img {
+        width: 44px;
+        height: 44px;
+    }
+
+    #headerLogo h1 {
+        font-size: 17px;
+        line-height: 1.2;
+    }
+
+    #headerLogo p {
+        margin-top: 3px;
+        font-size: 8px;
+        line-height: 1.35;
+    }
+
+    #publicMenu {
+        justify-content: flex-start;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    #publicMenu a {
+        flex: 0 0 auto;
+        min-height: 46px;
+        padding: 0 15px;
+        font-size: 10px;
+    }
+
+    #publicMain {
+        width: calc(100% - 16px);
+        min-height: 0;
+        padding: 10px 0 28px;
+    }
+
+    #publicContent {
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    #publicContent img,
+    #publicContent video,
+    #publicContent iframe {
+        max-width: 100%;
+    }
+
+    #publicContent table {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #publicContent pre,
+    #publicContent code {
+        max-width: 100%;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    #publicContent input,
+    #publicContent textarea,
+    #publicContent select,
+    #publicContent button {
+        max-width: 100%;
+    }
+
+    .publicPageHeader {
+        margin-bottom: 20px;
+    }
+
+    .publicPageHeader h1,
+    .publicPageHeader h2 {
+        font-size: 23px;
+        line-height: 1.2;
+    }
+
+    .publicPageHeader p {
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .abicSimplePage {
+        min-height: 0;
+        padding: 35px 20px;
+    }
+
+    .abicSimplePage h1 {
+        font-size: 27px;
+    }
+
+    .abicHomeHeroText h1 {
+        font-size: clamp(30px, 9vw, 40px);
+    }
+
+    .abicHomeHeroImage {
+        min-height: 230px;
+    }
+
+    .abicHomeSearchRow {
+        width: 100%;
+    }
+
+    .abicHomePlantGrid {
+        grid-template-columns: 1fr;
+    }
+
+    /* ======================================================
+       OMEGA DESKTOP
+       Bottom navigation is much easier to use by touch.
+    ====================================================== */
+
+    #desktop {
+        height: 100dvh;
+        min-height: 100dvh;
+        overflow: hidden;
+        touch-action: manipulation;
+    }
+
+    #sidebar {
+        top: auto;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        min-width: 0;
+        height: 58px;
+        min-height: 58px;
+        flex-direction: row;
+        align-items: stretch;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        border-right: 0;
+        border-top: 1px solid #1d3245;
+        z-index: 6000;
+    }
+
+    #sidebar .menuTitle,
+    #sidebar .sidebarFooter {
+        display: none;
+    }
+
+    #sidebar button {
+        flex: 0 0 64px;
+        width: 64px;
+        min-width: 64px;
+        min-height: 58px;
+        height: 58px;
+        padding: 8px 4px;
+        justify-content: center;
+        align-items: center;
+        gap: 3px;
+        font-size: 9px;
+        line-height: 1.1;
+        white-space: nowrap;
+        border-right: 1px solid rgba(255,255,255,.04);
+        border-left: 0;
+    }
+
+    #sidebar button span {
+        display: block;
+        max-width: 56px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 8px;
+        line-height: 1.1;
+    }
+
+    #workspace {
+        top: 60px;
+        left: 7px;
+        right: 7px;
+        bottom: 65px;
+        overflow: hidden;
+    }
+
+    #icons {
+        display: none;
+    }
+
+    .desktopWatermark {
+        right: 9px;
+        bottom: 7px;
+        max-width: calc(100% - 20px);
+        text-align: right;
+        pointer-events: none;
+    }
+
+    /* ======================================================
+       WINDOWS
+    ====================================================== */
+
+    .window {
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        border-radius: 6px;
+    }
+
+    .windowHeader {
+        flex: 0 0 42px;
+        height: 42px;
+        min-height: 42px;
+    }
+
+    .windowTitle {
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .windowControls button {
+        min-width: 30px;
+        min-height: 28px;
+        width: 30px;
+        height: 28px;
+    }
+
+    .windowBody,
+    .windowContent {
+        min-width: 0;
+        min-height: 0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .windowBody {
+        overflow: hidden;
+    }
+
+    .windowContent {
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+
+    .windowFooter {
+        flex-wrap: nowrap;
+    }
+
+    .windowFooter input,
+    .windowFooter textarea,
+    .windowFooter select {
+        min-width: 0;
+        width: 100%;
+    }
+
+    /* ======================================================
+       CONSOLE
+    ====================================================== */
+
+    #consoleWindow .windowBody {
+        min-height: 0;
+    }
+
+    #consoleLog {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        padding: 12px;
+        font-size: 11px;
+        line-height: 1.55;
+    }
+
+    #consoleWindow .windowFooter {
+        display: flex;
+        min-height: 48px;
+        padding: 7px;
+        gap: 6px;
+    }
+
+    #consoleInput {
+        flex: 1 1 auto;
+        min-width: 0;
+        height: 34px;
+        font-size: 13px;
+        border-radius: 4px;
+    }
+
+    #consoleEnter {
+        flex: 0 0 58px;
+        min-width: 58px;
+        height: 34px;
+        font-size: 11px;
+    }
+
+    /* ======================================================
+       FILE EXPLORER
+    ====================================================== */
+
+    #filesWindow .windowBody {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #pathBar {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        max-width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #filesList {
+        min-width: 0;
+        overflow-x: hidden;
+        overflow-y: visible;
+    }
+
+    .explorerItem {
+        min-height: 48px;
+        touch-action: manipulation;
+    }
+
+    .explorerName {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    /* ======================================================
+       CAMERAS
+       Stack the camera UI vertically rather than squeezing
+       the desktop two-column layout onto a phone.
+    ====================================================== */
+
+    #cameraWindow {
+        width: 100% !important;
+        height: 100% !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+    }
+
+    #cameraWindow .cameraSystem {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #cameraWindow .cameraChannelPanel {
+        flex: 0 0 98px;
+        width: 100%;
+        min-height: 98px;
+        max-height: 118px;
+        border-right: 0;
+        border-bottom: 1px solid #293f4f;
+    }
+
+    #cameraWindow .cameraPanelTitle {
+        height: 34px;
+        min-height: 34px;
+        padding: 0 10px;
+    }
+
+    #cameraWindow .cameraChannelList {
+        display: flex;
+        gap: 6px;
+        width: 100%;
+        min-height: 54px;
+        padding: 6px 8px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #cameraWindow .cameraChannel {
+        flex: 0 0 108px;
+        min-width: 108px;
+        min-height: 48px;
+    }
+
+    #cameraWindow .cameraPanelStatus {
+        display: none;
+    }
+
+    #cameraWindow .cameraMain {
+        flex: 1 1 auto;
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #cameraWindow .cameraFeedPanel {
+        flex: 0 0 min(46vh, 300px);
+        min-height: 180px;
+    }
+
+    #cameraWindow .cameraTechnicalBar {
+        flex: 0 0 auto;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #cameraWindow .cameraTechnicalItem {
+        min-width: 0;
+    }
+
+    #cameraWindow .cameraEventPanel {
+        flex: 1 1 130px;
+        min-height: 110px;
+    }
+
+    #cameraWindow .cameraEventList {
+        min-height: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #cameraWindow .cameraControlBar {
+        flex: 0 0 auto;
+        grid-template-columns: 1fr;
+        gap: 6px;
+        padding: 7px;
+    }
+
+    #cameraWindow .cameraControlLeft {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    #cameraWindow .cameraControlButton {
+        min-width: 0;
+        width: 100%;
+        height: 34px;
+    }
+
+    #cameraWindow .cameraLiveStatus {
+        display: none;
+    }
+
+    /* ======================================================
+       INTERNAL CHAT
+    ====================================================== */
+
+    .chatSystem {
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chatSidebar {
+        flex: 0 0 82px;
+        width: 100%;
+        min-width: 0;
+        height: 82px;
+        border-right: 0;
+        border-bottom: 1px solid #263d52;
+    }
+
+    .chatSidebarHeader {
+        min-height: 32px;
+        padding: 7px 9px;
+        font-size: 10px;
+    }
+
+    .chatList {
+        display: flex;
+        min-height: 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .chatListItem {
+        flex: 0 0 150px;
+        min-width: 150px;
+        min-height: 48px;
+        border-bottom: 0;
+        border-right: 1px solid rgba(255,255,255,.04);
+    }
+
+    .chatListStatus {
+        display: none;
+    }
+
+    .chatMain {
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    .chatMessages {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #chatInput,
+    #sendBtn {
+        min-height: 34px;
+    }
+
+    /* ======================================================
+       RESEARCH / SETTINGS / PERSONNEL
+    ====================================================== */
+
+    #researchLayout,
+    #settingsLayout {
+        min-width: 0;
+        min-height: 0;
+    }
+
+    #researchWindow,
+    #settingsWindow,
+    #personnelWindow {
+        overflow: hidden;
+    }
+
+    #researchWindow .windowBody,
+    #personnelWindow .windowBody {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media (max-width: 380px) {
+
+    #sidebar button {
+        flex-basis: 58px;
+        width: 58px;
+        min-width: 58px;
+    }
+
+    #sidebar button span {
+        font-size: 7px;
+    }
+
+    .windowHeader {
+        height: 40px;
+        min-height: 40px;
+        flex-basis: 40px;
+    }
+
+    .windowControls button {
+        min-width: 27px;
+        width: 27px;
+    }
+
+    #consoleInput {
+        font-size: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    #sidebar button,
+    .window,
+    .windowControls button {
+        transition: none !important;
+        animation: none !important;
+    }
+}
