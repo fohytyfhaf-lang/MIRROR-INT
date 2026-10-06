@@ -1,12 +1,12 @@
 /* ==========================================================
    MIRROR-INT / OMEGA
-   MOBILE + TOUCH LAYOUT
+   MOBILE-FIRST ADAPTATION
 
    Add to style.css:
    @import url("mobile.css");
 
-   Or rename this file to your preferred location and adjust
-   the import path accordingly.
+   This file only applies to touch-sized screens.
+   Desktop layout stays unchanged.
 ========================================================== */
 
 html {
@@ -21,8 +21,8 @@ body {
 button,
 a,
 input,
-select,
-textarea {
+textarea,
+select {
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -30,6 +30,7 @@ textarea {
 
     /* ======================================================
        PUBLIC ABIC
+       Calm vertical reading layout.
     ====================================================== */
 
     #publicSite {
@@ -41,7 +42,7 @@ textarea {
     #headerLogo {
         width: calc(100% - 24px);
         min-height: 72px;
-        padding: 12px 0;
+        padding: 11px 0;
         gap: 10px;
     }
 
@@ -52,7 +53,7 @@ textarea {
 
     #headerLogo h1 {
         font-size: 17px;
-        line-height: 1.2;
+        line-height: 1.18;
     }
 
     #headerLogo p {
@@ -67,6 +68,7 @@ textarea {
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: thin;
+        scroll-snap-type: x proximity;
     }
 
     #publicMenu a {
@@ -74,6 +76,7 @@ textarea {
         min-height: 46px;
         padding: 0 15px;
         font-size: 10px;
+        scroll-snap-align: start;
     }
 
     #publicMain {
@@ -101,12 +104,10 @@ textarea {
         -webkit-overflow-scrolling: touch;
     }
 
-    #publicContent pre,
-    #publicContent code {
+    #publicContent pre {
         max-width: 100%;
         overflow-x: auto;
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
+        -webkit-overflow-scrolling: touch;
     }
 
     #publicContent input,
@@ -128,37 +129,80 @@ textarea {
 
     .publicPageHeader p {
         font-size: 12px;
-        line-height: 1.6;
+        line-height: 1.65;
     }
 
     .abicSimplePage {
         min-height: 0;
-        padding: 35px 20px;
+        padding: 34px 19px;
     }
 
     .abicSimplePage h1 {
         font-size: 27px;
+        line-height: 1.15;
+    }
+
+    .abicHomeHero {
+        grid-template-columns: 1fr;
+    }
+
+    .abicHomeHeroText {
+        padding: 38px 20px;
     }
 
     .abicHomeHeroText h1 {
         font-size: clamp(30px, 9vw, 40px);
     }
 
+    .abicHomeHeroText p {
+        font-size: 13px;
+        line-height: 1.75;
+    }
+
     .abicHomeHeroImage {
         min-height: 230px;
     }
 
+    .abicHomeSearch,
+    .abicHomeFeatured,
+    .abicHomeNews {
+        padding: 38px 20px;
+    }
+
     .abicHomeSearchRow {
         width: 100%;
+        flex-direction: column;
+    }
+
+    .abicHomeSearchRow input {
+        width: 100%;
+        border-right: 1px solid #c5cdc4;
+        border-bottom: 0;
+    }
+
+    .abicHomeSearchButton {
+        width: 100%;
+        min-height: 42px;
     }
 
     .abicHomePlantGrid {
         grid-template-columns: 1fr;
     }
 
+    .abicHomeSectionHeader {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 9px;
+    }
+
+    .abicHomeNewsCard {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
     /* ======================================================
-       OMEGA DESKTOP
-       Bottom navigation is much easier to use by touch.
+       OMEGA SHELL
+       Phone = vertical workspace + bottom app dock.
     ====================================================== */
 
     #desktop {
@@ -168,6 +212,14 @@ textarea {
         touch-action: manipulation;
     }
 
+    #desktopBackground {
+        inset: 0;
+    }
+
+    #topBar {
+        z-index: 7000;
+    }
+
     #sidebar {
         top: auto;
         left: 0;
@@ -175,16 +227,18 @@ textarea {
         bottom: 0;
         width: 100%;
         min-width: 0;
-        height: 58px;
-        min-height: 58px;
+        height: 60px;
+        min-height: 60px;
+        display: flex;
         flex-direction: row;
         align-items: stretch;
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
         border-right: 0;
         border-top: 1px solid #1d3245;
-        z-index: 6000;
+        z-index: 6500;
     }
 
     #sidebar .menuTitle,
@@ -193,25 +247,27 @@ textarea {
     }
 
     #sidebar button {
-        flex: 0 0 64px;
-        width: 64px;
-        min-width: 64px;
-        min-height: 58px;
-        height: 58px;
-        padding: 8px 4px;
+        flex: 0 0 68px;
+        width: 68px;
+        min-width: 68px;
+        min-height: 60px;
+        height: 60px;
+        padding: 7px 4px;
         justify-content: center;
         align-items: center;
         gap: 3px;
         font-size: 9px;
         line-height: 1.1;
         white-space: nowrap;
+        scroll-snap-align: start;
         border-right: 1px solid rgba(255,255,255,.04);
         border-left: 0;
     }
 
     #sidebar button span {
         display: block;
-        max-width: 56px;
+        width: 100%;
+        max-width: 60px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -220,10 +276,10 @@ textarea {
     }
 
     #workspace {
-        top: 60px;
-        left: 7px;
-        right: 7px;
-        bottom: 65px;
+        top: 61px;
+        left: 6px;
+        right: 6px;
+        bottom: 66px;
         overflow: hidden;
     }
 
@@ -232,20 +288,23 @@ textarea {
     }
 
     .desktopWatermark {
-        right: 9px;
+        right: 8px;
         bottom: 7px;
-        max-width: calc(100% - 20px);
+        max-width: calc(100% - 16px);
         text-align: right;
         pointer-events: none;
     }
 
     /* ======================================================
-       WINDOWS
+       ALL OMEGA WINDOWS
+       Opened module fills the usable workspace.
     ====================================================== */
 
     .window {
         left: 0 !important;
         top: 0 !important;
+        right: auto !important;
+        bottom: auto !important;
         width: 100% !important;
         height: 100% !important;
         max-width: 100% !important;
@@ -256,23 +315,31 @@ textarea {
     }
 
     .windowHeader {
-        flex: 0 0 42px;
-        height: 42px;
-        min-height: 42px;
+        flex: 0 0 43px;
+        height: 43px;
+        min-height: 43px;
+        gap: 7px;
+        padding-left: 9px;
+        padding-right: 7px;
     }
 
     .windowTitle {
         min-width: 0;
+        max-width: calc(100% - 105px);
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
     }
 
+    .windowControls {
+        flex: 0 0 auto;
+    }
+
     .windowControls button {
-        min-width: 30px;
-        min-height: 28px;
         width: 30px;
-        height: 28px;
+        min-width: 30px;
+        height: 29px;
+        min-height: 29px;
     }
 
     .windowBody,
@@ -290,10 +357,11 @@ textarea {
         overflow-x: hidden;
         overflow-y: auto;
         overscroll-behavior: contain;
+        scrollbar-width: thin;
     }
 
     .windowFooter {
-        flex-wrap: nowrap;
+        min-width: 0;
     }
 
     .windowFooter input,
@@ -312,16 +380,16 @@ textarea {
     }
 
     #consoleLog {
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
         padding: 12px;
         font-size: 11px;
-        line-height: 1.55;
+        line-height: 1.6;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
     }
 
     #consoleWindow .windowFooter {
         display: flex;
-        min-height: 48px;
+        min-height: 50px;
         padding: 7px;
         gap: 6px;
     }
@@ -329,15 +397,17 @@ textarea {
     #consoleInput {
         flex: 1 1 auto;
         min-width: 0;
-        height: 34px;
+        height: 36px;
+        padding-left: 10px;
+        padding-right: 10px;
         font-size: 13px;
-        border-radius: 4px;
     }
 
     #consoleEnter {
-        flex: 0 0 58px;
-        min-width: 58px;
-        height: 34px;
+        flex: 0 0 60px;
+        width: 60px;
+        min-width: 60px;
+        height: 36px;
         font-size: 11px;
     }
 
@@ -348,12 +418,13 @@ textarea {
     #filesWindow .windowBody {
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
     }
 
     #pathBar {
         position: sticky;
         top: 0;
-        z-index: 3;
+        z-index: 5;
         max-width: 100%;
         overflow-x: auto;
         white-space: nowrap;
@@ -377,9 +448,9 @@ textarea {
     }
 
     /* ======================================================
-       CAMERAS
-       Stack the camera UI vertically rather than squeezing
-       the desktop two-column layout onto a phone.
+       CAMERA
+       Mobile camera hierarchy:
+       feed -> channel strip -> tech info -> events -> controls
     ====================================================== */
 
     #cameraWindow {
@@ -392,16 +463,19 @@ textarea {
     #cameraWindow .cameraSystem {
         display: flex;
         flex-direction: column;
+        min-height: 0;
         overflow-y: auto;
         overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
     }
 
     #cameraWindow .cameraChannelPanel {
-        flex: 0 0 98px;
+        order: 1;
+        flex: 0 0 96px;
         width: 100%;
-        min-height: 98px;
-        max-height: 118px;
+        min-height: 96px;
+        max-height: 110px;
         border-right: 0;
         border-bottom: 1px solid #293f4f;
     }
@@ -421,12 +495,15 @@ textarea {
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
     }
 
     #cameraWindow .cameraChannel {
-        flex: 0 0 108px;
-        min-width: 108px;
+        flex: 0 0 112px;
+        width: 112px;
+        min-width: 112px;
         min-height: 48px;
+        scroll-snap-align: start;
     }
 
     #cameraWindow .cameraPanelStatus {
@@ -434,6 +511,7 @@ textarea {
     }
 
     #cameraWindow .cameraMain {
+        order: 0;
         flex: 1 1 auto;
         min-width: 0;
         min-height: 0;
@@ -442,8 +520,8 @@ textarea {
     }
 
     #cameraWindow .cameraFeedPanel {
-        flex: 0 0 min(46vh, 300px);
-        min-height: 180px;
+        flex: 0 0 min(45vh, 300px);
+        min-height: 190px;
     }
 
     #cameraWindow .cameraTechnicalBar {
@@ -453,17 +531,22 @@ textarea {
 
     #cameraWindow .cameraTechnicalItem {
         min-width: 0;
+        overflow: hidden;
     }
 
     #cameraWindow .cameraEventPanel {
         flex: 1 1 130px;
-        min-height: 110px;
+        min-height: 120px;
     }
 
     #cameraWindow .cameraEventList {
         min-height: 0;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
+    }
+
+    #cameraWindow .cameraEventRow {
+        min-width: 0;
     }
 
     #cameraWindow .cameraControlBar {
@@ -476,20 +559,23 @@ textarea {
     #cameraWindow .cameraControlLeft {
         display: grid;
         grid-template-columns: 1fr 1fr;
+        gap: 6px;
     }
 
     #cameraWindow .cameraControlButton {
-        min-width: 0;
         width: 100%;
-        height: 34px;
+        min-width: 0;
+        height: 35px;
     }
 
-    #cameraWindow .cameraLiveStatus {
+    #cameraWindow .cameraLiveStatus,
+    #cameraWindow .cameraControlCurrent {
         display: none;
     }
 
     /* ======================================================
-       INTERNAL CHAT
+       CHATS
+       Channel strip on top; conversation below.
     ====================================================== */
 
     .chatSystem {
@@ -508,7 +594,7 @@ textarea {
     }
 
     .chatSidebarHeader {
-        min-height: 32px;
+        min-height: 31px;
         padding: 7px 9px;
         font-size: 10px;
     }
@@ -519,14 +605,16 @@ textarea {
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
     }
 
     .chatListItem {
-        flex: 0 0 150px;
-        min-width: 150px;
+        flex: 0 0 154px;
+        min-width: 154px;
         min-height: 48px;
         border-bottom: 0;
         border-right: 1px solid rgba(255,255,255,.04);
+        scroll-snap-align: start;
     }
 
     .chatListStatus {
@@ -539,43 +627,81 @@ textarea {
     }
 
     .chatMessages {
+        padding: 12px;
         -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+
+    .chatMessage {
+        max-width: 94%;
+    }
+
+    .chatInputArea {
+        padding: 7px;
     }
 
     #chatInput,
     #sendBtn {
-        min-height: 34px;
+        min-height: 36px;
     }
 
     /* ======================================================
-       RESEARCH / SETTINGS / PERSONNEL
+       SETTINGS
+       Existing settings mobile layout is preserved, with
+       safer touch scrolling.
     ====================================================== */
 
-    #researchLayout,
-    #settingsLayout {
+    #settingsWindow .windowContent,
+    #settingsContent {
+        min-height: 0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #settingsSidebar,
+    #settingsContent {
+        scrollbar-width: thin;
+    }
+
+    /* ======================================================
+       RESEARCH
+    ====================================================== */
+
+    #researchWindow .windowBody {
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    #researchLayout {
         min-width: 0;
         min-height: 0;
     }
 
-    #researchWindow,
-    #settingsWindow,
-    #personnelWindow {
-        overflow: hidden;
-    }
+    /* ======================================================
+       PERSONNEL
+    ====================================================== */
 
-    #researchWindow .windowBody,
     #personnelWindow .windowBody {
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+
+    #personnelList {
+        min-width: 0;
+    }
+
+    .personCard {
+        width: 100%;
+        min-width: 0;
     }
 }
 
 @media (max-width: 380px) {
 
     #sidebar button {
-        flex-basis: 58px;
-        width: 58px;
-        min-width: 58px;
+        flex-basis: 60px;
+        width: 60px;
+        min-width: 60px;
     }
 
     #sidebar button span {
@@ -583,18 +709,38 @@ textarea {
     }
 
     .windowHeader {
-        height: 40px;
-        min-height: 40px;
-        flex-basis: 40px;
+        height: 41px;
+        min-height: 41px;
+        flex-basis: 41px;
+    }
+
+    .windowTitle {
+        font-size: 11px;
     }
 
     .windowControls button {
-        min-width: 27px;
         width: 27px;
+        min-width: 27px;
     }
 
     #consoleInput {
         font-size: 12px;
+    }
+
+    #consoleEnter {
+        width: 56px;
+        min-width: 56px;
+    }
+
+    #cameraWindow .cameraChannel {
+        flex-basis: 102px;
+        width: 102px;
+        min-width: 102px;
+    }
+
+    .chatListItem {
+        flex-basis: 142px;
+        min-width: 142px;
     }
 }
 
