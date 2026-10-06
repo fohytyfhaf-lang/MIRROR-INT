@@ -1143,36 +1143,34 @@ function createPrivateChannelNotice() {
             }
 
 
-       const granted =
-    api({
-        source:
-            "operator_connect"
-    });
 
 
-if (
-    granted === true
-) {
-
-    button.textContent =
-        "CONNECTED";
-
-
-    const status =
-        element.querySelector(
-            "#mrSmileConnectionStatus"
-        );
+        const granted =
+            api({
+                source:
+                    "operator_connect"
+            });
 
 
-    if (status) {
+        button.textContent =
+            "CONNECTED";
 
-        status.textContent =
-            "STATUS: CHANNEL CONNECTED";
 
-           }
+        const status =
+            element.querySelector(
+                "#mrSmileConnectionStatus"
+            );
+
+
+        if (status) {
+
+            status.textContent =
+                "STATUS: CHANNEL CONNECTED";
 
         }
-    );
+
+    }
+);
 
 
     trigger(
