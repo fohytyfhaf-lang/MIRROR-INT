@@ -926,20 +926,138 @@ STATE.handshakeRunning =
    ----------------------------------------------------------
    THIS IS THE ONLY OFFICIAL ENTRY POINT.
 ========================================================== */
-
 export function triggerMrSmileFirstContact(
     data = {}
 ) {
 
+    /*
+     * First Contact уже завершён
+     */
+    if (
+        STATE.firstContactCompleted ||
+        isFirstContactCompleted()
+    ) {
+
+        if (data.force !== true) {
+
+            console.log(
+                "[MR.SMILE EVENTS] First Contact already completed."
+            );
+
+            return false;
+
+        }
+
+    }
+
+
+    /*
+     * Уже выполняется
+     */
+    if (
+        STATE.firstContactRunning
+    ) {
+
+        console.log(
+            "[MR.SMILE EVENTS] First Contact already running."
+        );
+
+        return false;
+
+    }
+
+
+    /*
+     * ACCESS GATE
+     *
+     * Без CONNECT First Contact не начинается.
+     * Discovery только оставляет его в ожидании.
+     */
+    if (
+        !isMrSmileAccessGranted() &&
+        data.bypassAccess !== true
+    ) {
+
+        const pendingPayload = {
+
+            ...data,
+
+            source:
+                data.source ||
+                "discovery_system",
+
+            type:
+                data.type ||
+                "first_contact_discovered",
+
+            timestamp:
+                Date.now()
+
+        };
+
+
+        STATE.pendingFirstContact =
+            pendingPayload;
+
+
+        STATE.firstContactQueued =
+            true;
+
+
+        trigger(
+            "mrsmile:firstContactWaitingForAccess",
+            {
+
+                source:
+                    pendingPayload.source,
+
+                timestamp:
+                    Date.now()
+
+            }
+        );
+
+
+        console.log(
+            "[MR.SMILE EVENTS] First Contact waiting for operator CONNECT."
+        );
+
+
+        return false;
+
+    }
+
+
+    /*
+     * Защита от повторной постановки в очередь
+     */
+    if (
+        STATE.firstContactQueued
+    ) {
+
+        return false;
+
+    }
+
+
+    /*
+     * Теперь создаём Event ID.
+     *
+     * Важно:
+     * он создаётся только после того,
+     * как доступ действительно разрешён.
+     */
     const eventId =
         nextEventId();
 
 
     const payload = {
 
+        ...data,
+
         source:
             data.source ||
-            "manual",
+            "operator_connect",
 
         type:
             data.type ||
@@ -955,118 +1073,39 @@ export function triggerMrSmileFirstContact(
 
     };
 
-       /* ------------------------------------------------------
-       ACCESS GATE
-       ------------------------------------------------------
-       Discovery can request First Contact, but MR.SMILE
-       cannot enter until the operator explicitly connects.
-    ------------------------------------------------------ */
 
-    if (
-        !isMrSmileAccessGranted() &&
-        data.bypassAccess !== true
-    ) {
-
-        if (
-            !STATE.pendingFirstContact
-        ) {
-
-            STATE.pendingFirstContact =
-                payload;
-
-        }
-
-        STATE.firstContactQueued =
-            true;
-
-        trigger(
-            "mrsmile:firstContactWaitingForAccess",
-            {
-
-                source:
-                    payload.source,
-
-                timestamp:
-                    Date.now(),
-
-                eventId:
-                    payload.eventId
-
-            }
-        );
-
-        console.log(
-            "[MR.SMILE EVENTS] First Contact waiting for operator CONNECT."
-        );
-
-        return false;
-
-    }
-
-
-    /* ------------------------------------------------------
-       Persistent guard
-    ------------------------------------------------------ */
-
-    if (
-        isFirstContactCompleted() &&
-        payload.force !== true
-    ) {
-
-        console.log(
-            "[MR.SMILE EVENTS] First Contact already completed."
-        );
-
-        return false;
-
-    }
-
-
-    /* ------------------------------------------------------
-       Runtime guard
-    ------------------------------------------------------ */
-
-    if (
-        STATE.firstContactRunning
-    ) {
-
-        console.log(
-            "[MR.SMILE EVENTS] First Contact already running."
-        );
-
-        return false;
-
-    }
-
-
-    /* ------------------------------------------------------
-       Queue guard
-    ------------------------------------------------------ */
-
-    if (
-        STATE.firstContactQueued
-    ) {
-
-        return false;
-
-    }
+    STATE.pendingFirstContact =
+        null;
 
 
     STATE.firstContactQueued =
         true;
 
 
+    /*
+     * Сохраняем время запуска
+     */
+    markFirstContactStarted();
+
+
+    /*
+     * Запускаем единственный официальный
+     * First Contact event.
+     */
     trigger(
         "mrsmile:firstContact",
         payload
     );
 
 
+    console.log(
+        `[MR.SMILE EVENTS] First Contact queued. Event ID: ${eventId}`
+    );
+
+
     return true;
 
 }
-
-
 /* ==========================================================
    GLOBAL API
 ========================================================== */
