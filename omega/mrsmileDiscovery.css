@@ -1048,6 +1048,124 @@
 
 }
 
+/* ==========================================================
+   MR.SMILE CONNECTION ACTION
+========================================================== */
+
+.omegaDiscoveryNotice.private-channel {
+    pointer-events: auto;
+}
+
+
+.mrSmileConnectionAction {
+
+    margin-top:
+        12px;
+
+    padding-top:
+        10px;
+
+    border-top:
+        1px solid
+        rgba(79,216,255,.16);
+
+}
+
+
+.mrSmileConnectionAction button {
+
+    appearance:
+        none;
+
+    min-width:
+        112px;
+
+    min-height:
+        36px;
+
+    padding:
+        8px
+        14px;
+
+    border:
+        1px solid
+        rgba(79,216,255,.42);
+
+    background:
+        #0a1b28;
+
+    color:
+        #91e5ff;
+
+    font:
+        11px
+        "Consolas",
+        "Courier New",
+        monospace;
+
+    letter-spacing:
+        .08em;
+
+    cursor:
+        pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+.mrSmileConnectionAction button:hover {
+
+    background:
+        #0d2433;
+
+    border-color:
+        rgba(79,216,255,.7);
+
+    box-shadow:
+        0 0 14px
+        rgba(79,216,255,.08);
+
+}
+
+
+.mrSmileConnectionAction button:active {
+
+    transform:
+        translateY(1px);
+
+}
+
+
+.mrSmileConnectionAction button:disabled {
+
+    cursor:
+        default;
+
+    opacity:
+        .7;
+
+}
+
+
+.mrSmileConnectionAction button:disabled:hover {
+
+    background:
+        #0a1b28;
+
+    border-color:
+        rgba(79,216,255,.42);
+
+    box-shadow:
+        none;
+
+}
+
+
 
 /* ==========================================================
    17. REDUCED MOTION
