@@ -1223,15 +1223,6 @@ function createPrivateChannelNotice() {
 function prepareFirstContact() {
 
     if (
-        STATE.firstContactRunning
-    ) {
-
-        return false;
-
-    }
-
-
-    if (
         STATE.firstContactCompleted
     ) {
 
@@ -1241,19 +1232,8 @@ function prepareFirstContact() {
 
 
     if (
-        isFirstContactCompleted()
-    ) {
-
-        STATE.firstContactCompleted =
-            true;
-
-        return false;
-
-    }
-
-
-    if (
-        STATE.contactTimer
+        STATE.firstContactRunning ||
+        STATE.channelShown
     ) {
 
         return false;
@@ -1261,14 +1241,9 @@ function prepareFirstContact() {
     }
 
 
-    STATE.firstContactRunning =
+    STATE.discoveryReady =
         true;
 
-
-    /*
-     * Show final channel notice after
-     * the discovery layer has settled.
-     */
 
     STATE.channelTimer =
         setTimeout(
@@ -1277,35 +1252,16 @@ function prepareFirstContact() {
                 STATE.channelTimer =
                     null;
 
-
                 createPrivateChannelNotice();
-
 
             },
             CONFIG.channelDelay
         );
 
 
-    STATE.contactTimer =
-        setTimeout(
-            () => {
-
-                STATE.contactTimer =
-                    null;
-
-
-                startOfficialFirstContact();
-
-            },
-            CONFIG.channelDelay +
-            CONFIG.firstContactDelay
-        );
-
-
     return true;
 
 }
-
 
 /* ==========================================================
    OFFICIAL FIRST CONTACT
