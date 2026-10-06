@@ -1,12 +1,13 @@
 /* ==========================================================
-   MIRROR-INT / OMEGA
-   MOBILE-FIRST ADAPTATION
+   MIRROR-INT
+   MOBILE UI
+   ----------------------------------------------------------
+   IMPORTANT:
+   This file does NOT remove functionality.
+   It only changes layout for small touch screens.
 
-   Add to style.css:
-   @import url("mobile.css");
-
-   This file only applies to touch-sized screens.
-   Desktop layout stays unchanged.
+   Recommended:
+   load this file AFTER all other CSS files.
 ========================================================== */
 
 html {
@@ -26,11 +27,40 @@ select {
     -webkit-tap-highlight-color: transparent;
 }
 
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
 @media (max-width: 600px) {
 
     /* ======================================================
-       PUBLIC ABIC
-       Calm vertical reading layout.
+       GLOBAL MOBILE BEHAVIOR
+    ====================================================== */
+
+    #publicSite,
+    #desktop {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    #publicSite *,
+    #desktop * {
+        max-width: 100%;
+    }
+
+    img,
+    video,
+    canvas,
+    iframe {
+        max-width: 100%;
+    }
+
+
+    /* ======================================================
+       ABIC PUBLIC WEBSITE
+       Nothing hidden.
+       Everything simply becomes vertical.
     ====================================================== */
 
     #publicSite {
@@ -39,11 +69,20 @@ select {
         overflow-y: visible;
     }
 
+    #publicHeader {
+        width: 100%;
+    }
+
     #headerLogo {
         width: calc(100% - 24px);
         min-height: 72px;
-        padding: 11px 0;
-        gap: 10px;
+
+        padding:
+            11px
+            0;
+
+        gap:
+            10px;
     }
 
     #headerLogo img {
@@ -52,121 +91,172 @@ select {
     }
 
     #headerLogo h1 {
+        margin: 0;
         font-size: 17px;
-        line-height: 1.18;
+        line-height: 1.2;
     }
 
     #headerLogo p {
         margin-top: 3px;
         font-size: 8px;
-        line-height: 1.35;
+        line-height: 1.4;
     }
 
     #publicMenu {
         justify-content: flex-start;
+
         overflow-x: auto;
         overflow-y: hidden;
+
         -webkit-overflow-scrolling: touch;
+
         scrollbar-width: thin;
-        scroll-snap-type: x proximity;
     }
 
     #publicMenu a {
-        flex: 0 0 auto;
+        flex:
+            0 0
+            auto;
+
         min-height: 46px;
-        padding: 0 15px;
+
+        padding:
+            0
+            15px;
+
+        white-space: nowrap;
+
         font-size: 10px;
-        scroll-snap-align: start;
     }
 
     #publicMain {
-        width: calc(100% - 16px);
+        width:
+            calc(100% - 16px);
+
         min-height: 0;
-        padding: 10px 0 28px;
+
+        padding:
+            10px
+            0
+            30px;
     }
 
     #publicContent {
         min-height: 0;
-        overflow: hidden;
+
+        overflow:
+            hidden;
     }
 
     #publicContent img,
     #publicContent video,
     #publicContent iframe {
+        display: block;
+        width: auto;
         max-width: 100%;
+        height: auto;
     }
 
     #publicContent table {
         display: block;
+
         width: 100%;
         max-width: 100%;
+
         overflow-x: auto;
+
         -webkit-overflow-scrolling: touch;
     }
 
     #publicContent pre {
         max-width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
 
-    #publicContent input,
-    #publicContent textarea,
-    #publicContent select,
-    #publicContent button {
-        max-width: 100%;
+        overflow-x: auto;
+
+        -webkit-overflow-scrolling: touch;
+
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
     }
 
     .publicPageHeader {
-        margin-bottom: 20px;
+        margin-bottom:
+            20px;
     }
 
     .publicPageHeader h1,
     .publicPageHeader h2 {
-        font-size: 23px;
-        line-height: 1.2;
+        font-size:
+            23px;
+
+        line-height:
+            1.2;
     }
 
     .publicPageHeader p {
-        font-size: 12px;
-        line-height: 1.65;
+        font-size:
+            12px;
+
+        line-height:
+            1.65;
     }
 
     .abicSimplePage {
-        min-height: 0;
-        padding: 34px 19px;
+        min-height:
+            0;
+
+        padding:
+            34px
+            19px;
     }
 
     .abicSimplePage h1 {
-        font-size: 27px;
-        line-height: 1.15;
+        font-size:
+            27px;
+
+        line-height:
+            1.15;
     }
 
     .abicHomeHero {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
     }
 
     .abicHomeHeroText {
-        padding: 38px 20px;
+        padding:
+            38px
+            20px;
     }
 
     .abicHomeHeroText h1 {
-        font-size: clamp(30px, 9vw, 40px);
+        font-size:
+            clamp(
+                30px,
+                9vw,
+                40px
+            );
     }
 
     .abicHomeHeroText p {
-        font-size: 13px;
-        line-height: 1.75;
+        font-size:
+            13px;
+
+        line-height:
+            1.75;
     }
 
     .abicHomeHeroImage {
-        min-height: 230px;
+        min-height:
+            220px;
     }
 
     .abicHomeSearch,
     .abicHomeFeatured,
     .abicHomeNews {
-        padding: 38px 20px;
+        padding:
+            38px
+            20px;
     }
 
     .abicHomeSearchRow {
@@ -176,8 +266,13 @@ select {
 
     .abicHomeSearchRow input {
         width: 100%;
-        border-right: 1px solid #c5cdc4;
-        border-bottom: 0;
+
+        border-right:
+            1px solid
+            #c5cdc4;
+
+        border-bottom:
+            0;
     }
 
     .abicHomeSearchButton {
@@ -186,902 +281,1010 @@ select {
     }
 
     .abicHomePlantGrid {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
     }
 
     .abicHomeSectionHeader {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 9px;
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+        gap:
+            9px;
     }
 
     .abicHomeNewsCard {
-        grid-template-columns: 1fr;
-        gap: 6px;
+        grid-template-columns:
+            1fr;
+
+        gap:
+            6px;
     }
 
+
     /* ======================================================
-       OMEGA SHELL
-       Phone = vertical workspace + bottom app dock.
+       OMEGA MAIN DESKTOP
     ====================================================== */
 
     #desktop {
-        height: 100dvh;
-        min-height: 100dvh;
-        overflow: hidden;
-        touch-action: manipulation;
+        height:
+            100dvh;
+
+        min-height:
+            100dvh;
+
+        overflow:
+            hidden;
+
+        touch-action:
+            manipulation;
     }
 
     #desktopBackground {
-        inset: 0;
+        position:
+            absolute;
+
+        inset:
+            0;
     }
+
+
+    /* ======================================================
+       OMEGA TOP BAR
+    ====================================================== */
 
     #topBar {
-        z-index: 7000;
+        z-index:
+            7000;
     }
 
+
+    /* ======================================================
+       OMEGA MOBILE APP DOCK
+       ALL MODULES REMAIN AVAILABLE.
+       User can horizontally scroll the dock.
+    ====================================================== */
+
     #sidebar {
-        top: auto;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100%;
-        min-width: 0;
-        height: 60px;
-        min-height: 60px;
-        display: flex;
-        flex-direction: row;
-        align-items: stretch;
-        overflow-x: auto;
-        overflow-y: hidden;
-        -webkit-overflow-scrolling: touch;
-        scroll-snap-type: x proximity;
-        border-right: 0;
-        border-top: 1px solid #1d3245;
-        z-index: 6500;
+        top:
+            auto;
+
+        left:
+            0;
+
+        right:
+            0;
+
+        bottom:
+            0;
+
+        width:
+            100%;
+
+        min-width:
+            0;
+
+        height:
+            62px;
+
+        min-height:
+            62px;
+
+        display:
+            flex;
+
+        flex-direction:
+            row;
+
+        align-items:
+            stretch;
+
+        overflow-x:
+            auto;
+
+        overflow-y:
+            hidden;
+
+        -webkit-overflow-scrolling:
+            touch;
+
+        scrollbar-width:
+            thin;
+
+        border-right:
+            0;
+
+        border-top:
+            1px solid
+            #1d3245;
+
+        z-index:
+            6500;
     }
 
     #sidebar .menuTitle,
     #sidebar .sidebarFooter {
-        display: none;
+        display:
+            none;
     }
 
     #sidebar button {
-        flex: 0 0 68px;
-        width: 68px;
-        min-width: 68px;
-        min-height: 60px;
-        height: 60px;
-        padding: 7px 4px;
-        justify-content: center;
-        align-items: center;
-        gap: 3px;
-        font-size: 9px;
-        line-height: 1.1;
-        white-space: nowrap;
-        scroll-snap-align: start;
-        border-right: 1px solid rgba(255,255,255,.04);
-        border-left: 0;
+        flex:
+            0
+            0
+            70px;
+
+        width:
+            70px;
+
+        min-width:
+            70px;
+
+        min-height:
+            62px;
+
+        height:
+            62px;
+
+        padding:
+            7px
+            4px;
+
+        display:
+            flex;
+
+        justify-content:
+            center;
+
+        align-items:
+            center;
+
+        flex-direction:
+            column;
+
+        gap:
+            3px;
+
+        font-size:
+            14px;
+
+        line-height:
+            1.05;
+
+        white-space:
+            nowrap;
+
+        border-right:
+            1px solid
+            rgba(
+                255,
+                255,
+                255,
+                .04
+            );
     }
+
+    /*
+       desktop sidebar hides labels at 900px.
+       We explicitly restore them here.
+    */
 
     #sidebar button span {
-        display: block;
-        width: 100%;
-        max-width: 60px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        font-size: 8px;
-        line-height: 1.1;
+        display:
+            block;
+
+        width:
+            100%;
+
+        max-width:
+            62px;
+
+        overflow:
+            hidden;
+
+        text-overflow:
+            ellipsis;
+
+        white-space:
+            nowrap;
+
+        text-align:
+            center;
+
+        font-size:
+            8px;
+
+        line-height:
+            1.1;
     }
 
+
+    /* ======================================================
+       OMEGA WORKSPACE
+    ====================================================== */
+
     #workspace {
-        top: 61px;
-        left: 6px;
-        right: 6px;
-        bottom: 66px;
-        overflow: hidden;
+        top:
+            61px;
+
+        left:
+            6px;
+
+        right:
+            6px;
+
+        bottom:
+            68px;
+
+        overflow:
+            hidden;
+
+        min-width:
+            0;
+
+        min-height:
+            0;
     }
 
     #icons {
-        display: none;
+        display:
+            none;
     }
 
     .desktopWatermark {
-        right: 8px;
-        bottom: 7px;
-        max-width: calc(100% - 16px);
-        text-align: right;
-        pointer-events: none;
+        right:
+            8px;
+
+        bottom:
+            6px;
+
+        max-width:
+            calc(
+                100% -
+                16px
+            );
+
+        pointer-events:
+            none;
+
+        text-align:
+            right;
     }
 
+
     /* ======================================================
-       ALL OMEGA WINDOWS
-       Opened module fills the usable workspace.
+       OMEGA WINDOWS
+       One application = one usable mobile screen.
+       No functionality removed.
     ====================================================== */
 
     .window {
-        left: 0 !important;
-        top: 0 !important;
-        right: auto !important;
-        bottom: auto !important;
-        width: 100% !important;
-        height: 100% !important;
-        max-width: 100% !important;
-        max-height: 100% !important;
-        min-width: 0 !important;
-        min-height: 0 !important;
-        border-radius: 6px;
+        position:
+            absolute;
+
+        inset:
+            0
+            auto
+            auto
+            0 !important;
+
+        width:
+            100% !important;
+
+        height:
+            100% !important;
+
+        max-width:
+            100% !important;
+
+        max-height:
+            100% !important;
+
+        min-width:
+            0 !important;
+
+        min-height:
+            0 !important;
+
+        margin:
+            0 !important;
+
+        border-radius:
+            6px;
+
+        overflow:
+            hidden;
     }
 
     .windowHeader {
-        flex: 0 0 43px;
-        height: 43px;
-        min-height: 43px;
-        gap: 7px;
-        padding-left: 9px;
-        padding-right: 7px;
+        flex:
+            0
+            0
+            43px;
+
+        height:
+            43px;
+
+        min-height:
+            43px;
+
+        padding:
+            0
+            8px;
+
+        gap:
+            7px;
     }
 
     .windowTitle {
-        min-width: 0;
-        max-width: calc(100% - 105px);
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+        min-width:
+            0;
+
+        max-width:
+            calc(
+                100% -
+                105px
+            );
+
+        overflow:
+            hidden;
+
+        white-space:
+            nowrap;
+
+        text-overflow:
+            ellipsis;
     }
 
     .windowControls {
-        flex: 0 0 auto;
+        flex:
+            0
+            0
+            auto;
+
+        gap:
+            3px;
     }
 
     .windowControls button {
-        width: 30px;
-        min-width: 30px;
-        height: 29px;
-        min-height: 29px;
+        width:
+            30px;
+
+        min-width:
+            30px;
+
+        height:
+            29px;
+
+        min-height:
+            29px;
     }
 
     .windowBody,
     .windowContent {
-        min-width: 0;
-        min-height: 0;
-        -webkit-overflow-scrolling: touch;
+        min-width:
+            0;
+
+        min-height:
+            0;
+
+        -webkit-overflow-scrolling:
+            touch;
     }
 
     .windowBody {
-        overflow: hidden;
+        overflow:
+            hidden;
     }
 
     .windowContent {
-        overflow-x: hidden;
-        overflow-y: auto;
-        overscroll-behavior: contain;
-        scrollbar-width: thin;
+        overflow-x:
+            hidden;
+
+        overflow-y:
+            auto;
+
+        overscroll-behavior:
+            contain;
+
+        scrollbar-width:
+            thin;
     }
 
-    .windowFooter {
-        min-width: 0;
-    }
-
-    .windowFooter input,
-    .windowFooter textarea,
-    .windowFooter select {
-        min-width: 0;
-        width: 100%;
-    }
-
-    /* ======================================================
-       CONSOLE
-    ====================================================== */
-
-    #consoleWindow .windowBody {
-        min-height: 0;
-    }
-
-    #consoleLog {
-        padding: 12px;
-        font-size: 11px;
-        line-height: 1.6;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
-    }
-
-    #consoleWindow .windowFooter {
-        display: flex;
-        min-height: 50px;
-        padding: 7px;
-        gap: 6px;
-    }
-
-    #consoleInput {
-        flex: 1 1 auto;
-        min-width: 0;
-        height: 36px;
-        padding-left: 10px;
-        padding-right: 10px;
-        font-size: 13px;
-    }
-
-    #consoleEnter {
-        flex: 0 0 60px;
-        width: 60px;
-        min-width: 60px;
-        height: 36px;
-        font-size: 11px;
-    }
 
     /* ======================================================
        FILE EXPLORER
     ====================================================== */
 
     #filesWindow .windowBody {
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
+        overflow-y:
+            auto;
+
+        -webkit-overflow-scrolling:
+            touch;
+
+        overscroll-behavior:
+            contain;
     }
 
     #pathBar {
-        position: sticky;
-        top: 0;
-        z-index: 5;
-        max-width: 100%;
-        overflow-x: auto;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
+        max-width:
+            100%;
+
+        overflow-x:
+            auto;
+
+        white-space:
+            nowrap;
+
+        -webkit-overflow-scrolling:
+            touch;
     }
 
     #filesList {
-        min-width: 0;
-        overflow-x: hidden;
-        overflow-y: visible;
+        min-width:
+            0;
+
+        overflow-x:
+            hidden;
     }
 
     .explorerItem {
-        min-height: 48px;
-        touch-action: manipulation;
+        min-height:
+            48px;
+
+        touch-action:
+            manipulation;
     }
 
     .explorerName {
-        min-width: 0;
-        overflow-wrap: anywhere;
+        min-width:
+            0;
+
+        overflow-wrap:
+            anywhere;
     }
+
 
     /* ======================================================
-       CAMERA
-       Mobile camera hierarchy:
-       feed -> channel strip -> tech info -> events -> controls
+       CONSOLE
     ====================================================== */
 
-    #cameraWindow {
-        width: 100% !important;
-        height: 100% !important;
-        min-width: 0 !important;
-        min-height: 0 !important;
+    #consoleWindow .windowBody {
+        min-height:
+            0;
+
+        overflow:
+            hidden;
     }
 
-    #cameraWindow .cameraSystem {
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-        overflow-y: auto;
-        overflow-x: hidden;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
+    #consoleLog {
+        padding:
+            12px;
+
+        font-size:
+            11px;
+
+        line-height:
+            1.6;
+
+        overflow-y:
+            auto;
+
+        overflow-x:
+            hidden;
+
+        -webkit-overflow-scrolling:
+            touch;
+
+        overscroll-behavior:
+            contain;
     }
 
-    #cameraWindow .cameraChannelPanel {
-        order: 1;
-        flex: 0 0 96px;
-        width: 100%;
-        min-height: 96px;
-        max-height: 110px;
-        border-right: 0;
-        border-bottom: 1px solid #293f4f;
-    }
+    #consoleWindow .windowFooter {
+        flex:
+            0
+            0
+            auto;
 
-    #cameraWindow .cameraPanelTitle {
-        height: 34px;
-        min-height: 34px;
-        padding: 0 10px;
-    }
+        display:
+            flex;
 
-    #cameraWindow .cameraChannelList {
-        display: flex;
-        gap: 6px;
-        width: 100%;
-        min-height: 54px;
-        padding: 6px 8px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        -webkit-overflow-scrolling: touch;
-        scroll-snap-type: x proximity;
-    }
+        flex-wrap:
+            nowrap;
 
-    #cameraWindow .cameraChannel {
-        flex: 0 0 112px;
-        width: 112px;
-        min-width: 112px;
-        min-height: 48px;
-        scroll-snap-align: start;
-    }
+        min-height:
+            50px;
 
-    #cameraWindow .cameraPanelStatus {
-        display: none;
-    }
+        padding:
+            7px;
 
-    #cameraWindow .cameraMain {
-        order: 0;
-        flex: 1 1 auto;
-        min-width: 0;
-        min-height: 0;
-        display: flex;
-        flex-direction: column;
-    }
-
-    #cameraWindow .cameraFeedPanel {
-        flex: 0 0 min(45vh, 300px);
-        min-height: 190px;
-    }
-
-    #cameraWindow .cameraTechnicalBar {
-        flex: 0 0 auto;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    #cameraWindow .cameraTechnicalItem {
-        min-width: 0;
-        overflow: hidden;
-    }
-
-    #cameraWindow .cameraEventPanel {
-        flex: 1 1 130px;
-        min-height: 120px;
-    }
-
-    #cameraWindow .cameraEventList {
-        min-height: 0;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    #cameraWindow .cameraEventRow {
-        min-width: 0;
-    }
-
-    #cameraWindow .cameraControlBar {
-        flex: 0 0 auto;
-        grid-template-columns: 1fr;
-        gap: 6px;
-        padding: 7px;
-    }
-
-    #cameraWindow .cameraControlLeft {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 6px;
-    }
-
-    #cameraWindow .cameraControlButton {
-        width: 100%;
-        min-width: 0;
-        height: 35px;
-    }
-
-    #cameraWindow .cameraLiveStatus,
-    #cameraWindow .cameraControlCurrent {
-        display: none;
-    }
-
-    /* ======================================================
-       CHATS
-       Channel strip on top; conversation below.
-    ====================================================== */
-
-    .chatSystem {
-        min-height: 0;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .chatSidebar {
-        flex: 0 0 82px;
-        width: 100%;
-        min-width: 0;
-        height: 82px;
-        border-right: 0;
-        border-bottom: 1px solid #263d52;
-    }
-
-    .chatSidebarHeader {
-        min-height: 31px;
-        padding: 7px 9px;
-        font-size: 10px;
-    }
-
-    .chatList {
-        display: flex;
-        min-height: 0;
-        overflow-x: auto;
-        overflow-y: hidden;
-        -webkit-overflow-scrolling: touch;
-        scroll-snap-type: x proximity;
-    }
-
-    .chatListItem {
-        flex: 0 0 154px;
-        min-width: 154px;
-        min-height: 48px;
-        border-bottom: 0;
-        border-right: 1px solid rgba(255,255,255,.04);
-        scroll-snap-align: start;
-    }
-
-    .chatListStatus {
-        display: none;
-    }
-
-    .chatMain {
-        flex: 1 1 auto;
-        min-height: 0;
-    }
-
-    .chatMessages {
-        padding: 12px;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
-    }
-
-    .chatMessage {
-        max-width: 94%;
-    }
-
-    .chatInputArea {
-        padding: 7px;
-    }
-
-    #chatInput,
-    #sendBtn {
-        min-height: 36px;
-    }
-
-    /* ======================================================
-       SETTINGS
-       Existing settings mobile layout is preserved, with
-       safer touch scrolling.
-    ====================================================== */
-
-    #settingsWindow .windowContent,
-    #settingsContent {
-        min-height: 0;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    #settingsSidebar,
-    #settingsContent {
-        scrollbar-width: thin;
-    }
-
-    /* ======================================================
-       RESEARCH
-    ====================================================== */
-
-    #researchWindow .windowBody {
-        min-height: 0;
-        overflow: hidden;
-    }
-
-    #researchLayout {
-        min-width: 0;
-        min-height: 0;
-    }
-
-    /* ======================================================
-       PERSONNEL
-    ====================================================== */
-
-    #personnelWindow .windowBody {
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
-    }
-
-    #personnelList {
-        min-width: 0;
-    }
-
-    .personCard {
-        width: 100%;
-        min-width: 0;
-    }
-}
-
-@media (max-width: 380px) {
-
-    #sidebar button {
-        flex-basis: 60px;
-        width: 60px;
-        min-width: 60px;
-    }
-
-    #sidebar button span {
-        font-size: 7px;
-    }
-
-    .windowHeader {
-        height: 41px;
-        min-height: 41px;
-        flex-basis: 41px;
-    }
-
-    .windowTitle {
-        font-size: 11px;
-    }
-
-    .windowControls button {
-        width: 27px;
-        min-width: 27px;
+        gap:
+            6px;
     }
 
     #consoleInput {
-        font-size: 12px;
+        flex:
+            1
+            1
+            auto;
+
+        min-width:
+            0;
+
+        width:
+            100%;
+
+        height:
+            36px;
+
+        font-size:
+            13px;
     }
 
     #consoleEnter {
-        width: 56px;
-        min-width: 56px;
+        flex:
+            0
+            0
+            60px;
+
+        width:
+            60px;
+
+        min-width:
+            60px;
+
+        height:
+            36px;
     }
 
-    #cameraWindow .cameraChannel {
-        flex-basis: 102px;
-        width: 102px;
-        min-width: 102px;
-    }
-
-    .chatListItem {
-        flex-basis: 142px;
-        min-width: 142px;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-
-    #sidebar button,
-    .window,
-    .windowControls button {
-        transition: none !important;
-        animation: none !important;
-    }
-}
-
-
-/* ==========================================================
-   OMEGA MOBILE
-   CAMERA + CHAT REDESIGN
-========================================================== */
-
-@media (max-width: 600px) {
 
     /* ======================================================
        CAMERA
+       ------------------------------------------------------
+       IMPORTANT:
+       Video is intentionally smaller.
+       ALL information and controls remain available.
     ====================================================== */
 
     #cameraWindow {
-        display: flex;
-        flex-direction: column;
-        width: 100% !important;
-        height: 100% !important;
-        min-width: 0 !important;
-        min-height: 0 !important;
-        overflow: hidden !important;
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        width:
+            100% !important;
+
+        height:
+            100% !important;
+
+        min-width:
+            0 !important;
+
+        min-height:
+            0 !important;
+
+        overflow:
+            hidden !important;
     }
 
     #cameraWindow .cameraSystem {
-        flex: 1 1 auto;
-        min-width: 0;
-        min-height: 0;
+        flex:
+            1
+            1
+            auto;
 
-        display: grid;
+        min-width:
+            0;
 
-        grid-template-columns: minmax(0, 1fr);
+        min-height:
+            0;
 
-        grid-template-rows:
-            auto
-            auto
-            auto
-            minmax(105px, 1fr);
+        display:
+            flex;
 
-        gap: 0;
+        flex-direction:
+            column;
 
-        overflow: hidden;
+        overflow:
+            hidden;
 
-        background: #05090d;
+        background:
+            #05090d;
     }
 
     /*
-       cameraMain is flattened so the mobile layout can place
-       feed / technical info / events independently.
+       Camera channels stay ABOVE the main information area,
+       but become a compact horizontal touch strip.
     */
 
-    #cameraWindow .cameraMain {
-        display: contents;
-    }
-
-    /* ---------- LIVE FEED ---------- */
-
-    #cameraWindow .cameraFeedPanel {
-        grid-column: 1;
-        grid-row: 1;
-
-        width: 100%;
-        min-width: 0;
-        min-height: 0;
-
-        aspect-ratio: 16 / 9;
-
-        max-height: 44vh;
-
-        border:
-            1px solid
-            #2b414f;
-
-        background: #020507;
-    }
-
-    #cameraWindow #cameraView {
-        width: 100%;
-        height: 100%;
-    }
-
-    /* ---------- CAMERA CHANNELS ---------- */
-
     #cameraWindow .cameraChannelPanel {
-        grid-column: 1;
-        grid-row: 2;
+        flex:
+            0
+            0
+            88px;
 
-        width: 100%;
-        min-width: 0;
-        min-height: 0;
+        width:
+            100%;
 
-        border-right: 0;
+        min-width:
+            0;
+
+        min-height:
+            88px;
+
+        border-right:
+            0;
+
         border-bottom:
             1px solid
-            #263b4a;
-
-        background: #09131c;
+            #293f4f;
     }
 
     #cameraWindow .cameraPanelTitle {
-        height: 32px;
-        min-height: 32px;
+        height:
+            31px;
 
-        padding: 0 10px;
+        min-height:
+            31px;
 
-        font-size: 9px;
+        padding:
+            0
+            10px;
+
+        font-size:
+            9px;
     }
 
     #cameraWindow .cameraChannelList {
-        display: flex;
+        display:
+            flex;
 
-        width: 100%;
-        min-height: 0;
+        width:
+            100%;
+
+        min-height:
+            0;
+
+        height:
+            57px;
 
         padding:
-            7px
+            6px
             8px;
 
-        gap: 7px;
+        gap:
+            6px;
 
-        overflow-x: auto;
-        overflow-y: hidden;
+        overflow-x:
+            auto;
 
-        -webkit-overflow-scrolling: touch;
+        overflow-y:
+            hidden;
 
-        scrollbar-width: none;
+        -webkit-overflow-scrolling:
+            touch;
+
+        scrollbar-width:
+            none;
     }
 
     #cameraWindow .cameraChannelList::-webkit-scrollbar {
-        display: none;
+        display:
+            none;
     }
 
     #cameraWindow .cameraChannel {
         flex:
-            0 0
-            118px;
-
-        width: 118px;
-        min-width: 118px;
-
-        min-height: 50px;
-
-        margin: 0;
-
-        padding: 7px 8px;
-
-        border:
-            1px solid
-            #243d4d;
-
-        border-radius: 4px;
-
-        background:
-            linear-gradient(
-                180deg,
-                #101d28,
-                #0b151d
-            );
-    }
-
-    #cameraWindow .cameraChannel.active {
-        border-color:
-            #3f9cc1;
-
-        background:
-            linear-gradient(
-                180deg,
-                #142c3a,
-                #0c1b25
-            );
-
-        box-shadow:
-            inset
-            3px
             0
             0
-            #4fd8ff;
-    }
+            112px;
 
-    #cameraWindow .cameraChannelInfo {
-        gap: 2px;
-    }
+        width:
+            112px;
 
-    #cameraWindow .cameraChannelInfo strong {
-        font-size: 10px;
-    }
+        min-width:
+            112px;
 
-    #cameraWindow .cameraChannelInfo small {
-        font-size: 8px;
-    }
+        min-height:
+            44px;
 
-    #cameraWindow .cameraChannelState {
-        font-size: 8px;
+        height:
+            44px;
+
+        margin:
+            0;
+
+        padding:
+            6px
+            8px;
     }
 
     #cameraWindow .cameraPanelStatus {
-        display: none;
+        display:
+            none;
     }
 
-    /* ---------- TECHNICAL INFO ---------- */
+    /*
+       Main camera area retains its own structure:
+       VIDEO -> TECHNICAL -> EVENTS
+    */
+
+    #cameraWindow .cameraMain {
+        flex:
+            1
+            1
+            auto;
+
+        min-width:
+            0;
+
+        min-height:
+            0;
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        overflow:
+            hidden;
+    }
+
+    /* ---------- SMALLER CAMERA VIDEO ---------- */
+
+    #cameraWindow .cameraFeedPanel {
+        flex:
+            0
+            0
+            min(
+                31vh,
+                225px
+            );
+
+        width:
+            100%;
+
+        min-width:
+            0;
+
+        min-height:
+            150px;
+
+        max-height:
+            225px;
+
+        aspect-ratio:
+            16 / 9;
+
+        overflow:
+            hidden;
+
+        background:
+            #020507;
+
+        border:
+            1px solid
+            #2b414f;
+    }
+
+    #cameraWindow #cameraView {
+        width:
+            100%;
+
+        height:
+            100%;
+
+        min-width:
+            0;
+
+        min-height:
+            0;
+
+        overflow:
+            hidden;
+    }
+
+    /*
+       Do NOT stretch camera imagery beyond its natural
+       aspect ratio.
+    */
+
+    #cameraWindow .cameraImage,
+    #cameraWindow video,
+    #cameraWindow canvas {
+        max-width:
+            100%;
+
+        max-height:
+            100%;
+    }
+
+    /* ---------- TECHNICAL DATA ---------- */
 
     #cameraWindow .cameraTechnicalBar {
-        grid-column: 1;
-        grid-row: 3;
+        flex:
+            0
+            0
+            auto;
 
-        width: 100%;
+        width:
+            100%;
 
         grid-template-columns:
             repeat(
                 2,
-                minmax(0, 1fr)
+                minmax(
+                    0,
+                    1fr
+                )
             );
-
-        background: #0a141c;
     }
 
     #cameraWindow .cameraTechnicalItem {
-        min-width: 0;
+        min-width:
+            0;
 
         padding:
-            8px
-            10px;
-
-        border-right:
-            1px solid
-            #243743;
-
-        border-bottom:
-            1px solid
-            #243743;
-    }
-
-    #cameraWindow .cameraTechnicalItem:nth-child(2n) {
-        border-right: none;
+            7px
+            9px;
     }
 
     #cameraWindow .cameraTechnicalItem span {
-        margin-bottom: 3px;
-        font-size: 8px;
+        font-size:
+            8px;
+
+        margin-bottom:
+            3px;
     }
 
     #cameraWindow .cameraTechnicalItem strong {
-        font-size: 10px;
+        font-size:
+            10px;
     }
 
     /* ---------- EVENTS ---------- */
 
     #cameraWindow .cameraEventPanel {
-        grid-column: 1;
-        grid-row: 4;
+        flex:
+            1
+            1
+            120px;
 
-        min-width: 0;
-        min-height: 0;
+        min-height:
+            105px;
 
-        display: flex;
-        flex-direction: column;
+        min-width:
+            0;
 
-        background: #071018;
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        overflow:
+            hidden;
     }
 
     #cameraWindow .cameraEventHeader {
         flex:
-            0 0
-            32px;
+            0
+            0
+            31px;
 
-        height: 32px;
-        min-height: 32px;
+        height:
+            31px;
+
+        min-height:
+            31px;
 
         padding:
             0
             10px;
 
-        font-size: 9px;
+        font-size:
+            9px;
     }
 
     #cameraWindow .cameraEventList {
-        min-height: 0;
+        flex:
+            1
+            1
+            auto;
 
-        overflow-y: auto;
+        min-height:
+            0;
 
-        -webkit-overflow-scrolling: touch;
+        overflow-y:
+            auto;
+
+        overflow-x:
+            hidden;
+
+        -webkit-overflow-scrolling:
+            touch;
     }
 
+    /*
+       Events become two-column:
+       TIME | MESSAGE
+       Nothing is deleted; only secondary desktop columns
+       are visually compacted.
+    */
+
     #cameraWindow .cameraEventRow {
-        min-height: 30px;
+        min-height:
+            30px;
 
         grid-template-columns:
             52px
             1fr;
 
-        gap: 7px;
+        gap:
+            7px;
 
         padding:
             5px
             9px;
 
-        font-size: 9px;
+        font-size:
+            9px;
     }
 
     #cameraWindow .cameraEventChannel,
     #cameraWindow .cameraEventType {
-        display: none;
+        display:
+            none;
     }
 
     #cameraWindow .cameraEventTime {
-        font-size: 8px;
+        font-size:
+            8px;
     }
 
     #cameraWindow .cameraEventMessage {
-        font-size: 9px;
+        min-width:
+            0;
+
+        font-size:
+            9px;
+
+        overflow-wrap:
+            anywhere;
     }
 
-    /* ---------- CONTROLS ---------- */
+    /*
+       ---------- CAMERA CONTROLS ----------
+       Both navigation buttons remain.
+    */
 
     #cameraWindow .cameraControlBar {
         flex:
-            0 0
+            0
+            0
             auto;
 
-        display: grid;
+        display:
+            grid;
 
         grid-template-columns:
             1fr;
 
-        gap: 6px;
+        gap:
+            6px;
 
         padding:
             7px;
 
-        background: #09131b;
+        background:
+            #09131b;
 
         border-top:
             1px solid
@@ -1089,137 +1292,187 @@ select {
     }
 
     #cameraWindow .cameraControlLeft {
-        display: grid;
+        display:
+            grid;
 
         grid-template-columns:
             1fr
             1fr;
 
-        gap: 6px;
+        gap:
+            6px;
     }
 
     #cameraWindow .cameraControlButton {
-        width: 100%;
-        min-width: 0;
+        width:
+            100%;
 
-        height: 36px;
+        min-width:
+            0;
 
-        border-radius: 4px;
+        height:
+            36px;
 
-        font-size: 10px;
+        font-size:
+            10px;
     }
 
-    #cameraWindow .cameraLiveStatus,
+    /*
+       Information remains in the DOM.
+       These are only moved out of the main visual area
+       because the same information is already shown above.
+    */
+
+    #cameraWindow .cameraLiveStatus {
+        display:
+            none;
+    }
+
     #cameraWindow .cameraControlCurrent {
-        display: none;
+        display:
+            none;
     }
 
 
     /* ======================================================
-       CHAT
+       INTERNAL CHAT
+       ------------------------------------------------------
+       CHANNELS -> HEADER -> MESSAGES -> INPUT
     ====================================================== */
 
     .chatSystem {
-        display: flex;
-        flex-direction: column;
+        width:
+            100%;
 
-        width: 100%;
-        height: 100%;
+        height:
+            100%;
 
-        min-width: 0;
-        min-height: 0;
+        min-width:
+            0;
 
-        background: #09111a;
+        min-height:
+            0;
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        background:
+            #09111a;
     }
 
-    /* ---------- CHANNEL STRIP ---------- */
+    /*
+       Channel selector becomes a compact horizontal strip.
+    */
 
     .chatSidebar {
-        order: 0;
-
         flex:
-            0 0
-            72px;
+            0
+            0
+            76px;
 
-        width: 100%;
-        min-width: 0;
+        width:
+            100%;
 
-        height: 72px;
+        min-width:
+            0;
 
-        border-right: 0;
+        height:
+            76px;
+
+        border-right:
+            0;
 
         border-bottom:
             1px solid
             #263d52;
-
-        background:
-            linear-gradient(
-                180deg,
-                #0d1823,
-                #09131c
-            );
     }
 
     .chatSidebarHeader {
-        height: 29px;
-        min-height: 29px;
+        height:
+            30px;
+
+        min-height:
+            30px;
 
         padding:
             6px
             9px;
 
-        font-size: 9px;
+        font-size:
+            9px;
     }
 
     .chatList {
-        display: flex;
+        display:
+            flex;
 
-        min-width: 0;
-        min-height: 0;
+        min-height:
+            0;
+
+        width:
+            100%;
 
         padding:
-            4px
+            5px
             6px;
 
-        gap: 6px;
+        gap:
+            6px;
 
-        overflow-x: auto;
-        overflow-y: hidden;
+        overflow-x:
+            auto;
 
-        -webkit-overflow-scrolling: touch;
+        overflow-y:
+            hidden;
 
-        scrollbar-width: none;
+        -webkit-overflow-scrolling:
+            touch;
+
+        scrollbar-width:
+            none;
     }
 
     .chatList::-webkit-scrollbar {
-        display: none;
+        display:
+            none;
     }
 
     .chatListItem {
         flex:
-            0 0
-            120px;
+            0
+            0
+            118px;
 
-        width: 120px;
-        min-width: 120px;
+        width:
+            118px;
 
-        min-height: 35px;
+        min-width:
+            118px;
+
+        min-height:
+            36px;
 
         padding:
             5px
             7px;
 
-        gap: 7px;
+        gap:
+            7px;
 
         border:
             1px solid
             transparent;
 
-        border-radius: 4px;
+        border-radius:
+            4px;
     }
 
     .chatListItem.active {
-        padding-left: 7px;
+        padding-left:
+            7px;
 
         border:
             1px solid
@@ -1242,105 +1495,144 @@ select {
 
     .chatAvatar {
         flex:
-            0 0
+            0
+            0
             27px;
 
-        width: 27px;
-        height: 27px;
+        width:
+            27px;
 
-        font-size: 10px;
+        height:
+            27px;
+
+        font-size:
+            10px;
     }
 
     .chatListName {
-        font-size: 9px;
+        font-size:
+            9px;
     }
 
     .chatListStatus {
-        display: none;
+        display:
+            none;
     }
 
-    /* ---------- ACTIVE CHAT ---------- */
+    /* ---------- CHAT MAIN ---------- */
 
     .chatMain {
-        order: 1;
-
         flex:
-            1 1 auto;
+            1
+            1
+            auto;
 
-        min-width: 0;
-        min-height: 0;
+        min-width:
+            0;
 
-        display: flex;
-        flex-direction: column;
+        min-height:
+            0;
 
-        background: #09111a;
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        overflow:
+            hidden;
     }
 
     .chatHeader {
         flex:
-            0 0
-            48px;
+            0
+            0
+            49px;
 
-        min-height: 48px;
+        min-height:
+            49px;
 
         padding:
             7px
             10px;
 
-        gap: 8px;
+        gap:
+            8px;
     }
 
     #activeChatName {
-        font-size: 12px;
+        font-size:
+            12px;
     }
 
     #activeChatStatus {
-        margin-top: 2px;
-        font-size: 9px;
+        margin-top:
+            2px;
+
+        font-size:
+            9px;
     }
 
     #activeChatClearance {
-        font-size: 8px;
+        font-size:
+            8px;
     }
 
-    /* ---------- MESSAGES ---------- */
+    /* ---------- CHAT MESSAGES ---------- */
 
     .chatMessages {
-        flex: 1 1 auto;
+        flex:
+            1
+            1
+            auto;
 
-        min-width: 0;
-        min-height: 0;
+        min-width:
+            0;
+
+        min-height:
+            0;
 
         padding:
             12px
             9px;
 
-        overflow-y: auto;
-        overflow-x: hidden;
+        overflow-y:
+            auto;
 
-        -webkit-overflow-scrolling: touch;
+        overflow-x:
+            hidden;
 
-        scrollbar-width: thin;
+        -webkit-overflow-scrolling:
+            touch;
+
+        overscroll-behavior:
+            contain;
     }
 
     .chatMessage {
-        max-width: 88%;
+        max-width:
+            90%;
 
-        margin-bottom: 14px;
+        margin-bottom:
+            14px;
     }
 
     .messageMeta {
-        gap: 6px;
+        gap:
+            6px;
 
-        margin-bottom: 4px;
+        margin-bottom:
+            4px;
     }
 
     .messageUser {
-        font-size: 9px;
+        font-size:
+            9px;
     }
 
     .messageTime {
-        font-size: 8px;
+        font-size:
+            8px;
     }
 
     .messageText {
@@ -1348,43 +1640,48 @@ select {
             8px
             10px;
 
-        border-radius: 6px;
+        border-radius:
+            6px;
 
-        font-size: 11px;
+        font-size:
+            11px;
 
-        line-height: 1.5;
+        line-height:
+            1.5;
 
-        overflow-wrap: anywhere;
+        overflow-wrap:
+            anywhere;
     }
 
     .systemMessage {
-        max-width: 94%;
+        max-width:
+            94%;
     }
 
     .mrSmileMessage {
-        max-width: 92%;
+        max-width:
+            92%;
     }
 
-    /* ---------- MESSAGE INPUT ---------- */
+    /* ---------- CHAT INPUT ---------- */
 
     .chatInputArea {
         flex:
-            0 0
+            0
+            0
             auto;
 
-        display: flex;
+        display:
+            flex;
 
-        gap: 6px;
+        min-width:
+            0;
+
+        gap:
+            6px;
 
         padding:
             7px;
-
-        background:
-            #0d1823;
-
-        border-top:
-            1px solid
-            #263d52;
 
         padding-bottom:
             max(
@@ -1397,60 +1694,651 @@ select {
 
     #chatInput {
         flex:
-            1 1 auto;
+            1
+            1
+            auto;
 
-        min-width: 0;
+        min-width:
+            0;
 
-        height: 36px;
+        width:
+            100%;
 
-        padding:
-            0
-            10px;
+        height:
+            37px;
 
-        font-size: 12px;
+        min-height:
+            37px;
+
+        font-size:
+            12px;
     }
 
     #sendBtn {
         flex:
-            0 0
+            0
+            0
             64px;
 
-        width: 64px;
-        min-width: 64px;
+        width:
+            64px;
 
-        height: 36px;
+        min-width:
+            64px;
+
+        height:
+            37px;
+
+        min-height:
+            37px;
+
+        font-size:
+            9px;
+    }
+
+
+    /* ======================================================
+       SETTINGS
+       ------------------------------------------------------
+       ALL SETTINGS STAY AVAILABLE.
+       Only the navigation becomes horizontal.
+    ====================================================== */
+
+    #settingsWindow {
+        overflow:
+            hidden;
+    }
+
+    #settingsWindow .windowContent {
+        min-width:
+            0;
+
+        min-height:
+            0;
+
+        overflow:
+            hidden;
 
         padding:
+            0;
+    }
+
+    #settingsLayout {
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        width:
+            100%;
+
+        height:
+            100%;
+
+        min-width:
+            0;
+
+        min-height:
+            0;
+    }
+
+    #settingsSidebar {
+        flex:
             0
-            8px;
+            0
+            58px;
 
-        font-size: 9px;
+        width:
+            100%;
+
+        height:
+            58px;
+
+        min-height:
+            58px;
+
+        padding:
+            6px;
+
+        display:
+            flex;
+
+        flex-direction:
+            row;
+
+        overflow-x:
+            auto;
+
+        overflow-y:
+            hidden;
+
+        -webkit-overflow-scrolling:
+            touch;
+
+        scrollbar-width:
+            none;
+
+        border-right:
+            0;
+
+        border-bottom:
+            1px solid
+            #20445b;
     }
-}
 
-@media (max-width: 380px) {
-
-    #cameraWindow .cameraChannel {
-        flex-basis: 106px;
-        width: 106px;
-        min-width: 106px;
+    #settingsSidebar::-webkit-scrollbar {
+        display:
+            none;
     }
 
-    #cameraWindow .cameraEventRow {
+    #settingsSidebar .settingsTab {
+        flex:
+            0
+            0
+            112px;
+
+        width:
+            112px;
+
+        min-width:
+            112px;
+
+        min-height:
+            44px;
+
+        height:
+            44px;
+
+        margin:
+            0;
+
+        padding:
+            7px
+            9px;
+
+        font-size:
+            10px;
+    }
+
+    #settingsContent {
+        flex:
+            1
+            1
+            auto;
+
+        width:
+            100%;
+
+        min-width:
+            0;
+
+        min-height:
+            0;
+
+        padding:
+            13px;
+
+        overflow-x:
+            hidden;
+
+        overflow-y:
+            auto;
+
+        -webkit-overflow-scrolling:
+            touch;
+    }
+
+    /*
+       Settings cards never become too wide or too small.
+    */
+
+    .settingsInfo {
         grid-template-columns:
-            48px
             1fr;
     }
 
+    .settingsRow {
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+        gap:
+            9px;
+    }
+
+    /*
+       Audio controls get comfortable touch targets.
+    */
+
+    #settingsContent input[type="range"] {
+        width:
+            100%;
+
+        min-height:
+            32px;
+    }
+
+    #settingsContent input[type="text"],
+    #settingsContent input[type="number"],
+    #settingsContent select {
+        width:
+            100%;
+
+        min-height:
+            40px;
+
+        font-size:
+            12px;
+    }
+
+    #settingsContent .settingsButton {
+        min-height:
+            40px;
+
+        padding:
+            9px
+            13px;
+    }
+
+    .switch {
+        min-width:
+            48px;
+
+        min-height:
+            28px;
+    }
+
+
+    /* ======================================================
+       RESEARCH
+       ------------------------------------------------------
+       Existing mobile research layout is preserved.
+       We only make its scrolling reliable.
+    ====================================================== */
+
+    #researchWindow {
+        overflow:
+            hidden;
+    }
+
+    #researchWindow .windowBody {
+        min-width:
+            0;
+
+        min-height:
+            0;
+
+        overflow:
+            hidden;
+    }
+
+    #researchLayout {
+        width:
+            100%;
+
+        min-width:
+            0;
+
+        min-height:
+            0;
+    }
+
+    #researchViewer,
+    #viewerContent {
+        min-width:
+            0;
+    }
+
+    #viewerContent {
+        overflow-x:
+            hidden;
+
+        overflow-y:
+            auto;
+
+        -webkit-overflow-scrolling:
+            touch;
+
+        overflow-wrap:
+            anywhere;
+    }
+
+
+    /* ======================================================
+       PERSONNEL
+    ====================================================== */
+
+    #personnelWindow {
+        overflow:
+            hidden;
+    }
+
+    #personnelWindow .windowBody {
+        overflow-y:
+            auto;
+
+        overflow-x:
+            hidden;
+
+        -webkit-overflow-scrolling:
+            touch;
+
+        overscroll-behavior:
+            contain;
+    }
+
+    #personnelList {
+        width:
+            100%;
+
+        min-width:
+            0;
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        gap:
+            9px;
+
+        padding:
+            10px;
+    }
+
+    .personCard {
+        width:
+            100%;
+
+        min-width:
+            0;
+    }
+
+    .personInfo,
+    .personProfile {
+        min-width:
+            0;
+    }
+
+
+    /* ======================================================
+       OPERATOR PROFILE
+    ====================================================== */
+
+    #operatorProfileWindow {
+        overflow:
+            hidden;
+    }
+
+    #operatorProfileWindow .windowContent {
+        min-height:
+            0;
+
+        overflow-y:
+            auto;
+
+        overflow-x:
+            hidden;
+
+        -webkit-overflow-scrolling:
+            touch;
+    }
+
+    .operatorGrid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    /* ======================================================
+       ACTIVITY
+    ====================================================== */
+
+    #activityWindow .windowBody {
+        overflow:
+            hidden;
+    }
+
+    #operatorActivityLog {
+        min-width:
+            0;
+
+        overflow-y:
+            auto;
+
+        overflow-x:
+            hidden;
+
+        -webkit-overflow-scrolling:
+            touch;
+    }
+
+    #activityControls {
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        gap:
+            7px;
+    }
+
+    #activityFilter,
+    #activitySearch {
+        width:
+            100%;
+
+        min-height:
+            40px;
+    }
+
+
+    /* ======================================================
+       DOCUMENTS / PDF
+    ====================================================== */
+
+    #documentWindow {
+        width:
+            100% !important;
+
+        height:
+            100% !important;
+
+        min-width:
+            0 !important;
+
+        min-height:
+            0 !important;
+    }
+
+    #documentWindow .windowBody {
+        overflow:
+            auto;
+
+        -webkit-overflow-scrolling:
+            touch;
+    }
+
+    #documentContent {
+        min-width:
+            0;
+
+        overflow-wrap:
+            anywhere;
+    }
+
+    #documentContent iframe,
+    #documentContent embed,
+    #documentContent object {
+        width:
+            100%;
+
+        max-width:
+            100%;
+    }
+
+
+    /* ======================================================
+       NOTIFICATIONS
+    ====================================================== */
+
+    #notificationArea {
+        left:
+            8px;
+
+        right:
+            8px;
+
+        bottom:
+            70px;
+
+        width:
+            auto;
+
+        max-width:
+            none;
+    }
+
+
+    /* ======================================================
+       TOUCH / FOCUS
+    ====================================================== */
+
+    .window button,
+    #sidebar button,
+    .settingsTab,
+    .explorerItem,
+    .cameraChannel,
     .chatListItem {
-        flex-basis: 108px;
-        width: 108px;
-        min-width: 108px;
+        touch-action:
+            manipulation;
+    }
+}
+
+
+/* ==========================================================
+   VERY SMALL PHONES
+========================================================== */
+
+@media (max-width: 380px) {
+
+    #sidebar button {
+        flex-basis:
+            62px;
+
+        width:
+            62px;
+
+        min-width:
+            62px;
+    }
+
+    #sidebar button span {
+        font-size:
+            7px;
+    }
+
+    .windowHeader {
+        height:
+            41px;
+
+        min-height:
+            41px;
+
+        flex-basis:
+            41px;
+    }
+
+    .windowControls button {
+        width:
+            27px;
+
+        min-width:
+            27px;
+    }
+
+    #consoleInput {
+        font-size:
+            12px;
+    }
+
+    #consoleEnter {
+        width:
+            56px;
+
+        min-width:
+            56px;
+    }
+
+    #cameraWindow .cameraChannel {
+        flex-basis:
+            103px;
+
+        width:
+            103px;
+
+        min-width:
+            103px;
+    }
+
+    #cameraWindow .cameraFeedPanel {
+        min-height:
+            140px;
+    }
+
+    .chatListItem {
+        flex-basis:
+            108px;
+
+        width:
+            108px;
+
+        min-width:
+            108px;
     }
 
     #sendBtn {
-        flex-basis: 58px;
-        width: 58px;
-        min-width: 58px;
+        flex-basis:
+            58px;
+
+        width:
+            58px;
+
+        min-width:
+            58px;
+    }
+
+    #settingsSidebar .settingsTab {
+        flex-basis:
+            105px;
+
+        width:
+            105px;
+
+        min-width:
+            105px;
+    }
+}
+
+
+/* ==========================================================
+   REDUCED MOTION
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation:
+            none !important;
+
+        transition:
+            none !important;
     }
 }
