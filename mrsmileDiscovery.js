@@ -142,6 +142,9 @@ const STATE = {
 
     channelShown:
         false,
+   
+   accessRequested:
+        false,
 
     noticeContainer:
         null,
