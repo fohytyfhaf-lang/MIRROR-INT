@@ -774,7 +774,7 @@ export function grantMrSmileAccess(
     STATE.pendingFirstContact =
         null;
 
-    if (pending) {
+if (pending) {
 
     STATE.firstContactQueued = false;
     STATE.pendingFirstContact = null;
@@ -782,15 +782,12 @@ export function grantMrSmileAccess(
     setTimeout(
         () => {
 
-            trigger(
-                "mrsmile:firstContact",
-                {
-                    ...pending,
+            triggerMrSmileFirstContact({
+                ...pending,
 
-                    source:
-                        "reflective_channel"
-                }
-            );
+                source:
+                    "operator_connect"
+            });
 
         },
 
