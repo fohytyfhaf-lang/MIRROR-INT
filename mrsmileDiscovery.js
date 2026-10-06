@@ -1077,79 +1077,77 @@ function createPrivateChannelNotice() {
     );
 
 
-    const button =
-        element.querySelector(
-            "#mrSmileConnectButton"
-        );
+    
+const button =
+    element.querySelector(
+        "#mrSmileConnectButton"
+    );
 
 
-    button?.addEventListener(
-        "click",
-        () => {
+button?.addEventListener(
+    "click",
+    () => {
 
-            if (
-                STATE.accessRequested
-            ) {
+        if (
+            STATE.accessRequested
+        ) {
 
-                return;
+            return;
 
-            }
+        }
 
+
+        STATE.accessRequested =
+            true;
+
+
+        button.disabled =
+            true;
+
+
+        button.textContent =
+            "CONNECTING...";
+
+
+        const api =
+            window.grantMrSmileAccess;
+
+
+        if (
+            typeof api !==
+            "function"
+        ) {
 
             STATE.accessRequested =
-                true;
-
+                false;
 
             button.disabled =
-                true;
-
+                false;
 
             button.textContent =
-                "CONNECTING...";
+                "CONNECT";
 
+            const status =
+                element.querySelector(
+                    "#mrSmileConnectionStatus"
+                );
 
-            const api =
-                window.grantMrSmileAccess;
+            if (status) {
 
-
-            if (
-                typeof api !==
-                "function"
-            ) {
-
-                STATE.accessRequested =
-                    false;
-
-                button.disabled =
-                    false;
-
-                button.textContent =
-                    "CONNECT";
-
-                const status =
-                    element.querySelector(
-                        "#mrSmileConnectionStatus"
-                    );
-
-                if (status) {
-
-                    status.textContent =
-                        "STATUS: CONNECTION SERVICE UNAVAILABLE";
-
-                }
-
-                return;
+                status.textContent =
+                    "STATUS: CONNECTION SERVICE UNAVAILABLE";
 
             }
 
+            return;
+
+        }
 
 
-
-        const granted =
-            api({
-                source:
-                    "operator_connect"
-            });
+        api({
+            source:
+                "operator_connect"
+        });
 
 
         button.textContent =
@@ -1171,7 +1169,6 @@ function createPrivateChannelNotice() {
 
     }
 );
-
 
     trigger(
         "mrsmile:unregisteredChannelDetected",
