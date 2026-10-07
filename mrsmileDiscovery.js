@@ -2084,6 +2084,9 @@ export function resetMrSmileDiscovery() {
     STATE.channelShown =
         false;
 
+   STATE.accessRequested =
+    false;
+
     STATE.lastTraceId =
         null;
 
