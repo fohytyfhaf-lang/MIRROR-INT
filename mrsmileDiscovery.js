@@ -50,6 +50,10 @@ import {
     getMrSmileState
 } from "./mrsmileState.js";
 
+import {
+    getSettings
+} from "./systemConfig.js";
+
 
 /* ==========================================================
    STORAGE
@@ -161,9 +165,14 @@ const STATE = {
     contactTimer:
         null,
 
-    channelTimer:
-        null
+      channelTimer:
+        null,
 
+    channelSoundTimer:
+        null,
+
+    lastHoverSoundAt:
+        0
 };
 
 
@@ -320,6 +329,429 @@ function clone(data) {
     } catch {
 
         return data;
+
+    }
+
+}
+
+
+/* ==========================================================
+   MR.SMILE CHANNEL AUDIO
+========================================================== */
+
+let mrSmileAudioContext = null;
+
+
+function getMrSmileAudioContext() {
+
+    if (
+        typeof window ===
+        "undefined"
+    ) {
+        return null;
+    }
+
+
+    const AudioContext =
+        window.AudioContext ||
+        window.webkitAudioContext;
+
+
+    if (!AudioContext) {
+        return null;
+    }
+
+
+    if (
+        !mrSmileAudioContext
+    ) {
+
+        try {
+
+            mrSmileAudioContext =
+                new AudioContext();
+
+        } catch {
+
+            return null;
+
+        }
+
+    }
+
+
+    return mrSmileAudioContext;
+
+}
+
+
+function getMrSmileAudioVolume(
+    baseVolume
+) {
+
+    try {
+
+        const settings =
+            getSettings();
+
+        const master =
+            Number(
+                settings?.masterVolume ?? 70
+            ) / 100;
+
+        const effects =
+            Number(
+                settings?.effectsVolume ?? 70
+            ) / 100;
+
+        return Math.max(
+            0,
+            Math.min(
+                1,
+                baseVolume *
+                master *
+                effects
+            )
+        );
+
+    } catch {
+
+        return baseVolume;
+
+    }
+
+}
+
+
+function createMrSmileTone(
+    context,
+    {
+        frequency = 800,
+        duration = 0.12,
+        start = 0,
+        volume = 0.03,
+        type = "sine",
+        detune = 0
+    } = {}
+) {
+
+    const oscillator =
+        context.createOscillator();
+
+    const gain =
+        context.createGain();
+
+
+    oscillator.type =
+        type;
+
+    oscillator.frequency.setValueAtTime(
+        frequency,
+        context.currentTime + start
+    );
+
+    oscillator.detune.setValueAtTime(
+        detune,
+        context.currentTime + start
+    );
+
+
+    const startTime =
+        context.currentTime +
+        start;
+
+    const endTime =
+        startTime +
+        duration;
+
+
+    gain.gain.setValueAtTime(
+        0.0001,
+        startTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        Math.max(
+            0.0001,
+            getMrSmileAudioVolume(
+                volume
+            )
+        ),
+        startTime + 0.012
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        endTime
+    );
+
+
+    oscillator.connect(
+        gain
+    );
+
+    gain.connect(
+        context.destination
+    );
+
+
+    oscillator.start(
+        startTime
+    );
+
+    oscillator.stop(
+        endTime + 0.02
+    );
+
+}
+
+
+function playMrSmileChannelSound(
+    type = "appear"
+) {
+
+    const context =
+        getMrSmileAudioContext();
+
+
+    if (!context) {
+        return;
+    }
+
+
+    try {
+
+        if (
+            context.state ===
+            "suspended"
+        ) {
+
+            context.resume()
+                .catch(
+                    () => {}
+                );
+
+        }
+
+
+        switch (type) {
+
+            case "hover":
+
+                createMrSmileTone(
+                    context,
+                    {
+                        frequency:
+                            1180,
+
+                        duration:
+                            0.055,
+
+                        volume:
+                            0.018,
+
+                        type:
+                            "sine"
+                    }
+                );
+
+                break;
+
+
+            case "connect":
+
+                createMrSmileTone(
+                    context,
+                    {
+                        frequency:
+                            520,
+
+                        duration:
+                            0.16,
+
+                        volume:
+                            0.028,
+
+                        type:
+                            "sine"
+                    }
+                );
+
+
+                createMrSmileTone(
+                    context,
+                    {
+                        frequency:
+                            780,
+
+                        duration:
+                            0.20,
+
+                        start:
+                            0.08,
+
+                        volume:
+                            0.022,
+
+                        type:
+                            "triangle",
+
+                        detune:
+                            -8
+                    }
+                );
+
+
+                createMrSmileTone(
+                    context,
+                    {
+                        frequency:
+                            1560,
+
+                        duration:
+                            0.09,
+
+                        start:
+                            0.25,
+
+                        volume:
+                            0.012,
+
+                        type:
+                            "sine",
+
+                        detune:
+                            5
+                    }
+                );
+
+                break;
+
+
+            case "return":
+
+                createMrSmileTone(
+                    context,
+                    {
+                        frequency:
+                            430,
+
+                        duration:
+                            0.13,
+
+                        volume:
+                            0.014,
+
+                        type:
+                            "sine"
+                    }
+                );
+
+
+                createMrSmileTone(
+                    context,
+                    {
+                        frequency:
+                            438,
+
+                        duration:
+                            0.18,
+
+                        start:
+                            0.08,
+
+                        volume:
+                            0.011,
+
+                        type:
+                            "sine",
+
+                        detune:
+                            9
+                    }
+                );
+
+                break;
+
+
+            case "appear":
+            default:
+
+                createMrSmileTone(
+                    context,
+                    {
+                        frequency:
+                            620,
+
+                        duration:
+                            0.18,
+
+                        volume:
+                            0.025,
+
+                        type:
+                            "sine"
+                    }
+                );
+
+
+                createMrSmileTone(
+                    context,
+                    {
+                        frequency:
+                            930,
+
+                        duration:
+                            0.24,
+
+                        start:
+                            0.07,
+
+                        volume:
+                            0.018,
+
+                        type:
+                            "triangle",
+
+                        detune:
+                            -7
+                    }
+                );
+
+
+                createMrSmileTone(
+                    context,
+                    {
+                        frequency:
+                            1860,
+
+                        duration:
+                            0.075,
+
+                        start:
+                            0.20,
+
+                        volume:
+                            0.009,
+
+                        type:
+                            "sine",
+
+                        detune:
+                            11
+                    }
+                );
+
+                break;
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE DISCOVERY] Channel audio failed:",
+            error
+        );
 
     }
 
@@ -956,7 +1388,31 @@ function createPrivateChannelNotice() {
 
     STATE.channelShown =
         true;
+   
+playMrSmileChannelSound(
+    "appear"
+);
 
+STATE.channelSoundTimer =
+    setTimeout(
+        () => {
+
+            STATE.channelSoundTimer =
+                null;
+
+            if (
+                !STATE.firstContactCompleted
+            ) {
+
+                playMrSmileChannelSound(
+                    "return"
+                );
+
+            }
+
+        },
+        8000
+    );
 
     const container =
         createNoticeContainer();
@@ -1083,6 +1539,36 @@ const button =
         "#mrSmileConnectButton"
     );
 
+button?.addEventListener(
+    "mouseenter",
+    () => {
+
+        const current =
+            Date.now();
+
+
+        if (
+            current -
+            STATE.lastHoverSoundAt <
+            700
+        ) {
+
+            return;
+
+        }
+
+
+        STATE.lastHoverSoundAt =
+            current;
+
+
+        playMrSmileChannelSound(
+            "hover"
+        );
+
+    }
+);
+
 
 button?.addEventListener(
     "click",
@@ -1148,6 +1634,9 @@ button?.addEventListener(
             source:
                 "operator_connect"
         });
+       playMrSmileChannelSound(
+    "connect"
+);
 
 
         button.textContent =
@@ -1568,6 +2057,19 @@ export function resetMrSmileDiscovery() {
             null;
 
     }
+
+   if (
+    STATE.channelSoundTimer
+) {
+
+    clearTimeout(
+        STATE.channelSoundTimer
+    );
+
+    STATE.channelSoundTimer =
+        null;
+
+}
 
 
     STATE.discoveryReady =
