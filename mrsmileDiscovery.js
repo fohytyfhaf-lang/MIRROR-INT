@@ -1517,10 +1517,7 @@ STATE.channelSoundTimer =
     );
 
 
-    STATE.notices.push(
-        element
-    );
-
+  
 
     requestAnimationFrame(
         () => {
