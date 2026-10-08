@@ -54,6 +54,10 @@ import {
     getSettings
 } from "./systemConfig.js";
 
+import {
+    playEffect
+} from "./audio.js";
+
 
 /* ==========================================================
    STORAGE
@@ -173,6 +177,12 @@ const STATE = {
 
     lastHoverSoundAt:
         0
+
+channelMusic:
+    null,
+
+channelMusicFadeTimer:
+    null
 };
 
 
@@ -756,6 +766,212 @@ function playMrSmileChannelSound(
     }
 
 }
+
+/* ==========================================================
+   MR.SMILE CHANNEL MUSIC
+========================================================== */
+
+function stopMrSmileChannelMusic() {
+
+    if (
+        STATE.channelMusicFadeTimer
+    ) {
+
+        clearInterval(
+            STATE.channelMusicFadeTimer
+        );
+
+        STATE.channelMusicFadeTimer =
+            null;
+
+    }
+
+
+    const music =
+        STATE.channelMusic;
+
+
+    if (!music) {
+        return;
+    }
+
+
+    let volume =
+        Number(
+            music.volume
+        ) || 0;
+
+
+    STATE.channelMusicFadeTimer =
+        setInterval(
+            () => {
+
+                volume -=
+                    0.025;
+
+
+                if (
+                    volume <=
+                    0.01
+                ) {
+
+                    clearInterval(
+                        STATE.channelMusicFadeTimer
+                    );
+
+                    STATE.channelMusicFadeTimer =
+                        null;
+
+                    music.pause();
+                    music.currentTime =
+                        0;
+
+                    STATE.channelMusic =
+                        null;
+
+                    return;
+
+                }
+
+
+                music.volume =
+                    volume;
+
+            },
+            50
+        );
+
+}
+
+
+function playMrSmileChannelMusic() {
+
+    if (
+        STATE.channelMusic
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const settings =
+            getSettings();
+
+
+        const master =
+            Number(
+                settings?.masterVolume ?? 70
+            ) / 100;
+
+
+        const effects =
+            Number(
+                settings?.effectsVolume ?? 70
+            ) / 100;
+
+
+        const music =
+            new Audio(
+                "./audio/mrsmile_channel.mp3"
+            );
+
+
+        music.loop =
+            true;
+
+
+        music.volume =
+            0;
+
+
+        const targetVolume =
+            Math.max(
+                0,
+                Math.min(
+                    1,
+                    0.16 *
+                    master *
+                    effects
+                )
+            );
+
+
+        STATE.channelMusic =
+            music;
+
+
+        const playPromise =
+            music.play();
+
+
+        if (
+            playPromise &&
+            typeof playPromise.catch ===
+            "function"
+        ) {
+
+            playPromise.catch(
+                error => {
+
+                    console.warn(
+                        "[MR.SMILE DISCOVERY] Channel music playback blocked:",
+                        error
+                    );
+
+                }
+            );
+
+        }
+
+
+        let volume =
+            0;
+
+
+        const fadeIn =
+            setInterval(
+                () => {
+
+                    volume +=
+                        0.01;
+
+
+                    if (
+                        volume >=
+                        targetVolume
+                    ) {
+
+                        volume =
+                            targetVolume;
+
+                        clearInterval(
+                            fadeIn
+                        );
+
+                    }
+
+
+                    music.volume =
+                        volume;
+
+                },
+                70
+            );
+
+    } catch (error) {
+
+        console.warn(
+            "[MR.SMILE DISCOVERY] Channel music failed:",
+            error
+        );
+
+    }
+
+}
+
 
 
 /* ==========================================================
@@ -1393,6 +1609,8 @@ playMrSmileChannelSound(
     "appear"
 );
 
+playMrSmileChannelMusic();
+
 STATE.channelSoundTimer =
     setTimeout(
         () => {
@@ -1631,6 +1849,9 @@ button?.addEventListener(
             source:
                 "operator_connect"
         });
+
+       stopMrSmileChannelMusic();
+       
        playMrSmileChannelSound(
     "connect"
 );
@@ -2058,6 +2279,8 @@ export function resetMrSmileDiscovery() {
    if (
     STATE.channelSoundTimer
 ) {
+
+   stopMrSmileChannelMusic();
 
     clearTimeout(
         STATE.channelSoundTimer
