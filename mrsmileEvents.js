@@ -447,70 +447,53 @@ function isDuplicateEvent(
 /* ==========================================================
    MASTER STATE SYNCHRONIZATION
 ========================================================== */
-
-function synchronizeMasterState(
-    firstContact = false
-) {
-
+function synchronizeMasterState(firstContact = false) {
     try {
+        if (typeof window === "undefined") return;
 
-        if (
-            typeof window ===
-            "undefined"
-        ) {
+        const api = window.MRSMILE_STATE;
+        if (!api) return;
+
+        const current =
+            typeof api.get === "function"
+                ? api.get()
+                : null;
+
+        // Сброс — это установка флагов в false,
+        // а не вызов firstContact(false).
+        if (!firstContact) {
+            if (typeof api.set === "function") {
+                api.set("firstContact", false);
+                api.set("accepted", false);
+                api.set("present", false);
+                return;
+            }
+
+            if (typeof api.reset === "function") {
+                api.reset();
+            }
+
             return;
         }
 
-        const api =
-            window.MRSMILE_STATE;
+        const accepted = current?.accepted === true;
 
-        if (
-            !api
-        ) {
+        if (typeof api.set === "function") {
+            api.set("accepted", accepted);
+            api.set("firstContact", true);
+            api.set("present", true);
             return;
         }
 
-        let current =
-            null;
-
-        if (
-            typeof api.get ===
-            "function"
-        ) {
-
-            current =
-                api.get();
-
+        if (typeof api.firstContact === "function") {
+            api.firstContact(accepted);
         }
-
-        if (
-            current &&
-            current.firstContact ===
-            firstContact
-        ) {
-            return;
-        }
-
-        if (
-            typeof api.firstContact ===
-            "function"
-        ) {
-
-            api.firstContact(
-                firstContact
-            );
-
-        }
-
     } catch (error) {
-
         console.warn(
             "[MR.SMILE EVENTS] Master state sync failed:",
             error
         );
-
     }
-
 }
 
 
@@ -597,13 +580,14 @@ function synchronizeFirstContactState(
     data = {}
 ) {
 
-    synchronizeMasterState(
-        false
-    );
+    synchronizeMasterState(false);
 
-    synchronizePresence(
-        false
-    );
+if (
+    typeof window !== "undefined" &&
+    typeof window.MRSMILE_PRESENCE?.reset === "function"
+) {
+    window.MRSMILE_PRESENCE.reset();
+}
 
     trigger(
         "mrsmile:firstContactStateSynchronized",
