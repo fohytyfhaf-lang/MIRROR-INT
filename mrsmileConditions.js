@@ -2134,16 +2134,9 @@ function evaluateDiscovery() {
      * The operator must actually
      * explore the system.
      */
-
-    const explorationReady = (
-
-        conditionFiles() ||
-
-        conditionCameras() ||
-
-        conditionConsole()
-
-    );
+     const explorationReady =
+    conditionResources();
+   
 
 
     if (
