@@ -1146,11 +1146,7 @@ async function playFirstContactSequence() {
                     "1"
                 );
                 
-                /*
-                 * After First Contact the normal idle scheduler
-                 * takes over.
-                 */
-                startIdleMessages();
+                
 
                 return true;
 
