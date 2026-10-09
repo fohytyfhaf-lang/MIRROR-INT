@@ -1142,10 +1142,19 @@ function openExternalFile(
 
         }
 
-        const pdfUrl = new URL(
-    filePath,
-    import.meta.url
-).href;
+ const requestedPath = String(filePath || "")
+    .replace(/\\/g, "/")
+    .replace(/^\/+/, "");
+
+const normalizedPdfPath = requestedPath.replace(
+    /^files\/OMEGA_General_Operational_Regulations\.pdf$/i,
+    "files/OMEGA_General_Operational_Regulations_CLEAN.pdf"
+);
+
+const pdfUrl = new URL(
+    normalizedPdfPath,
+    new URL("./", import.meta.url)
+).href;    
 
 content.innerHTML = `
 
