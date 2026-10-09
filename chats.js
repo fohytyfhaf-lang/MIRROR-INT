@@ -1908,6 +1908,57 @@ export function hideChatTyping(chatId, user) {
 
 }
 
+/* ==========================================================
+   REVEAL MR.SMILE IDENTITY
+========================================================== */
+
+export function revealMrSmileIdentity() {
+
+    const chat =
+        chats.mrsmile;
+
+    if (!chat) {
+        return false;
+    }
+
+    if (mrSmileIdentityRevealed) {
+        return true;
+    }
+
+    mrSmileIdentityRevealed = true;
+
+    chat.name = "MR.SMILE";
+
+    try {
+
+        localStorage.setItem(
+            MRSMILE_IDENTITY_STORAGE_KEY,
+            "1"
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "[CHAT] Could not persist MR.SMILE identity.",
+            error
+        );
+
+    }
+
+    renderChatList();
+    renderActiveChat();
+
+    trigger(
+        "mrsmile:identityRevealed",
+        {
+            name: "MR.SMILE",
+            timestamp: Date.now()
+        }
+    );
+
+    return true;
+
+}
 
 /* ==========================================================
    OPEN CHAT
