@@ -2366,34 +2366,261 @@ export function resetMrSmileDiscovery() {
 /* ==========================================================
    STATUS
 ========================================================== */
-
 export function getMrSmileDiscoveryStatus() {
+    const masterState = getMrSmileState() || {};
+
+    const storedCompleted =
+        storageGet(STORAGE.firstContact) === "1";
+
+    const blocked =
+        STATE.firstContactCompleted ||
+        storedCompleted ||
+        masterState.firstContact === true ||
+        masterState.accepted === true;
 
     return {
+        initialized: STATE.initialized,
+        discoveryReady: STATE.discoveryReady,
+        firstContactRunning: STATE.firstContactRunning,
+        firstContactCompleted: STATE.firstContactCompleted,
 
-        initialized:
-            STATE.initialized,
+        storedFirstContactCompleted: storedCompleted,
+        masterFirstContact: masterState.firstContact === true,
+        masterAccepted: masterState.accepted === true,
 
-        discoveryReady:
-            STATE.discoveryReady,
+        blockedReason: blocked
+            ? "first_contact_already_completed"
+            : null,
 
-        firstContactRunning:
-            STATE.firstContactRunning,
+        channelShown: STATE.channelShown,
+        channelElementPresent: Boolean(
+            document.querySelector(
+                '[data-type="unregistered-channel"]'
+            )
+        ),
 
-        firstContactCompleted:
-            STATE.firstContactCompleted,
-
-        channelShown:
-            STATE.channelShown,
-
-        lastTraceId:
-            STATE.lastTraceId,
-
-        visibleNotices:
-            STATE.notices.length
-
+        lastTraceId: STATE.lastTraceId,
+        visibleNotices: STATE.notices.length
     };
+}
 
+
+
+function openDiscoveryTestPreview() {
+    const container = createNoticeContainer();
+
+    // Удаляем предыдущее окно канала, если оно есть.
+    container
+        .querySelectorAll('[data-type="unregistered-channel"]')
+        .forEach(element => element.remove());
+
+    const element = document.createElement("div");
+
+    element.className =
+        "omegaDiscoveryNotice private-channel locked-channel";
+
+    element.dataset.type = "unregistered-channel";
+    element.dataset.testMode = "true";
+    element.style.pointerEvents = "auto";
+
+    const timestamp = new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+    });
+
+    element.innerHTML = `
+        <div class="omegaDiscoveryHeader">
+            <span class="omegaDiscoveryMarker">[!]</span>
+            <span class="omegaDiscoveryTitle">
+                COMMUNICATION MONITOR
+            </span>
+            <span class="omegaDiscoveryTime">
+                ${escapeHtml(timestamp)}
+            </span>
+        </div>
+
+        <div class="omegaDiscoveryMessage">
+            A private communication endpoint
+            was detected outside the current
+            operator session.
+        </div>
+
+        <div class="omegaDiscoveryDetail">
+            CHANNEL: UNREGISTERED
+        </div>
+
+        <div
+            class="omegaDiscoveryStatus"
+            id="mrSmileConnectionStatus"
+        >
+            STATUS: AWAITING OPERATOR
+        </div>
+
+        <div class="mrSmileConnectionMeta">
+            <span>CHANNEL STATE: PERSISTENT</span>
+            <span>DISMISS: UNAVAILABLE</span>
+        </div>
+
+        <div class="mrSmileConnectionAction">
+            <button
+                id="mrSmileConnectButton"
+                type="button"
+            >
+                CONNECT
+            </button>
+        </div>
+    `;
+
+    container.appendChild(element);
+
+    requestAnimationFrame(() => {
+        element.classList.add("visible");
+    });
+
+    const button = element.querySelector(
+        "#mrSmileConnectButton"
+    );
+
+    button?.addEventListener("mouseenter", () => {
+        playMrSmileChannelSound("hover");
+    });
+
+    button?.addEventListener("click", () => {
+        if (button.disabled) return;
+
+        button.disabled = true;
+        button.textContent = "CONNECTED";
+
+        const status = element.querySelector(
+            "#mrSmileConnectionStatus"
+        );
+
+        if (status) {
+            status.textContent =
+                "STATUS: TEST CONNECTION VERIFIED";
+        }
+
+        stopMrSmileChannelMusic();
+        playMrSmileChannelSound("connect");
+
+        trigger("mrsmile:channelTestConnected", {
+            mode: "preview",
+            timestamp: now()
+        });
+
+        console.info(
+            "[MR.SMILE TEST] CONNECT verified. " +
+            "Player progress was not changed."
+        );
+    });
+
+    playMrSmileChannelSound("appear");
+    playMrSmileChannelMusic();
+
+    trigger("mrsmile:testChannelPreviewed", {
+        source: "tester",
+        timestamp: now()
+    });
+
+    console.info(
+        "[MR.SMILE TEST] Preview opened. " +
+        "This mode does not start First Contact."
+    );
+
+    return {
+        ok: true,
+        mode: "preview",
+        channelElementPresent: true
+    };
+}
+
+
+function resetPlayerRun({ reload = true } = {}) {
+    if (
+        typeof window.resetMrSmileFirstContact !== "function"
+    ) {
+        return {
+            ok: false,
+            reason: "mrsmile_events_not_ready",
+            message: "OMEGA has not finished initializing."
+        };
+    }
+
+    try {
+        window.resetMrSmileFirstContact();
+
+        if (window.MRSMILE_STATE?.set) {
+            window.MRSMILE_STATE.set("firstContact", false);
+            window.MRSMILE_STATE.set("accepted", false);
+            window.MRSMILE_STATE.set("present", false);
+        }
+
+        window.MRSMILE_PRESENCE?.reset?.();
+        window.resetMrSmileConditions?.();
+
+        resetMrSmileDiscovery();
+
+        if (reload) {
+            window.setTimeout(
+                () => window.location.reload(),
+                250
+            );
+        }
+
+        console.info("[MR.SMILE TEST] Player state reset.", {
+            reload
+        });
+
+        return {
+            ok: true,
+            reloadScheduled: reload,
+            message: reload
+                ? "State cleared. Reloading for a clean player run."
+                : "State cleared. Ready to test the real player flow."
+        };
+    } catch (error) {
+        console.error(
+            "[MR.SMILE TEST] Reset failed:",
+            error
+        );
+
+        return {
+            ok: false,
+            reason: "reset_failed",
+            error: String(error)
+        };
+    }
+}
+
+
+function testPlayerFlow() {
+    const reset = resetPlayerRun({ reload: false });
+
+    if (!reset.ok) return reset;
+
+    STATE.firstContactCompleted = false;
+    STATE.firstContactRunning = false;
+    STATE.lastReadyTime = 0;
+
+    // Same discovery event used by the actual game path.
+    trigger("mrsmile:discoveryReady", {
+        route: "tester_player_flow",
+        traces: ["A-01", "S-01"],
+        tester: true,
+        timestamp: now()
+    });
+
+    console.info(
+        "[MR.SMILE TEST] Real player flow started. " +
+        "Wait for COMMUNICATION MONITOR and press CONNECT."
+    );
+
+    return {
+        ok: true,
+        mode: "player-flow",
+        message: "The normal CONNECT and First Contact path is active."
+    };
 }
 
 
@@ -2420,16 +2647,20 @@ function exposeGlobalAPI() {
     window.resetMrSmileDiscovery =
         resetMrSmileDiscovery;
 
-
     window.MRSMILE_DISCOVERY = {
+    status: getMrSmileDiscoveryStatus,
+    reset: resetMrSmileDiscovery,
 
-        status:
-            getMrSmileDiscoveryStatus,
+    // Безопасный визуальный тест.
+    testOpen: openDiscoveryTestPreview,
 
-        reset:
-            resetMrSmileDiscovery
+    // Проверка настоящего подключения и First Contact.
+    testPlayerFlow,
 
-    };
+    // Полный сброс для чистого прохождения.
+    resetPlayerRun
+};
+   
 
 }
 
