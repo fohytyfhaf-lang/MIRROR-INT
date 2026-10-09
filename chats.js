@@ -1540,12 +1540,38 @@ function renderActiveChat() {
         );
 
 
-    if (name) {
+if (name) {
 
-        name.textContent =
-            chat.name;
+    name.textContent =
+        chat.name;
+
+    if (
+        activeChat === "mrsmile" &&
+        mrSmileIdentityRevealed
+    ) {
+
+        name.classList.add(
+            "mrSmileChannelName"
+        );
+
+        name.setAttribute(
+            "data-text",
+            chat.name
+        );
+
+    } else {
+
+        name.classList.remove(
+            "mrSmileChannelName"
+        );
+
+        name.removeAttribute(
+            "data-text"
+        );
 
     }
+
+}
 
 
     if (status) {
