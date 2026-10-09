@@ -1656,18 +1656,13 @@ function emitTraceMixed() {
 /* ==========================================================
    FINAL CONDITION CHECK
 ========================================================== */
-
 function allConditionsMet() {
 
     return (
 
         conditionActionCount() &&
 
-        conditionFiles() &&
-
-        conditionCameras() &&
-
-        conditionConsole() &&
+        conditionResources() &&
 
         conditionCategories() &&
 
@@ -1676,6 +1671,7 @@ function allConditionsMet() {
     );
 
 }
+
 
 
 /* ==========================================================
