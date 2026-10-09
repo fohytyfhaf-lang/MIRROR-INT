@@ -238,101 +238,84 @@ export async function showMrSmileFirstContactFace(
 async function runFirstContactIntrusion() {
 
     /*
-     * The operator has explicitly connected.
-     *
-     * First Contact therefore appears
-     * as a legitimate OMEGA communication
-     * handshake that the system cannot fully classify.
+     * CONNECT is accepted. OMEGA carries out a routine-looking
+     * reflective-channel audit, then produces contradictory state.
+     * MR.SMILE's first spoken message belongs in the real chat window.
      */
 
     await showSystemStatus(
         "COMMUNICATION MONITOR",
         "PRIVATE CHANNEL CONNECTION ACCEPTED",
-        "system"
+        "system",
+        1300
     );
 
-
-    await sleep(700);
-
-
-    await showIntrusionNotice(
-        "ESTABLISHING REFLECTIVE CHANNEL...",
-        "system"
-    );
-
-
-    await sleep(900);
-
-
-    /*
-     * Use the real OMEGA Console.
-     */
+    await sleep(400);
 
     openConsoleWindow();
 
-
-    await sleep(650);
-
+    await sleep(600);
 
     await typeConsoleCommand(
         "channel.open --reflective"
     );
 
-
-    await sleep(450);
-
+    await sleep(250);
 
     await typeConsoleOutput(
         "HANDSHAKE: ACCEPTED"
     );
 
-
     await typeConsoleOutput(
         "SOURCE: REFLECTIVE INTERNAL"
     );
-
 
     await typeConsoleOutput(
         "IDENTITY: UNRESOLVED"
     );
 
+    await sleep(450);
 
-    await sleep(900);
+    await typeConsoleCommand(
+        "session.audit --participants"
+    );
 
+    await sleep(250);
 
-    /*
-     * Very small distortion.
-     *
-     * Nothing jumps at the player.
-     * The interface simply behaves strangely
-     * for a moment.
-     */
+    await typeConsoleOutput(
+        "AUTHORIZED OPERATORS: 1"
+    );
+
+    await typeConsoleOutput(
+        "ACTIVE ENDPOINTS: 0"
+    );
+
+    await sleep(500);
+
+    await typeConsoleOutput(
+        "[LIVE UPDATE] ACTIVE ENDPOINTS: 1"
+    );
 
     await runMrSmileSubtleDistortion();
 
-
-    await sleep(400);
-
+    await sleep(250);
 
     await showSystemStatus(
         "OMEGA",
         "REMOTE PARTICIPANT PRESENT",
-        "system"
+        "system",
+        1250
     );
 
-
-    await sleep(800);
-
+    await sleep(200);
 
     await showIntrusionNotice(
-        "COMMUNICATION CHANNEL STABLE",
+        "CONNECTION STATUS: NO REMOTE CONNECTION",
         "system",
-        1400
+        1200
     );
 
-
-    await sleep(500);
-
+    await sleep(250);
 }
 
 /* ==========================================================
