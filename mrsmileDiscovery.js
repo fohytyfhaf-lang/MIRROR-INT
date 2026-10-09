@@ -2507,6 +2507,13 @@ function openDiscoveryTestPreview() {
             status.textContent =
                 "STATUS: TEST CONNECTION VERIFIED";
         }
+                // Close the test monitor after CONNECT.
+        element.classList.remove("visible");
+
+        window.setTimeout(() => {
+            element.remove();
+        }, 300);
+       
 
         stopMrSmileChannelMusic();
         playMrSmileChannelSound("connect");
