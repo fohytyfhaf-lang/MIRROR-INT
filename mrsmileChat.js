@@ -256,6 +256,19 @@ function cleanText(value) {
     ).trim();
 }
 
+function isMrSmileNameQuestion(text) {
+
+    const normalized =
+        cleanText(text)
+            .toLowerCase()
+            .replace(/[’‘]/g, "'");
+
+    return /(?:\bwhat\s+is\s+your\s+name\b|\bwhat's\s+your\s+name\b|\bwho\s+are\s+you\s+called\b|как\s+тебя\s+зовут|как\s+вас\s+зовут|тво[её]\s+имя|^имя\??$|як\s+тебе\s+звати|як\s+вас\s+звати|твоє\s+ім'я)/i.test(
+        normalized
+    );
+
+}
+
 
 function random(min, max) {
     const low =
