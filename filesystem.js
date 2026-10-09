@@ -90,9 +90,9 @@ const filesystem = {
                     ====================================== */
 
 
-   "OMEGA_General_Operational_Regulations.pdf": {
+ "OMEGA_General_Operational_Regulations.pdf": {
     type: "external",
-    path: "files/OMEGA_General_Operational_Regulations.pdf",
+    path: "files/OMEGA_General_Operational_Regulations_CLEAN.pdf",
     level: 0
 },
                   
