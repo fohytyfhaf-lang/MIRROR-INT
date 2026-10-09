@@ -1673,10 +1673,26 @@ if (name) {
         user.className =
             "messageUser";
 
-        user.textContent =
-            safeString(
-                message.user
-            );
+const isMrSmileMessage =
+    message.user === "MR.SMILE";
+
+const displayedUser =
+    isMrSmileMessage &&
+    !mrSmileIdentityRevealed
+        ? "UNKNOWN"
+        : safeString(message.user);
+
+user.textContent =
+    displayedUser;
+
+if (isMrSmileMessage) {
+
+    user.setAttribute(
+        "data-text",
+        displayedUser
+    );
+
+}
 
 
         const time =
@@ -1713,6 +1729,17 @@ if (name) {
             safeString(
                 message.text
             );
+
+       if (
+    isMrSmileMessage
+) {
+
+    body.setAttribute(
+        "data-text",
+        body.textContent
+    );
+
+}
 
 
         element.appendChild(
