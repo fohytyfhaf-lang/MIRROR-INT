@@ -2865,6 +2865,16 @@ function handlePersonnelMessage(
             null;
 
     }
+      if (pendingPersonnelTyping) {
+
+        hideChatTyping(
+            pendingPersonnelTyping.chatId,
+            pendingPersonnelTyping.user
+        );
+
+        pendingPersonnelTyping = null;
+
+    }
 
 
     const personnel =
@@ -2892,6 +2902,16 @@ function handlePersonnelMessage(
             TIMING.personnelMaximum
         );
 
+   
+    pendingPersonnelTyping = {
+        chatId,
+        user: personnel.user
+    };
+
+    showChatTyping(
+        chatId,
+        personnel.user
+    );          
 
     personnelResponseTimer =
         setTimeout(
@@ -2899,7 +2919,20 @@ function handlePersonnelMessage(
 
                 personnelResponseTimer =
                     null;
+               if (
+                    pendingPersonnelTyping &&
+                    pendingPersonnelTyping.chatId === chatId &&
+                    pendingPersonnelTyping.user === personnel.user
+                ) {
 
+                    hideChatTyping(
+                        chatId,
+                        personnel.user
+                    );
+
+                    pendingPersonnelTyping = null;
+
+                }
 
                 /*
                  * The channel might have changed while
