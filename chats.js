@@ -3681,61 +3681,12 @@ function restorePersistedMrSmileHistory() {
     }
 
 
-    const messages = [
+     const messages = [
 
         {
-            user:
-                "SYSTEM",
-
-            time:
-                "--:--",
-
-            text:
-                "PRIVATE COMMUNICATION CHANNEL INITIALIZED."
-        },
-
-        {
-            user:
-                "SYSTEM",
-
-            time:
-                "--:--",
-
-            text:
-                "REMOTE PARTICIPANT PRESENT."
-        },
-
-        {
-            user:
-                "MR.SMILE",
-
-            time:
-                "--:--",
-
-            text:
-                "Good evening."
-        },
-
-        {
-            user:
-                "MR.SMILE",
-
-            time:
-                "--:--",
-
-            text:
-                "I believe we have interrupted one another."
-        },
-
-        {
-            user:
-                "MR.SMILE",
-
-            time:
-                "--:--",
-
-            text:
-                "Please, take your time."
+            user: "MR.SMILE",
+            time: "--:--",
+            text: "Good evening."
         }
 
     ];
