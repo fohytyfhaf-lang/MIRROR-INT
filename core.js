@@ -15,7 +15,7 @@ import {
     initCamera
 } from "./camera.js";
 
-import { openExplorer } from "./explorer.js";
+import { openExplorer } from "./explorer.js?v=2";
 import { initMrSmile,whisper } from "./mrsmile.js";
 import { initMemory } from "./mrsmileMemory.js";
 import { loadTrust } from "./mrsmileTrust.js";
