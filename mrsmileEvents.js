@@ -1403,16 +1403,6 @@ async function runFirstContact(
         STATE.firstContactQueued =
             false;
 
-
-        safeCall(
-            "resume idle",
-            () => {
-
-                resumeIdleMessages();
-
-            }
-        );
-
     }
 
 }
