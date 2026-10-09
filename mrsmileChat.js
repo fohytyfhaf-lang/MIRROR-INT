@@ -99,6 +99,8 @@ const STATE = {
     firstContactRunning: false,
 
     firstContactPromise: null,
+   
+    operatorHasSpoken: false,
 
     /* ------------------------------------------------------
        OPERATOR PIPELINE
