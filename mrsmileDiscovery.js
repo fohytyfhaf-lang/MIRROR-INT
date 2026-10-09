@@ -1642,8 +1642,8 @@ STATE.channelSoundTimer =
         );
 
 
-    element.className =
-        "omegaDiscoveryNotice private-channel";
+   element.className =
+    "omegaDiscoveryNotice private-channel locked-channel";
 
 
     element.dataset.type =
@@ -1713,6 +1713,11 @@ STATE.channelSoundTimer =
             STATUS:
             AWAITING OPERATOR
 
+        </div>
+
+        <div class="mrSmileConnectionMeta">
+            <span>CHANNEL STATE: PERSISTENT</span>
+            <span>DISMISS: UNAVAILABLE</span>
         </div>
 
 
