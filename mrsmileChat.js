@@ -843,6 +843,8 @@ async function processOperatorMessage(
         );
     }
 
+   STATE.operatorHasSpoken = true;
+
     /*
      * Pause idle while the operator is actively speaking.
      */
