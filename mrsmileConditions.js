@@ -2106,15 +2106,55 @@ function evaluateDiscovery() {
 
     }
 
+if (state.ready) {
 
-    if (
-        state.ready
-    ) {
+    const readyStateValid =
+        allConditionsMet() &&
+        state.traceCount >= CONFIG.tracesRequired;
+
+    if (!readyStateValid) {
+
+        if (readyTimer) {
+            clearTimeout(readyTimer);
+            readyTimer = null;
+        }
+
+        state.ready = false;
+        state.readyAt = null;
+
+        saveState();
+
+    } else {
+
+        if (!readyTimer) {
+
+            const readyAt =
+                Number(state.readyAt) || now();
+
+            const elapsed =
+                Math.max(0, now() - readyAt);
+
+            const remaining =
+                Math.max(
+                    0,
+                    CONFIG.discoveryReadyDelay - elapsed
+                );
+
+            readyTimer = setTimeout(() => {
+
+                readyTimer = null;
+                finalizeDiscoveryReady();
+
+            }, remaining);
+
+        }
 
         return;
 
     }
 
+}
+    
 
     /*
      * Main threshold:
