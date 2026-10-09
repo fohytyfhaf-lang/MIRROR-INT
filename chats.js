@@ -4658,6 +4658,24 @@ export function initChats(
     initialized =
         true;
 
+   try {
+
+    mrSmileIdentityRevealed =
+        localStorage.getItem(
+            MRSMILE_IDENTITY_STORAGE_KEY
+        ) === "1";
+
+} catch {
+
+    mrSmileIdentityRevealed = false;
+
+}
+
+chats.mrsmile.name =
+    mrSmileIdentityRevealed
+        ? "MR.SMILE"
+        : "UNREGISTERED CONTACT";
+
 
     /* ------------------------------------------------------
        Restore persisted First Contact if necessary.
@@ -4677,6 +4695,8 @@ export function initChats(
 
         window.addChatMessage =
             addChatMessage;
+       window.revealMrSmileIdentity =
+           revealMrSmileIdentity;
        
         window.showChatTyping =
            showChatTyping;
