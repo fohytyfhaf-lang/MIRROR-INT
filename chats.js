@@ -1699,9 +1699,154 @@ function renderActiveChat() {
 
     }
 
+   
+    const typing = typingByChat.get(activeChat);
+
+    if (typing) {
+
+        const indicator =
+            document.createElement("div");
+
+        indicator.className =
+            "chatTypingIndicator";
+
+        indicator.setAttribute(
+            "aria-live",
+            "polite"
+        );
+
+
+        const name =
+            document.createElement("span");
+
+        name.className =
+            "chatTypingName";
+
+        name.textContent =
+            typing.user;
+
+
+        const label =
+            document.createElement("span");
+
+        label.className =
+            "chatTypingLabel";
+
+        label.textContent =
+            " is typing";
+
+
+        const dots =
+            document.createElement("span");
+
+        dots.className =
+            "chatTypingDots";
+
+
+        for (let index = 0; index < 3; index++) {
+
+            const dot =
+                document.createElement("span");
+
+            dot.className =
+                "chatTypingDot";
+
+            dots.appendChild(dot);
+
+        }
+
+
+        indicator.appendChild(name);
+        indicator.appendChild(label);
+        indicator.appendChild(dots);
+
+        messages.appendChild(indicator);
+
+    }
 
     messages.scrollTop =
         messages.scrollHeight;
+
+}
+
+/* ==========================================================
+   CHAT TYPING INDICATORS
+========================================================== */
+
+export function showChatTyping(chatId, user) {
+
+    if (!chats[chatId]) {
+        return false;
+    }
+
+    const typingUser =
+        cleanText(user) ||
+        chats[chatId].name ||
+        "STAFF";
+
+    typingByChat.set(
+        chatId,
+        {
+            user: typingUser,
+            startedAt: Date.now()
+        }
+    );
+
+    if (chatId === activeChat) {
+        renderActiveChat();
+    }
+
+    trigger(
+        "chat:typingStarted",
+        {
+            chatId,
+            user: typingUser,
+            timestamp: Date.now()
+        }
+    );
+
+    return true;
+
+}
+
+
+export function hideChatTyping(chatId, user) {
+
+    const current =
+        typingByChat.get(chatId);
+
+    if (!current) {
+        return false;
+    }
+
+    /*
+     * A previous typing operation must not hide
+     * a newer indicator belonging to another user.
+     */
+
+    if (
+        user &&
+        current.user !== cleanText(user)
+    ) {
+        return false;
+    }
+
+    typingByChat.delete(chatId);
+
+    if (chatId === activeChat) {
+        renderActiveChat();
+    }
+
+    trigger(
+        "chat:typingEnded",
+        {
+            chatId,
+            user: current.user,
+            timestamp: Date.now()
+        }
+    );
+
+    return true;
 
 }
 
@@ -4441,6 +4586,12 @@ export function initChats(
 
         window.addChatMessage =
             addChatMessage;
+       
+        window.showChatTyping =
+           showChatTyping;
+
+       window.hideChatTyping =
+          hideChatTyping;
 
         window.openChat =
             openChat;
