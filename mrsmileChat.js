@@ -831,6 +831,8 @@ async function processOperatorMessage(
     if (!input) {
         return null;
     }
+    const revealIdentityAfterResponse =
+    isMrSmileNameQuestion(input);
 
     /*
      * Ignore only duplicate EVENT delivery.
@@ -877,17 +879,18 @@ async function processOperatorMessage(
          * ONE AND ONLY ONE DIALOGUE CALL
          * ====================================================
          */
-        const result =
-            processMrSmileDialogue(
-                input,
-                {
-                    instant:
-                        options.instant === true,
+      const result =
+    processMrSmileDialogue(
+        input,
+        {
+            instant:
+                revealIdentityAfterResponse ||
+                options.instant === true,
 
-                    language:
-                        options.language
-                }
-            );
+            language:
+                options.language
+        }
+    );
 
         if (!result) {
             return null;
@@ -914,10 +917,27 @@ async function processOperatorMessage(
          * ====================================================
          */
         const response =
-            await outputMrSmile(
-                result,
-                options
-            );
+    await outputMrSmile(
+        result,
+        {
+            ...options,
+
+            instant:
+                revealIdentityAfterResponse ||
+                options.instant === true
+        }
+    );
+
+if (
+    response &&
+    revealIdentityAfterResponse &&
+    typeof window !== "undefined" &&
+    typeof window.revealMrSmileIdentity === "function"
+) {
+
+    window.revealMrSmileIdentity();
+
+}
 
         return {
             input,
