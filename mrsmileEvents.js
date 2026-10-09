@@ -35,12 +35,11 @@
 /* ==========================================================
    IMPORTS
 ========================================================== */
-
 import {
     playFirstContactMessage,
-    stopIdleMessages,
-    resumeIdleMessages
+    pauseIdleMessages
 } from "./mrsmileChat.js";
+
 
 import {
     getTrust,
@@ -49,6 +48,7 @@ import {
 } from "./mrsmileTrust.js";
 
 import {
+    openChat,
     revealMrSmileChat
 } from "./chats.js";
 
