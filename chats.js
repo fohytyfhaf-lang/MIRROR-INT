@@ -566,7 +566,7 @@ const chats = {
     mrsmile: {
 
         name:
-            "MR.SMILE",
+            "UNREGISTERED CONTACT",
 
         status:
             "PRIVATE CONNECTION",
