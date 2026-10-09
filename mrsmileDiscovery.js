@@ -867,10 +867,10 @@ function playMrSmileChannelMusic() {
             ) / 100;
 
 
-        const effects =
-            Number(
-                settings?.effectsVolume ?? 70
-            ) / 100;
+       const musicLevel =
+    Number(
+        settings?.musicVolume ?? 70
+    ) / 100;
 
 
         const music =
@@ -887,16 +887,16 @@ function playMrSmileChannelMusic() {
             0;
 
 
-        const targetVolume =
-            Math.max(
-                0,
-                Math.min(
-                    1,
-                    0.16 *
-                    master *
-                    effects
-                )
-            );
+       const targetVolume =
+    Math.max(
+        0,
+        Math.min(
+            1,
+            0.16 *
+            master *
+            musicLevel
+        )
+    );
 
 
         STATE.channelMusic =
