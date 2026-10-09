@@ -607,25 +607,25 @@ function addUnique(
 /* =========================
    GET SESSION START
 ========================= */
-
 function getSessionStart() {
 
+    const start =
+        Number(state.sessionStartedAt);
+
     if (
-        Number.isFinite(
-            Number(
-                state.sessionStartedAt
-            )
-        )
+        state.sessionStartedAt !== null &&
+        state.sessionStartedAt !== "" &&
+        Number.isFinite(start) &&
+        start > 0
     ) {
-
-        return Number(
-            state.sessionStartedAt
-        );
-
+        return start;
     }
 
+    state.sessionStartedAt = now();
 
-    return now();
+    saveState();
+
+    return state.sessionStartedAt;
 
 }
 
