@@ -1687,9 +1687,12 @@ async function handleOperatorEvent(
 async function handleOperatorAction(
     data
 ) {
-    if (!data) {
-        return;
-    }
+ if (
+    !data ||
+    !STATE.operatorHasSpoken
+) {
+    return;
+}
 
     try {
 
@@ -2371,6 +2374,9 @@ export function resetMrSmileChat(
 
     STATE.operatorProcessing =
         false;
+   
+   STATE.operatorHasSpoken =
+    false;
 
     STATE.operatorQueue =
         Promise.resolve();
