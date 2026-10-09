@@ -1073,6 +1073,50 @@ function conditionConsole() {
 
 
 /* =========================
+   UNIQUE RESOURCES
+========================= */
+
+function getUniqueResourceCount() {
+
+    const resources = [
+
+        ...state.files.map(
+            value => `file:${clean(value)}`
+        ),
+
+        ...state.cameras.map(
+            value => `camera:${clean(value)}`
+        ),
+
+        ...state.commands.map(
+            value => `command:${clean(value)}`
+        ),
+
+        ...state.windows.map(
+            value => `window:${clean(value)}`
+        )
+
+    ];
+
+    return new Set(
+        resources.filter(
+            value => !value.endsWith(":")
+        )
+    ).size;
+
+}
+
+
+function conditionResources() {
+
+    return (
+        getUniqueResourceCount() >=
+        CONFIG.minimumResources
+    );
+
+}
+
+/* =========================
    CATEGORIES
 ========================= */
 
