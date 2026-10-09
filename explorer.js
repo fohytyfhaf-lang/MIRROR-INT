@@ -1142,16 +1142,21 @@ function openExternalFile(
 
         }
 
+        const pdfUrl = new URL(
+    filePath,
+    import.meta.url
+).href;
 
-        content.innerHTML = `
+content.innerHTML = `
 
-            <iframe
-                class="omegaPdfViewer"
-                src="${escapeAttribute(filePath)}"
-                title="OMEGA PDF">
-            </iframe>
+    <iframe
+        class="omegaPdfViewer"
+        src="${escapeAttribute(pdfUrl)}"
+        title="OMEGA PDF">
+    </iframe>
 
-        `;
+`;
+       
 
 
         return;
