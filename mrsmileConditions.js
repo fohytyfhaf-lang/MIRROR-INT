@@ -101,11 +101,20 @@ const CONFIG = {
         2,
 
 
-    /*
-     * Console interaction required.
+      /*
+     * Console interaction.
+     * Kept for statistics, but no longer required.
      */
     minimumConsoleCommands:
         1,
+
+
+    /*
+     * Minimum number of unique resources
+     * across files, cameras, windows and console.
+     */
+    minimumResources:
+        3,
 
 
     /*
@@ -114,7 +123,6 @@ const CONFIG = {
      */
     minimumCategories:
         3,
-
 
     /*
      * Number of small traces before
