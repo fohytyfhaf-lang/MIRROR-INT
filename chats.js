@@ -739,11 +739,15 @@ for (
 let activeChat =
     "general";
 
+const typingByChat = new Map();
+
 let initialized =
     false;
 
 let personnelResponseTimer =
     null;
+
+let pendingPersonnelTyping = null;
 
 let operatorMessageSequence =
     0;
