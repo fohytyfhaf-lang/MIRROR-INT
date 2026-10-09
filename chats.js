@@ -739,6 +739,11 @@ for (
 let activeChat =
     "general";
 
+const MRSMILE_IDENTITY_STORAGE_KEY =
+    "mrsmile_identity_revealed_v1";
+
+let mrSmileIdentityRevealed = false;
+
 const typingByChat = new Map();
 
 let initialized =
