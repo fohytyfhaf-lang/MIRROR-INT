@@ -1223,6 +1223,31 @@
 }
 
 
+/* MR.SMILE — persistent private channel */
+
+.omegaDiscoveryNotice.private-channel.locked-channel {
+    position: relative;
+}
+
+.mrSmileConnectionMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    margin-top: 9px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(79, 216, 255, 0.12);
+    color: #496b7b;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.05em;
+}
+
+.mrSmileConnectionMeta span:last-child {
+    color: #718b93;
+}
+
+
+
 /* ==========================================================
    END MR.SMILE DISCOVERY
 ========================================================== */
