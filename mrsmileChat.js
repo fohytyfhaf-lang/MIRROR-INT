@@ -2152,13 +2152,7 @@ export function initMrSmileChat(
         STATE.firstContactPlayed =
             true;
 
-        if (
-            options.startIdle !== false &&
-            CONFIG.idleEnabled
-        ) {
-
-            startIdleMessages();
-        }
+     
 
    } else if (
     options.autoFirstContact !== false &&
@@ -2202,13 +2196,7 @@ export function initMrSmileChat(
                 STATE.firstContactPlayed =
                     true;
 
-                if (
-                    options.startIdle !== false &&
-                    CONFIG.idleEnabled
-                ) {
-
-                    startIdleMessages();
-                }
+              
 
                 return;
             }
