@@ -1126,53 +1126,26 @@ async function playFirstContactSequence() {
                 
 
                 pauseIdleMessages();
-
+                
                 /*
-                 * SYSTEM CHANNEL INITIALIZATION
+                 * FIRST CONTACT: one opening line only.
+                 * MR.SMILE waits for the operator to continue.
                  */
 
                 await sleep(500);
-
-                addSystemChatMessage(
-                    "PRIVATE COMMUNICATION CHANNEL INITIALIZED."
-                );
-
-                await sleep(700);
-
-                addSystemChatMessage(
-                    "REMOTE PARTICIPANT PRESENT."
-                );
-
-                /*
-                 * MR.SMILE FIRST CONTACT
-                 */
-
-                await sleep(900);
 
                 addMrSmileChatMessage(
                     "Good evening."
                 );
 
-                await sleep(1600);
+                STATE.firstContactPlayed =
+                    true;
 
-                addMrSmileChatMessage(
-                    "I believe we have interrupted one another."
+                storageSet(
+                    "mrsmile_first_contact",
+                    "1"
                 );
-
-                await sleep(1800);
-
-                addMrSmileChatMessage(
-                    "Please, take your time."
-                );
-
-               STATE.firstContactPlayed =
-                   true;
-
-               storageSet(
-                  "mrsmile_first_contact",
-                  "1"
-               );
-
+                
                 /*
                  * After First Contact the normal idle scheduler
                  * takes over.
