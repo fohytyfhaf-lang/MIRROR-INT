@@ -411,7 +411,7 @@ function getMrSmileAudioVolume(
 
         const effects =
             Number(
-                settings?.effectsVolume ?? 70
+                settings?.musicVolume ?? 70
             ) / 100;
 
         return Math.max(
