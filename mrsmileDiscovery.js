@@ -1878,6 +1878,13 @@ button?.addEventListener(
                 "STATUS: CHANNEL CONNECTED";
 
         }
+        
+                // Close the monitor after successful CONNECT.
+        element.classList.remove("visible");
+
+        window.setTimeout(() => {
+            element.remove();
+        }, 300);
 
     }
 );
