@@ -4772,30 +4772,36 @@ export function mrSmileSay(
     /*
        Repeated question path.
     */
+if (intent === "name") {
 
-    if (
-        repeatContext.repeated
-    ) {
+    response = "MR.SMILE.";
 
-        response =
-            getRepeatResponse(
-                language,
-                repeatContext.count,
-                repeatContext.previousResponse
-            );
+}
 
-    }
+else if (
+    repeatContext.repeated
+) {
 
-    else {
+    response =
+        getRepeatResponse(
+            language,
+            repeatContext.count,
+            repeatContext.previousResponse
+        );
 
-        response =
-            getResponse(
-                intent,
-                language,
-                CORE_STATE.lastResponse
-            );
+}
 
-    }
+else {
+
+    response =
+        getResponse(
+            intent,
+            language,
+            CORE_STATE.lastResponse
+        );
+
+}
+    
 
 
     /*
