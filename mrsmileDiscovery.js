@@ -176,7 +176,7 @@ const STATE = {
         null,
 
     lastHoverSoundAt:
-        0
+        0,
 
 channelMusic:
     null,
