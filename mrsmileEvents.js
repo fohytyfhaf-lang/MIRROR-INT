@@ -1218,7 +1218,7 @@ async function runFirstContact(
             "pause idle",
             () => {
 
-                stopIdleMessages();
+             pauseIdleMessages(); 
 
             }
         );
@@ -1262,72 +1262,85 @@ async function runFirstContact(
         );
 
 
+       
+         /* --------------------------------------------------
+           OPEN THE REAL MR.SMILE CHANNEL FIRST
+        -------------------------------------------------- */
+
+        safeCall(
+            "open internal chats window",
+            () => {
+                if (typeof window === "undefined") {
+                    return;
+                }
+
+                if (typeof window.openWindow === "function") {
+                    window.openWindow("logs");
+                } else if (window.OMEGA_WINDOWS?.open) {
+                    window.OMEGA_WINDOWS.open("logs");
+                } else {
+                    const logsWindow =
+                        document.getElementById("logsWindow");
+
+                    if (logsWindow) {
+                        logsWindow.classList.remove("hidden");
+                        logsWindow.style.display = "flex";
+                    }
+                }
+            }
+        );
+
+        safeCall(
+            "reveal and open MR.SMILE channel",
+            () => {
+                revealMrSmileChat();
+
+                const opened = openChat("mrsmile");
+
+                if (!opened) {
+                    console.warn(
+                        "[MR.SMILE EVENTS] The MR.SMILE channel could not become active."
+                    );
+                }
+            }
+        );
+
+        await sleep(350);
+
         /* --------------------------------------------------
-           CHAT FIRST CONTACT
+           FIRST MESSAGE — THEN WAIT FOR THE OPERATOR
         -------------------------------------------------- */
 
         await safeAsyncCall(
             "First Contact chat",
             () =>
                 playFirstContactMessage({
-
-                    eventId:
-                        STATE.currentEventId,
-
-                    source:
-                        data.source ||
-                        "event",
-
-                    startIdle:
-                        false
-
+                    eventId: STATE.currentEventId,
+                    source: data.source || "event",
+                    startIdle: false
                 }),
             null
         );
 
-
-        /* --------------------------------------------------
-           REVEAL PRIVATE CHANNEL
-        -------------------------------------------------- */
-
         safeCall(
-            "reveal MR.SMILE chat",
+            "focus MR.SMILE message input",
             () => {
+                const input =
+                    document.getElementById("chatInput");
 
-                revealMrSmileChat();
-
+                if (input) {
+                    input.focus();
+                }
             }
         );
-
 
         trigger(
             "mrsmile:firstContactChatCompleted",
             {
-
-                timestamp:
-                    Date.now(),
-
-                eventId:
-                    STATE.currentEventId
-
+                timestamp: Date.now(),
+                eventId: STATE.currentEventId
             }
         );
-
-
-        /* --------------------------------------------------
-           PROGRESSION
-        -------------------------------------------------- */
-
-        safeCall(
-            "evaluate progress",
-            () => {
-
-                evaluateProgress();
-
-            }
-        );
-
-
         /* --------------------------------------------------
            COMPLETE
         -------------------------------------------------- */
