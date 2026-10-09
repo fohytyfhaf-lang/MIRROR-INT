@@ -682,26 +682,69 @@ async function outputMrSmile(
             CONFIG.maxResponseDelay
         );
 
-    if (delay > 0) {
-        await sleep(delay);
+
+    const showTyping =
+        options.instant !== true &&
+        delay > 0;
+
+    let typingShown = false;
+
+    try {
+
+        if (
+            showTyping &&
+            typeof window !== "undefined" &&
+            typeof window.showChatTyping === "function"
+        ) {
+
+            typingShown =
+                window.showChatTyping(
+                    "mrsmile",
+                    "MR.SMILE"
+                ) === true;
+
+        }
+
+        if (delay > 0) {
+            await sleep(delay);
+        }
+
+        /*
+         * Respect the visible response cooldown.
+         */
+
+        const current = now();
+
+        if (
+            current <
+            STATE.responseCooldownUntil
+        ) {
+
+            await sleep(
+                STATE.responseCooldownUntil - current
+            );
+
+        }
+
+    } finally {
+
+        if (
+            typingShown &&
+            typeof window !== "undefined" &&
+            typeof window.hideChatTyping === "function"
+        ) {
+
+            window.hideChatTyping(
+                "mrsmile",
+                "MR.SMILE"
+            );
+
+        }
+
     }
 
-    /*
-     * Respect the visible response cooldown.
-     */
-    const current =
-        now();
 
-    if (
-        current <
-        STATE.responseCooldownUntil
-    ) {
-        await sleep(
-            STATE.responseCooldownUntil -
-            current
-        );
-    }
-
+   
     const sent =
         addMrSmileChatMessage(
             text
