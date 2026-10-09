@@ -589,33 +589,209 @@
 
 
 /* ==========================================================
-   MR.SMILE MESSAGE
+   MR.SMILE — DAMAGED SIGNAL
 ========================================================== */
 
-.mrSmileMessage .messageUser {
-
-    color:
-        #d66cff;
-
+.mrSmileMessage .messageUser,
+.mrSmileMessage .messageText,
+.mrSmileChannelName {
+    position: relative;
+    isolation: isolate;
+    color: #e5e8e9;
 }
 
+.mrSmileMessage .messageUser,
+.mrSmileChannelName {
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Consolas,
+        monospace;
+
+    font-weight: 700;
+    letter-spacing: .7px;
+
+    text-shadow:
+        -1px 0 rgba(177, 190, 198, .28),
+         1px 0 rgba(255, 255, 255, .14);
+}
 
 .mrSmileMessage .messageText {
+    color: #e1e5e6;
+    background-color: #11161a;
 
-    color:
-        #e6caff;
+    background-image:
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 3px,
+            rgba(255, 255, 255, .018) 4px,
+            transparent 5px
+        );
 
-    background:
-        #170f1d;
-
-    border-color:
-        #693b7d;
+    border-color: #4a545c;
 
     box-shadow:
-        0 0 12px
-        rgba(190,70,255,.08);
-
+        inset 0 0 0 1px rgba(255, 255, 255, .018),
+        0 0 9px rgba(195, 209, 216, .035);
 }
+
+/* Duplicate text layers: only thin slices become visible. */
+
+.mrSmileMessage .messageUser::before,
+.mrSmileMessage .messageUser::after,
+.mrSmileMessage .messageText::before,
+.mrSmileMessage .messageText::after,
+.mrSmileChannelName::before,
+.mrSmileChannelName::after {
+    content: attr(data-text);
+
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+    overflow: hidden;
+
+    white-space: inherit;
+    opacity: 0;
+}
+
+/* Bright, pale layer */
+
+.mrSmileMessage .messageUser::before,
+.mrSmileChannelName::before {
+    color: rgba(245, 248, 250, .88);
+
+    animation:
+        mrSmileSliceA
+        8.3s
+        steps(1, end)
+        -2.1s
+        infinite;
+}
+
+/* Cold grey layer */
+
+.mrSmileMessage .messageUser::after,
+.mrSmileChannelName::after {
+    color: rgba(133, 150, 160, .9);
+
+    animation:
+        mrSmileSliceB
+        10.7s
+        steps(1, end)
+        -5.4s
+        infinite;
+}
+
+/* The same damaged signal affects the message itself. */
+
+.mrSmileMessage .messageText::before,
+.mrSmileMessage .messageText::after {
+    box-sizing: border-box;
+    padding: inherit;
+    font: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+    overflow-wrap: inherit;
+
+    mix-blend-mode: screen;
+}
+
+.mrSmileMessage .messageText::before {
+    color: rgba(237, 241, 243, .7);
+
+    animation:
+        mrSmileSliceA
+        11.3s
+        steps(1, end)
+        -4.8s
+        infinite;
+}
+
+.mrSmileMessage .messageText::after {
+    color: rgba(150, 165, 174, .65);
+
+    animation:
+        mrSmileSliceB
+        9.1s
+        steps(1, end)
+        -1.7s
+        infinite;
+}
+
+/* Brief horizontal displacement of separate text slices. */
+
+@keyframes mrSmileSliceA {
+    0%, 88%, 92%, 100% {
+        clip-path: inset(0 0 100% 0);
+        transform: translateX(0);
+        opacity: 0;
+    }
+
+    88.2% {
+        clip-path: inset(0 0 60% 0);
+        transform: translateX(-2px);
+        opacity: .9;
+    }
+
+    88.5% {
+        clip-path: inset(38% 0 35% 0);
+        transform: translateX(1.5px);
+        opacity: .72;
+    }
+
+    88.8% {
+        clip-path: inset(78% 0 0 0);
+        transform: translateX(-1px);
+        opacity: .85;
+    }
+
+    89.1% {
+        clip-path: inset(0 0 100% 0);
+        opacity: 0;
+    }
+}
+
+@keyframes mrSmileSliceB {
+    0%, 93%, 96%, 100% {
+        clip-path: inset(0 0 100% 0);
+        transform: translateX(0);
+        opacity: 0;
+    }
+
+    93.2% {
+        clip-path: inset(15% 0 55% 0);
+        transform: translateX(2px);
+        opacity: .75;
+    }
+
+    93.5% {
+        clip-path: inset(56% 0 18% 0);
+        transform: translateX(-1.5px);
+        opacity: .8;
+    }
+
+    93.8% {
+        clip-path: inset(0 0 100% 0);
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mrSmileMessage .messageUser,
+    .mrSmileMessage .messageText,
+    .mrSmileChannelName,
+    .mrSmileMessage .messageUser::before,
+    .mrSmileMessage .messageUser::after,
+    .mrSmileMessage .messageText::before,
+    .mrSmileMessage .messageText::after,
+    .mrSmileChannelName::before,
+    .mrSmileChannelName::after {
+        animation: none !important;
+    }
+}
+
 
 
 /* ==========================================================
