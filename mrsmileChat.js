@@ -2221,12 +2221,10 @@ export function initMrSmileChat(
     /* ------------------------------------------------------
        PERSISTED FIRST CONTACT
     ------------------------------------------------------ */
-
     const firstContactWasPlayed =
-        storageGet(
-            "mrsmile_first_contact"
-        ) === "1";
-
+    storageGet("mrsmile_first_contact_message") === "1" ||
+    storageGet("mrsmile_first_contact") === "1";
+    
     if (
         firstContactWasPlayed
     ) {
