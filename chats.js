@@ -3172,6 +3172,22 @@ export function sendMessage() {
         "";
 
 
+/* NULL commands are intercepted by the hidden channel. */
+if (
+    activeChat === "mrsmile" &&
+    nullPresenceActive
+) {
+    if (isNullWorldCommand(text)) {
+        runNullWorldTransition();
+        return true;
+    }
+
+    if (isNullDismissCommand(text)) {
+        dismissNullPresence();
+        return true;
+    }
+}
+
     /* ------------------------------------------------------
        Add operator message to visible chat.
     ------------------------------------------------------ */
@@ -3203,6 +3219,18 @@ if (
     runNullEasterEgg();
     return true;
 }
+
+/*
+ * NULL blocks the normal MR.SMILE response pipeline
+ * while its presence is active.
+ */
+if (
+    activeChat === "mrsmile" &&
+    nullPresenceActive
+) {
+    return true;
+}
+
 
 
     /* ------------------------------------------------------
