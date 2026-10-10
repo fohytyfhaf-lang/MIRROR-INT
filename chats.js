@@ -2696,6 +2696,188 @@ function waitForNullEasterEgg(ms) {
     });
 }
 
+
+function isNullWorldCommand(value) {
+    return cleanText(value) === "erroVoid";
+}
+
+function runNullWorldTransition() {
+    if (
+        nullWorldTransitionRunning ||
+        !isNullAccountDiscovered()
+    ) {
+        return false;
+    }
+
+    nullWorldTransitionRunning = true;
+
+    // Создаём стили перехода один раз.
+    if (!document.getElementById("nullWorldTransitionStyle")) {
+        const style = document.createElement("style");
+        style.id = "nullWorldTransitionStyle";
+
+        style.textContent = `
+            #nullWorldTransition {
+                position: fixed;
+                inset: 0;
+                z-index: 2147483647;
+                background: #000;
+                opacity: 0;
+                overflow: hidden;
+                pointer-events: all;
+                transition: opacity 180ms linear;
+            }
+
+            #nullWorldTransition.active {
+                opacity: 1;
+            }
+
+            #nullWorldTransition::before,
+            #nullWorldTransition::after {
+                content: "";
+                position: absolute;
+                inset: -10%;
+                pointer-events: none;
+            }
+
+            #nullWorldTransition::before {
+                background: repeating-linear-gradient(
+                    180deg,
+                    transparent 0 3px,
+                    rgba(255,255,255,.13) 4px,
+                    transparent 5px 9px
+                );
+                animation: nullWorldStatic 100ms steps(2) infinite;
+            }
+
+            #nullWorldTransition::after {
+                background: linear-gradient(
+                    180deg,
+                    transparent 12%,
+                    rgba(255,255,255,.2) 13%,
+                    transparent 15%,
+                    transparent 46%,
+                    rgba(255,255,255,.13) 47%,
+                    transparent 49%,
+                    transparent 76%,
+                    rgba(255,255,255,.17) 77%,
+                    transparent 79%
+                );
+                animation: nullWorldTear 140ms steps(2) infinite;
+            }
+
+            #nullWorldTransition.blackout::before,
+            #nullWorldTransition.blackout::after {
+                animation: none;
+                opacity: 0;
+            }
+
+            @keyframes nullWorldStatic {
+                0%   { transform: translate(0,0); }
+                25%  { transform: translate(-1.5%,.5%); }
+                50%  { transform: translate(1%,-.3%); }
+                75%  { transform: translate(-.5%,.2%); }
+                100% { transform: translate(0,0); }
+            }
+
+            @keyframes nullWorldTear {
+                0%   { transform: translateX(-2%); }
+                50%  { transform: translateX(2%); }
+                100% { transform: translateX(0); }
+            }
+        `;
+
+        document.head.appendChild(style);
+    }
+
+    // Никаких надписей, логотипов или индикаторов загрузки.
+    const overlay = document.createElement("div");
+    overlay.id = "nullWorldTransition";
+    overlay.setAttribute("aria-hidden", "true");
+    document.body.appendChild(overlay);
+
+    // Звук создаётся локально, без внешних аудиофайлов.
+    try {
+        const AudioContextClass =
+            window.AudioContext || window.webkitAudioContext;
+
+        if (AudioContextClass) {
+            const audio = new AudioContextClass();
+            const start = audio.currentTime;
+
+            const oscillator = audio.createOscillator();
+            const gain = audio.createGain();
+
+            oscillator.type = "sawtooth";
+            oscillator.frequency.setValueAtTime(150, start);
+            oscillator.frequency.exponentialRampToValueAtTime(
+                35, start + 0.7
+            );
+
+            gain.gain.setValueAtTime(0.0001, start);
+            gain.gain.exponentialRampToValueAtTime(
+                0.07, start + 0.025
+            );
+            gain.gain.exponentialRampToValueAtTime(
+                0.0001, start + 0.75
+            );
+
+            oscillator.connect(gain);
+            gain.connect(audio.destination);
+            oscillator.start(start);
+            oscillator.stop(start + 0.8);
+
+            // Короткий цифровой треск.
+            const length = Math.floor(audio.sampleRate * 0.5);
+            const buffer = audio.createBuffer(
+                1, length, audio.sampleRate
+            );
+            const data = buffer.getChannelData(0);
+
+            for (let i = 0; i < length; i++) {
+                data[i] = (Math.random() * 2 - 1) *
+                    (1 - i / length);
+            }
+
+            const noise = audio.createBufferSource();
+            const noiseGain = audio.createGain();
+
+            noise.buffer = buffer;
+            noiseGain.gain.setValueAtTime(0.04, start);
+            noiseGain.gain.exponentialRampToValueAtTime(
+                0.0001, start + 0.5
+            );
+
+            noise.connect(noiseGain);
+            noiseGain.connect(audio.destination);
+            noise.start(start);
+
+            window.setTimeout(() => {
+                audio.close().catch(() => {});
+            }, 1200);
+        }
+    } catch (error) {
+        console.warn("[NULL] Transition sound unavailable.", error);
+    }
+
+    requestAnimationFrame(() => {
+        overlay.classList.add("active");
+    });
+
+    // Помехи исчезают. Остаётся полная темнота.
+    window.setTimeout(() => {
+        overlay.classList.add("blackout");
+    }, 1500);
+
+    // Через несколько секунд OMEGA сменяется архивом NULL.
+    window.setTimeout(() => {
+        window.location.assign(NULL_WORLD_URL);
+    }, 4300);
+
+    return true;
+}
+
+
 function runNullEasterEgg() {
     if (
         nullEasterEggRunning ||
@@ -2735,9 +2917,16 @@ function runNullEasterEgg() {
 
             await waitForNullEasterEgg(500);
 
-            // Let the player see NULL's own channel.
-            openChat("nullEntity");
+           // Let the player see NULL's own channel.
+openChat("nullEntity");
 
+await waitForNullEasterEgg(850);
+
+addChatMessage("nullEntity", {
+    user: "NULL",
+    time: getCurrentTime(),
+    text: "There is a place beyond this system. If you want to enter, type: erroVoid."
+});
         } catch (error) {
             console.error(
                 "[OMEGA NULL] Easter egg sequence failed:",
