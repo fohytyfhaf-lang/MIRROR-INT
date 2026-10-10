@@ -1773,8 +1773,7 @@ function finalizeDiscoveryReady() {
     }
 
 
-    const masterState =
-        getMrSmileState();
+   
 
 
     /*
