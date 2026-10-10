@@ -38,7 +38,7 @@
 import {
     playFirstContactMessage,
     pauseIdleMessages
-} from "./mrsmileChat.js?v=2";
+} from "./mrsmileChat.js?v=3";
 
 import {
     getTrust,
@@ -806,6 +806,10 @@ export function resetMrSmileFirstContact() {
     storageRemove(
         STORAGE.firstContact
     );
+
+   storageRemove(
+    "mrsmile_first_contact_message"
+);
 
     storageRemove(
         STORAGE.firstContactStarted
