@@ -55,6 +55,17 @@ import {
 const STORAGE_KEY =
     "mrsmile_conditions_v2";
 
+function isOfficialFirstContactCompleted() {
+    try {
+        return localStorage.getItem(
+            "mrsmile_first_contact"
+        ) === "1";
+    } catch {
+        return false;
+    }
+}
+
+
 
 /* ==========================================================
    VERSION
