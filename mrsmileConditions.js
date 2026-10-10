@@ -1782,19 +1782,14 @@ function finalizeDiscoveryReady() {
      * always wins over discovery.
      */
 
-    if (
-        masterState?.firstContact ===
-        true
-    ) {
+if (isOfficialFirstContactCompleted()) {
+    state.completed = true;
+    state.ready = true;
+    saveState();
+    return;
+}
 
-        state.completed =
-            true;
-
-        saveState();
-
-        return;
-
-    }
+  
 
 
     trigger(
