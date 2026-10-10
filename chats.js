@@ -2986,12 +2986,12 @@ function runNullWorldTransition() {
 
 
 function runNullEasterEgg() {
-    if (
-        nullEasterEggRunning ||
-        isNullAccountDiscovered()
-    ) {
-        return false;
-    }
+  if (
+    nullEasterEggRunning ||
+    nullPresenceActive
+) {
+    return false;
+}
 
     nullEasterEggRunning = true;
 
@@ -3018,9 +3018,17 @@ function runNullEasterEgg() {
             // Reveal the hidden account.
             await waitForNullEasterEgg(1100);
 
-            if (!revealNullAccount()) {
-                return;
-            }
+           
+if (!activateHiddenNullAccount()) {
+    return;
+}
+
+nullPresenceActive = true;
+startNullPresenceEffects();
+
+// NULL не объясняет, кто он и что нужно вводить.
+// Его присутствие проявляется через нарушения OMEGA.
+
 
             await waitForNullEasterEgg(500);
 
