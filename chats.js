@@ -2809,12 +2809,13 @@ function dismissNullPresence() {
 
 
 function runNullWorldTransition() {
-    if (
-        nullWorldTransitionRunning ||
-        !isNullAccountDiscovered()
-    ) {
-        return false;
-    }
+   if (
+    nullWorldTransitionRunning ||
+    !nullPresenceActive ||
+    !isNullAccountDiscovered()
+) {
+    return false;
+}
 
     nullWorldTransitionRunning = true;
 
