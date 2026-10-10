@@ -2702,9 +2702,111 @@ function waitForNullEasterEgg(ms) {
 }
 
 
+
 function isNullWorldCommand(value) {
-    return cleanText(value) === "erroVoid";
+    return cleanText(value).toLowerCase() === "errovoid";
 }
+
+function isNullDismissCommand(value) {
+    return cleanText(value).toLowerCase() === "unmake";
+}
+
+function clearNullPresenceTimers() {
+    while (nullPresenceTimers.length) {
+        clearTimeout(nullPresenceTimers.pop());
+    }
+}
+
+function setNullPresenceStage(stage) {
+    if (!nullPresenceActive || !document.body) return;
+
+    document.body.classList.remove(
+        "omegaNullStage1",
+        "omegaNullStage2",
+        "omegaNullStage3"
+    );
+
+    document.body.classList.add("omegaNullPresent");
+    document.body.classList.add(`omegaNullStage${stage}`);
+}
+
+function startNullPresenceEffects() {
+    clearNullPresenceTimers();
+
+    setNullPresenceStage(1);
+
+    nullPresenceTimers.push(
+        window.setTimeout(() => setNullPresenceStage(2), 7000)
+    );
+
+    nullPresenceTimers.push(
+        window.setTimeout(() => setNullPresenceStage(3), 18000)
+    );
+}
+
+function stopNullPresenceEffects() {
+    clearNullPresenceTimers();
+
+    if (!document.body) return;
+
+    document.body.classList.remove(
+        "omegaNullPresent",
+        "omegaNullStage1",
+        "omegaNullStage2",
+        "omegaNullStage3"
+    );
+}
+
+function activateHiddenNullAccount() {
+    const account = chatAccounts.NULL;
+    const chat = chats.nullEntity;
+
+    if (!account || !chat) return false;
+
+    account.discovered = true;
+    account.connected = true;
+
+    // Аккаунт существует, но не появляется в списке чатов.
+    chat.hidden = true;
+
+    try {
+        localStorage.setItem(
+            NULL_ACCOUNT_DISCOVERY_STORAGE_KEY,
+            "1"
+        );
+    } catch {
+        // Состояние остаётся действительным в текущем сеансе.
+    }
+
+    renderChatList();
+
+    return true;
+}
+
+function dismissNullPresence() {
+    if (!nullPresenceActive) return false;
+
+    nullPresenceActive = false;
+
+    stopNullPresenceEffects();
+
+    if (chatAccounts.NULL) {
+        chatAccounts.NULL.connected = false;
+    }
+
+    if (chats.nullEntity) {
+        chats.nullEntity.hidden = true;
+    }
+
+    renderChatList();
+
+    if (activeChat === "nullEntity") {
+        openChat("mrsmile");
+    }
+
+    return true;
+}
+
 
 function runNullWorldTransition() {
     if (
