@@ -1221,11 +1221,10 @@ async function playFirstContactSequence() {
                 STATE.firstContactPlayed =
                     true;
 
-                storageSet(
-                    "mrsmile_first_contact",
-                    "1"
-                );
-                
+              storageSet(
+                  "mrsmile_first_contact_message",
+                  "1"
+              );
                 
 
                 return true;
