@@ -748,6 +748,11 @@ const NULL_ACCOUNT_DISCOVERY_STORAGE_KEY =
 let mrSmileIdentityRevealed = false;
 let nullEasterEggRunning = false;
 
+const NULL_WORLD_URL =
+    "https://deluxe-puppy-fdd23c.netlify.app/archive.html";
+
+let nullWorldTransitionRunning = false;
+
 const typingByChat = new Map();
 
 let initialized =
