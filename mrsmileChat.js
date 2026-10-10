@@ -2238,7 +2238,7 @@ export function initMrSmileChat(
      
 
    } else if (
-    options.autoFirstContact !== false &&
+    options.autoFirstContact === true &&
     CONFIG.firstContactEnabled
 ) {
 
