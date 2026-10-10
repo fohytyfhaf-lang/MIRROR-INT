@@ -4076,15 +4076,19 @@ function restorePersistedMrSmileHistory() {
         }
 
 
-        if (
-            localStorage.getItem(
-                "mrsmile_first_contact"
-            ) !== "1"
-        ) {
+     const greetingShown =
+    localStorage.getItem(
+        "mrsmile_first_contact_message"
+    ) === "1";
 
-            return false;
+const contactCompleted =
+    localStorage.getItem(
+        "mrsmile_first_contact"
+    ) === "1";
 
-        }
+if (!greetingShown && !contactCompleted) {
+    return false;
+}
 
     } catch {
 
