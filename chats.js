@@ -2882,6 +2882,19 @@ export function sendMessage() {
         }
     );
 
+   /*
+ * NULL Easter egg.
+ * The message is visible in chat, but is not sent
+ * to MR.SMILE Core or its dialogue pipeline.
+ */
+if (
+    activeChat === "mrsmile" &&
+    isNullEasterEggCommand(text)
+) {
+    runNullEasterEgg();
+    return true;
+}
+
 
     /* ------------------------------------------------------
        Global MR.SMILE memory.
