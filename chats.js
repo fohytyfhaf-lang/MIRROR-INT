@@ -2293,6 +2293,15 @@ export function revealNullAccount() {
     account.discovered =
         true;
 
+   try {
+    localStorage.setItem(
+        NULL_ACCOUNT_DISCOVERY_STORAGE_KEY,
+        "1"
+    );
+} catch {
+    // Discovery remains valid for this session.
+}
+
 
     chat.hidden =
         false;
@@ -4832,6 +4841,7 @@ chats.mrsmile.name =
     ------------------------------------------------------ */
 
     restorePersistedMrSmileHistory();
+   restorePersistedNullAccount();
 
 
     /* ------------------------------------------------------
