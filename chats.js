@@ -4089,6 +4089,9 @@ const contactCompleted =
 if (!greetingShown && !contactCompleted) {
     return false;
 }
+       
+// Restore MR.SMILE channel visibility after reload.
+chat.hidden = false;
 
     } catch {
 
