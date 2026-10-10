@@ -21,7 +21,7 @@ import { initMemory } from "./mrsmileMemory.js";
 import { loadTrust } from "./mrsmileTrust.js";
 import { updatePersonality } from "./personality.js";
 import { mrSmileSay } from "./mrsmileCore.js";
-import { initMrSmileChat } from "./mrsmileChat.js?v=2";
+import { initMrSmileChat } from "./mrsmileChat.js?v=3";
 import { initMrSmileEvents } from "./mrsmileEvents.js";
 import {
     initMrSmileConditions
