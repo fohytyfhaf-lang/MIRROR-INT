@@ -38,8 +38,7 @@
 import {
     playFirstContactMessage,
     pauseIdleMessages
-} from "./mrsmileChat.js";
-
+} from "./mrsmileChat.js?v=2";
 
 import {
     getTrust,
