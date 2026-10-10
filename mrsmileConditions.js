@@ -2411,44 +2411,24 @@ export function initMrSmileConditions() {
      * Remember current route.
      */
 
+
     state.route =
         detectRoute();
 
 
     /*
-     * Existing First Contact
-     * permanently disables discovery.
+     * Existing First Contact.
+     * Only official completion disables discovery.
      */
 
-    try {
+    if (isOfficialFirstContactCompleted()) {
 
-        const masterState =
-            getMrSmileState();
+        state.completed = true;
+        state.ready = true;
 
+    } else {
 
-        if (
-            masterState?.firstContact ===
-            true ||
-            masterState?.accepted ===
-            true
-        ) {
-
-            state.completed =
-                true;
-
-            state.ready =
-                true;
-
-        }
-
-    }
-
-    catch (error) {
-
-        console.warn(
-            "[MR.SMILE CONDITIONS] Master state check failed:",
-            error
-        );
+        state.completed = false;
 
     }
 
