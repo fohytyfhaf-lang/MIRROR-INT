@@ -748,6 +748,11 @@ const NULL_ACCOUNT_DISCOVERY_STORAGE_KEY =
 let mrSmileIdentityRevealed = false;
 let nullEasterEggRunning = false;
 
+let nullPresenceActive = false;
+const nullPresenceTimers = [];
+
+
+
 const NULL_WORLD_URL =
     "https://deluxe-puppy-fdd23c.netlify.app/archive.html";
 
