@@ -2453,6 +2453,9 @@ export function resetMrSmileChat(
                 localStorage.removeItem(
                     "mrsmile_first_contact"
                 );
+                localStorage.removeItem(
+                    "mrsmile_first_contact_message"
+                );
             }
 
         } catch {
