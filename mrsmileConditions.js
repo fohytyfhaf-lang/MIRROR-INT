@@ -2483,6 +2483,51 @@ export function initMrSmileConditions() {
 
     exposeDebugAPI();
 
+   /*
+ * Resume saved discovery after page reload.
+ */
+if (state.ready && !state.completed) {
+
+    const readyStateValid =
+        allConditionsMet() &&
+        state.traceCount >= CONFIG.tracesRequired;
+
+    if (readyStateValid) {
+
+        const savedReadyAt =
+            Number(state.readyAt);
+
+        const elapsed =
+            Number.isFinite(savedReadyAt) &&
+            savedReadyAt > 0
+                ? Math.max(0, now() - savedReadyAt)
+                : 0;
+
+        const remaining =
+            Math.max(
+                0,
+                CONFIG.discoveryReadyDelay - elapsed
+            );
+
+        readyTimer = setTimeout(() => {
+
+            readyTimer = null;
+            finalizeDiscoveryReady();
+
+        }, remaining);
+
+    } else {
+
+        state.ready = false;
+        state.readyAt = null;
+
+        saveState();
+        evaluateDiscovery();
+
+    }
+
+}
+
 
     console.log(
         "[MR.SMILE CONDITIONS] Hidden discovery engine initialized.",
