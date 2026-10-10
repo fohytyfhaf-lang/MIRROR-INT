@@ -2147,3 +2147,83 @@
     }
 
 }
+
+
+
+
+/* ==========================================================
+   NULL PRESENCE — OMEGA SYSTEM DISTORTION
+   Scoped to the internal OMEGA desktop.
+========================================================== */
+
+body.omegaNullPresent #desktop::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2147483000;
+    pointer-events: none;
+
+    opacity: 0.025;
+
+    background: repeating-linear-gradient(
+        180deg,
+        rgba(220, 235, 245, 0.10) 0 1px,
+        transparent 1px 4px
+    );
+
+    transition: opacity 3s ease;
+}
+
+body.omegaNullStage1 #desktop::after {
+    opacity: 0.025;
+}
+
+body.omegaNullStage2 #desktop::after {
+    opacity: 0.045;
+
+    animation: omegaNullSignal 9s steps(1, end) infinite;
+}
+
+body.omegaNullStage3 #desktop::after {
+    opacity: 0.075;
+
+    background:
+        repeating-linear-gradient(
+            180deg,
+            rgba(220, 235, 245, 0.12) 0 1px,
+            transparent 1px 4px
+        ),
+        linear-gradient(
+            180deg,
+            transparent 0 48%,
+            rgba(210, 225, 235, 0.08) 49%,
+            transparent 50% 100%
+        );
+
+    animation: omegaNullSignal 5s steps(1, end) infinite;
+}
+
+@keyframes omegaNullSignal {
+    0%, 91%, 100% {
+        transform: translateX(0);
+    }
+
+    92% {
+        transform: translateX(-1px);
+    }
+
+    93% {
+        transform: translateX(1px);
+    }
+
+    94% {
+        transform: translateX(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.omegaNullPresent #desktop::after {
+        animation: none !important;
+    }
+}
+
