@@ -3072,8 +3072,8 @@ function restorePersistedNullAccount() {
             return false;
         }
 
-        account.discovered = true;
-        chat.hidden = false;
+       account.discovered = true;
+       chat.hidden = true;
 
         return true;
     } catch {
