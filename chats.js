@@ -2668,6 +2668,101 @@ function isDuplicateOperatorSend(
 
 }
 
+/* ==========================================================
+   NULL EASTER EGG
+========================================================== */
+
+function isNullEasterEggCommand(value) {
+    return /^null[.!?]*$/i.test(cleanText(value));
+}
+
+function waitForNullEasterEgg(ms) {
+    return new Promise(resolve => {
+        window.setTimeout(resolve, ms);
+    });
+}
+
+function runNullEasterEgg() {
+    if (
+        nullEasterEggRunning ||
+        isNullAccountDiscovered()
+    ) {
+        return false;
+    }
+
+    nullEasterEggRunning = true;
+
+    (async () => {
+        try {
+            // The first signal appears.
+            await waitForNullEasterEgg(900);
+
+            addChatMessage("mrsmile", {
+                user: "SYSTEM",
+                time: getCurrentTime(),
+                text: "ROUTING ERROR: RECIPIENT NOT FOUND."
+            });
+
+            // Something else has connected.
+            await waitForNullEasterEgg(1400);
+
+            addChatMessage("mrsmile", {
+                user: "SYSTEM",
+                time: getCurrentTime(),
+                text: "UNEXPECTED SESSION DETECTED."
+            });
+
+            // Reveal the hidden account.
+            await waitForNullEasterEgg(1100);
+
+            if (!revealNullAccount()) {
+                return;
+            }
+
+            await waitForNullEasterEgg(500);
+
+            // Let the player see NULL's own channel.
+            openChat("nullEntity");
+
+        } catch (error) {
+            console.error(
+                "[OMEGA NULL] Easter egg sequence failed:",
+                error
+            );
+        } finally {
+            nullEasterEggRunning = false;
+        }
+    })();
+
+    return true;
+}
+
+function restorePersistedNullAccount() {
+    try {
+        if (
+            localStorage.getItem(
+                NULL_ACCOUNT_DISCOVERY_STORAGE_KEY
+            ) !== "1"
+        ) {
+            return false;
+        }
+
+        const account = chatAccounts.NULL;
+        const chat = chats.nullEntity;
+
+        if (!account || !chat) {
+            return false;
+        }
+
+        account.discovered = true;
+        chat.hidden = false;
+
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 
 /* ==========================================================
    OPERATOR MESSAGE
