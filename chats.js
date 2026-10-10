@@ -3200,6 +3200,12 @@ if (
         activeChat ===
         "nullEntity"
     ) {
+         // The player deliberately chooses to enter NULL's world.
+        if (isNullWorldCommand(text)) {
+            runNullWorldTransition();
+            return true;
+         }
+       
 
         /*
          * NULL remains completely dormant.
