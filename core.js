@@ -25,7 +25,7 @@ import { initMrSmileChat } from "./mrsmileChat.js?v=2";
 import { initMrSmileEvents } from "./mrsmileEvents.js";
 import {
     initMrSmileConditions
-} from "./mrsmileConditions.js";
+} from "./mrsmileConditions.js?v=2";
 
 import {
     initMrSmileDiscovery
