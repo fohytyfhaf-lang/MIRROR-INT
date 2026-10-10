@@ -742,7 +742,11 @@ let activeChat =
 const MRSMILE_IDENTITY_STORAGE_KEY =
     "mrsmile_identity_revealed_v1";
 
+const NULL_ACCOUNT_DISCOVERY_STORAGE_KEY =
+    "omega_null_account_discovered_v1";
+
 let mrSmileIdentityRevealed = false;
+let nullEasterEggRunning = false;
 
 const typingByChat = new Map();
 
